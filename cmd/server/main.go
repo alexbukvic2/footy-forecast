@@ -1,3 +1,4 @@
+// Command server runs the footy-forecast HTTP API.
 package main
 
 import (
@@ -10,58 +11,65 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"github.com/alexbukvic2/footy-forecast/internal/config"
+	"github.com/alexbukvic2/footy-forecast/internal/server"
 )
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(
+		slog.NewJSONHandler(
+			os.Stdout, &slog.HandlerOptions{
+				Level: slog.LevelInfo,
+			},
+		),
+	)
 	slog.SetDefault(logger)
 
-	r := chi.NewRouter()
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(15 * time.Second))
-
-	r.Get(
-		"/healthz",
-		func(
-			w http.ResponseWriter,
-			r *http.Request,
-		) {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(`{"status":"ok"}`))
-		},
-	)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+	cfg, err := config.Load()
+	if err != nil {
+		logger.Error("failed to load config", "err", err)
+		os.Exit(1)
 	}
 
-	srv := &http.Server{
-		Addr:              ":" + port,
-		Handler:           r,
+	router := server.NewRouter(logger)
+
+	server := &http.Server{
+		Addr:              ":" + cfg.Port,
+		Handler:           router,
 		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
+	// Graceful shutdown
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	serverErr := make(chan error, 1)
 	go func() {
-		slog.Info("server starting", "port", port)
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("server failed", "err", err)
-			os.Exit(1)
+		logger.Info("server starting", "addr", server.Addr, "env", cfg.Env)
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			serverErr <- err
 		}
+		close(serverErr)
 	}()
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	<-stop
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		slog.Error("shutdown failed", "err", err)
+	select {
+	case <-ctx.Done():
+		logger.Info("shutdown signal received")
+	case err := <-serverErr:
+		logger.Error("server error", "err", err)
+		return
 	}
-	slog.Info("server stopped")
+	logger.Info("shutdown signal received")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		logger.Error("graceful shutdown failed", "err", err)
+		return
+	}
+	logger.Info("server stopped cleanly")
 }

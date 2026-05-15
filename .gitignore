@@ -1,6 +1,36 @@
+# Binaries
 /bin/
+/dist/
+footy-forecast
+server
+
+# Go
 *.exe
-.env
-.envrc
-.DS_Store
+*.test
+*.out
+*.prof
 coverage.out
+coverage.html
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+/tmp/
+*.log
+
+# Air (live reload)
+.air.toml
+tmp/
