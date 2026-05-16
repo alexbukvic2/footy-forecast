@@ -50,7 +50,7 @@ Layered, not hexagonal — keep it simple.
 - Repositories return `domain.ErrNotFound` for missing rows, not `sql.ErrNoRows`.
 - Services translate repository errors into domain errors when crossing boundaries.
 - Handlers translate domain errors into HTTP status codes in one place
-  (see `internal/http/handler/errors.go` once it exists).
+  (see `internal/server/handler/errors.go` once it exists).
 - Never expose internal error messages to clients in production.
 - Logs include `request_id` from context for every error.
 

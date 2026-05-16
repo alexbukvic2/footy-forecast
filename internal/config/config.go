@@ -2,9 +2,9 @@
 package config
 
 import (
-	"errors"
 	"fmt"
-	"os"
+
+	"github.com/caarlos0/env/v11"
 )
 
 // Env represents the runtime environment the app is running in.
@@ -18,32 +18,22 @@ const (
 
 // Config holds all runtime configuration.
 type Config struct {
-	Env  Env
-	Port string
+	Env         Env    `env:"APP_ENV"       envDefault:"dev"`
+	Port        string `env:"PORT"          envDefault:"8080"`
+	DatabaseURL string `env:"DATABASE_URL,required"`
 }
 
 // Load reads configuration from the environment and validates it.
-// Returns an error if any value is invalid.
+// Returns an error if any required value is missing or invalid.
 func Load() (*Config, error) {
-	env := Env(getenv("APP_ENV", string(EnvDev)))
-	if env != EnvDev && env != EnvProd {
-		return nil, fmt.Errorf("invalid APP_ENV: %q", env)
+	cfg := &Config{}
+	if err := env.Parse(cfg); err != nil {
+		return nil, fmt.Errorf("parse env: %w", err)
 	}
 
-	port := getenv("PORT", "8080")
-	if port == "" {
-		return nil, errors.New("PORT must not be empty")
+	if cfg.Env != EnvDev && cfg.Env != EnvProd {
+		return nil, fmt.Errorf("invalid APP_ENV: %q", cfg.Env)
 	}
 
-	return &Config{
-		Env:  env,
-		Port: port,
-	}, nil
-}
-
-func getenv(key, fallback string) string {
-	if v, ok := os.LookupEnv(key); ok {
-		return v
-	}
-	return fallback
+	return cfg, nil
 }

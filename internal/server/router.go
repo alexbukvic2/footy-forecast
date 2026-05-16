@@ -6,15 +6,19 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/alexbukvic2/footy-forecast/internal/db"
 	"github.com/alexbukvic2/footy-forecast/internal/server/handler"
 	"github.com/alexbukvic2/footy-forecast/internal/server/middleware"
 )
 
 // NewRouter wires up all HTTP routes and returns the root handler.
-func NewRouter(logger *slog.Logger) http.Handler {
+func NewRouter(
+	logger *slog.Logger,
+	pool *db.Pool,
+) http.Handler {
 	mux := http.NewServeMux()
 
-	health := handler.NewHealth(logger)
+	health := handler.NewHealth(logger, pool)
 	mux.HandleFunc("GET /health", health.Live)
 	mux.HandleFunc("GET /health/ready", health.Ready)
 
