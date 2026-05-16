@@ -43,16 +43,6 @@ func NewTournamentService(repo TournamentRepo) *TournamentService {
 	return &TournamentService{repo: repo}
 }
 
-// CreateTournamentInput is what callers provide to create a tournament.
-// It mirrors but does not equal repository.CreateTournamentParams — the service
-// owns its own input shape so the repository can change without breaking callers.
-type CreateTournamentInput struct {
-	Slug     string
-	Name     string
-	StartsAt time.Time
-	EndsAt   time.Time
-}
-
 // Create validates input and persists a new tournament.
 //
 // Returns:
@@ -60,7 +50,7 @@ type CreateTournamentInput struct {
 //   - domain.ErrConflict if a tournament with the same slug exists
 func (s *TournamentService) Create(
 	ctx context.Context,
-	in CreateTournamentInput,
+	in domain.CreateTournamentInput,
 ) (*domain.Tournament, error) {
 	in.Slug = strings.TrimSpace(strings.ToLower(in.Slug))
 	in.Name = strings.TrimSpace(in.Name)

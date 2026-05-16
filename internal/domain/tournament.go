@@ -36,3 +36,11 @@ type Tournament struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
+
+// CreateTournamentInput is the input for creating a tournament.
+type CreateTournamentInput struct {
+	Slug     string
+	Name     string
+	StartsAt time.Time
+	EndsAt   time.Time
+}
