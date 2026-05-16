@@ -1,4 +1,4 @@
-// Package http wires together the application's HTTP layer:
+// Package server wires together the application's HTTP layer:
 // routes, middleware, and handlers.
 package server
 
