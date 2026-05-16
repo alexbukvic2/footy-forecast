@@ -1,4 +1,4 @@
-.PHONY: help run build test lint fmt tidy clean
+.PHONY: help run build test lint fmt tidy clean sqlc-gen
 
 BINARY := footy-forecast
 PKG := ./...
@@ -19,6 +19,7 @@ help:
 	@echo "  migrate-down             - roll back last migration"
 	@echo "  migrate-status           - show migration status"
 	@echo "  migrate-reset            - roll back ALL migrations (destructive)"
+	@echo "  sqlc-gen        - regenerate sqlc code from queries"
 
 run:
 	go run ./cmd/server
@@ -72,3 +73,6 @@ migrate-status:
 
 migrate-reset:
 	go tool goose -dir $(MIGRATIONS_DIR) postgres "$(DB_URL)" reset
+
+sqlc-gen:
+	go tool sqlc generate
