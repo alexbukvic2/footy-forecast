@@ -1,17 +1,19 @@
-.PHONY: help run build test lint fmt tidy clean sqlc-gen
+.PHONY: help run build test test-integration test-all lint fmt tidy clean sqlc-gen
 
 BINARY := footy-forecast
 PKG := ./...
 
 help:
 	@echo "Targets:"
-	@echo "  run             - run server locally"
-	@echo "  build           - build binary into ./bin"
-	@echo "  test            - run all tests with race detector"
-	@echo "  lint            - run golangci-lint"
-	@echo "  fmt             - format code"
-	@echo "  tidy            - tidy go modules"
-	@echo "  clean           - remove build artifacts"
+	@echo "  run              - run server locally"
+	@echo "  build            - build binary into ./bin"
+	@echo "  test             - run unit tests (fast)"
+	@echo "  test-integration - run integration tests (needs Docker)"
+	@echo "  test-all         - run both"
+	@echo "  lint             - run golangci-lint"
+	@echo "  fmt              - format code"
+	@echo "  tidy             - tidy go modules"
+	@echo "  clean            - remove build artifacts"
 	@echo ""
 	@echo "Database:"
 	@echo "  migrate-new name=<name>  - create new migration"
@@ -33,7 +35,12 @@ build-linux-arm64:
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o bin/$(BINARY)-linux-arm64 ./cmd/server
 
 test:
-	go test -race -count=1 $(PKG)
+	go test -race -count=1 ./...
+
+test-integration:
+	go test -race -count=1 -tags=integration ./...
+
+test-all: test test-integration
 
 test-cover:
 	go test -race -count=1 -coverprofile=coverage.out $(PKG)
