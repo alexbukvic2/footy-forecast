@@ -25,6 +25,7 @@ jobs:
           cache: true
       - uses: golangci/golangci-lint-action@v7
         with:
+          install-mode: goinstall
           version: v2.7.2
 
   test-unit:
