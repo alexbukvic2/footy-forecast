@@ -116,4 +116,58 @@ Ask. A clarifying question is cheaper than a wrong implementation.
   binaries (as of golangci-lint v2.7.2) are built with Go 1.25 and refuse to
   analyze code targeting Go 1.26+. Building from source uses the local Go
   toolchain instead. Revisit once golangci-lint ships 1.26-built binaries.
-g
+
+## Deployment
+
+Deploys to production happen automatically on push to `main`:
+
+1. `.github/workflows/deploy.yml` triggers on push to main
+2. It calls `.github/workflows/ci.yml` as a sub-workflow to verify the build
+3. After CI passes, it builds an ARM64 Linux binary
+4. Assumes the `footy-forecast-deploy` IAM role via OIDC
+  - Trust policy keyed on `environment:production`, not branch ref
+  - Required because the deploy job declares `environment: production`
+5. Uploads binary + migrations to `s3://footy-forecast-deploy-.../`
+6. Triggers `/usr/local/bin/footy-forecast-deploy` on the EC2 box via SSM Run Command
+  - The script downloads, validates, migrates, installs atomically, restarts
+  - Waits for `/health/ready` to confirm before exiting
+
+Manual deploy from laptop (debugging only):
+
+```bash
+# Build + upload as if you were the workflow
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o /tmp/server ./cmd/server
+aws s3 cp /tmp/server "s3://${BUCKET}/builds/server-$(git rev-parse --short HEAD)" --profile hexa
+aws s3 sync ./migrations/ "s3://${BUCKET}/migrations/" --profile hexa
+
+# Trigger the deploy script
+aws ssm send-command --instance-ids "$INSTANCE_ID" \
+  --document-name "AWS-RunShellScript" \
+  --parameters "commands=[\"bash /usr/local/bin/footy-forecast-deploy builds/server-$(git rev-parse --short HEAD)\"]" \
+  --profile hexa
+```
+
+## Backup strategy
+
+- Postgres `pg_dump` every 6 hours, gzipped, uploaded to s3://footy-forecast-backups/daily/
+- 90-day retention via S3 lifecycle policy
+- Worst-case data loss: 6 hours
+
+**Point-in-time recovery (PITR) is intentionally deferred.** When user base grows
+or data becomes harder to recreate (real-money transactions, irrecoverable user
+data), set up WAL-G or pgBackRest for continuous WAL archiving to S3.
+
+Restore: see docs/runbooks/restore.md (to be written).
+
+# On the box:
+aws s3 cp "s3://footy-forecast-backups/daily/<date>/<key>" /tmp/restore.sql.gz --region eu-central-1
+
+# Stop the app so it doesn't see partial state mid-restore
+sudo systemctl stop footy-forecast
+
+# Restore (clean + if-exists means it drops existing tables first)
+gunzip -c /tmp/restore.sql.gz | PGPASSWORD="$(aws ssm get-parameter --name /footy-forecast/prod/postgres-password --with-decryption --region eu-central-1 --query 'Parameter.Value' --output text)" psql -h 127.0.0.1 -U footy_app -d footy_forecast
+
+# Restart the app
+sudo systemctl start footy-forecast
+
