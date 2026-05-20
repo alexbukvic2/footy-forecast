@@ -109,3 +109,11 @@ All three must pass. Do not skip `make lint` even if "the change is small."
 ## When you're unsure
 
 Ask. A clarifying question is cheaper than a wrong implementation.
+
+## CI quirks
+
+- `golangci-lint-action` uses `install-mode: goinstall` because the prebuilt
+  binaries (as of golangci-lint v2.7.2) are built with Go 1.25 and refuse to
+  analyze code targeting Go 1.26+. Building from source uses the local Go
+  toolchain instead. Revisit once golangci-lint ships 1.26-built binaries.
+g
