@@ -22,6 +22,11 @@ help:
 	@echo "  migrate-status           - show migration status"
 	@echo "  migrate-reset            - roll back ALL migrations (destructive)"
 	@echo "  sqlc-gen        - regenerate sqlc code from queries"
+	@echo ""
+	@echo "AWS lifecycle:"
+	@echo "  aws-status   - show current state of the AWS infrastructure"
+	@echo "  aws-pause    - take final backup, stop EC2, release EIP (~\$$0.80/mo)"
+	@echo "  aws-resume   - start EC2, allocate fresh EIP, wait for healthy"
 
 run:
 	go run ./cmd/server
@@ -83,3 +88,19 @@ migrate-reset:
 
 sqlc-gen:
 	go tool sqlc generate
+
+# ============================================================================
+# AWS lifecycle
+# ============================================================================
+.PHONY: aws-pause aws-resume aws-status
+
+AWS_PROFILE ?= hexa
+
+aws-status:
+	@AWS_PROFILE=$(AWS_PROFILE) ./scripts/aws/status.sh
+
+aws-pause:
+	@AWS_PROFILE=$(AWS_PROFILE) ./scripts/aws/pause.sh
+
+aws-resume:
+	@AWS_PROFILE=$(AWS_PROFILE) ./scripts/aws/resume.sh
