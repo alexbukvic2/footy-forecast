@@ -12,3 +12,6 @@ var ErrConflict = errors.New("conflict")
 
 // ErrInvalid is returned when input fails validation at the service layer.
 var ErrInvalid = errors.New("invalid")
+
+// ErrForbidden is returned when the requester lacks permission for the operation.
+var ErrForbidden = errors.New("forbidden")

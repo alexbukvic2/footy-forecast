@@ -28,6 +28,9 @@ func NewRouter(
 	userRepo := repository.NewUserRepository(pool)
 	userSvc := service.NewUserService(userRepo)
 
+	leagueRepo := repository.NewLeagueRepository(pool)
+	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo)
+
 	validator := cognito.NewValidator(
 		cfg.CognitoRegion,
 		cfg.CognitoUserPoolID,
@@ -39,6 +42,7 @@ func NewRouter(
 	healthH := handler.NewHealth(logger, pool)
 	tournamentH := handler.NewTournament(logger, tournamentSvc)
 	userH := handler.NewUser(logger)
+	leagueH := handler.NewLeague(logger, leagueSvc)
 
 	mux := http.NewServeMux()
 
@@ -54,6 +58,16 @@ func NewRouter(
 
 	// Users (protected).
 	mux.Handle("GET /users/me", authMW(http.HandlerFunc(userH.Me)))
+
+	// Leagues (protected).
+	mux.Handle("POST /leagues", authMW(http.HandlerFunc(leagueH.Create)))
+	mux.Handle("GET /leagues", authMW(http.HandlerFunc(leagueH.List)))
+	mux.Handle("POST /leagues/join", authMW(http.HandlerFunc(leagueH.Join)))
+	mux.Handle("GET /leagues/{id}", authMW(http.HandlerFunc(leagueH.Get)))
+	mux.Handle("PATCH /leagues/{id}", authMW(http.HandlerFunc(leagueH.UpdateName)))
+	mux.Handle("DELETE /leagues/{id}", authMW(http.HandlerFunc(leagueH.Delete)))
+	mux.Handle("POST /leagues/{id}/code", authMW(http.HandlerFunc(leagueH.RegenerateCode)))
+	mux.Handle("DELETE /leagues/{id}/members/{userId}", authMW(http.HandlerFunc(leagueH.RemoveMember)))
 
 	// Apply middleware in outer-to-inner order.
 	return middleware.RequestID(

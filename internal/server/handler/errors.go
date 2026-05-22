@@ -36,6 +36,8 @@ func writeError(
 		writeJSON(w, http.StatusNotFound, ErrorResponse{Error: "not found"})
 	case errors.Is(err, domain.ErrConflict):
 		writeJSON(w, http.StatusConflict, ErrorResponse{Error: err.Error()})
+	case errors.Is(err, domain.ErrForbidden):
+		writeJSON(w, http.StatusForbidden, ErrorResponse{Error: "forbidden"})
 	default:
 		logger.ErrorContext(r.Context(), "internal error", "err", err)
 		writeJSON(w, http.StatusInternalServerError, ErrorResponse{Error: "internal server error"})
