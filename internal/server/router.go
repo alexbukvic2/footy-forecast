@@ -46,6 +46,12 @@ func NewRouter(
 
 	mux := http.NewServeMux()
 
+	// protected wraps a handler with auth middleware.
+	// http.HandlerFunc conversion is hidden here so call sites stay clean.
+	protected := func(fn http.HandlerFunc) http.Handler {
+		return authMW(fn)
+	}
+
 	// Health.
 	mux.HandleFunc("GET /health", healthH.Live)
 	mux.HandleFunc("GET /health/ready", healthH.Ready)
@@ -57,17 +63,17 @@ func NewRouter(
 	mux.HandleFunc("GET /tournaments/slug/{slug}", tournamentH.GetBySlug)
 
 	// Users (protected).
-	mux.Handle("GET /users/me", authMW(http.HandlerFunc(userH.Me)))
+	mux.Handle("GET /users/me", protected(userH.Me))
 
 	// Leagues (protected).
-	mux.Handle("POST /leagues", authMW(http.HandlerFunc(leagueH.Create)))
-	mux.Handle("GET /leagues", authMW(http.HandlerFunc(leagueH.List)))
-	mux.Handle("POST /leagues/join", authMW(http.HandlerFunc(leagueH.Join)))
-	mux.Handle("GET /leagues/{id}", authMW(http.HandlerFunc(leagueH.Get)))
-	mux.Handle("PATCH /leagues/{id}", authMW(http.HandlerFunc(leagueH.UpdateName)))
-	mux.Handle("DELETE /leagues/{id}", authMW(http.HandlerFunc(leagueH.Delete)))
-	mux.Handle("POST /leagues/{id}/code", authMW(http.HandlerFunc(leagueH.RegenerateCode)))
-	mux.Handle("DELETE /leagues/{id}/members/{userId}", authMW(http.HandlerFunc(leagueH.RemoveMember)))
+	mux.Handle("POST /leagues", protected(leagueH.Create))
+	mux.Handle("GET /leagues", protected(leagueH.List))
+	mux.Handle("POST /leagues/join", protected(leagueH.Join))
+	mux.Handle("GET /leagues/{id}", protected(leagueH.Get))
+	mux.Handle("PATCH /leagues/{id}", protected(leagueH.UpdateName))
+	mux.Handle("DELETE /leagues/{id}", protected(leagueH.Delete))
+	mux.Handle("POST /leagues/{id}/code", protected(leagueH.RegenerateCode))
+	mux.Handle("DELETE /leagues/{id}/members/{userId}", protected(leagueH.RemoveMember))
 
 	// Apply middleware in outer-to-inner order.
 	return middleware.RequestID(
