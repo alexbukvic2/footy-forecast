@@ -39,7 +39,7 @@ func (r *UserRepository) Upsert(
 	})
 	if err != nil {
 		if isUniqueViolation(err) {
-			return domain.User{}, fmt.Errorf("upsert user email %q: %w", email, domain.ErrConflict)
+			return domain.User{}, fmt.Errorf("upsert user: %w", domain.ErrConflict)
 		}
 		return domain.User{}, fmt.Errorf("upsert user: %w", err)
 	}

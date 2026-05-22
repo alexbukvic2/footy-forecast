@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"math/big"
 	"net/http"
 	"sync"
@@ -60,6 +61,11 @@ func (c *JWKSCache) Get(ctx context.Context, kid string) (*rsa.PublicKey, error)
 	}
 
 	if err := c.fetchLocked(ctx); err != nil {
+		// Serve the stale key rather than denying all traffic during a JWKS outage.
+		if stale := c.keys[kid]; stale != nil {
+			slog.WarnContext(ctx, "JWKS re-fetch failed, serving stale key", "kid", kid, "err", err)
+			return stale, nil
+		}
 		return nil, fmt.Errorf("fetch JWKS: %w", err)
 	}
 
@@ -128,6 +134,9 @@ func parseRSAPublicKey(n, e string) (*rsa.PublicKey, error) {
 		return nil, fmt.Errorf("decode e: %w", err)
 	}
 	nInt := new(big.Int).SetBytes(nBytes)
-	eInt := int(new(big.Int).SetBytes(eBytes).Int64())
-	return &rsa.PublicKey{N: nInt, E: eInt}, nil
+	eBig := new(big.Int).SetBytes(eBytes)
+	if !eBig.IsInt64() || eBig.Int64() < 2 || eBig.Int64() > 1<<31-1 {
+		return nil, fmt.Errorf("RSA exponent out of safe range: %s", eBig)
+	}
+	return &rsa.PublicKey{N: nInt, E: int(eBig.Int64())}, nil
 }

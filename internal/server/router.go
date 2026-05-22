@@ -46,8 +46,8 @@ func NewRouter(
 	mux.HandleFunc("GET /health", healthH.Live)
 	mux.HandleFunc("GET /health/ready", healthH.Ready)
 
-	// Tournaments (public).
-	mux.HandleFunc("POST /tournaments", tournamentH.Create)
+	// Tournaments.
+	mux.Handle("POST /tournaments", authMW(http.HandlerFunc(tournamentH.Create)))
 	mux.HandleFunc("GET /tournaments", tournamentH.List)
 	mux.HandleFunc("GET /tournaments/{id}", tournamentH.GetByID)
 	mux.HandleFunc("GET /tournaments/slug/{slug}", tournamentH.GetBySlug)

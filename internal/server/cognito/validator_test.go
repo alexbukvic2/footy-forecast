@@ -57,7 +57,7 @@ func buildJWKSServer(t *testing.T, kid string, key *rsa.PublicKey) (serverURL st
 	return srv.URL, callCount
 }
 
-// buildToken creates a signed JWT for testing.
+// buildToken creates a signed JWT for testing. TokenUse defaults to "id".
 func buildToken(t *testing.T, kid, issuer, clientID string, key *rsa.PrivateKey, opts ...func(*jwt.RegisteredClaims)) string {
 	t.Helper()
 	claims := &cognitoClaims{
@@ -68,6 +68,7 @@ func buildToken(t *testing.T, kid, issuer, clientID string, key *rsa.PrivateKey,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
 		},
+		TokenUse:  "id",
 		Email:     "user@example.com",
 		Name:      "Test User",
 		GivenName: "Test",
@@ -218,6 +219,58 @@ func TestValidator_MultipleAllowedClientIDs(t *testing.T) {
 	_, err := v.Validate(context.Background(), tok)
 	if err != nil {
 		t.Fatalf("unexpected error for second allowed client: %v", err)
+	}
+}
+
+func TestValidator_AccessTokenRejected(t *testing.T) {
+	key := testKey(t)
+	jwksURL, _ := buildJWKSServer(t, testKid, &key.PublicKey)
+	issuer := fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/pool1", testRegion)
+	v := buildValidator(jwksURL, issuer, []string{testClientID})
+
+	claims := &cognitoClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   "sub-test",
+			Issuer:    issuer,
+			Audience:  jwt.ClaimStrings{testClientID},
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),
+		},
+		TokenUse: "access",
+		Email:    "user@example.com",
+	}
+	tok := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+	tok.Header["kid"] = testKid
+	signed, err := tok.SignedString(key)
+	if err != nil {
+		t.Fatalf("sign token: %v", err)
+	}
+
+	_, err = v.Validate(context.Background(), signed)
+	if err == nil {
+		t.Fatal("expected error for access token, got nil")
+	}
+}
+
+func TestJWKSCache_ServeStaleOnFetchError(t *testing.T) {
+	key := testKey(t)
+
+	// A JWKS server that always returns 500.
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	t.Cleanup(srv.Close)
+
+	cache := NewJWKSCache(srv.URL, time.Hour)
+	// Pre-populate with a stale key (zero fetchedAt means expired).
+	cache.keys[testKid] = &key.PublicKey
+
+	got, err := cache.Get(context.Background(), testKid)
+	if err != nil {
+		t.Fatalf("expected stale key to be served during outage, got error: %v", err)
+	}
+	if got != &key.PublicKey {
+		t.Error("expected the stale public key to be returned")
 	}
 }
 

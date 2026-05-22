@@ -74,8 +74,11 @@ func (s *UserService) ProvisionFromCognito(
 }
 
 // InvalidateUser removes the cache entry for cognitoSub.
-// Call this after any mutation that changes the stored User (e.g. display_name
-// update, status change) so the next request re-reads from the DB.
+//
+// CONTRACT: every method on UserService that mutates a user record in the DB
+// (e.g. UpdateDisplayName, Suspend, Unsuspend) MUST call InvalidateUser before
+// returning, so the next request re-reads the authoritative state from the DB.
+// Forgetting this will serve stale data — suspended users would remain active.
 func (s *UserService) InvalidateUser(cognitoSub string) {
 	s.mu.Lock()
 	delete(s.cache, cognitoSub)

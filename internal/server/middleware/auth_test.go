@@ -117,6 +117,17 @@ func TestAuth_ValidTokenAndProvision_CallsNext(t *testing.T) {
 	}
 }
 
+func TestAuth_SuspendedUser_Returns403(t *testing.T) {
+	validator := &fakeValidator{claims: cognito.Claims{Sub: "s", Email: "e@e.com"}}
+	provisioner := &fakeProvisioner{user: domain.User{Status: domain.UserStatusSuspended}}
+	req := httptest.NewRequest(http.MethodGet, "/users/me", nil)
+	req.Header.Set("Authorization", "Bearer validtoken")
+	rec := applyAuth(validator, provisioner, req)
+	if rec.Code != http.StatusForbidden {
+		t.Errorf("status = %d, want 403 for suspended user", rec.Code)
+	}
+}
+
 func TestAuth_DisplayNamePreference(t *testing.T) {
 	// When Name is present, it should be passed to provisioner.
 	var capturedDisplayName string
@@ -126,7 +137,7 @@ func TestAuth_DisplayNamePreference(t *testing.T) {
 	captureProvisioner := &captureProvisionerFn{
 		fn: func(_ context.Context, _, _, displayName string) (domain.User, error) {
 			capturedDisplayName = displayName
-			return domain.User{}, nil
+			return domain.User{Status: domain.UserStatusActive}, nil
 		},
 	}
 
