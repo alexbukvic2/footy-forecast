@@ -21,6 +21,10 @@ type Config struct {
 	Env         Env    `env:"APP_ENV"       envDefault:"dev"`
 	Port        string `env:"PORT"          envDefault:"8080"`
 	DatabaseURL string `env:"DATABASE_URL,required"`
+
+	CognitoRegion           string   `env:"COGNITO_REGION,required"`
+	CognitoUserPoolID       string   `env:"COGNITO_USER_POOL_ID,required"`
+	CognitoAllowedClientIDs []string `env:"COGNITO_ALLOWED_CLIENT_IDS,required" envSeparator:","`
 }
 
 // Load reads configuration from the environment and validates it.
@@ -33,6 +37,10 @@ func Load() (*Config, error) {
 
 	if cfg.Env != EnvDev && cfg.Env != EnvProd {
 		return nil, fmt.Errorf("invalid APP_ENV: %q", cfg.Env)
+	}
+
+	if len(cfg.CognitoAllowedClientIDs) == 0 {
+		return nil, fmt.Errorf("COGNITO_ALLOWED_CLIENT_IDS must contain at least one value")
 	}
 
 	return cfg, nil

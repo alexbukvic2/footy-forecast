@@ -54,7 +54,7 @@ func run(logger *slog.Logger) error {
 	defer pool.Close()
 	logger.Info("database connected")
 
-	router := server.NewRouter(logger, pool)
+	router := server.NewRouter(logger, pool, cfg)
 
 	s := &http.Server{
 		Addr:              ":" + cfg.Port,
