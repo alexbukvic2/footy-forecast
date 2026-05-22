@@ -12,6 +12,64 @@ import (
 	"github.com/google/uuid"
 )
 
+type LeagueMemberRole string
+
+const (
+	LeagueMemberRoleOwner  LeagueMemberRole = "owner"
+	LeagueMemberRoleMember LeagueMemberRole = "member"
+)
+
+func (e *LeagueMemberRole) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = LeagueMemberRole(s)
+	case string:
+		*e = LeagueMemberRole(s)
+	default:
+		return fmt.Errorf("unsupported scan type for LeagueMemberRole: %T", src)
+	}
+	return nil
+}
+
+type NullLeagueMemberRole struct {
+	LeagueMemberRole LeagueMemberRole
+	Valid            bool // Valid is true if LeagueMemberRole is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullLeagueMemberRole) Scan(value interface{}) error {
+	if value == nil {
+		ns.LeagueMemberRole, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.LeagueMemberRole.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullLeagueMemberRole) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.LeagueMemberRole), nil
+}
+
+func (e LeagueMemberRole) Valid() bool {
+	switch e {
+	case LeagueMemberRoleOwner,
+		LeagueMemberRoleMember:
+		return true
+	}
+	return false
+}
+
+func AllLeagueMemberRoleValues() []LeagueMemberRole {
+	return []LeagueMemberRole{
+		LeagueMemberRoleOwner,
+		LeagueMemberRoleMember,
+	}
+}
+
 type TournamentStatus string
 
 const (
@@ -129,6 +187,23 @@ func AllUserStatusValues() []UserStatus {
 		UserStatusActive,
 		UserStatusSuspended,
 	}
+}
+
+type League struct {
+	ID           uuid.UUID
+	TournamentID uuid.UUID
+	OwnerID      uuid.UUID
+	Name         string
+	Code         string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type LeagueMember struct {
+	LeagueID uuid.UUID
+	UserID   uuid.UUID
+	Role     LeagueMemberRole
+	JoinedAt time.Time
 }
 
 type Tournament struct {
