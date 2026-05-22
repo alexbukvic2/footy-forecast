@@ -25,6 +25,7 @@ type JWTValidator interface {
 // cognitoClaims extends the standard JWT registered claims with Cognito ID token fields.
 type cognitoClaims struct {
 	jwt.RegisteredClaims
+	TokenUse  string `json:"token_use"`
 	Email     string `json:"email"`
 	Name      string `json:"name"`
 	GivenName string `json:"given_name"`
@@ -73,6 +74,10 @@ func (v *Validator) Validate(ctx context.Context, tokenString string) (Claims, e
 
 	if !v.audienceAllowed(c.Audience) {
 		return Claims{}, errors.New("token audience not in allowed client IDs")
+	}
+
+	if c.TokenUse != "id" {
+		return Claims{}, fmt.Errorf("token_use %q: want \"id\"", c.TokenUse)
 	}
 
 	return Claims{

@@ -59,6 +59,11 @@ func Auth(validator cognito.JWTValidator, users UserProvisioner) func(http.Handl
 				return
 			}
 
+			if user.Status != domain.UserStatusActive {
+				writeAuthError(w, http.StatusForbidden, "forbidden")
+				return
+			}
+
 			next.ServeHTTP(w, r.WithContext(ctxutil.WithUser(r.Context(), user)))
 		})
 	}
