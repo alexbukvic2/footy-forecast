@@ -12,7 +12,7 @@ import (
 	"github.com/alexbukvic2/footy-forecast/internal/service"
 )
 
-// ---------- fake ----------
+// ---------- fakes ----------
 
 type fakePlayerRepo struct {
 	searchFn func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error)
@@ -44,6 +44,18 @@ func tournamentExists(id uuid.UUID) *fakeTournamentGetter {
 	return &fakeTournamentGetter{
 		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Tournament, error) {
 			return upcomingTournament(id), nil
+		},
+	}
+}
+
+// repoWithHandicaps returns a fakePlayerRepo that returns one player whose Handicaps
+// map is pre-populated with the provided values (entries omitted for absent categories).
+func repoWithHandicaps(playerID uuid.UUID, h map[domain.PlayerHandicapCategory]int) *fakePlayerRepo {
+	return &fakePlayerRepo{
+		searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+			return []*domain.PlayerSearchResult{
+				{ID: playerID, Name: "Player", TeamName: "Team", TeamLogo: "", Handicaps: h},
+			}, nil
 		},
 	}
 }
@@ -173,20 +185,68 @@ func TestPlayerService_Search_EmptyRepoResultPassedThrough(t *testing.T) {
 	require.Empty(t, players)
 }
 
-func TestPlayerService_Search_ReturnsPlayers(t *testing.T) {
+// ---------- handicap enrichment ----------
+
+func TestPlayerService_Search_AllCategoriesAlwaysPresent(t *testing.T) {
 	t.Parallel()
 
 	tournamentID := uuid.New()
-	want := []*domain.PlayerSearchResult{
-		{ID: uuid.New(), Name: "Kylian Mbappé", TeamName: "France", TeamLogo: "<svg/>"},
-		{ID: uuid.New(), Name: "Lionel Messi", TeamName: "Argentina", TeamLogo: "<svg/>"},
-	}
-	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
-		return want, nil
-	}}
+	// repo returns a player with no handicap entries — service must fill all categories
+	repo := repoWithHandicaps(uuid.New(), map[domain.PlayerHandicapCategory]int{})
 	svc := playerSvc(repo, tournamentExists(tournamentID))
 
-	got, err := svc.Search(context.Background(), domain.SearchPlayersInput{TournamentID: tournamentID, Query: "messi"})
+	got, err := svc.Search(context.Background(), domain.SearchPlayersInput{TournamentID: tournamentID, Query: "x"})
 	require.NoError(t, err)
-	require.Equal(t, want, got)
+	require.Len(t, got, 1)
+	require.Len(t, got[0].Handicaps, len(domain.AllPlayerHandicapCategories))
+	for _, cat := range domain.AllPlayerHandicapCategories {
+		_, ok := got[0].Handicaps[cat]
+		require.True(t, ok, "category %q must be present", cat)
+	}
+}
+
+func TestPlayerService_Search_UsesDefaultWhenRepoReturnsNoHandicap(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	repo := repoWithHandicaps(uuid.New(), map[domain.PlayerHandicapCategory]int{})
+	svc := playerSvc(repo, tournamentExists(tournamentID))
+
+	got, err := svc.Search(context.Background(), domain.SearchPlayersInput{TournamentID: tournamentID, Query: "x"})
+	require.NoError(t, err)
+	for _, cat := range domain.AllPlayerHandicapCategories {
+		require.Equal(t, 20, got[0].Handicaps[cat], "category %q: expected default 20", cat)
+	}
+}
+
+func TestPlayerService_Search_UsesRepoPointsWhenHandicapRowExists(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	repo := repoWithHandicaps(uuid.New(), map[domain.PlayerHandicapCategory]int{
+		domain.PlayerHandicapCategoryGroupTopScorer: 7,
+		domain.PlayerHandicapCategoryTotalTopScorer: 15,
+	})
+	svc := playerSvc(repo, tournamentExists(tournamentID))
+
+	got, err := svc.Search(context.Background(), domain.SearchPlayersInput{TournamentID: tournamentID, Query: "x"})
+	require.NoError(t, err)
+	require.Equal(t, 7, got[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
+	require.Equal(t, 15, got[0].Handicaps[domain.PlayerHandicapCategoryTotalTopScorer])
+}
+
+func TestPlayerService_Search_MixedHandicaps_DefaultAppliedOnlyForMissingCategories(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	// repo returns one category present, one absent
+	repo := repoWithHandicaps(uuid.New(), map[domain.PlayerHandicapCategory]int{
+		domain.PlayerHandicapCategoryGroupTopScorer: 3,
+	})
+	svc := playerSvc(repo, tournamentExists(tournamentID))
+
+	got, err := svc.Search(context.Background(), domain.SearchPlayersInput{TournamentID: tournamentID, Query: "x"})
+	require.NoError(t, err)
+	require.Equal(t, 3, got[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
+	require.Equal(t, 20, got[0].Handicaps[domain.PlayerHandicapCategoryTotalTopScorer])
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/alexbukvic2/footy-forecast/internal/db"
+	"github.com/alexbukvic2/footy-forecast/internal/domain"
 	"github.com/alexbukvic2/footy-forecast/internal/repository"
 )
 
@@ -18,10 +19,11 @@ func insertTeam(
 	pool *db.Pool,
 	ctx context.Context,
 	name, logo string,
+	tournamentID uuid.UUID,
 ) uuid.UUID {
 	t.Helper()
 	var id uuid.UUID
-	row := pool.QueryRow(ctx, `INSERT INTO teams (name, logo) VALUES ($1, $2) RETURNING id`, name, logo)
+	row := pool.QueryRow(ctx, `INSERT INTO teams (name, logo, tournament_id) VALUES ($1, $2, $3) RETURNING id`, name, logo, tournamentID)
 	require.NoError(t, row.Scan(&id))
 	return id
 }
@@ -43,22 +45,34 @@ func TestPlayerRepository_Search(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	argentinaID := insertTeam(t, pool, ctx, "Argentina", "<svg>arg</svg>")
-	portugalID := insertTeam(t, pool, ctx, "Portugal", "<svg>por</svg>")
-	englandID := insertTeam(t, pool, ctx, "England", "<svg>eng</svg>")
-	brazilID := insertTeam(t, pool, ctx, "Brazil", "<svg>bra</svg>")
-	usaID := insertTeam(t, pool, ctx, "USA", "<svg>usa</svg>")
-	genericID := insertTeam(t, pool, ctx, "Generic", "")
+	argentinaID := insertTeam(t, pool, ctx, "Argentina", "<svg>arg</svg>", tournamentAID)
+	portugalID := insertTeam(t, pool, ctx, "Portugal", "<svg>por</svg>", tournamentAID)
+	englandID := insertTeam(t, pool, ctx, "England", "<svg>eng</svg>", tournamentAID)
+	brazilID := insertTeam(t, pool, ctx, "Brazil", "<svg>bra</svg>", tournamentBID)
+	usaID := insertTeam(t, pool, ctx, "USA", "<svg>usa</svg>", tournamentAID)
+	genericID := insertTeam(t, pool, ctx, "Generic", "", tournamentAID)
 
 	insertPlayer := func(
 		externalID, name string,
 		tournamentID, teamID uuid.UUID,
-	) {
+	) uuid.UUID {
+		t.Helper()
+		var id uuid.UUID
+		row := pool.QueryRow(
+			ctx,
+			`INSERT INTO players (external_id, name, tournament_id, team_id) VALUES ($1, $2, $3, $4) RETURNING id`,
+			externalID, name, tournamentID, teamID,
+		)
+		require.NoError(t, row.Scan(&id))
+		return id
+	}
+
+	insertPlayerHandicap := func(playerID uuid.UUID, category domain.PlayerHandicapCategory, points int) {
 		t.Helper()
 		_, err := pool.Exec(
 			ctx,
-			`INSERT INTO players (external_id, name, tournament_id, team_id) VALUES ($1, $2, $3, $4)`,
-			externalID, name, tournamentID, teamID,
+			`INSERT INTO player_handicap (player_id, category, points) VALUES ($1, $2::player_handicap_category, $3)`,
+			playerID, string(category), points,
 		)
 		require.NoError(t, err)
 	}
@@ -129,7 +143,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 	})
 
 	t.Run("JOIN returns correct team_name and team_logo", func(t *testing.T) {
-		franceID := insertTeam(t, pool, ctx, "France", "<svg>flag</svg>")
+		franceID := insertTeam(t, pool, ctx, "France", "<svg>flag</svg>", tournamentAID)
 		insertPlayer("ext-mbappe", "Kylian Mbappé", tournamentAID, franceID)
 
 		// unaccent_immutable maps "mbappe" → matches "Mbappé"; verifies the JOIN
@@ -140,5 +154,41 @@ func TestPlayerRepository_Search(t *testing.T) {
 		require.Equal(t, "Kylian Mbappé", players[0].Name)
 		require.Equal(t, "France", players[0].TeamName)
 		require.Equal(t, "<svg>flag</svg>", players[0].TeamLogo)
+	})
+
+	t.Run("handicaps: both categories returned when rows exist", func(t *testing.T) {
+		spainID := insertTeam(t, pool, ctx, "Spain", "<svg>esp</svg>", tournamentAID)
+		playerID := insertPlayer("ext-yamal", "Lamine Yamal", tournamentAID, spainID)
+		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryGroupTopScorer, 7)
+		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryTotalTopScorer, 15)
+
+		players, err := repo.Search(ctx, tournamentAID, "yamal", "yamal")
+		require.NoError(t, err)
+		require.Len(t, players, 1)
+		require.Equal(t, 7, players[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
+		require.Equal(t, 15, players[0].Handicaps[domain.PlayerHandicapCategoryTotalTopScorer])
+	})
+
+	t.Run("handicaps: single category returned when only one row exists", func(t *testing.T) {
+		germanyID := insertTeam(t, pool, ctx, "Germany", "<svg>ger</svg>", tournamentAID)
+		playerID := insertPlayer("ext-musiala", "Jamal Musiala", tournamentAID, germanyID)
+		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryGroupTopScorer, 3)
+
+		players, err := repo.Search(ctx, tournamentAID, "musiala", "musiala")
+		require.NoError(t, err)
+		require.Len(t, players, 1)
+		require.Equal(t, 3, players[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
+		_, hasTotal := players[0].Handicaps[domain.PlayerHandicapCategoryTotalTopScorer]
+		require.False(t, hasTotal, "repo must not invent missing categories — that is the service's job")
+	})
+
+	t.Run("handicaps: empty map returned when no handicap rows exist", func(t *testing.T) {
+		italyID := insertTeam(t, pool, ctx, "Italy", "<svg>ita</svg>", tournamentAID)
+		insertPlayer("ext-barella", "Nicolo Barella", tournamentAID, italyID)
+
+		players, err := repo.Search(ctx, tournamentAID, "barella", "barella")
+		require.NoError(t, err)
+		require.Len(t, players, 1)
+		require.Empty(t, players[0].Handicaps, "repo must return empty map, not nil, for players with no handicap rows")
 	})
 }

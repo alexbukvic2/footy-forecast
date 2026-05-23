@@ -2,17 +2,15 @@ name: local
 values:
   - key: authToken
     value: ''
-  - key: leagueId
-    value: ''
   - key: leagueCode
     value: ''
   - key: userId
     value: ''
-  - key: league_id
+  - key: leagueId
     value: ''
   - key: season
     value: ''
-  - key: team_id
+  - key: teamId
     value: ''
   - key: playerId
     value: ''

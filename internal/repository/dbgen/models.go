@@ -70,6 +70,128 @@ func AllLeagueMemberRoleValues() []LeagueMemberRole {
 	}
 }
 
+type PlayerHandicapCategory string
+
+const (
+	PlayerHandicapCategoryGroupTopScorer PlayerHandicapCategory = "group_top_scorer"
+	PlayerHandicapCategoryTotalTopScorer PlayerHandicapCategory = "total_top_scorer"
+)
+
+func (e *PlayerHandicapCategory) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PlayerHandicapCategory(s)
+	case string:
+		*e = PlayerHandicapCategory(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PlayerHandicapCategory: %T", src)
+	}
+	return nil
+}
+
+type NullPlayerHandicapCategory struct {
+	PlayerHandicapCategory PlayerHandicapCategory
+	Valid                  bool // Valid is true if PlayerHandicapCategory is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPlayerHandicapCategory) Scan(value interface{}) error {
+	if value == nil {
+		ns.PlayerHandicapCategory, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PlayerHandicapCategory.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPlayerHandicapCategory) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PlayerHandicapCategory), nil
+}
+
+func (e PlayerHandicapCategory) Valid() bool {
+	switch e {
+	case PlayerHandicapCategoryGroupTopScorer,
+		PlayerHandicapCategoryTotalTopScorer:
+		return true
+	}
+	return false
+}
+
+func AllPlayerHandicapCategoryValues() []PlayerHandicapCategory {
+	return []PlayerHandicapCategory{
+		PlayerHandicapCategoryGroupTopScorer,
+		PlayerHandicapCategoryTotalTopScorer,
+	}
+}
+
+type TeamHandicapCategory string
+
+const (
+	TeamHandicapCategoryGroupWinner  TeamHandicapCategory = "group_winner"
+	TeamHandicapCategoryPlayoff      TeamHandicapCategory = "playoff"
+	TeamHandicapCategorySemifinalist TeamHandicapCategory = "semifinalist"
+	TeamHandicapCategoryWinner       TeamHandicapCategory = "winner"
+)
+
+func (e *TeamHandicapCategory) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = TeamHandicapCategory(s)
+	case string:
+		*e = TeamHandicapCategory(s)
+	default:
+		return fmt.Errorf("unsupported scan type for TeamHandicapCategory: %T", src)
+	}
+	return nil
+}
+
+type NullTeamHandicapCategory struct {
+	TeamHandicapCategory TeamHandicapCategory
+	Valid                bool // Valid is true if TeamHandicapCategory is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullTeamHandicapCategory) Scan(value interface{}) error {
+	if value == nil {
+		ns.TeamHandicapCategory, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.TeamHandicapCategory.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullTeamHandicapCategory) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.TeamHandicapCategory), nil
+}
+
+func (e TeamHandicapCategory) Valid() bool {
+	switch e {
+	case TeamHandicapCategoryGroupWinner,
+		TeamHandicapCategoryPlayoff,
+		TeamHandicapCategorySemifinalist,
+		TeamHandicapCategoryWinner:
+		return true
+	}
+	return false
+}
+
+func AllTeamHandicapCategoryValues() []TeamHandicapCategory {
+	return []TeamHandicapCategory{
+		TeamHandicapCategoryGroupWinner,
+		TeamHandicapCategoryPlayoff,
+		TeamHandicapCategorySemifinalist,
+		TeamHandicapCategoryWinner,
+	}
+}
+
 type TournamentStatus string
 
 const (
@@ -216,10 +338,25 @@ type Player struct {
 	UpdatedAt    time.Time
 }
 
+type PlayerHandicap struct {
+	ID       uuid.UUID
+	PlayerID uuid.UUID
+	Category PlayerHandicapCategory
+	Points   int32
+}
+
 type Team struct {
-	ID   uuid.UUID
-	Name string
-	Logo string
+	ID           uuid.UUID
+	Name         string
+	Logo         string
+	TournamentID uuid.UUID
+}
+
+type TeamHandicap struct {
+	ID       uuid.UUID
+	TeamID   uuid.UUID
+	Category TeamHandicapCategory
+	Points   int32
 }
 
 type Tournament struct {

@@ -184,11 +184,11 @@ func importTeams(
 		var id uuid.UUID
 		err := pool.QueryRow(
 			ctx,
-			`INSERT INTO teams (name, logo)
-			 VALUES ($1, $2)
+			`INSERT INTO teams (name, logo, tournament_id)
+			 VALUES ($1, $2, $3)
 			 ON CONFLICT (name) DO UPDATE SET logo = EXCLUDED.logo
 			 RETURNING id`,
-			r.Team.Name, r.Team.Logo,
+			r.Team.Name, r.Team.Logo, cfg.tournamentID,
 		).Scan(&id)
 		if err != nil {
 			return nil, fmt.Errorf("upsert team %q: %w", r.Team.Name, err)

@@ -17,6 +17,10 @@ type PlayerRepo interface {
 	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string) ([]*domain.PlayerSearchResult, error)
 }
 
+// defaultHandicapPoints is returned for any player+category pair that has no handicap row.
+// Placing this here keeps the business rule colocated with the code that applies it.
+const defaultHandicapPoints = 20
+
 // PlayerService orchestrates player search use cases.
 type PlayerService struct {
 	players     PlayerRepo
@@ -32,6 +36,8 @@ const maxPlayerQueryRunes = 100
 
 // Search validates input, confirms the tournament exists, then delegates to the repo.
 // The query is trimmed of whitespace and SQL wildcards are escaped before passing to the repo.
+// Every result carries handicap points for all player handicap categories; players without
+// a handicap row for a given category receive defaultHandicapPoints.
 func (s *PlayerService) Search(
 	ctx context.Context,
 	in domain.SearchPlayersInput,
@@ -54,6 +60,15 @@ func (s *PlayerService) Search(
 	if err != nil {
 		return nil, fmt.Errorf("search players: %w", err)
 	}
+
+	for _, p := range players {
+		for _, cat := range domain.AllPlayerHandicapCategories {
+			if _, ok := p.Handicaps[cat]; !ok {
+				p.Handicaps[cat] = defaultHandicapPoints
+			}
+		}
+	}
+
 	return players, nil
 }
 

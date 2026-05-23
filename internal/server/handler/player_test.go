@@ -47,7 +47,16 @@ func TestPlayer_Search_HappyPath(t *testing.T) {
 
 	tournamentID := uuid.New()
 	players := []*domain.PlayerSearchResult{
-		{ID: uuid.New(), Name: "Kylian Mbappé", TeamName: "France", TeamLogo: "<svg/>"},
+		{
+			ID:       uuid.New(),
+			Name:     "Kylian Mbappé",
+			TeamName: "France",
+			TeamLogo: "<svg/>",
+			Handicaps: map[domain.PlayerHandicapCategory]int{
+				domain.PlayerHandicapCategoryGroupTopScorer: 5,
+				domain.PlayerHandicapCategoryTotalTopScorer: 20,
+			},
+		},
 	}
 	var gotInput domain.SearchPlayersInput
 	svc := &fakePlayerService{
@@ -70,10 +79,44 @@ func TestPlayer_Search_HappyPath(t *testing.T) {
 	require.Equal(t, players[0].ID.String(), resp.Players[0]["id"])
 	require.Equal(t, "France", resp.Players[0]["team_name"])
 	require.Equal(t, "<svg/>", resp.Players[0]["team_logo"])
-	require.NotContains(t, resp.Players[0], "team_flag", "team_flag must not appear in response")
-	// Verify the handler correctly forwarded both the parsed tournament ID and the query.
+	require.Contains(t, resp.Players[0], "handicaps", "handicaps must always be present in response")
 	require.Equal(t, tournamentID, gotInput.TournamentID)
 	require.Equal(t, "mbappe", gotInput.Query)
+}
+
+func TestPlayer_Search_HandicapsAlwaysPresentInResponse(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	svc := &fakePlayerService{
+		searchFn: func(context.Context, domain.SearchPlayersInput) ([]*domain.PlayerSearchResult, error) {
+			return []*domain.PlayerSearchResult{
+				{
+					ID:       uuid.New(),
+					Name:     "Player A",
+					TeamName: "Team",
+					Handicaps: map[domain.PlayerHandicapCategory]int{
+						domain.PlayerHandicapCategoryGroupTopScorer: 7,
+						domain.PlayerHandicapCategoryTotalTopScorer: 20,
+					},
+				},
+			}, nil
+		},
+	}
+	h := handler.NewPlayer(silentLogger(), svc)
+
+	rec := getPlayerSearch(t, h.Search, tournamentID.String(), "Player")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	var resp struct {
+		Players []map[string]any `json:"players"`
+	}
+	require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
+	require.Len(t, resp.Players, 1)
+	handicaps, ok := resp.Players[0]["handicaps"].(map[string]any)
+	require.True(t, ok, "handicaps must be an object")
+	require.Equal(t, float64(7), handicaps["group_top_scorer"])
+	require.Equal(t, float64(20), handicaps["total_top_scorer"])
 }
 
 func TestPlayer_Search_EmptyResults(t *testing.T) {

@@ -18,6 +18,7 @@ type PlayerSearchResult struct {
 	TournamentID uuid.UUID
 	TeamName     string
 	TeamLogo     string
+	Handicaps    map[PlayerHandicapCategory]int
 }
 
 // SearchPlayersInput carries the validated inputs for a player search.

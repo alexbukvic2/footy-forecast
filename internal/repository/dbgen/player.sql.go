@@ -12,19 +12,30 @@ import (
 )
 
 const searchPlayers = `-- name: SearchPlayers :many
-SELECT p.id, p.name, t.name AS team_name, t.logo AS team_logo, p.tournament_id
-FROM players p
-JOIN teams t ON t.id = p.team_id
-WHERE p.tournament_id = $1
-  AND unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($2) || '%' ESCAPE '\'
-ORDER BY similarity(unaccent_immutable(p.name), unaccent_immutable($3)) DESC
-LIMIT 5
+WITH top_players AS (
+    SELECT p.id, p.name, t.name AS team_name, t.logo AS team_logo, p.tournament_id
+    FROM players p
+    JOIN teams t ON t.id = p.team_id
+    WHERE p.tournament_id = $2
+      AND unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($3) || '%' ESCAPE '\'
+    ORDER BY similarity(unaccent_immutable(p.name), unaccent_immutable($1)) DESC
+    LIMIT 5
+)
+SELECT tp.id, tp.name, tp.team_name, tp.team_logo, tp.tournament_id,
+       coalesce(
+           json_object_agg(ph.category, ph.points) FILTER (WHERE ph.category IS NOT NULL),
+           '{}'::json
+       )::text AS handicaps
+FROM top_players tp
+LEFT JOIN player_handicap ph ON ph.player_id = tp.id
+GROUP BY tp.id, tp.name, tp.team_name, tp.team_logo, tp.tournament_id
+ORDER BY similarity(unaccent_immutable(tp.name), unaccent_immutable($1)) DESC
 `
 
 type SearchPlayersParams struct {
+	RawQuery     string
 	TournamentID uuid.UUID
 	EscapedQuery string
-	RawQuery     string
 }
 
 type SearchPlayersRow struct {
@@ -33,12 +44,13 @@ type SearchPlayersRow struct {
 	TeamName     string
 	TeamLogo     string
 	TournamentID uuid.UUID
+	Handicaps    string
 }
 
 // @escaped_query: wildcard-escaped term for ILIKE filtering
 // @raw_query:     original trimmed term for similarity ranking (must not be escaped)
 func (q *Queries) SearchPlayers(ctx context.Context, arg SearchPlayersParams) ([]SearchPlayersRow, error) {
-	rows, err := q.db.Query(ctx, searchPlayers, arg.TournamentID, arg.EscapedQuery, arg.RawQuery)
+	rows, err := q.db.Query(ctx, searchPlayers, arg.RawQuery, arg.TournamentID, arg.EscapedQuery)
 	if err != nil {
 		return nil, err
 	}
@@ -52,6 +64,7 @@ func (q *Queries) SearchPlayers(ctx context.Context, arg SearchPlayersParams) ([
 			&i.TeamName,
 			&i.TeamLogo,
 			&i.TournamentID,
+			&i.Handicaps,
 		); err != nil {
 			return nil, err
 		}
