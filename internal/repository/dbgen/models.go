@@ -206,6 +206,22 @@ type LeagueMember struct {
 	JoinedAt time.Time
 }
 
+type Player struct {
+	ID           uuid.UUID
+	ExternalID   string
+	Name         string
+	TournamentID uuid.UUID
+	TeamID       uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type Team struct {
+	ID   uuid.UUID
+	Name string
+	Logo string
+}
+
 type Tournament struct {
 	ID        uuid.UUID
 	Slug      string
