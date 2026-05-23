@@ -84,6 +84,22 @@ make test   # tests with race detector
 
 All three must pass. Do not skip `make lint` even if "the change is small."
 
+## Postman
+
+The Postman collection lives in `postman/collections/footy-forecast/`.
+Any change that adds, removes, or alters an HTTP route **must** include a
+corresponding Postman update in the same commit:
+
+- **New route** → add a `<Name>.request.yaml` in the matching subfolder (or create
+  the subfolder if it is a new resource).
+- **Route removed** → delete the corresponding `.request.yaml`.
+- **URL, method, or request body changed** → update the `.request.yaml` in place.
+
+Authenticated routes must include `Authorization: Bearer {{authToken}}` in the
+headers. Use `{{baseUrl}}` for the host and existing env vars (`{{tournamentId}}`,
+`{{leagueId}}`, etc.) for path parameters. Add a post-response script to capture
+newly returned IDs into env vars when that ID will be needed by downstream requests.
+
 ## Working with planning artifacts
 
 - All non-trivial features get a plan first, written to `docs/plans/<slug>.md`

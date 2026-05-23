@@ -1,0 +1,8 @@
+name: prod
+values:
+  - key: baseUrl
+    value: ''
+  - key: authToken
+    value: ''
+  - key: leagueId
+    value: ''

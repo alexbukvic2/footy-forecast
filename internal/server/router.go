@@ -31,6 +31,9 @@ func NewRouter(
 	leagueRepo := repository.NewLeagueRepository(pool)
 	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo)
 
+	playerRepo := repository.NewPlayerRepository(pool)
+	playerSvc := service.NewPlayerService(playerRepo, tournamentRepo)
+
 	validator := cognito.NewValidator(
 		cfg.CognitoRegion,
 		cfg.CognitoUserPoolID,
@@ -43,6 +46,7 @@ func NewRouter(
 	tournamentH := handler.NewTournament(logger, tournamentSvc)
 	userH := handler.NewUser(logger)
 	leagueH := handler.NewLeague(logger, leagueSvc)
+	playerH := handler.NewPlayer(logger, playerSvc)
 
 	mux := http.NewServeMux()
 
@@ -64,6 +68,9 @@ func NewRouter(
 
 	// Users (protected).
 	mux.Handle("GET /users/me", protected(userH.Me))
+
+	// Players (protected).
+	mux.Handle("GET /tournaments/{tournament_id}/players/search", protected(playerH.Search))
 
 	// Leagues (protected).
 	mux.Handle("POST /leagues", protected(leagueH.Create))
