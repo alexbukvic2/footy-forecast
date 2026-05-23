@@ -31,8 +31,14 @@ func NewRouter(
 	leagueRepo := repository.NewLeagueRepository(pool)
 	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo)
 
+	playerHandicapRepo := repository.NewPlayerHandicapRepository(pool)
+	playerHandicapSvc := service.NewPlayerHandicapService(playerHandicapRepo)
+
 	playerRepo := repository.NewPlayerRepository(pool)
 	playerSvc := service.NewPlayerService(playerRepo, tournamentRepo)
+
+	teamHandicapRepo := repository.NewTeamHandicapRepository(pool)
+	teamHandicapSvc := service.NewTeamHandicapService(teamHandicapRepo)
 
 	validator := cognito.NewValidator(
 		cfg.CognitoRegion,
@@ -47,6 +53,8 @@ func NewRouter(
 	userH := handler.NewUser(logger)
 	leagueH := handler.NewLeague(logger, leagueSvc)
 	playerH := handler.NewPlayer(logger, playerSvc)
+	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
+	teamHandicapH := handler.NewTeamHandicap(logger, teamHandicapSvc)
 
 	mux := http.NewServeMux()
 
@@ -71,6 +79,12 @@ func NewRouter(
 
 	// Players (protected).
 	mux.Handle("GET /tournaments/{tournament_id}/players/search", protected(playerH.Search))
+
+	// Player handicaps (protected).
+	mux.Handle("GET /player-handicaps/{player_id}/{category}", protected(playerHandicapH.Get))
+
+	// Team handicaps (protected).
+	mux.Handle("GET /team-handicaps/{team_id}/{category}", protected(teamHandicapH.Get))
 
 	// Leagues (protected).
 	mux.Handle("POST /leagues", protected(leagueH.Create))

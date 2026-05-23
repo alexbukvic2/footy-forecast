@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -41,17 +42,30 @@ func (r *PlayerRepository) Search(
 
 	out := make([]*domain.PlayerSearchResult, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, playerSearchResultFromRow(row))
+		p, err := playerSearchResultFromRow(row)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, p)
 	}
 	return out, nil
 }
 
-func playerSearchResultFromRow(row dbgen.SearchPlayersRow) *domain.PlayerSearchResult {
+func playerSearchResultFromRow(row dbgen.SearchPlayersRow) (*domain.PlayerSearchResult, error) {
+	var raw map[string]int
+	if err := json.Unmarshal([]byte(row.Handicaps), &raw); err != nil {
+		return nil, fmt.Errorf("unmarshal handicaps for player %s: %w", row.ID, err)
+	}
+	h := make(map[domain.PlayerHandicapCategory]int, len(raw))
+	for k, v := range raw {
+		h[domain.PlayerHandicapCategory(k)] = v
+	}
 	return &domain.PlayerSearchResult{
 		ID:           row.ID,
 		Name:         row.Name,
 		TournamentID: row.TournamentID,
 		TeamName:     row.TeamName,
 		TeamLogo:     row.TeamLogo,
-	}
+		Handicaps:    h,
+	}, nil
 }

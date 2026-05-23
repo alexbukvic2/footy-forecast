@@ -28,18 +28,20 @@ func NewPlayer(logger *slog.Logger, svc PlayerService) *Player {
 // ---------- DTOs ----------
 
 type playerResponse struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	TeamName string `json:"team_name"`
-	TeamLogo string `json:"team_logo"`
+	ID        string                                `json:"id"`
+	Name      string                                `json:"name"`
+	TeamName  string                                `json:"team_name"`
+	TeamLogo  string                                `json:"team_logo"`
+	Handicaps map[domain.PlayerHandicapCategory]int `json:"handicaps"`
 }
 
 func toPlayerResponse(p *domain.PlayerSearchResult) playerResponse {
 	return playerResponse{
-		ID:       p.ID.String(),
-		Name:     p.Name,
-		TeamName: p.TeamName,
-		TeamLogo: p.TeamLogo,
+		ID:        p.ID.String(),
+		Name:      p.Name,
+		TeamName:  p.TeamName,
+		TeamLogo:  p.TeamLogo,
+		Handicaps: p.Handicaps,
 	}
 }
 
