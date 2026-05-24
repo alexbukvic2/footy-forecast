@@ -1,0 +1,10 @@
+$kind: http-request
+name: List My Player Predictions
+method: GET
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/players"
+auth:
+  type: noauth
+order: 2000
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"

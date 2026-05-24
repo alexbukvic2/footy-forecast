@@ -14,7 +14,8 @@ FROM leagues
 WHERE code = $1;
 
 -- name: ListLeaguesForUser :many
-SELECT l.id, l.tournament_id, l.owner_id, l.name, l.code, l.created_at, l.updated_at
+SELECT l.id, l.tournament_id, l.owner_id, l.name, l.code, l.created_at, l.updated_at,
+       (SELECT COUNT(*) FROM league_members lm2 WHERE lm2.league_id = l.id) AS member_count
 FROM leagues l
 JOIN league_members lm ON lm.league_id = l.id
 WHERE lm.user_id = $1

@@ -11,6 +11,27 @@ import (
 	"github.com/google/uuid"
 )
 
+const getPlayerByID = `-- name: GetPlayerByID :one
+SELECT id, external_id, name, tournament_id, team_id, created_at, updated_at
+FROM players
+WHERE id = $1
+`
+
+func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (Player, error) {
+	row := q.db.QueryRow(ctx, getPlayerByID, id)
+	var i Player
+	err := row.Scan(
+		&i.ID,
+		&i.ExternalID,
+		&i.Name,
+		&i.TournamentID,
+		&i.TeamID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const searchPlayers = `-- name: SearchPlayers :many
 WITH top_players AS (
     SELECT p.id, p.name, t.name AS team_name, t.logo AS team_logo, p.tournament_id

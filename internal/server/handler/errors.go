@@ -30,6 +30,8 @@ func writeError(
 	err error,
 ) {
 	switch {
+	case errors.Is(err, domain.ErrUnauthorized):
+		writeJSON(w, http.StatusUnauthorized, ErrorResponse{Error: "unauthorized"})
 	case errors.Is(err, domain.ErrInvalid):
 		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 	case errors.Is(err, domain.ErrNotFound):

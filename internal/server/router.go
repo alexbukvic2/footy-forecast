@@ -40,6 +40,20 @@ func NewRouter(
 	teamHandicapRepo := repository.NewTeamHandicapRepository(pool)
 	teamHandicapSvc := service.NewTeamHandicapService(teamHandicapRepo)
 
+	teamRepo := repository.NewTeamRepository(pool)
+	fixtureRepo := repository.NewFixtureRepository(pool)
+	playerPredictionRepo := repository.NewPlayerPredictionRepository(pool)
+	teamPredictionRepo := repository.NewTeamPredictionRepository(pool)
+	tournamentPredictionSvc := service.NewTournamentPredictionService(
+		playerPredictionRepo,
+		teamPredictionRepo,
+		playerRepo,
+		teamRepo,
+		fixtureRepo,
+		leagueRepo,
+		service.RealClock{},
+	)
+
 	validator := cognito.NewValidator(
 		cfg.CognitoRegion,
 		cfg.CognitoUserPoolID,
@@ -55,6 +69,7 @@ func NewRouter(
 	playerH := handler.NewPlayer(logger, playerSvc)
 	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
 	teamHandicapH := handler.NewTeamHandicap(logger, teamHandicapSvc)
+	tournamentPredictionH := handler.NewTournamentPrediction(logger, tournamentPredictionSvc)
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -90,6 +105,14 @@ func NewRouter(
 
 	// Team handicaps (protected).
 	mux.Handle("GET /team-handicaps/{team_id}/{category}", protected(teamHandicapH.Get))
+
+	// Tournament predictions (protected).
+	mux.Handle("PUT /tournaments/{tournamentId}/predictions/players/{category}", protected(tournamentPredictionH.UpsertPlayer))
+	mux.Handle("GET /tournaments/{tournamentId}/predictions/players", protected(tournamentPredictionH.ListMyPlayers))
+	mux.Handle("PUT /tournaments/{tournamentId}/predictions/teams/{category}", protected(tournamentPredictionH.UpsertTeam))
+	mux.Handle("GET /tournaments/{tournamentId}/predictions/teams", protected(tournamentPredictionH.ListMyTeams))
+	mux.Handle("GET /leagues/{leagueId}/predictions/players", protected(tournamentPredictionH.ListLeaguePlayers))
+	mux.Handle("GET /leagues/{leagueId}/predictions/teams", protected(tournamentPredictionH.ListLeagueTeams))
 
 	// Leagues (protected).
 	mux.Handle("POST /leagues", protected(leagueH.Create))

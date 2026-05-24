@@ -22,6 +22,7 @@ type League struct {
 	OwnerID      uuid.UUID
 	Name         string
 	Code         string
+	MemberCount  int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

@@ -1,0 +1,18 @@
+$kind: http-request
+name: Upsert Player Prediction
+method: PUT
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/players/group_top_scorer"
+auth:
+  type: noauth
+order: 1000
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "player_id": "{{playerId}}"
+    }

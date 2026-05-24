@@ -7,6 +7,7 @@ package dbgen
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -179,22 +180,34 @@ func (q *Queries) ListLeagueMembersForLeague(ctx context.Context, leagueID uuid.
 }
 
 const listLeaguesForUser = `-- name: ListLeaguesForUser :many
-SELECT l.id, l.tournament_id, l.owner_id, l.name, l.code, l.created_at, l.updated_at
+SELECT l.id, l.tournament_id, l.owner_id, l.name, l.code, l.created_at, l.updated_at,
+       (SELECT COUNT(*) FROM league_members lm2 WHERE lm2.league_id = l.id) AS member_count
 FROM leagues l
 JOIN league_members lm ON lm.league_id = l.id
 WHERE lm.user_id = $1
 ORDER BY l.created_at DESC
 `
 
-func (q *Queries) ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]League, error) {
+type ListLeaguesForUserRow struct {
+	ID           uuid.UUID
+	TournamentID uuid.UUID
+	OwnerID      uuid.UUID
+	Name         string
+	Code         string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	MemberCount  int64
+}
+
+func (q *Queries) ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]ListLeaguesForUserRow, error) {
 	rows, err := q.db.Query(ctx, listLeaguesForUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []League{}
+	items := []ListLeaguesForUserRow{}
 	for rows.Next() {
-		var i League
+		var i ListLeaguesForUserRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.TournamentID,
@@ -203,6 +216,7 @@ func (q *Queries) ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]L
 			&i.Code,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.MemberCount,
 		); err != nil {
 			return nil, err
 		}

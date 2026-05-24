@@ -3,9 +3,11 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/alexbukvic2/footy-forecast/internal/db"
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
@@ -20,6 +22,27 @@ type PlayerRepository struct {
 // NewPlayerRepository constructs a PlayerRepository backed by pool.
 func NewPlayerRepository(pool *db.Pool) *PlayerRepository {
 	return &PlayerRepository{q: dbgen.New(pool)}
+}
+
+// GetByID fetches a player by its UUID.
+// Returns domain.ErrNotFound if no row exists.
+func (r *PlayerRepository) GetByID(
+	ctx context.Context,
+	id uuid.UUID,
+) (*domain.Player, error) {
+	row, err := r.q.GetPlayerByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, fmt.Errorf("player %s: %w", id, domain.ErrNotFound)
+		}
+		return nil, fmt.Errorf("get player: %w", err)
+	}
+	return &domain.Player{
+		ID:           row.ID,
+		Name:         row.Name,
+		TournamentID: row.TournamentID,
+		TeamID:       row.TeamID,
+	}, nil
 }
 
 // Search returns up to 5 players in the given tournament whose name fuzzy-matches query.

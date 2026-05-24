@@ -22,6 +22,8 @@ tags:
     description: Player search within a tournament
   - name: handicaps
     description: Player and team handicap point assignments
+  - name: predictions
+    description: Tournament-level player and team predictions
   - name: spec
     description: API spec and documentation endpoints
 
@@ -151,6 +153,25 @@ components:
             role: "owner"
             joined_at: "2025-01-01T00:00:00Z"
 
+    LeagueListItem:
+      allOf:
+        - $ref: '#/components/schemas/League'
+        - type: object
+          required: [member_count]
+          properties:
+            member_count:
+              type: integer
+              description: Total number of members in this league.
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440001"
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        owner_id: "550e8400-e29b-41d4-a716-446655440002"
+        name: "My Prediction League"
+        code: "ABCD1234"
+        created_at: "2025-01-01T00:00:00Z"
+        updated_at: "2025-01-01T00:00:00Z"
+        member_count: 3
+
     User:
       type: object
       required: [id, email, display_name, status, created_at, updated_at]
@@ -260,7 +281,7 @@ components:
         leagues:
           type: array
           items:
-            $ref: '#/components/schemas/League'
+            $ref: '#/components/schemas/LeagueListItem'
       example:
         leagues:
           - id: "550e8400-e29b-41d4-a716-446655440001"
@@ -270,6 +291,7 @@ components:
             code: "ABCD1234"
             created_at: "2025-01-01T00:00:00Z"
             updated_at: "2025-01-01T00:00:00Z"
+            member_count: 3
 
     PlayerListResponse:
       type: object
@@ -288,6 +310,216 @@ components:
             handicaps:
               group_top_scorer: 5
               total_top_scorer: 10
+
+    UpsertPlayerPredictionRequest:
+      type: object
+      required: [player_id]
+      properties:
+        player_id:
+          type: string
+          format: uuid
+      example:
+        player_id: "550e8400-e29b-41d4-a716-446655440003"
+
+    UpsertTeamPredictionRequest:
+      type: object
+      required: [team_id]
+      properties:
+        team_id:
+          type: string
+          format: uuid
+      example:
+        team_id: "550e8400-e29b-41d4-a716-446655440004"
+
+    PlayerPredictionResponse:
+      type: object
+      required: [id, tournament_id, category, player_id, player_name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tournament_id:
+          type: string
+          format: uuid
+        category:
+          $ref: '#/components/schemas/PlayerHandicapCategory'
+        player_id:
+          type: string
+          format: uuid
+        player_name:
+          type: string
+        points:
+          type: integer
+          nullable: true
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440010"
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        category: "group_top_scorer"
+        player_id: "550e8400-e29b-41d4-a716-446655440003"
+        player_name: "Lionel Messi"
+        points: null
+
+    TeamPredictionResponse:
+      type: object
+      required: [id, tournament_id, category, team_id, team_name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tournament_id:
+          type: string
+          format: uuid
+        category:
+          $ref: '#/components/schemas/TeamHandicapCategory'
+        team_id:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+        points:
+          type: integer
+          nullable: true
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440011"
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        category: "winner"
+        team_id: "550e8400-e29b-41d4-a716-446655440004"
+        team_name: "Argentina"
+        points: null
+
+    PlayerPredictionView:
+      type: object
+      required: [category]
+      properties:
+        category:
+          $ref: '#/components/schemas/PlayerHandicapCategory'
+        player_id:
+          type: string
+          format: uuid
+          nullable: true
+        player_name:
+          type: string
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+      example:
+        category: "group_top_scorer"
+        player_id: "550e8400-e29b-41d4-a716-446655440003"
+        player_name: "Lionel Messi"
+        points: null
+
+    TeamPredictionView:
+      type: object
+      required: [category]
+      properties:
+        category:
+          $ref: '#/components/schemas/TeamHandicapCategory'
+        team_id:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+      example:
+        category: "winner"
+        team_id: "550e8400-e29b-41d4-a716-446655440004"
+        team_name: "Argentina"
+        points: null
+
+    LeagueMemberPlayerPick:
+      type: object
+      required: [user_id, display_name]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        player_id:
+          type: string
+          format: uuid
+          nullable: true
+        player_name:
+          type: string
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+      example:
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        display_name: "alice"
+        player_id: "550e8400-e29b-41d4-a716-446655440003"
+        player_name: "Lionel Messi"
+        points: 5
+
+    LeagueMemberTeamPick:
+      type: object
+      required: [user_id, display_name]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        team_id:
+          type: string
+          format: uuid
+          nullable: true
+        team_name:
+          type: string
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+      example:
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        display_name: "alice"
+        team_id: "550e8400-e29b-41d4-a716-446655440004"
+        team_name: "Argentina"
+        points: null
+
+    LeaguePlayerCategoryView:
+      type: object
+      required: [category, predictions]
+      properties:
+        category:
+          $ref: '#/components/schemas/PlayerHandicapCategory'
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueMemberPlayerPick'
+      example:
+        category: "group_top_scorer"
+        predictions:
+          - user_id: "550e8400-e29b-41d4-a716-446655440002"
+            display_name: "me"
+            player_id: "550e8400-e29b-41d4-a716-446655440003"
+            player_name: "Messi"
+            points: 5
+
+    LeagueTeamCategoryView:
+      type: object
+      required: [category, predictions]
+      properties:
+        category:
+          $ref: '#/components/schemas/TeamHandicapCategory'
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueMemberTeamPick'
+      example:
+        category: "winner"
+        predictions:
+          - user_id: "550e8400-e29b-41d4-a716-446655440002"
+            display_name: "me"
+            team_id: "550e8400-e29b-41d4-a716-446655440004"
+            team_name: "Argentina"
+            points: null
 
 paths:
   /health:
@@ -1072,6 +1304,312 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Handicap not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/predictions/players/{category}:
+    put:
+      summary: Upsert player tournament prediction
+      operationId: upsertPlayerPrediction
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PlayerHandicapCategory'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertPlayerPredictionRequest'
+      responses:
+        '200':
+          description: Player prediction saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerPredictionResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Predictions locked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Player not found in this tournament
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/predictions/players:
+    get:
+      summary: List my player predictions for a tournament
+      operationId: listMyPlayerPredictions
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Player predictions for all categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerPredictionView'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/predictions/teams/{category}:
+    put:
+      summary: Upsert team tournament prediction
+      operationId: upsertTeamPrediction
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/TeamHandicapCategory'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertTeamPredictionRequest'
+      responses:
+        '200':
+          description: Team prediction saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamPredictionResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Predictions locked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Team not found in this tournament
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/predictions/teams:
+    get:
+      summary: List my team predictions for a tournament
+      operationId: listMyTeamPredictions
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Team predictions for all categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamPredictionView'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{leagueId}/predictions/players:
+    get:
+      summary: List league player predictions (after lock)
+      operationId: listLeaguePlayerPredictions
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: leagueId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Player predictions for all categories grouped by league member
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaguePlayerCategoryView'
+        '400':
+          description: Invalid league ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not a member of the league, or lock time has not passed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{leagueId}/predictions/teams:
+    get:
+      summary: List league team predictions (after lock)
+      operationId: listLeagueTeamPredictions
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: leagueId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Team predictions for all categories grouped by league member
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeagueTeamCategoryView'
+        '400':
+          description: Invalid league ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not a member of the league, or lock time has not passed
           content:
             application/json:
               schema:

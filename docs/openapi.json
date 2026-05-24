@@ -101,6 +101,35 @@
           "updated_at": "2025-01-01T00:00:00Z"
         }
       },
+      "LeagueListItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/League"
+          },
+          {
+            "properties": {
+              "member_count": {
+                "description": "Total number of members in this league.",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "member_count"
+            ],
+            "type": "object"
+          }
+        ],
+        "example": {
+          "code": "ABCD1234",
+          "created_at": "2025-01-01T00:00:00Z",
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "member_count": 3,
+          "name": "My Prediction League",
+          "owner_id": "550e8400-e29b-41d4-a716-446655440002",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
+          "updated_at": "2025-01-01T00:00:00Z"
+        }
+      },
       "LeagueListResponse": {
         "example": {
           "leagues": [
@@ -108,6 +137,7 @@
               "code": "ABCD1234",
               "created_at": "2025-01-01T00:00:00Z",
               "id": "550e8400-e29b-41d4-a716-446655440001",
+              "member_count": 3,
               "name": "My Prediction League",
               "owner_id": "550e8400-e29b-41d4-a716-446655440002",
               "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -118,7 +148,7 @@
         "properties": {
           "leagues": {
             "items": {
-              "$ref": "#/components/schemas/League"
+              "$ref": "#/components/schemas/LeagueListItem"
             },
             "type": "array"
           }
@@ -155,6 +185,138 @@
           "user_id",
           "role",
           "joined_at"
+        ],
+        "type": "object"
+      },
+      "LeagueMemberPlayerPick": {
+        "example": {
+          "display_name": "alice",
+          "player_id": "550e8400-e29b-41d4-a716-446655440003",
+          "player_name": "Lionel Messi",
+          "points": 5,
+          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+        },
+        "properties": {
+          "display_name": {
+            "type": "string"
+          },
+          "player_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "player_name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "display_name"
+        ],
+        "type": "object"
+      },
+      "LeagueMemberTeamPick": {
+        "example": {
+          "display_name": "alice",
+          "points": null,
+          "team_id": "550e8400-e29b-41d4-a716-446655440004",
+          "team_name": "Argentina",
+          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+        },
+        "properties": {
+          "display_name": {
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "team_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "team_name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "display_name"
+        ],
+        "type": "object"
+      },
+      "LeaguePlayerCategoryView": {
+        "example": {
+          "category": "group_top_scorer",
+          "predictions": [
+            {
+              "display_name": "me",
+              "player_id": "550e8400-e29b-41d4-a716-446655440003",
+              "player_name": "Messi",
+              "points": 5,
+              "user_id": "550e8400-e29b-41d4-a716-446655440002"
+            }
+          ]
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/PlayerHandicapCategory"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueMemberPlayerPick"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "predictions"
+        ],
+        "type": "object"
+      },
+      "LeagueTeamCategoryView": {
+        "example": {
+          "category": "winner",
+          "predictions": [
+            {
+              "display_name": "me",
+              "points": null,
+              "team_id": "550e8400-e29b-41d4-a716-446655440004",
+              "team_name": "Argentina",
+              "user_id": "550e8400-e29b-41d4-a716-446655440002"
+            }
+          ]
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/TeamHandicapCategory"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueMemberTeamPick"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "predictions"
         ],
         "type": "object"
       },
@@ -249,6 +411,78 @@
         ],
         "type": "object"
       },
+      "PlayerPredictionResponse": {
+        "example": {
+          "category": "group_top_scorer",
+          "id": "550e8400-e29b-41d4-a716-446655440010",
+          "player_id": "550e8400-e29b-41d4-a716-446655440003",
+          "player_name": "Lionel Messi",
+          "points": null,
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/PlayerHandicapCategory"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "player_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "tournament_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tournament_id",
+          "category",
+          "player_id",
+          "player_name"
+        ],
+        "type": "object"
+      },
+      "PlayerPredictionView": {
+        "example": {
+          "category": "group_top_scorer",
+          "player_id": "550e8400-e29b-41d4-a716-446655440003",
+          "player_name": "Lionel Messi",
+          "points": null
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/PlayerHandicapCategory"
+          },
+          "player_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "player_name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category"
+        ],
+        "type": "object"
+      },
       "TeamHandicap": {
         "example": {
           "points": 3
@@ -272,6 +506,78 @@
         ],
         "example": "winner",
         "type": "string"
+      },
+      "TeamPredictionResponse": {
+        "example": {
+          "category": "winner",
+          "id": "550e8400-e29b-41d4-a716-446655440011",
+          "points": null,
+          "team_id": "550e8400-e29b-41d4-a716-446655440004",
+          "team_name": "Argentina",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/TeamHandicapCategory"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "team_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          },
+          "tournament_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tournament_id",
+          "category",
+          "team_id",
+          "team_name"
+        ],
+        "type": "object"
+      },
+      "TeamPredictionView": {
+        "example": {
+          "category": "winner",
+          "points": null,
+          "team_id": "550e8400-e29b-41d4-a716-446655440004",
+          "team_name": "Argentina"
+        },
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/TeamHandicapCategory"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "team_id": {
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
+          },
+          "team_name": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "category"
+        ],
+        "type": "object"
       },
       "Tournament": {
         "example": {
@@ -357,6 +663,36 @@
         },
         "required": [
           "tournaments"
+        ],
+        "type": "object"
+      },
+      "UpsertPlayerPredictionRequest": {
+        "example": {
+          "player_id": "550e8400-e29b-41d4-a716-446655440003"
+        },
+        "properties": {
+          "player_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "player_id"
+        ],
+        "type": "object"
+      },
+      "UpsertTeamPredictionRequest": {
+        "example": {
+          "team_id": "550e8400-e29b-41d4-a716-446655440004"
+        },
+        "properties": {
+          "team_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "team_id"
         ],
         "type": "object"
       },
@@ -1225,6 +1561,166 @@
         ]
       }
     },
+    "/leagues/{leagueId}/predictions/players": {
+      "get": {
+        "operationId": "listLeaguePlayerPredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "leagueId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LeaguePlayerCategoryView"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Player predictions for all categories grouped by league member"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid league ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not a member of the league, or lock time has not passed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List league player predictions (after lock)",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
+    "/leagues/{leagueId}/predictions/teams": {
+      "get": {
+        "operationId": "listLeagueTeamPredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "leagueId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LeagueTeamCategoryView"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Team predictions for all categories grouped by league member"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid league ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not a member of the league, or lock time has not passed"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List league team predictions (after lock)",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
     "/openapi.json": {
       "get": {
         "operationId": "getOpenAPISpec",
@@ -1666,6 +2162,356 @@
         ]
       }
     },
+    "/tournaments/{tournamentId}/predictions/players": {
+      "get": {
+        "operationId": "listMyPlayerPredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlayerPredictionView"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Player predictions for all categories"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List my player predictions for a tournament",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
+    "/tournaments/{tournamentId}/predictions/players/{category}": {
+      "put": {
+        "operationId": "upsertPlayerPrediction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PlayerHandicapCategory"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPlayerPredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerPredictionResponse"
+                }
+              }
+            },
+            "description": "Player prediction saved"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Predictions locked"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Player not found in this tournament"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Upsert player tournament prediction",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
+    "/tournaments/{tournamentId}/predictions/teams": {
+      "get": {
+        "operationId": "listMyTeamPredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TeamPredictionView"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Team predictions for all categories"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List my team predictions for a tournament",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
+    "/tournaments/{tournamentId}/predictions/teams/{category}": {
+      "put": {
+        "operationId": "upsertTeamPrediction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TeamHandicapCategory"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertTeamPredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamPredictionResponse"
+                }
+              }
+            },
+            "description": "Team prediction saved"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Predictions locked"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Team not found in this tournament"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Upsert team tournament prediction",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
     "/tournaments/{tournament_id}/players/search": {
       "get": {
         "operationId": "searchPlayers",
@@ -1828,6 +2674,10 @@
     {
       "description": "Player and team handicap point assignments",
       "name": "handicaps"
+    },
+    {
+      "description": "Tournament-level player and team predictions",
+      "name": "predictions"
     },
     {
       "description": "API spec and documentation endpoints",

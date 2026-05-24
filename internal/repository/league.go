@@ -141,6 +141,7 @@ func (r *LeagueRepository) GetByCode(
 }
 
 // ListForUser returns all leagues the user is a member of, ordered by created_at DESC.
+// Each league's MemberCount is populated from a subquery.
 func (r *LeagueRepository) ListForUser(
 	ctx context.Context,
 	userID uuid.UUID,
@@ -151,7 +152,17 @@ func (r *LeagueRepository) ListForUser(
 	}
 	out := make([]*domain.League, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, leagueFromRow(row))
+		l := leagueFromRow(dbgen.League{
+			ID:           row.ID,
+			TournamentID: row.TournamentID,
+			OwnerID:      row.OwnerID,
+			Name:         row.Name,
+			Code:         row.Code,
+			CreatedAt:    row.CreatedAt,
+			UpdatedAt:    row.UpdatedAt,
+		})
+		l.MemberCount = int(row.MemberCount)
+		out = append(out, l)
 	}
 	return out, nil
 }
@@ -273,6 +284,26 @@ func (r *LeagueRepository) ListMembers(
 	out := make([]*domain.LeagueMember, 0, len(rows))
 	for _, row := range rows {
 		out = append(out, leagueMemberFromRow(row))
+	}
+	return out, nil
+}
+
+// ListMembersForPredictions returns all members with their display names.
+// Used by TournamentPredictionService to build league prediction views.
+func (r *LeagueRepository) ListMembersForPredictions(
+	ctx context.Context,
+	leagueID uuid.UUID,
+) ([]*domain.LeagueMemberDisplay, error) {
+	rows, err := r.q.ListLeagueMembersForPredictions(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("list league members for predictions: %w", err)
+	}
+	out := make([]*domain.LeagueMemberDisplay, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, &domain.LeagueMemberDisplay{
+			UserID:      row.UserID,
+			DisplayName: row.DisplayName,
+		})
 	}
 	return out, nil
 }
