@@ -1,3 +1,8 @@
+-- name: GetPlayerByID :one
+SELECT id, external_id, name, tournament_id, team_id, created_at, updated_at
+FROM players
+WHERE id = @id;
+
 -- name: SearchPlayers :many
 -- @escaped_query: wildcard-escaped term for ILIKE filtering
 -- @raw_query:     original trimmed term for similarity ranking (must not be escaped)

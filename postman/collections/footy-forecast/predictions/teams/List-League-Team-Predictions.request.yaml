@@ -1,0 +1,10 @@
+$kind: http-request
+name: List League Team Predictions
+method: GET
+url: "{{baseUrl}}/leagues/{{leagueId}}/predictions/teams"
+auth:
+  type: noauth
+order: 3000
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"

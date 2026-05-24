@@ -140,9 +140,23 @@ type LeagueDetail struct {
 	UpdatedAt    time.Time          `json:"updated_at"`
 }
 
+// LeagueListItem defines model for LeagueListItem.
+type LeagueListItem struct {
+	Code      string             `json:"code"`
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+
+	// MemberCount Total number of members in this league.
+	MemberCount  int                `json:"member_count"`
+	Name         string             `json:"name"`
+	OwnerId      openapi_types.UUID `json:"owner_id"`
+	TournamentId openapi_types.UUID `json:"tournament_id"`
+	UpdatedAt    time.Time          `json:"updated_at"`
+}
+
 // LeagueListResponse defines model for LeagueListResponse.
 type LeagueListResponse struct {
-	Leagues []League `json:"leagues"`
+	Leagues []LeagueListItem `json:"leagues"`
 }
 
 // LeagueMember defines model for LeagueMember.
@@ -154,6 +168,36 @@ type LeagueMember struct {
 
 // LeagueMemberRole defines model for LeagueMember.Role.
 type LeagueMemberRole string
+
+// LeagueMemberPlayerPick defines model for LeagueMemberPlayerPick.
+type LeagueMemberPlayerPick struct {
+	DisplayName string              `json:"display_name"`
+	PlayerId    *openapi_types.UUID `json:"player_id,omitempty"`
+	PlayerName  *string             `json:"player_name,omitempty"`
+	Points      *int                `json:"points,omitempty"`
+	UserId      openapi_types.UUID  `json:"user_id"`
+}
+
+// LeagueMemberTeamPick defines model for LeagueMemberTeamPick.
+type LeagueMemberTeamPick struct {
+	DisplayName string              `json:"display_name"`
+	Points      *int                `json:"points,omitempty"`
+	TeamId      *openapi_types.UUID `json:"team_id,omitempty"`
+	TeamName    *string             `json:"team_name,omitempty"`
+	UserId      openapi_types.UUID  `json:"user_id"`
+}
+
+// LeaguePlayerCategoryView defines model for LeaguePlayerCategoryView.
+type LeaguePlayerCategoryView struct {
+	Category    PlayerHandicapCategory   `json:"category"`
+	Predictions []LeagueMemberPlayerPick `json:"predictions"`
+}
+
+// LeagueTeamCategoryView defines model for LeagueTeamCategoryView.
+type LeagueTeamCategoryView struct {
+	Category    TeamHandicapCategory   `json:"category"`
+	Predictions []LeagueMemberTeamPick `json:"predictions"`
+}
 
 // Player defines model for Player.
 type Player struct {
@@ -177,6 +221,24 @@ type PlayerListResponse struct {
 	Players []Player `json:"players"`
 }
 
+// PlayerPredictionResponse defines model for PlayerPredictionResponse.
+type PlayerPredictionResponse struct {
+	Category     PlayerHandicapCategory `json:"category"`
+	Id           openapi_types.UUID     `json:"id"`
+	PlayerId     openapi_types.UUID     `json:"player_id"`
+	PlayerName   string                 `json:"player_name"`
+	Points       *int                   `json:"points,omitempty"`
+	TournamentId openapi_types.UUID     `json:"tournament_id"`
+}
+
+// PlayerPredictionView defines model for PlayerPredictionView.
+type PlayerPredictionView struct {
+	Category   PlayerHandicapCategory `json:"category"`
+	PlayerId   *openapi_types.UUID    `json:"player_id,omitempty"`
+	PlayerName *string                `json:"player_name,omitempty"`
+	Points     *int                   `json:"points,omitempty"`
+}
+
 // TeamHandicap defines model for TeamHandicap.
 type TeamHandicap struct {
 	Points int `json:"points"`
@@ -184,6 +246,24 @@ type TeamHandicap struct {
 
 // TeamHandicapCategory defines model for TeamHandicapCategory.
 type TeamHandicapCategory string
+
+// TeamPredictionResponse defines model for TeamPredictionResponse.
+type TeamPredictionResponse struct {
+	Category     TeamHandicapCategory `json:"category"`
+	Id           openapi_types.UUID   `json:"id"`
+	Points       *int                 `json:"points,omitempty"`
+	TeamId       openapi_types.UUID   `json:"team_id"`
+	TeamName     string               `json:"team_name"`
+	TournamentId openapi_types.UUID   `json:"tournament_id"`
+}
+
+// TeamPredictionView defines model for TeamPredictionView.
+type TeamPredictionView struct {
+	Category TeamHandicapCategory `json:"category"`
+	Points   *int                 `json:"points,omitempty"`
+	TeamId   *openapi_types.UUID  `json:"team_id,omitempty"`
+	TeamName *string              `json:"team_name,omitempty"`
+}
 
 // Tournament defines model for Tournament.
 type Tournament struct {
@@ -203,6 +283,16 @@ type TournamentStatus string
 // TournamentListResponse defines model for TournamentListResponse.
 type TournamentListResponse struct {
 	Tournaments []Tournament `json:"tournaments"`
+}
+
+// UpsertPlayerPredictionRequest defines model for UpsertPlayerPredictionRequest.
+type UpsertPlayerPredictionRequest struct {
+	PlayerId openapi_types.UUID `json:"player_id"`
+}
+
+// UpsertTeamPredictionRequest defines model for UpsertTeamPredictionRequest.
+type UpsertTeamPredictionRequest struct {
+	TeamId openapi_types.UUID `json:"team_id"`
 }
 
 // User defines model for User.
@@ -261,3 +351,9 @@ type UpdateLeagueNameJSONRequestBody UpdateLeagueNameJSONBody
 
 // CreateTournamentJSONRequestBody defines body for CreateTournament for application/json ContentType.
 type CreateTournamentJSONRequestBody CreateTournamentJSONBody
+
+// UpsertPlayerPredictionJSONRequestBody defines body for UpsertPlayerPrediction for application/json ContentType.
+type UpsertPlayerPredictionJSONRequestBody = UpsertPlayerPredictionRequest
+
+// UpsertTeamPredictionJSONRequestBody defines body for UpsertTeamPrediction for application/json ContentType.
+type UpsertTeamPredictionJSONRequestBody = UpsertTeamPredictionRequest

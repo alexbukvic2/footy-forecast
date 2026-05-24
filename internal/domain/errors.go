@@ -15,3 +15,6 @@ var ErrInvalid = errors.New("invalid")
 
 // ErrForbidden is returned when the requester lacks permission for the operation.
 var ErrForbidden = errors.New("forbidden")
+
+// ErrUnauthorized is returned when the request carries no valid identity.
+var ErrUnauthorized = errors.New("unauthorized")

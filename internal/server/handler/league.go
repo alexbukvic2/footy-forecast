@@ -56,6 +56,11 @@ type leagueMemberResponse struct {
 	JoinedAt time.Time `json:"joined_at"`
 }
 
+type leagueListItemResponse struct {
+	leagueResponse
+	MemberCount int `json:"member_count"`
+}
+
 type leagueDetailResponse struct {
 	leagueResponse
 	Members []leagueMemberResponse `json:"members"`
@@ -87,7 +92,7 @@ func toLeagueMemberResponse(m *domain.LeagueMember) leagueMemberResponse {
 func (h *League) Create(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -121,7 +126,7 @@ func (h *League) Create(w http.ResponseWriter, r *http.Request) {
 func (h *League) List(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -131,9 +136,12 @@ func (h *League) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	out := make([]leagueResponse, 0, len(leagues))
+	out := make([]leagueListItemResponse, 0, len(leagues))
 	for _, l := range leagues {
-		out = append(out, toLeagueResponse(l))
+		out = append(out, leagueListItemResponse{
+			leagueResponse: toLeagueResponse(l),
+			MemberCount:    l.MemberCount,
+		})
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"leagues": out})
 }
@@ -142,7 +150,7 @@ func (h *League) List(w http.ResponseWriter, r *http.Request) {
 func (h *League) Get(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -172,7 +180,7 @@ func (h *League) Get(w http.ResponseWriter, r *http.Request) {
 func (h *League) UpdateName(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -202,7 +210,7 @@ func (h *League) UpdateName(w http.ResponseWriter, r *http.Request) {
 func (h *League) Delete(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -223,7 +231,7 @@ func (h *League) Delete(w http.ResponseWriter, r *http.Request) {
 func (h *League) RegenerateCode(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -245,7 +253,7 @@ func (h *League) RegenerateCode(w http.ResponseWriter, r *http.Request) {
 func (h *League) Join(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 
@@ -277,7 +285,7 @@ func (h *League) Join(w http.ResponseWriter, r *http.Request) {
 func (h *League) RemoveMember(w http.ResponseWriter, r *http.Request) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context"))
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
 		return
 	}
 

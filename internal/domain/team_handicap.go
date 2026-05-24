@@ -17,6 +17,14 @@ const (
 	TeamHandicapCategoryWinner       TeamHandicapCategory = "winner"
 )
 
+// AllTeamHandicapCategories lists every valid TeamHandicapCategory.
+var AllTeamHandicapCategories = []TeamHandicapCategory{
+	TeamHandicapCategoryGroupWinner,
+	TeamHandicapCategoryPlayoff,
+	TeamHandicapCategorySemifinalist,
+	TeamHandicapCategoryWinner,
+}
+
 // ParseTeamHandicapCategory returns a TeamHandicapCategory for s, or ErrInvalid if unrecognised.
 func ParseTeamHandicapCategory(s string) (TeamHandicapCategory, error) {
 	switch TeamHandicapCategory(s) {

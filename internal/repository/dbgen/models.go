@@ -12,6 +12,67 @@ import (
 	"github.com/google/uuid"
 )
 
+type FixtureStatus string
+
+const (
+	FixtureStatusUpcoming   FixtureStatus = "upcoming"
+	FixtureStatusInProgress FixtureStatus = "in_progress"
+	FixtureStatusFinished   FixtureStatus = "finished"
+)
+
+func (e *FixtureStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = FixtureStatus(s)
+	case string:
+		*e = FixtureStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for FixtureStatus: %T", src)
+	}
+	return nil
+}
+
+type NullFixtureStatus struct {
+	FixtureStatus FixtureStatus
+	Valid         bool // Valid is true if FixtureStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullFixtureStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.FixtureStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.FixtureStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullFixtureStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.FixtureStatus), nil
+}
+
+func (e FixtureStatus) Valid() bool {
+	switch e {
+	case FixtureStatusUpcoming,
+		FixtureStatusInProgress,
+		FixtureStatusFinished:
+		return true
+	}
+	return false
+}
+
+func AllFixtureStatusValues() []FixtureStatus {
+	return []FixtureStatus{
+		FixtureStatusUpcoming,
+		FixtureStatusInProgress,
+		FixtureStatusFinished,
+	}
+}
+
 type LeagueMemberRole string
 
 const (
@@ -311,6 +372,20 @@ func AllUserStatusValues() []UserStatus {
 	}
 }
 
+type Fixture struct {
+	ID           uuid.UUID
+	ExternalID   int64
+	TournamentID uuid.UUID
+	HomeTeamID   uuid.UUID
+	AwayTeamID   uuid.UUID
+	KickoffAt    time.Time
+	Status       FixtureStatus
+	GoalsHome    *int32
+	GoalsAway    *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
 type League struct {
 	ID           uuid.UUID
 	TournamentID uuid.UUID
@@ -345,6 +420,17 @@ type PlayerHandicap struct {
 	Points   int32
 }
 
+type PlayerPrediction struct {
+	ID           uuid.UUID
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     PlayerHandicapCategory
+	Pick         uuid.UUID
+	Points       *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
 type Team struct {
 	ID           uuid.UUID
 	Name         string
@@ -357,6 +443,17 @@ type TeamHandicap struct {
 	TeamID   uuid.UUID
 	Category TeamHandicapCategory
 	Points   int32
+}
+
+type TeamPrediction struct {
+	ID           uuid.UUID
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	Pick         uuid.UUID
+	Points       *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 type Tournament struct {
