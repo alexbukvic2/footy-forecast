@@ -35,4 +35,4 @@ LEFT JOIN score_predictions sp
 WHERE l.id = @league_id
   AND f.status IN ('in_progress', 'finished')
 GROUP BY f.id
-ORDER BY f.kickoff_at;
+ORDER BY f.kickoff_at DESC;

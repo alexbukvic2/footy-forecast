@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -33,7 +34,6 @@ func main() {
 		slog.Error("connect", "err", err)
 		os.Exit(1)
 	}
-	defer pool.Close()
 
 	steps := []struct {
 		name string
@@ -54,21 +54,24 @@ func main() {
 	for _, s := range steps {
 		n, err := s.fn(ctx, pool)
 		if err != nil {
+			pool.Close()
 			slog.Error("seed failed", "step", s.name, "err", err)
 			os.Exit(1)
 		}
 		slog.Info("seeded", "step", s.name, "inserted", n)
 	}
+	pool.Close()
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 func readJSON[T any](filename string) ([]T, error) {
-	f, err := os.Open("seeds/data/" + filename)
+	path := filepath.Join("seeds", "data", filename)
+	f, err := os.Open(path) //nolint:gosec // path is constructed from a trusted static prefix
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w", filename, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	var rows []T
 	if err := json.NewDecoder(f).Decode(&rows); err != nil {
 		return nil, fmt.Errorf("decode %s: %w", filename, err)
@@ -79,12 +82,12 @@ func readJSON[T any](filename string) ([]T, error) {
 // ── seeders ──────────────────────────────────────────────────────────────────
 
 type tournament struct {
-	ID        string `json:"id"`
-	Slug      string `json:"slug"`
-	Name      string `json:"name"`
-	Status    string `json:"status"`
-	StartsAt  string `json:"starts_at"`
-	EndsAt    string `json:"ends_at"`
+	ID       string `json:"id"`
+	Slug     string `json:"slug"`
+	Name     string `json:"name"`
+	Status   string `json:"status"`
+	StartsAt string `json:"starts_at"`
+	EndsAt   string `json:"ends_at"`
 }
 
 func seedTournaments(ctx context.Context, pool *pgxpool.Pool) (int, error) {
@@ -315,15 +318,15 @@ func seedPlayerHandicap(ctx context.Context, pool *pgxpool.Pool) (int, error) {
 }
 
 type fixture struct {
-	ID           string  `json:"id"`
-	ExternalID   int64   `json:"external_id"`
-	TournamentID string  `json:"tournament_id"`
-	HomeTeamID   string  `json:"home_team_id"`
-	AwayTeamID   string  `json:"away_team_id"`
-	KickoffAt    string  `json:"kickoff_at"`
-	Status       string  `json:"status"`
-	GoalsHome    *int    `json:"goals_home"`
-	GoalsAway    *int    `json:"goals_away"`
+	ID           string `json:"id"`
+	ExternalID   int64  `json:"external_id"`
+	TournamentID string `json:"tournament_id"`
+	HomeTeamID   string `json:"home_team_id"`
+	AwayTeamID   string `json:"away_team_id"`
+	KickoffAt    string `json:"kickoff_at"`
+	Status       string `json:"status"`
+	GoalsHome    *int   `json:"goals_home"`
+	GoalsAway    *int   `json:"goals_away"`
 }
 
 func seedFixtures(ctx context.Context, pool *pgxpool.Pool) (int, error) {

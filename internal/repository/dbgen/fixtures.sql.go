@@ -43,7 +43,7 @@ SELECT id, external_id, tournament_id, home_team_id, away_team_id,
        kickoff_at, status, goals_home, goals_away, created_at, updated_at
 FROM fixtures
 WHERE tournament_id = $1
-ORDER BY kickoff_at DESC
+ORDER BY kickoff_at
 `
 
 func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uuid.UUID) ([]Fixture, error) {
@@ -102,7 +102,7 @@ LEFT JOIN score_predictions sp
 WHERE l.id = $2
   AND f.status IN ('in_progress', 'finished')
 GROUP BY f.id
-ORDER BY f.kickoff_at
+ORDER BY f.kickoff_at DESC
 `
 
 type ListLockedFixturesByLeagueParams struct {
