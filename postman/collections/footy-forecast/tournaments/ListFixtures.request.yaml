@@ -1,14 +1,8 @@
-name: List Fixtures (personal view)
-request:
-  method: GET
-  url:
-    raw: "{{baseUrl}}/tournaments/{{tournamentId}}/fixtures"
-    host:
-      - "{{baseUrl}}"
-    path:
-      - tournaments
-      - "{{tournamentId}}"
-      - fixtures
-  header:
-    - key: Authorization
-      value: "Bearer {{authToken}}"
+$kind: http-request
+name: List Fixtures
+method: GET
+url: '{{baseUrl}}/tournaments/{{tournamentId}}/fixtures'
+order: 5000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'

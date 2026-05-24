@@ -14,6 +14,10 @@ tags:
     description: Liveness and readiness probes
   - name: tournaments
     description: Tournament management
+  - name: fixtures
+    description: Match fixtures and personal prediction views
+  - name: predictions
+    description: Score predictions
   - name: users
     description: User profile
   - name: leagues
@@ -233,6 +237,168 @@ components:
       type: string
       enum: [group_winner, playoff, semifinalist, winner]
       example: winner
+
+    Fixture:
+      type: object
+      required: [id, external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        external_id:
+          type: integer
+        tournament_id:
+          type: string
+          format: uuid
+        home_team_id:
+          type: string
+          format: uuid
+        away_team_id:
+          type: string
+          format: uuid
+        kickoff_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [upcoming, in_progress, finished]
+        goals_home:
+          type: integer
+          nullable: true
+        goals_away:
+          type: integer
+          nullable: true
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440010"
+        external_id: 1001
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        home_team_id: "550e8400-e29b-41d4-a716-446655440020"
+        away_team_id: "550e8400-e29b-41d4-a716-446655440021"
+        kickoff_at: "2026-06-11T18:00:00Z"
+        status: "finished"
+        goals_home: 2
+        goals_away: 1
+
+    ScorePrediction:
+      type: object
+      required: [id, user_id, fixture_id, goals_home, goals_away, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        fixture_id:
+          type: string
+          format: uuid
+        goals_home:
+          type: integer
+        goals_away:
+          type: integer
+        points:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440030"
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        fixture_id: "550e8400-e29b-41d4-a716-446655440010"
+        goals_home: 2
+        goals_away: 1
+        points: null
+        created_at: "2026-06-10T12:00:00Z"
+        updated_at: "2026-06-10T12:00:00Z"
+
+    MemberPrediction:
+      type: object
+      required: [user_id, display_name]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        goals_home:
+          type: integer
+          nullable: true
+        goals_away:
+          type: integer
+          nullable: true
+        points:
+          type: integer
+          nullable: true
+      example:
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        display_name: "Alice"
+        goals_home: 2
+        goals_away: 1
+        points: 3
+
+    FixtureWithPrediction:
+      allOf:
+        - $ref: '#/components/schemas/Fixture'
+        - type: object
+          properties:
+            prediction:
+              $ref: '#/components/schemas/ScorePrediction'
+              nullable: true
+
+    FixtureWithMemberPredictions:
+      allOf:
+        - $ref: '#/components/schemas/Fixture'
+        - type: object
+          required: [predictions]
+          properties:
+            predictions:
+              type: array
+              items:
+                $ref: '#/components/schemas/MemberPrediction'
+
+    FixtureListResponse:
+      type: object
+      required: [fixtures]
+      properties:
+        fixtures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FixtureWithPrediction'
+
+    LeaguePredictionsResponse:
+      type: object
+      required: [fixtures]
+      properties:
+        fixtures:
+          type: array
+          items:
+            $ref: '#/components/schemas/FixtureWithMemberPredictions'
+      example:
+        fixtures:
+          - id: "550e8400-e29b-41d4-a716-446655440010"
+            external_id: 1001
+            tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+            home_team_id: "550e8400-e29b-41d4-a716-446655440020"
+            away_team_id: "550e8400-e29b-41d4-a716-446655440021"
+            kickoff_at: "2026-06-11T18:00:00Z"
+            status: "finished"
+            goals_home: 2
+            goals_away: 1
+            predictions:
+              - user_id: "550e8400-e29b-41d4-a716-446655440002"
+                display_name: "Alice"
+                goals_home: 2
+                goals_away: 1
+                points: 3
+              - user_id: "550e8400-e29b-41d4-a716-446655440003"
+                display_name: "Bob"
+                goals_home: 1
+                goals_away: 0
+                points: null
 
     TournamentListResponse:
       type: object
@@ -467,27 +633,150 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /tournaments/slug/{slug}:
+  /tournaments/{tournament_id}/fixtures:
     get:
-      summary: Get tournament by slug
-      operationId: getTournamentBySlug
-      tags: [tournaments]
-      security: []
+      summary: List fixtures for a tournament (personal prediction view)
+      operationId: listFixtures
+      tags: [fixtures]
+      security:
+        - bearerAuth: []
       parameters:
-        - name: slug
+        - name: tournament_id
           in: path
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
-          description: Tournament found
+          description: Fixtures with the caller's prediction for each
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tournament'
+                $ref: '#/components/schemas/FixtureListResponse'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{league_id}/predictions:
+    get:
+      summary: List locked fixtures with all member predictions for a league
+      operationId: listLeaguePredictions
+      tags: [fixtures]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: league_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Locked fixtures with member predictions (requesting user first, then alphabetical)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaguePredictionsResponse'
+        '400':
+          description: Invalid league ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not a member of this league
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /predictions/{fixture_id}:
+    put:
+      summary: Create or update a score prediction for a fixture
+      operationId: upsertScorePrediction
+      tags: [predictions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fixture_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [goals_home, goals_away]
+              properties:
+                goals_home:
+                  type: integer
+                  minimum: 0
+                goals_away:
+                  type: integer
+                  minimum: 0
+            example:
+              goals_home: 2
+              goals_away: 1
+      responses:
+        '200':
+          description: Prediction created or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScorePrediction'
+        '400':
+          description: Invalid input or negative goals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Fixture has already kicked off
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Tournament not found
+          description: Fixture not found
           content:
             application/json:
               schema:

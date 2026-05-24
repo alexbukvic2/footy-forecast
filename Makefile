@@ -1,4 +1,4 @@
-.PHONY: help run build build-linux-arm64 generate test test-integration test-all lint fmt tidy clean sqlc-gen
+.PHONY: help run build build-linux-arm64 generate test test-integration test-all lint fmt tidy clean sqlc-gen seed
 
 BINARY := footy-forecast
 PKG := ./...
@@ -23,6 +23,9 @@ help:
 	@echo "  migrate-status           - show migration status"
 	@echo "  migrate-reset            - roll back ALL migrations (destructive)"
 	@echo "  sqlc-gen        - regenerate sqlc code from queries"
+	@echo ""
+	@echo "AWS lifecycle:"
+	@echo "  seed         - load seeds/data/*.json into the local DB (manual, never runs in CI/prod)"
 	@echo ""
 	@echo "AWS lifecycle:"
 	@echo "  aws-status   - show current state of the AWS infrastructure"
@@ -80,7 +83,10 @@ migrate-new:
 	go tool goose -dir $(MIGRATIONS_DIR) create $(name) sql
 
 migrate-up:
-	go tool goose -dir $(MIGRATIONS_DIR) postgres "$(DB_URL)" up
+	@out=$$(go tool goose -dir $(MIGRATIONS_DIR) postgres "$(DB_URL)" up 2>&1); \
+	rc=$$?; echo "$$out"; \
+	if [ $$rc -ne 0 ] && echo "$$out" | grep -q "no next version found"; then exit 0; fi; \
+	exit $$rc
 
 migrate-down:
 	go tool goose -dir $(MIGRATIONS_DIR) postgres "$(DB_URL)" down
@@ -93,6 +99,9 @@ migrate-reset:
 
 sqlc-gen:
 	go tool sqlc generate
+
+seed:
+	go run ./seeds/ --db "$(DB_URL)"
 
 # ============================================================================
 # AWS lifecycle

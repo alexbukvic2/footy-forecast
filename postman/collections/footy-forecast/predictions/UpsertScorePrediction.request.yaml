@@ -1,27 +1,23 @@
+$kind: http-request
 name: Upsert Score Prediction
-request:
-  method: PUT
-  url:
-    raw: "{{baseUrl}}/predictions/{{fixtureId}}"
-    host:
-      - "{{baseUrl}}"
-    path:
-      - predictions
-      - "{{fixtureId}}"
-  header:
-    - key: Authorization
-      value: "Bearer {{authToken}}"
-    - key: Content-Type
-      value: application/json
-  body:
-    mode: raw
-    raw: '{"goals_home": 2, "goals_away": 1}'
-    options:
-      raw:
-        language: json
-event:
-  - listen: test
-    script:
-      type: text/javascript
-      exec:
-        - "pm.environment.set(\"predictionId\", pm.response.json().id);"
+method: PUT
+url: '{{baseUrl}}/predictions/{{fixtureId}}'
+order: 1000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "goals_home": 2,
+      "goals_away": 1
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.environment.set("predictionId", jsonData.id);
+    language: text/javascript

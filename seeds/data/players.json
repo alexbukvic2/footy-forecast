@@ -1,0 +1,5364 @@
+[
+  {
+    "id": "45c26b01-fa8f-476d-8428-af662c9ae70a",
+    "external_id": "3406",
+    "name": "A. Zambo Anguissa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "4c7ccf6d-efb2-4225-b9d9-44b451299d12",
+    "external_id": "20589",
+    "name": "B. Mbeumo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "18ad0b68-ec17-454e-b341-1a38b42edaa2",
+    "external_id": "2100",
+    "name": "C. Fai",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "f1634b57-f293-4498-8ec1-54011fcc69ce",
+    "external_id": "20916",
+    "name": "C. Wooh",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "0f0e8a16-8700-4fd9-88cc-d5ff4f1cc99d",
+    "external_id": "26940",
+    "name": "D. Epassy",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "193d5be7-a489-41a4-8597-4da918082823",
+    "external_id": "275",
+    "name": "E. Choupo-Moting",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "fe3676be-8b7a-469b-b748-407b298f9842",
+    "external_id": "20656",
+    "name": "E. Ebosse",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "f05006d5-dc7e-4956-bf37-f29cb7d92c92",
+    "external_id": "113",
+    "name": "G. Nkoudou",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "0fbe67dc-7a57-42a6-b906-72c6b0b2d1a7",
+    "external_id": "53740",
+    "name": "G. Ondoua",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "f0c79e93-1f47-4108-91cb-23173ed83a24",
+    "external_id": "20545",
+    "name": "J. Castelletto",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "77a06b6f-6272-4f10-9de6-8b0c8dc8da5a",
+    "external_id": "102469",
+    "name": "J. Mbekeli",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "cfdf6621-f713-4214-b01a-422699c8de63",
+    "external_id": "962",
+    "name": "J. Nsame",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "791be268-302b-425a-a634-ebacf82ad8bf",
+    "external_id": "1709",
+    "name": "K. Toko Ekambi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "cbede788-391d-4b14-b4db-e3a842ae77b7",
+    "external_id": "63542",
+    "name": "M. Hongla",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "81d53bd3-86a8-453d-9228-3cdb46c96e45",
+    "external_id": "955",
+    "name": "N. Moumi Ngamaleu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "08db0dd1-296d-46f5-ac18-963c019a2c1d",
+    "external_id": "30503",
+    "name": "N. Nkoulou",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "83c40bb1-75f2-4be4-9bb0-de0d0dfaaaa4",
+    "external_id": "51107",
+    "name": "N. Tolo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "f1978dd0-c6ce-4f23-b276-4c488eb18089",
+    "external_id": "50734",
+    "name": "O. Mbaïzo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "d5ca57ee-f67f-4e0d-8af4-6a4497e99af8",
+    "external_id": "1130",
+    "name": "O. Ntcham",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "a649c802-074f-4005-a17d-7d98584c8241",
+    "external_id": "3403",
+    "name": "P. Kunde",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "98a02e1a-49d1-4664-8786-901fd627bcec",
+    "external_id": "7689",
+    "name": "S. Gouet",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "a0783de8-7276-41cf-ba62-cb6a657d2953",
+    "external_id": "157086",
+    "name": "S. Marou",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "a9740154-ad0e-4454-953c-0b50945c187d",
+    "external_id": "145060",
+    "name": "S. Ngapandouetnbu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "04dbbd2e-c133-4def-a1e7-b50bc4e8960e"
+  },
+  {
+    "id": "97599677-8954-4e20-acb5-25c27bbeea5d",
+    "external_id": "2680",
+    "name": "A. Abedzadeh",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "ab9933b7-fc37-41de-a7f4-f9759abf1f58",
+    "external_id": "2682",
+    "name": "A. Beiranvand",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "a1931ac6-a8b7-42c6-8ff6-e30013164903",
+    "external_id": "2700",
+    "name": "A. Jahanbakhsh",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "c932c21e-2d29-4c10-90e0-5ec40e42e3f8",
+    "external_id": "29926",
+    "name": "A. Jalali",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "f530484b-8035-4d20-93c0-edb6f1180075",
+    "external_id": "2695",
+    "name": "A. Noorollahi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "70640513-fca7-4f5a-b185-7098042aded1",
+    "external_id": "2685",
+    "name": "E. Hajisafi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "ec2d729e-d27a-4183-9d45-b3630a64d092",
+    "external_id": "29755",
+    "name": "H. Hosseini",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "bfaac4e3-ea48-441a-b893-24bc5d6db9c0",
+    "external_id": "2687",
+    "name": "H. Kanani",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "8c9f9d0b-3d31-4d75-a78d-0243e1f3ced5",
+    "external_id": "2698",
+    "name": "K. Ansarifard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "78f40df8-f906-4630-866f-d7a9460b853a",
+    "external_id": "2690",
+    "name": "M. Pouraliganji",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "45abce0a-35d0-4bcf-bdb4-71fbdb6bb10c",
+    "external_id": "2697",
+    "name": "M. Torabi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "29e585ca-07ea-45e9-a99d-741645de4b13",
+    "external_id": "2681",
+    "name": "P. Niazmand",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "6ac182cc-3bd3-490f-ad9e-a1446fa07133",
+    "external_id": "2683",
+    "name": "R. Cheshmi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "ef62a469-8750-4ff4-b1a8-2bb15cc57aa0",
+    "external_id": "1221",
+    "name": "S. Azmoun",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "59d121aa-d60a-43a1-9bb6-4fe49895c9a4",
+    "external_id": "19614",
+    "name": "S. Ezatolahi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "f7c818b6-08c2-4dfd-a7a4-cc153fe022a3",
+    "external_id": "2699",
+    "name": "S. Ghoddos",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "b8dc2389-29f0-4197-b359-571970e08828",
+    "external_id": "29704",
+    "name": "S. Khalilzadeh",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "66a46a60-f88b-4c85-b9f2-4cb40d4ce354",
+    "external_id": "1311",
+    "name": "S. Moharrami",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c"
+  },
+  {
+    "id": "69e933eb-b7d1-44f8-920b-8eb33d712967",
+    "external_id": "19779",
+    "name": "A. Davies",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "822be77d-da63-450d-b4f2-e5d764d507d3",
+    "external_id": "1459",
+    "name": "A. Ramsey",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "6c69d330-c616-4d14-8186-1995c6864243",
+    "external_id": "104041",
+    "name": "B. Cabango",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "8c6ff889-648a-4d9a-83ca-94bccbc193b5",
+    "external_id": "164",
+    "name": "B. Davies",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "ea7e1429-1297-46e6-8309-cf7f6de86328",
+    "external_id": "129711",
+    "name": "B. Johnson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "e6c05b6c-a8b7-4c1f-810a-6de8a65d3efd",
+    "external_id": "19602",
+    "name": "C. Gunter",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "0f1fa5f5-663a-48b5-965e-2a6878aa2e1b",
+    "external_id": "18866",
+    "name": "C. Mepham",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "90ef4280-d14d-4aa9-bcb2-26a9252776bd",
+    "external_id": "19331",
+    "name": "C. Roberts",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "b3bd43bb-efaf-4cbb-a57e-03eed87e05d9",
+    "external_id": "19329",
+    "name": "D. James",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "9d2d92b9-92bc-4533-b0df-879a381cd903",
+    "external_id": "70335",
+    "name": "D. Levitt",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "0683fe0a-38af-41e5-a030-cc6e63a4d147",
+    "external_id": "18146",
+    "name": "D. Ward",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "b8483cbe-3410-4010-ad49-70e75decf3d3",
+    "external_id": "2279",
+    "name": "E. Ampadu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "3f79b649-a1a8-4410-a490-f3304b00ed87",
+    "external_id": "758",
+    "name": "G. Bale",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "797b3af8-ada9-49f7-814e-5c58cd869c43",
+    "external_id": "19221",
+    "name": "H. Wilson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "b8039225-ad4b-409b-a11c-d2054d825fa0",
+    "external_id": "19502",
+    "name": "J. Allen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "edd1f779-2a37-4ef1-851c-249c1453cb6a",
+    "external_id": "19271",
+    "name": "J. Morrell",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "9b8b5edc-2257-495e-886d-ef291eeee33e",
+    "external_id": "19321",
+    "name": "J. Rodon",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "af750762-d2e7-4532-8d25-af4aa95ab64b",
+    "external_id": "19837",
+    "name": "J. Williams",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "3412a7e2-3e7d-4a4c-98fb-777a161dee68",
+    "external_id": "19804",
+    "name": "K. Moore",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "ab4d1911-1927-45cc-9079-16515aa543a5",
+    "external_id": "17932",
+    "name": "M. Harris",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "dff355aa-55ae-40fe-bdf1-4db5c8ea8348",
+    "external_id": "36843",
+    "name": "M. Smith",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "0441e48e-90d3-4b7f-9915-3e4e77835d2f",
+    "external_id": "138780",
+    "name": "N. Williams",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "56ca63a9-8ce1-4e9b-9bbd-3b40d93e9f7e",
+    "external_id": "301184",
+    "name": "R. Colwill",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "3891571f-e9a2-409f-bc69-efdffd7eb67e",
+    "external_id": "18599",
+    "name": "S. Thomas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "f12a61cf-ffdd-49e9-a48b-b79fe6e05518",
+    "external_id": "20203",
+    "name": "T. Lockyer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "3c3e3ae8-ab39-4180-8fe8-119a371eae5a",
+    "external_id": "18836",
+    "name": "W. Hennessey",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "17068f50-b788-4f7d-ae50-306acd556d1f"
+  },
+  {
+    "id": "0125a1b6-7d36-4153-ac84-9dd29b13b9f4",
+    "external_id": "162714",
+    "name": "A. Onana",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "a81bd53e-903e-486d-a122-8700b83d5e77",
+    "external_id": "204043",
+    "name": "A. Theate",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "aa04dfd6-6786-4f0d-abeb-c5cb30307215",
+    "external_id": "20",
+    "name": "A. Witsel",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "a6fd225c-9e74-4979-bb38-7ac2a3f1577f",
+    "external_id": "147859",
+    "name": "C. De Ketelaere",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "5127c4a7-bf5c-46c6-816c-64b9146b9860",
+    "external_id": "332",
+    "name": "D. Mertens",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "c4ea3fab-2a36-4a05-8928-bd76f1ae9416",
+    "external_id": "2296",
+    "name": "E. Hazard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "25e37ebf-9bc7-4893-9e73-0865e90fa337",
+    "external_id": "78",
+    "name": "H. Vanaken",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "a4d31261-6cb7-49fe-a80a-598f1d503a7d",
+    "external_id": "1422",
+    "name": "J. Doku",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "3dcaa061-ed49-4987-8f33-1c30a4e8694f",
+    "external_id": "170",
+    "name": "J. Vertonghen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "0f890ac3-3807-41b0-9574-ff339ad9290b",
+    "external_id": "2918",
+    "name": "K. Casteels",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "17433450-1458-4b98-887d-e9ee5883a4e6",
+    "external_id": "629",
+    "name": "K. De Bruyne",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "13e0b05d-a8ce-4824-a68e-8800766fe98d",
+    "external_id": "2922",
+    "name": "L. Dendoncker",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "2f907495-a019-4dc3-8f39-ce904a11f4a7",
+    "external_id": "86",
+    "name": "L. Openda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "b7a328e5-b27a-472c-9862-30347aa28e4b",
+    "external_id": "1946",
+    "name": "L. Trossard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "f4b13fcc-fc21-4dc3-89a7-9bbd100c7ea9",
+    "external_id": "907",
+    "name": "R. Lukaku",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "806349ec-d28e-4db6-abc2-4c5b1f99d430",
+    "external_id": "282",
+    "name": "S. Mignolet",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "d62b3276-47b6-4e1c-8b1b-d97d678384f5",
+    "external_id": "162",
+    "name": "T. Alderweireld",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "3d6c6f94-74c2-46f2-8323-d8ca69877269",
+    "external_id": "2920",
+    "name": "T. Castagne",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "cfd7bbb1-6ca5-436b-b226-f2b8b9b75dd4",
+    "external_id": "730",
+    "name": "T. Courtois",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "a6454d50-428e-4b94-84e0-22c39ba5ebb2",
+    "external_id": "2929",
+    "name": "T. Hazard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "2562cda2-2dbe-441f-8bb3-8e8703b8de13",
+    "external_id": "8694",
+    "name": "W. Faes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "11606541-c86e-41c4-8371-4a229c4f0c5c",
+    "external_id": "2923",
+    "name": "Y. Carrasco",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "7e9e82ec-2d08-4a00-8866-40a67834a440",
+    "external_id": "2926",
+    "name": "Y. Tielemans",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "715e90f0-9d07-4b1c-b332-60b23e344d73",
+    "external_id": "304228",
+    "name": "Z. Debast",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "3a85356a-cd94-4210-8336-76ad1a3f9b24"
+  },
+  {
+    "id": "1a671fc6-4e2d-4a02-81fe-551a0a88045f",
+    "external_id": "1573",
+    "name": "A. Guardado",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "18620763-c70c-48c3-9b38-912ac3efd641",
+    "external_id": "35704",
+    "name": "A. Talavera",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "aeba4fb0-fea0-4de8-b0f9-7c77830c6f19",
+    "external_id": "2889",
+    "name": "A. Vega",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "dd63173d-f681-43fe-8763-c303da8ad557",
+    "external_id": "2873",
+    "name": "C. Montes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "72c09132-d08a-4c91-8d1a-72d0a9c6366a",
+    "external_id": "2888",
+    "name": "C. Rodríguez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "ce5c9ffd-251e-44db-b263-ec316a360ef1",
+    "external_id": "35774",
+    "name": "G. Arteaga",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "536a9866-5251-4239-8291-fca9d7f32a00",
+    "external_id": "2098",
+    "name": "G. Ochoa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "66a203e0-3e06-438a-882c-4750d4c1ba2b",
+    "external_id": "382",
+    "name": "H. Herrera",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "fde0bcb2-22f0-4ca4-9bbb-3d84cf7053c5",
+    "external_id": "248",
+    "name": "H. Lozano",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "851fd60a-7002-4f54-9dcb-124cad831b02",
+    "external_id": "35603",
+    "name": "H. Martín",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "33a977ba-606c-4652-a529-5f4b60fa051a",
+    "external_id": "2874",
+    "name": "H. Moreno",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "0f976ff7-80ee-4e03-a4cf-9b92b8a23622",
+    "external_id": "2881",
+    "name": "J. Gallardo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "8fc96ef7-9923-49e0-a918-2050cd802627",
+    "external_id": "2878",
+    "name": "J. Sánchez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "28460c06-1a80-46d0-af7e-3b38925336af",
+    "external_id": "35544",
+    "name": "J. Vásquez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "fe2fb060-8059-464e-aaf6-6788d6b5619a",
+    "external_id": "126751",
+    "name": "K. Álvarez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "7c346b72-282e-4d62-96b6-214ff6091404",
+    "external_id": "35690",
+    "name": "L. Chávez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "1cc5c3f9-6244-4aa4-bb42-1ed9358aa5fd",
+    "external_id": "35970",
+    "name": "L. Romo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "d0da68d9-6fb5-435e-b02b-8ca0649f3315",
+    "external_id": "2870",
+    "name": "N. Araújo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "21c0b2fb-8ae0-445c-a41b-77694987d3df",
+    "external_id": "35576",
+    "name": "O. Pineda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "d56697d0-f7f5-4f03-91e4-ced5823a96a7",
+    "external_id": "2879",
+    "name": "R. Alvarado",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "f79052b7-92c1-4033-9ba9-7367fc060175",
+    "external_id": "35473",
+    "name": "R. Cota",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "fb7273a0-b91a-4281-8f80-b02b3113f1c4",
+    "external_id": "2887",
+    "name": "R. Jiménez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "200bf69c-177e-4309-93e4-017114a8a68c",
+    "external_id": "51069",
+    "name": "U. Antuna",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "3abee94b-e03d-45e1-aba0-faf1b6d1f5ce",
+    "external_id": "234",
+    "name": "É. Gutiérrez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "42c43b80-8d4a-40d2-984a-42688ef279c9"
+  },
+  {
+    "id": "591c07b2-253c-42f9-9221-4136a72e7c17",
+    "external_id": "253",
+    "name": "A. Areola",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "c11adb7b-1c4c-4426-acf9-539f9e10cea3",
+    "external_id": "21998",
+    "name": "A. Disasi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "32726b86-4589-4010-9e40-94b30e3e00a8",
+    "external_id": "56",
+    "name": "A. Griezmann",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "cf97095e-5ed8-43fa-b344-a8eb3e6c991f",
+    "external_id": "272",
+    "name": "A. Rabiot",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "4bc57828-ac21-4103-83eb-558a909ea4ad",
+    "external_id": "1271",
+    "name": "A. Tchouaméni",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "27b75c2f-2a27-415a-95b8-9357d09e1525",
+    "external_id": "2725",
+    "name": "B. Pavard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "2b45e9cf-0f95-446e-8985-298921370302",
+    "external_id": "1149",
+    "name": "D. Upamecano",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "42761586-2128-42ce-b243-9e2a9f323e5b",
+    "external_id": "2207",
+    "name": "E. Camavinga",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "1917fed0-792c-48fe-a664-e1b429af4dfc",
+    "external_id": "159",
+    "name": "H. Lloris",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "3b892c8b-2491-49ff-9c1b-82635e75f19c",
+    "external_id": "1145",
+    "name": "I. Konaté",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "1d41649c-9387-4190-8a36-0a210ec50d68",
+    "external_id": "1257",
+    "name": "J. Koundé",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "f5f66885-c367-4d7a-912c-37b1d767cb5d",
+    "external_id": "30409",
+    "name": "J. Veretout",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "35c684ec-368d-4166-9bd3-088121d9a8eb",
+    "external_id": "508",
+    "name": "K. Coman",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "f86c09bb-98cb-4ba3-b398-d87544b572d0",
+    "external_id": "278",
+    "name": "Kylian Mbappé",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "9219468b-e556-43e5-88a8-87f9ac049f4d",
+    "external_id": "33",
+    "name": "L. Hernández",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "23385b01-e631-4f9b-9371-526648f7ad5a",
+    "external_id": "21509",
+    "name": "M. Thuram",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "10dc8084-f333-4513-a79e-11e05c742ae7",
+    "external_id": "153",
+    "name": "O. Dembélé",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "e201fe23-0717-4649-ad7d-a90f8a923ec2",
+    "external_id": "2295",
+    "name": "O. Giroud",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "b521202a-a99e-42d7-a46b-b31a3d171a23",
+    "external_id": "21104",
+    "name": "R. Kolo Muani",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "d1c437b0-72ee-4276-9822-723a8909d599",
+    "external_id": "742",
+    "name": "R. Varane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "9354b8b8-ac5f-47b8-9e6e-6ec2ec838f3d",
+    "external_id": "1897",
+    "name": "S. Mandanda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "6e5eea1d-bf95-4aa4-9d30-a09d447b76c7",
+    "external_id": "47300",
+    "name": "T. Hernández",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "aa71db38-3e8f-4743-a9dd-458b4a4f285a",
+    "external_id": "22090",
+    "name": "W. Saliba",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "d21f4107-d845-4617-b4d6-0d3dd101de24",
+    "external_id": "22254",
+    "name": "Y. Fofana",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c"
+  },
+  {
+    "id": "a606f06f-a060-417f-8a66-92ee70a6ef63",
+    "external_id": "3002",
+    "name": "A. Jędrzejczyk",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "86ed2b01-6e22-45aa-979c-84dab36c4602",
+    "external_id": "333",
+    "name": "A. Milik",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "c8b4968f-b55a-4c9e-9927-118ee6b7b7ce",
+    "external_id": "3000",
+    "name": "B. Bereszyński",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "96d80ecc-d834-42bf-b82d-cb6b175f3d0c",
+    "external_id": "3011",
+    "name": "D. Szymański",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "92a53baa-251c-4dca-901c-b54b7abd2254",
+    "external_id": "481",
+    "name": "G. Krychowiak",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "23cb7f9b-3767-4210-97ae-92d59e4be292",
+    "external_id": "2999",
+    "name": "J. Bednarek",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "9bf210cf-bd77-4dac-ab1c-86b16bcb0448",
+    "external_id": "40560",
+    "name": "J. Kamiński",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "eb5ed569-49a5-4262-a5c7-40de0632eea5",
+    "external_id": "61431",
+    "name": "J. Kiwior",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "3ceb6e00-98c2-4fe1-803d-cddf58e5314e",
+    "external_id": "19826",
+    "name": "K. Bielik",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "e431593c-05b7-4422-849a-cfadaa536609",
+    "external_id": "97",
+    "name": "K. Glik",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "daf47117-0e09-4064-a72d-e30e8de25546",
+    "external_id": "15573",
+    "name": "K. Grabara",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "fa13d637-2f3b-49f7-ba65-61dbaaa71c41",
+    "external_id": "2385",
+    "name": "K. Świderski",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "397eaed6-719a-4c07-ad9d-dfac04d6ebeb",
+    "external_id": "19298",
+    "name": "M. Cash",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "b921cc13-d38b-4d1a-ac52-4230a37782e0",
+    "external_id": "40809",
+    "name": "M. Skóraś",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "3f74060a-cd8f-40e2-a5ce-1aaacc2378f3",
+    "external_id": "40392",
+    "name": "M. Wieteska",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "0ac9544f-b51c-4896-8303-ce960ab24dfb",
+    "external_id": "203474",
+    "name": "N. Zalewski",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "170455f5-2cdf-4ed1-a040-e2194c17787b",
+    "external_id": "329",
+    "name": "P. Zieliński",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "0c76650b-6041-4555-80df-8e1199cc725e",
+    "external_id": "3001",
+    "name": "R. Gumny",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "18dc155a-c21f-4f78-a5b8-ec77b1845397",
+    "external_id": "521",
+    "name": "R. Lewandowski",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "8da3c285-b298-4dd1-bd7e-942ad3eada89",
+    "external_id": "3014",
+    "name": "S. Żurkowski",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "f8aeaf20-270f-44c0-95cc-6414f4132180",
+    "external_id": "851",
+    "name": "W. Szczęsny",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "ef8826e7-0e68-4c64-a106-2009fb385eeb",
+    "external_id": "2998",
+    "name": "Ł. Skorupski",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "45fc6268-bc11-4fa3-b5c4-09aee2bbb91e"
+  },
+  {
+    "id": "005c498e-51bd-4823-95c5-7e7c270c5528",
+    "external_id": "2063",
+    "name": "André Silva",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "03598dc3-2895-47fc-a598-b1103c3a6230",
+    "external_id": "331832",
+    "name": "António Silva",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "53b34c40-14bb-4649-9171-389407275fa2",
+    "external_id": "636",
+    "name": "Bernardo Silva",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "c4f75117-a75c-4f08-9a57-2d9c87d46eb9",
+    "external_id": "1485",
+    "name": "Bruno Fernandes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "9cedf3d8-5512-47d8-b9c2-6aca77f055f3",
+    "external_id": "874",
+    "name": "Cristiano Ronaldo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "20bda51d-2205-46ab-bca8-5b3851ca11f9",
+    "external_id": "381",
+    "name": "Danilo Pereira",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "51d1423f-5365-4941-8a8a-4b128bd845dc",
+    "external_id": "369",
+    "name": "Diogo Costa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "3d17d689-de41-4acd-82c3-e5106353fbb8",
+    "external_id": "886",
+    "name": "Diogo Dalot",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "ca8abfd2-1695-49d3-ac3e-e79cf506d418",
+    "external_id": "41585",
+    "name": "Gonçalo Ramos",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "02d67f1e-d586-42eb-878d-018ceba4ae0f",
+    "external_id": "1590",
+    "name": "José Sá",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "22707281-d594-4a0a-8162-b49949cd5e65",
+    "external_id": "855",
+    "name": "João Cancelo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "c181205a-9e7e-44d2-b169-c7895d7fc2cb",
+    "external_id": "583",
+    "name": "João Félix",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "67c93ce2-70dc-42f2-9bc5-8ae186ccd68f",
+    "external_id": "41104",
+    "name": "João Palhinha",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "502cf6c0-1a2e-441a-b849-4eb09da079ba",
+    "external_id": "41621",
+    "name": "Matheus Nunes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "8fabdd93-1a69-4bf1-b27c-00420df6e7d6",
+    "external_id": "263482",
+    "name": "Nuno Mendes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "69bb78e5-98e9-4786-abcd-868a6ee4f03f",
+    "external_id": "380",
+    "name": "Otávio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "702c16c8-4acd-4b14-8ab1-e1b6b805148f",
+    "external_id": "373",
+    "name": "Pepe",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "49227f2d-8d4d-4ba6-ab00-6474acbd70eb",
+    "external_id": "22236",
+    "name": "Rafael Leão",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "e64239c3-affe-4bea-96f4-4a7729a0ae22",
+    "external_id": "8",
+    "name": "Raphaël Guerreiro",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "c698f0c1-fb80-40c5-8326-8468c588e44f",
+    "external_id": "41103",
+    "name": "Ricardo Horta",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "a045ddbc-9268-45b9-9a65-92cde095bd53",
+    "external_id": "2674",
+    "name": "Rui Patrício",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "512f78f9-118b-4200-ab7f-0d3d915a049c",
+    "external_id": "567",
+    "name": "Rúben Dias",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "2acf1ded-e4cd-41fe-97f7-bbe7e9bb15ba",
+    "external_id": "2676",
+    "name": "Rúben Neves",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "9266eb4b-24fd-4d60-b3d4-74797d5fe7e3",
+    "external_id": "128384",
+    "name": "Vitinha",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "741ef1ad-9658-402d-bea0-aca9972214a2",
+    "external_id": "1580",
+    "name": "William Carvalho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4630fc5c-2b1c-4c32-8447-8fb0f2ba643e"
+  },
+  {
+    "id": "08f5b388-8880-4d8a-8cef-11c5df025497",
+    "external_id": "2825",
+    "name": "A. Mitrović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "63067a48-1baf-4ab4-924c-998eb43e03a9",
+    "external_id": "579",
+    "name": "A. Živković",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "f3726b0f-3070-4ae0-b7a1-788c387a39f3",
+    "external_id": "2822",
+    "name": "D. Lazović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "79b2ba81-b73a-496d-bfd2-642848834a3d",
+    "external_id": "30415",
+    "name": "D. Vlahović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "2f5a5c1d-a747-4cd3-8483-62c93bf2dd8f",
+    "external_id": "2820",
+    "name": "F. Mladenović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "edd14cc0-23c3-4569-aae5-4b0d5ff92710",
+    "external_id": "30536",
+    "name": "F. Đuričić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "06ee3a61-c78c-4f62-8ea9-086f643af609",
+    "external_id": "46170",
+    "name": "I. Ilić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "cb72d520-5ede-4f0c-97e4-3f541dcf0715",
+    "external_id": "1828",
+    "name": "L. Jović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "40067dea-0ce4-4130-9e2d-6dfb4cdbb8ad",
+    "external_id": "2813",
+    "name": "M. Dmitrović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "f27acada-d01c-436e-bd78-e2c3535bcfa0",
+    "external_id": "25350",
+    "name": "M. Grujić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "1c53f95b-dc7f-421a-9d90-c89dd0a18a34",
+    "external_id": "2821",
+    "name": "M. Veljković",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "e34fc2b9-ba1a-411b-b111-6d558f3daf51",
+    "external_id": "1489",
+    "name": "N. Gudelj",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "9512a6c4-4b02-4d72-82d3-7faedebf24ab",
+    "external_id": "2824",
+    "name": "N. Maksimović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "8f623227-c535-483c-9011-33aec26d0cca",
+    "external_id": "2817",
+    "name": "N. Milenković",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "1aa22a08-98b1-4663-89a8-3c819dbeea79",
+    "external_id": "1920",
+    "name": "N. Radonjić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "81a670c8-f487-45db-9239-fa328e6cf3c9",
+    "external_id": "2814",
+    "name": "P. Rajković",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "6ad77a7e-0523-47f7-9a78-f94ca9fdb1f5",
+    "external_id": "340",
+    "name": "S. Babić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "3ac7df25-5d79-4ff4-8cd9-5bd36f800958",
+    "external_id": "133391",
+    "name": "S. Eraković",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "acd628de-e853-4e89-a618-175773ae17b6",
+    "external_id": "2823",
+    "name": "S. Lukić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "5acbf7f0-3f5e-4a53-9697-20d69cfb40e0",
+    "external_id": "1856",
+    "name": "S. Milinković-Savić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "5ca6b005-f187-4614-ac07-764168835792",
+    "external_id": "2819",
+    "name": "S. Mitrović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "8525796f-6954-40a9-8efc-f884b3fc4c03",
+    "external_id": "45826",
+    "name": "S. Pavlović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "7da2dbfc-b57b-4ce4-818b-672dce682590",
+    "external_id": "47087",
+    "name": "U. Račić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "9355a755-2df6-4dfc-af56-b2c5a7f93053",
+    "external_id": "31156",
+    "name": "V. Milinković-Savić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6"
+  },
+  {
+    "id": "c640d68c-2392-4fdc-9319-2120a3a1ffff",
+    "external_id": "51603",
+    "name": "A. Canobbio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "c9779431-c8c8-4f00-b047-f4d46f528681",
+    "external_id": "32",
+    "name": "D. Godín",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "c6e6b71a-c6f5-4926-80a2-67d8141a3b0d",
+    "external_id": "51617",
+    "name": "D. Núñez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "05d81697-9ccc-4e07-b9be-9eee51c989db",
+    "external_id": "274",
+    "name": "E. Cavani",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "757819b2-3a7c-498b-9b8b-3f1575607de8",
+    "external_id": "70078",
+    "name": "F. Pellistri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "682d686b-4780-4d36-9a37-46c3740c906e",
+    "external_id": "51620",
+    "name": "F. Torres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "c8385696-6906-400b-817c-4f9c1f9e9ed9",
+    "external_id": "756",
+    "name": "F. Valverde",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "b795bccb-a6e8-4c58-ba4b-18c7c93613b5",
+    "external_id": "1290",
+    "name": "G. Varela",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "83d0bf0f-525a-4884-88f4-1c808980560a",
+    "external_id": "2612",
+    "name": "G. de Arrascaeta",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "1ac8607e-a179-43a3-8c9f-d826e8635369",
+    "external_id": "31",
+    "name": "J. Giménez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "9098ea5b-fdae-42f1-a211-934e4416ead9",
+    "external_id": "51426",
+    "name": "J. Rodríguez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "96429970-49d9-4436-936d-08e1534730e8",
+    "external_id": "157",
+    "name": "L. Suárez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "85e33078-d83a-48b6-8123-23b621e03e16",
+    "external_id": "854",
+    "name": "M. Cáceres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "0445284f-10f8-4247-8721-0985017c588c",
+    "external_id": "47254",
+    "name": "M. Olivera",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "6d33f78f-a7b2-4217-a4ae-2c1b34d90874",
+    "external_id": "51494",
+    "name": "M. Ugarte",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "fbc912f5-3e19-470c-b1ab-c36bac71d505",
+    "external_id": "211",
+    "name": "M. Vecino",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "cf2926f6-d1be-4ef2-949f-93eba521d9f0",
+    "external_id": "51572",
+    "name": "M. Viña",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "2b4f6478-2ee5-4f84-b9e0-2b16a4ce9f44",
+    "external_id": "5995",
+    "name": "N. de la Cruz",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "2064ed3a-2ade-41b2-83ec-60ef0f634b4f",
+    "external_id": "101814",
+    "name": "R. Araújo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "d45d1ed5-d1f1-4a81-ac8f-06e4bffa605c",
+    "external_id": "863",
+    "name": "R. Bentancur",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "2894cde0-d6b8-4803-892e-f918d41994a4",
+    "external_id": "1477",
+    "name": "S. Coates",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "9fe05d94-099e-4efc-a4b4-00d92775a7f7",
+    "external_id": "35931",
+    "name": "S. Sosa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86"
+  },
+  {
+    "id": "56ab8134-c017-4517-897d-f3672fc6f917",
+    "external_id": "46746",
+    "name": "A. Budimir",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "20dbdff8-70aa-4c50-9ae5-023a9b190705",
+    "external_id": "726",
+    "name": "A. Kramarić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "7726476d-e3d6-47b3-bed5-f5312ec9890a",
+    "external_id": "26303",
+    "name": "B. Sosa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "68e22e08-a546-4e8f-9fb5-7ead82c77468",
+    "external_id": "287",
+    "name": "D. Lovren",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "76c33c7f-a083-468d-a71b-804cfc252681",
+    "external_id": "14297",
+    "name": "I. Ivušić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "94e33957-038d-49f5-a5c4-68e53478d6b2",
+    "external_id": "207",
+    "name": "I. Perišić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "1d168b27-f748-47b3-8018-a1c8af6bdc94",
+    "external_id": "129033",
+    "name": "J. Gvardiol",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "25f30bea-a0a0-425a-8014-802e96de4977",
+    "external_id": "14330",
+    "name": "J. Juranović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "53d095d3-68cf-45a2-8e28-693b8c1ce312",
+    "external_id": "125171",
+    "name": "J. Stanišić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "58cf5fa3-51e7-4f41-8e34-1c03f518e134",
+    "external_id": "14701",
+    "name": "J. Šutalo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "523c3bdf-b10c-401d-82aa-249609e634e2",
+    "external_id": "14395",
+    "name": "K. Jakić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "abef2d64-35cb-41e1-8633-e9c702a63a65",
+    "external_id": "1321",
+    "name": "L. Majer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "026a404d-dccc-4e62-aaaf-f06941c0c5f3",
+    "external_id": "754",
+    "name": "L. Modrić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "29f88985-8768-414d-a7b4-ae2d68c709e4",
+    "external_id": "7332",
+    "name": "L. Sučić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "4dc87ec0-4aa9-4c6a-8aba-8ca81bf49939",
+    "external_id": "201",
+    "name": "M. Brozović",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "21fd1570-79b3-4546-b31e-37371e5b96f1",
+    "external_id": "30827",
+    "name": "M. Erlić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "8b998f6d-30e2-49f8-bc2e-e21fff9dd183",
+    "external_id": "2291",
+    "name": "M. Kovačić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "4a5916a6-b50e-45d8-b24b-bd665ccd4eda",
+    "external_id": "611",
+    "name": "M. Livaja",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "4805cf45-193e-4cf6-b3ad-517062c91c86",
+    "external_id": "2763",
+    "name": "M. Pašalić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "42d545df-ac41-4dcd-ae69-fbc0d75e78de",
+    "external_id": "842",
+    "name": "N. Vlašić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "51aef430-cfe1-428a-9352-36e0a79a1426"
+  },
+  {
+    "id": "9ee34a51-6783-4c52-b110-7df7f8c5fefa",
+    "external_id": "21996",
+    "name": "A. Baba",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "699167c4-d2e1-4a81-a910-b0500dd2e1b2",
+    "external_id": "303467",
+    "name": "A. Fatawu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "d0e68171-fa6e-4fff-b6f3-51161ae4b08f",
+    "external_id": "8631",
+    "name": "A. Nurudeen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "3fb9cfc3-6ca5-4f97-8de7-c8b5f6b94c4d",
+    "external_id": "196187",
+    "name": "A. Seidu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "005c48fd-7afe-4542-b72e-9a46d8610ec1",
+    "external_id": "19281",
+    "name": "A. Semenyo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "c6dc5a53-2ae6-4cf8-8fc6-72096e352cee",
+    "external_id": "303468",
+    "name": "D. Afriyie",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "1cbd6aa9-f64d-4921-8a9f-753e6e1d9fb8",
+    "external_id": "3421",
+    "name": "D. Amartey",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "4cb62fa9-5604-48c2-984c-ce3f321c2071",
+    "external_id": "25530",
+    "name": "D. Kyereh",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "1eec1e91-24d5-48cf-b4d3-10062122936e",
+    "external_id": "19022",
+    "name": "D. Odoi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "66dc723b-b343-45b9-b863-b3d5dac8f1c8",
+    "external_id": "21010",
+    "name": "E. Owusu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "c7c4f303-c98f-4a84-aacb-e44615b3959b",
+    "external_id": "7578",
+    "name": "G. Mensah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "9f10b8b7-fcae-4899-a909-779d850c63fa",
+    "external_id": "180272",
+    "name": "I. Danlad",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "2716604f-7180-4113-93ed-09eac9b17060",
+    "external_id": "47294",
+    "name": "I. Williams",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "8a9cfbe5-837f-4c3f-bdf7-102b13398f88",
+    "external_id": "1926",
+    "name": "J. Aidoo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "1dc63dbe-6f63-45c8-b0d0-3287735812df",
+    "external_id": "3428",
+    "name": "J. Ayew",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "b48a3826-c232-4a08-b815-b9588389e0a4",
+    "external_id": "8789",
+    "name": "K. Sowah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "1cb78140-d10f-4c1d-8895-81d5d5bed244",
+    "external_id": "199837",
+    "name": "K. Sulemana",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "bab1f0f5-3028-4619-af9f-c72637156c17",
+    "external_id": "3412",
+    "name": "L. Zigi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "6dd81ac9-35ad-431e-a5ca-568e87f2260f",
+    "external_id": "15911",
+    "name": "M. Kudus",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "ef49cdee-7b14-44dc-a831-e04cf1897c96",
+    "external_id": "47480",
+    "name": "M. Salisu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "2bd0d24a-3e1c-4355-afc9-47187123f0c6",
+    "external_id": "61418",
+    "name": "O. Bukari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "2f3d3070-b6f6-4a9d-8808-3f9c00f693cf",
+    "external_id": "128987",
+    "name": "S. Abdul Samed",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "a30953ad-fcee-4234-82d7-d3623773cb20",
+    "external_id": "138815",
+    "name": "T. Lamptey",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "086b7955-f738-44e9-b175-5fde3f31c074",
+    "external_id": "49",
+    "name": "T. Partey",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "54996157-f00a-46e0-b61f-284c6320ecec"
+  },
+  {
+    "id": "a52d9cd8-1369-4793-ab69-ab03355e40f1",
+    "external_id": "50952",
+    "name": "A. Long",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "bd3b592a-0437-4e27-a248-b3507e69deb1",
+    "external_id": "19549",
+    "name": "A. Robinson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "4e97bd6d-449c-44ca-b2a5-179e8ca894ae",
+    "external_id": "50739",
+    "name": "B. Aaronson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "cb9ae5a4-c66b-4d9e-808d-9c0c823bbc43",
+    "external_id": "19314",
+    "name": "C. Carter-Vickers",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "7485622a-1a98-4b98-b7c5-cbba5e5d25ba",
+    "external_id": "17",
+    "name": "C. Pulišić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "28794bb9-f9fc-4b20-beda-6d858337a32b",
+    "external_id": "51114",
+    "name": "C. Roldan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "cada3df1-188a-4b74-bd12-68f48628e94d",
+    "external_id": "62",
+    "name": "E. Horvath",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "b94962b0-5c2f-42d3-9cba-bbc895f7cccb",
+    "external_id": "161921",
+    "name": "G. Reyna",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "02bf05e9-c2a2-4bd2-b718-258ad923d65f",
+    "external_id": "427",
+    "name": "H. Wright",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "7167d4f9-1f63-452e-be23-6edfff56e07a",
+    "external_id": "51142",
+    "name": "J. Ferreira",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "2541fda2-f1d0-4186-aaf5-795741f0225e",
+    "external_id": "51118",
+    "name": "J. Morris",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "f70e9857-8956-4e91-969d-b09ea3394745",
+    "external_id": "25332",
+    "name": "J. Sargent",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "0ae494d0-cc5a-4f31-a507-9cc11853d218",
+    "external_id": "50852",
+    "name": "J. Scally",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "e336cd93-df49-43ad-81f7-74fc1a6f8823",
+    "external_id": "51310",
+    "name": "K. Acosta",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "be12045d-9907-4759-8d31-0605badd43af",
+    "external_id": "19026",
+    "name": "L. de la Torre",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "41cd70bd-12f0-4bb9-a8cc-a4d6ed1e3c2a",
+    "external_id": "50999",
+    "name": "M. Turner",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "840a5fc9-ea8d-4976-b03d-6e7f91ad12a7",
+    "external_id": "38735",
+    "name": "S. Dest",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "7a34b44b-2745-4942-8e6c-714c31ae21ce",
+    "external_id": "50848",
+    "name": "S. Johnson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "64b2e8be-814d-4174-8c6b-9fefb1f5d736",
+    "external_id": "64310",
+    "name": "S. Moore",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "faa2de41-7ace-4346-8df3-4614964dfcce",
+    "external_id": "1150",
+    "name": "T. Adams",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "99c7558d-5c6a-431c-8d14-2f4355948d6d",
+    "external_id": "19023",
+    "name": "T. Ream",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "be58fae2-2196-4bad-86be-173b64017425",
+    "external_id": "1138",
+    "name": "T. Weah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "7809da11-648d-4a49-b440-da46579b8396",
+    "external_id": "415",
+    "name": "W. McKennie",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "5e293b62-7ace-4212-811a-6e720217b53a",
+    "external_id": "51032",
+    "name": "W. Zimmerman",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "9db7e01d-b630-4780-95f7-a77a243a0c3c",
+    "external_id": "162106",
+    "name": "Y. Musah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90"
+  },
+  {
+    "id": "cbe121f9-25c7-4d03-8318-abcf1873d42d",
+    "external_id": "31632",
+    "name": "A. Noppert",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "520e7d2b-a49c-4458-abdc-115eb384d76e",
+    "external_id": "247",
+    "name": "C. Gakpo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "0df59f94-d997-41c5-88df-8e2aa60e46d6",
+    "external_id": "531",
+    "name": "D. Blind",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "dc664721-88df-478d-90cf-b4f4323de5a0",
+    "external_id": "226",
+    "name": "D. Dumfries",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "696f600c-214c-4ab6-9b8c-d45153760d11",
+    "external_id": "25321",
+    "name": "D. Klaassen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "cdedadc3-a220-4b35-9bb9-73eb65b5e87a",
+    "external_id": "538",
+    "name": "F. de Jong",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "7f3179a8-c633-4daf-b866-5a23b6754b52",
+    "external_id": "37137",
+    "name": "J. Bijlow",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "5f0b52df-94f5-4d4a-b5a1-b0b0e07a3adc",
+    "external_id": "152654",
+    "name": "J. Frimpong",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "274af517-ceea-412b-978b-c2a6a9c75d46",
+    "external_id": "38746",
+    "name": "J. Timber",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "7c37ff07-92af-471c-b211-46741b208d97",
+    "external_id": "38749",
+    "name": "K. Taylor",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "aa74df96-5a4e-48f7-a9b2-9ad64f5f5261",
+    "external_id": "246",
+    "name": "L. de Jong",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "e4889bed-4967-452a-b370-9bc1dc1a1c1e",
+    "external_id": "667",
+    "name": "M. Depay",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "19305064-6b9a-4457-a884-3150bbc75c0a",
+    "external_id": "532",
+    "name": "M. de Ligt",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "f5bd2652-17af-42c7-a2e4-4f7f44838138",
+    "external_id": "30432",
+    "name": "M. de Roon",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "41a9fb0d-5536-4985-a605-5101fc67f07e",
+    "external_id": "18861",
+    "name": "N. Aké",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "4e51173c-8cc9-4043-9793-0b2213bcc53f",
+    "external_id": "37113",
+    "name": "R. Pasveer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "192a598f-d47b-4599-a83a-e5802fbe813a",
+    "external_id": "37160",
+    "name": "S. Berghuis",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "b06d17f9-35e6-4027-a33e-3b51f5c34050",
+    "external_id": "244",
+    "name": "S. Bergwijn",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "da470a9d-a041-4c2b-932a-b7a7f3bcfd36",
+    "external_id": "194",
+    "name": "S. de Vrij",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "8663e67d-0096-4164-872f-7b4532c791df",
+    "external_id": "36899",
+    "name": "T. Koopmeiners",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "5b7f70d3-bf09-4a4d-b337-d52a73bf6b2b",
+    "external_id": "37145",
+    "name": "T. Malacia",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "96777868-fbd0-496b-a774-6db2d5c91205",
+    "external_id": "183",
+    "name": "V. Janssen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "77b392ab-d95c-417c-a33e-3b20342f4374",
+    "external_id": "290",
+    "name": "V. van Dijk",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "878d812d-75ac-46b7-ad47-0aeb7e410fbe",
+    "external_id": "162016",
+    "name": "X. Simons",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "5def1369-85a8-484f-9dfe-85fe3c202fb7"
+  },
+  {
+    "id": "61e8150f-9089-4043-abb2-fed7e5a7a5c0",
+    "external_id": "7",
+    "name": "A. Diallo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "fe934e5c-117d-4126-bead-03c7b33b7cea",
+    "external_id": "2985",
+    "name": "A. Gomis",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "8c674251-a3e5-4fbd-80ce-220cd518be0f",
+    "external_id": "22015",
+    "name": "B. Dia",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "d3995bc8-ea9f-4b9f-b20a-64433e7ad77f",
+    "external_id": "284072",
+    "name": "B. Dieng",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "36c3c45d-9696-4703-9a0a-283d5a1f8cfe",
+    "external_id": "2991",
+    "name": "C. Kouyaté",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "5908ceec-bb3d-46ff-b247-248f8feafda2",
+    "external_id": "105",
+    "name": "F. Ballo-Touré",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "4f5b9c94-6d88-4b2d-a794-4a988a5039b2",
+    "external_id": "162236",
+    "name": "F. Mendy",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "8a4b6b71-9fe3-42fd-95d4-17a764195a56",
+    "external_id": "2990",
+    "name": "I. Gueye",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "8c64c037-51d9-4c2f-ae0e-c04676e5a90c",
+    "external_id": "158121",
+    "name": "I. Jakobs",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "8813881a-153d-4aa3-8829-cdad6e97d085",
+    "external_id": "18592",
+    "name": "I. Ndiaye",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "a0bd8429-bd5a-444e-bc3e-e0e1892f1078",
+    "external_id": "2218",
+    "name": "I. Sarr",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "e9c9fce5-9684-4d1d-97fc-16dbc75816b8",
+    "external_id": "81",
+    "name": "K. Diatta",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "9e2754f4-c000-4114-8804-a6333c925fb7",
+    "external_id": "318",
+    "name": "K. Koulibaly",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "f5ac34da-02a4-4d15-8066-82f08550fb98",
+    "external_id": "384",
+    "name": "M. Loum",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "0c107f96-4657-4961-9073-b61a10802111",
+    "external_id": "175415",
+    "name": "M. N&apos;Diaye",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "26c8333e-dace-4fea-a6fb-3439ca9cf3b9",
+    "external_id": "23129",
+    "name": "M. Name",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "c607d4f7-6f3a-4b64-9d8f-43c27ff3d3d3",
+    "external_id": "283058",
+    "name": "N. Jackson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "a019c222-b3cb-40c0-97fe-f873de4ef8a0",
+    "external_id": "18785",
+    "name": "N. Mendy",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "2c9d7d6b-1cf1-4590-b342-a0c6b492636d",
+    "external_id": "41552",
+    "name": "P. Ciss",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "10928725-2d49-477c-9198-b406f470e859",
+    "external_id": "1592",
+    "name": "P. Cissé",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "a13ebabb-08a7-4bc3-962e-d0597a467c36",
+    "external_id": "20696",
+    "name": "P. Gueye",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "8aec5d7b-e398-4a4c-8b45-3dc305bb87e5",
+    "external_id": "237129",
+    "name": "P. Sarr",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "c0d1a7be-3fc0-4932-be7f-0e35427cb206",
+    "external_id": "45021",
+    "name": "S. Dieng",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "ef7ed470-e96a-426d-927e-cc00aae97183",
+    "external_id": "1264",
+    "name": "Y. Sabaly",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "de252f26-bac4-4c2c-86ea-09601bfb662b",
+    "external_id": "2986",
+    "name": "É. Mendy",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "636b5af0-07c5-4d67-8ddd-7c3ea858fcb0"
+  },
+  {
+    "id": "51ee8c6e-190a-42a3-9566-5ee9d9cf3130",
+    "external_id": "15623",
+    "name": "A. Bah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "92c1ea27-68d7-4b00-bc5d-d9c61537e83e",
+    "external_id": "2282",
+    "name": "A. Christensen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "54c7a2fd-fc8a-4c5d-b4f0-c880324d9118",
+    "external_id": "15916",
+    "name": "A. Skov Olsen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "3fced222-1b5d-4a91-8576-785c89bc7ba7",
+    "external_id": "174",
+    "name": "C. Eriksen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "a4ab76ce-d453-4088-8223-3cd93a486cf1",
+    "external_id": "30407",
+    "name": "C. Nørgaard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "b9f8e85c-1a7d-4c73-ad73-c0c1f36c3205",
+    "external_id": "932",
+    "name": "D. Wass",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "d7da888d-f5af-41b5-823d-a086a1d213a4",
+    "external_id": "1798",
+    "name": "F. Rønnow",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "88ded411-2eee-482f-8e5e-bda5d6f2e30c",
+    "external_id": "2729",
+    "name": "J. Andersen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "82c471c9-38c6-4422-b213-103c8eca0d50",
+    "external_id": "15884",
+    "name": "J. Lindstrøm",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "362b846b-660f-4794-9c46-becf93f69a65",
+    "external_id": "1930",
+    "name": "J. Mæhle",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "30307ad3-093d-47b4-8328-798c5616b5b6",
+    "external_id": "1302",
+    "name": "J. Wind",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "deca5562-b30e-4bcb-b4f8-49fc4330afd5",
+    "external_id": "550",
+    "name": "K. Dolberg",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "0067ae39-a8dc-41b0-986c-430aedaa6e74",
+    "external_id": "2728",
+    "name": "K. Schmeichel",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "02339fd8-433a-41f7-b29a-b6ecdadd11fc",
+    "external_id": "2737",
+    "name": "M. Braithwaite",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "e353cf30-edf2-440f-a234-b343c0da8efe",
+    "external_id": "15908",
+    "name": "M. Damsgaard",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "3896b9d6-61b2-41c0-abea-7ade965fd61e",
+    "external_id": "47438",
+    "name": "M. Jensen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "53dc6ca5-0ce2-4ee8-b8f9-8596b9eebf72",
+    "external_id": "15843",
+    "name": "O. Christensen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "d5c15138-bc51-4057-a4fd-f4b5f4ab82de",
+    "external_id": "2735",
+    "name": "P. Højbjerg",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "69c1bdf5-327e-4035-97c3-287b863a7a04",
+    "external_id": "533",
+    "name": "R. Kristensen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "d33e7639-0603-46da-8ad8-9f4965e95476",
+    "external_id": "1298",
+    "name": "R. Skov",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "3177f692-9fe9-4461-a58e-260a5e9d200f",
+    "external_id": "2045",
+    "name": "S. Kjær",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "e3188f86-c9ca-4397-ae04-98b9ba74c986",
+    "external_id": "15",
+    "name": "T. Delaney",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "fcf895ae-81fb-4196-b454-d5b3a6b8534b",
+    "external_id": "1167",
+    "name": "Y. Poulsen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "797c3ab2-e350-422e-aa7f-e3969446e696"
+  },
+  {
+    "id": "5e86b070-dacc-4710-8030-e935d5ca941e",
+    "external_id": "20355",
+    "name": "A. Ramsdale",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "272e38eb-c360-40e1-9ce5-7e17ebb4d47d",
+    "external_id": "1460",
+    "name": "B. Saka",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "632111e6-27fe-4b1b-8e4b-959dd5403ecc",
+    "external_id": "19959",
+    "name": "B. White",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "7ecd3518-c7ff-4490-af67-551b348d2329",
+    "external_id": "18741",
+    "name": "C. Coady",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "d5700553-9214-44f6-a90e-3e6d7ae3cd58",
+    "external_id": "67972",
+    "name": "C. Gallagher",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "43346be6-59a1-4206-a127-3cb83dcabb73",
+    "external_id": "2939",
+    "name": "C. Wilson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "97de98f0-9f16-4d89-88a4-c8ea6a6c274d",
+    "external_id": "2937",
+    "name": "D. Rice",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "7ad3aa36-b3a4-40d6-9fc4-a9d8e3ac5812",
+    "external_id": "175",
+    "name": "E. Dier",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "8585e41c-c230-4253-9282-cc1d62ca22ea",
+    "external_id": "184",
+    "name": "H. Kane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "98e17f14-45d1-46e7-b58c-9a9a2e35601b",
+    "external_id": "2935",
+    "name": "H. Maguire",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "5923fd9b-b84a-44f7-88b6-863267895fb5",
+    "external_id": "129718",
+    "name": "J. Bellingham",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "b8ad9740-270b-401a-b446-29561a52fdc6",
+    "external_id": "19187",
+    "name": "J. Grealish",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "2fc692dc-8d77-40ce-a078-fcdb43994548",
+    "external_id": "292",
+    "name": "J. Henderson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "9be2923a-5eac-4f37-bab9-8642880fc5f6",
+    "external_id": "18784",
+    "name": "J. Maddison",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "fdb79a4b-bf9d-4469-81cc-49822d91699e",
+    "external_id": "2932",
+    "name": "J. Pickford",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "37151008-e1b9-456e-8333-3e4387eacdc6",
+    "external_id": "626",
+    "name": "J. Stones",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "482cffae-27cd-4d2b-86d6-6c7357b05205",
+    "external_id": "19130",
+    "name": "K. Phillips",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "6518b6a7-10b0-4081-a266-26d6100bbfe5",
+    "external_id": "169",
+    "name": "K. Trippier",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "7b2b9de6-0e98-41fd-b7b7-849b21bb5d18",
+    "external_id": "627",
+    "name": "K. Walker",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "ae105488-96ae-46cb-9b4c-fbb1f55fe5c3",
+    "external_id": "891",
+    "name": "L. Shaw",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "80dd1597-9ea2-4379-a673-5f28c99013e4",
+    "external_id": "19220",
+    "name": "M. Mount",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "42355ef4-ff12-4f40-9949-50bb486f7454",
+    "external_id": "909",
+    "name": "M. Rashford",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "ee9522bb-83db-4580-bb96-cdcde8414794",
+    "external_id": "18911",
+    "name": "N. Pope",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "9b64dd73-0a68-43df-b751-eefd76ab77e9",
+    "external_id": "631",
+    "name": "P. Foden",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "a95ac3d1-3815-4626-ae24-80e3c3049e25",
+    "external_id": "645",
+    "name": "R. Sterling",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "5835c134-4661-4e37-9a80-a31eb69fb7e9",
+    "external_id": "283",
+    "name": "T. Alexander-Arnold",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08"
+  },
+  {
+    "id": "5184988c-9be2-40ba-94de-135dd9196470",
+    "external_id": "13955",
+    "name": "A. Contreras",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "cf341719-6c02-48c6-b574-ac95b6a68caa",
+    "external_id": "375012",
+    "name": "A. Hernández",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "4fb0829d-ea81-4007-9277-2ef1eaf9940e",
+    "external_id": "14206",
+    "name": "B. Aguilera",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "f8aefa86-2d96-4590-9a60-9889a8a15946",
+    "external_id": "19895",
+    "name": "B. Oviedo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "c4398d80-11ca-4959-beb5-2e594ffdc2cf",
+    "external_id": "2849",
+    "name": "Bryan Jafet Ruiz González",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "3c07b60e-931f-40be-b925-43e743d134df",
+    "external_id": "13939",
+    "name": "C. Martínez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "1492be5e-d451-41db-a5f7-4edf63b8f975",
+    "external_id": "13969",
+    "name": "D. Chacón",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "7526e9ff-1998-415f-899e-e0aa6b153abb",
+    "external_id": "14106",
+    "name": "D. López",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "4e96d450-96f5-498a-a5ae-289ce94cceac",
+    "external_id": "13952",
+    "name": "G. Torres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "8e828011-b959-420a-bbcf-801f300ab9e4",
+    "external_id": "325293",
+    "name": "J. Bennette",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "69081004-74c6-4c99-bb85-437d5ca444d7",
+    "external_id": "2845",
+    "name": "J. Campbell",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "9415c33c-4c43-4738-aec4-671afaea83dd",
+    "external_id": "2836",
+    "name": "J. Vargas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "c146d49a-b143-4422-812e-c65775a4b6a6",
+    "external_id": "13891",
+    "name": "J. Venegas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "1aa07f14-5dc2-4848-953d-e548d9060eba",
+    "external_id": "2832",
+    "name": "K. Fuller",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "3f2a9fcb-e40d-42a8-86c7-08ba0186bd36",
+    "external_id": "731",
+    "name": "K. Navas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "cbd63d44-a029-438a-ac0d-bd8d99c501df",
+    "external_id": "2837",
+    "name": "K. Waston",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "e91d979f-e737-4f19-ac74-ff160cfc0c88",
+    "external_id": "135148",
+    "name": "P. Sequeira",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "e08d6570-6223-4f6d-b254-7ae02814b528",
+    "external_id": "2834",
+    "name": "R. Matarrita",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "b0cd3438-7f8a-4aeb-b911-d74d48603faa",
+    "external_id": "14174",
+    "name": "R. Wilson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "37c94d32-d06e-4a9e-ba2c-18ce0aed9124",
+    "external_id": "13949",
+    "name": "Y. Salas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "a681bfa7-f068-4378-b7db-9ba62a35432c",
+    "external_id": "13951",
+    "name": "Y. Tejeda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "59aa4f9d-aed5-42c8-9e4e-062d2c89f475",
+    "external_id": "196254",
+    "name": "Á. Zamora",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "74a5b9e9-a361-44e2-9a3c-fd30bacbe8bd",
+    "external_id": "47328",
+    "name": "Ó. Duarte",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "7d64f7b6-14ed-49b0-be78-ab3b618e0e4e"
+  },
+  {
+    "id": "877dbc8f-f849-4c74-bc4a-89fe51928c28",
+    "external_id": "32966",
+    "name": "A. Tanaka",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "5e947d4f-04b4-4813-bd23-db55140cf854",
+    "external_id": "72155",
+    "name": "A. Ueda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "2dadf067-0a55-473d-9703-e5c875b34af0",
+    "external_id": "2601",
+    "name": "D. Kamada",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "e118081d-7b95-4c3e-a3e9-ae917aa05003",
+    "external_id": "33224",
+    "name": "D. Maeda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "cef1cf29-7be3-477c-a640-abf2922010e4",
+    "external_id": "2589",
+    "name": "D. Schmidt",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "d5b2d849-c8bc-4159-953c-c15144b63cd5",
+    "external_id": "22242",
+    "name": "E. Kawashima",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "943e3905-68e1-47ca-8c23-99281fb1d94d",
+    "external_id": "2604",
+    "name": "G. Shibasaki",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "bf36b5d6-d5a8-4418-a164-ae3c42cd77d2",
+    "external_id": "32893",
+    "name": "H. Ito",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "1023aa3b-7bde-46fc-b018-f6dcaa423f7d",
+    "external_id": "32960",
+    "name": "H. Morita",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "a08940d0-0175-4c20-94b1-13739732cfdc",
+    "external_id": "1907",
+    "name": "H. Sakai",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "dd5cf9db-0046-4298-a356-1b810a440535",
+    "external_id": "1942",
+    "name": "J. Ito",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "b6fd81ba-0717-4dd9-90d1-b27528664795",
+    "external_id": "38114",
+    "name": "K. Itakura",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "99843215-24d1-45d3-b7b5-f7d1d93cc0a4",
+    "external_id": "106835",
+    "name": "K. Mitoma",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "1c789686-d311-4091-8b52-3a915a8ac8c0",
+    "external_id": "33144",
+    "name": "M. Yamane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "ee722d81-ca7d-46b9-b1db-75bdb5fa5acd",
+    "external_id": "18944",
+    "name": "M. Yoshida",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "759525eb-3bef-4cf9-80c0-553f1747a2c8",
+    "external_id": "2598",
+    "name": "R. Dōan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "1bd7e1c9-a29f-4fae-945e-896f93f079f9",
+    "external_id": "41349",
+    "name": "S. Gonda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "84870c23-4975-4310-b5b2-df260f402b29",
+    "external_id": "106851",
+    "name": "S. Machino",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "eec4bfc5-e024-47b0-b1c1-e90a27391c02",
+    "external_id": "32954",
+    "name": "S. Taniguchi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "31d2692e-9674-4ea2-9bea-cf822c3f54b2",
+    "external_id": "25375",
+    "name": "T. Asano",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "e5305cf6-63c0-4ce7-afd3-9f597256c948",
+    "external_id": "32862",
+    "name": "T. Kubo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "730839b7-2ea0-42a1-b0d6-0883ec6bd26e",
+    "external_id": "1101",
+    "name": "T. Minamino",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "61682325-853d-4940-ae22-7211e47d3eec",
+    "external_id": "2597",
+    "name": "T. Tomiyasu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "8c76a2de-a8aa-49fd-a43a-6807d56deb98",
+    "external_id": "8500",
+    "name": "W. Endo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "d8c59d78-f94f-45de-aa11-369651c06a79",
+    "external_id": "36920",
+    "name": "Y. Nakayama",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "8341d853-364a-4a9e-a978-5066d4058f7d",
+    "external_id": "32902",
+    "name": "Y. Soma",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2"
+  },
+  {
+    "id": "c925968a-54a0-47a5-bff1-49a1041437e8",
+    "external_id": "16360",
+    "name": "A. Franco",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "de8987c9-7684-49bd-a12e-dc47f7a2fb67",
+    "external_id": "35786",
+    "name": "A. Preciado",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "b3efcade-9415-4512-a99a-0418ec9a34a9",
+    "external_id": "2583",
+    "name": "A. Preciado",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "d7f9b7df-d3a1-4849-a7b6-594878ea2c80",
+    "external_id": "2568",
+    "name": "Alexander Domínguez Carabalí",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "ea4cca0c-2c0e-4a97-9c73-24c0a670c815",
+    "external_id": "2577",
+    "name": "C. Gruezo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "c778e46d-b481-4904-a132-86303cbdca64",
+    "external_id": "36784",
+    "name": "D. Palacios",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "e66b4829-e1a2-44ab-b81d-8130857a3b27",
+    "external_id": "16480",
+    "name": "D. Reasco",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "0a6d20fe-822d-48d2-8943-6bb49323c047",
+    "external_id": "63964",
+    "name": "F. Torres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "d54c76fc-1cdb-4687-a06a-ead768f8ac2b",
+    "external_id": "16369",
+    "name": "G. Plata",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "43454248-70e3-4a8e-bf05-7791a151f5a9",
+    "external_id": "16380",
+    "name": "H. Galíndez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "db980d82-e4b3-4c48-9886-05f12684ae4c",
+    "external_id": "16776",
+    "name": "J. Cifuentes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "e789fad0-ffc6-4aba-8276-b05b74d775f8",
+    "external_id": "2581",
+    "name": "J. Méndez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "43168fc3-5589-4f80-b4ad-0ace1390c474",
+    "external_id": "2575",
+    "name": "J. Porozo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "a95dda04-57ca-4fee-952f-966a17e5bea0",
+    "external_id": "202086",
+    "name": "J. Sarmiento",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "3d2cd01a-312e-4511-a301-50a8f70c3266",
+    "external_id": "361966",
+    "name": "K. Rodríguez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "f0ba893a-3ec5-4af7-9f9b-9b8998c2276b",
+    "external_id": "116117",
+    "name": "M. Caicedo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "5cd078f5-5c77-45a6-a167-8b9dceadf317",
+    "external_id": "16432",
+    "name": "M. Estrada",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "684e74f9-e5a3-4349-a349-9bcca6a46981",
+    "external_id": "81224",
+    "name": "M. Ramírez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "d37e12df-e64a-4186-8086-b54810bab1b3",
+    "external_id": "46731",
+    "name": "P. Estupiñán",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "67327fdc-27c4-4f07-923d-c30283c85d04",
+    "external_id": "127817",
+    "name": "P. Hincapié",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "dd8a0db1-d020-4c7f-ac26-2b6e22c1fb78",
+    "external_id": "2571",
+    "name": "R. Arboleda",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "396a8439-162c-4334-b96e-6b881be94ef9",
+    "external_id": "2585",
+    "name": "R. Ibarra",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "764561d6-64f8-4602-9630-e497c5ae1c16",
+    "external_id": "16367",
+    "name": "W. Pacho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "be4fff22-4cee-4414-b23c-9460c9177145",
+    "external_id": "2572",
+    "name": "X. Arreaga",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "5da7781b-8e4b-42e8-b0a4-57c85e5b7076",
+    "external_id": "2586",
+    "name": "Á. Mena",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389"
+  },
+  {
+    "id": "cd2cfb05-a980-4923-b655-0fb799aa37e4",
+    "external_id": "860",
+    "name": "Alex Sandro",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "db1c8ce1-e282-4200-8b20-9225b4806c93",
+    "external_id": "280",
+    "name": "Alisson Becker",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "d8c39d09-c9c6-4dd8-b397-0e54dc8b88da",
+    "external_id": "9971",
+    "name": "Antony",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "8b436db3-39ac-45df-b073-995b6932ad19",
+    "external_id": "30497",
+    "name": "Bremer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "b9329876-29b1-4274-8fe8-bd73ca696f77",
+    "external_id": "10135",
+    "name": "Bruno Guimarães",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "699463eb-3e92-40e1-83dc-27abba2988a9",
+    "external_id": "747",
+    "name": "Casemiro",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "6e3327bc-8fc6-4243-85d4-e3e51d2bbc3f",
+    "external_id": "256",
+    "name": "Dani Alves",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "c804c20e-646f-4f8d-9dd7-b0a36bf0743f",
+    "external_id": "618",
+    "name": "Danilo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "b8d2a7eb-8a8d-45e3-9c99-6e69cd315528",
+    "external_id": "299",
+    "name": "Fabinho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "be1865d7-ce58-4e7a-8a8c-1dff3c066e0e",
+    "external_id": "643",
+    "name": "Gabriel Jesus",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "9b3b7339-4505-424f-9a93-500ea0fe217a",
+    "external_id": "127769",
+    "name": "Gabriel Martinelli",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "a511845d-5142-46c0-b5be-7eb5bac46e8f",
+    "external_id": "1646",
+    "name": "Lucas Paquetá",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "d2396b26-e1d6-4505-afcb-3bec3735ce0f",
+    "external_id": "257",
+    "name": "Marquinhos",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "bdddd062-5bc5-498d-a090-92c80d9cb03c",
+    "external_id": "276",
+    "name": "Neymar",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "bb559d8d-61ce-42b1-8aba-c52edc4e34f9",
+    "external_id": "10321",
+    "name": "Pedro",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "7f8fe9b8-90d2-42b8-a857-8373d7efa79d",
+    "external_id": "1496",
+    "name": "Raphinha",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "5c543c63-f7b8-4433-b8c4-c7edc5695cf9",
+    "external_id": "2413",
+    "name": "Richarlison",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "89e77f03-505e-4fb9-acec-84c367e0cdf2",
+    "external_id": "10009",
+    "name": "Rodrygo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "93889ba1-5458-4433-9dd9-28bb236273f2",
+    "external_id": "259",
+    "name": "Thiago Silva",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "37e130c2-bf33-48ad-abc5-ce2dcad7b283",
+    "external_id": "762",
+    "name": "Vinícius Júnior",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "60e6144e-f522-4a99-9ebc-89b8b2ceedaa",
+    "external_id": "2410",
+    "name": "Weverton",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "ce2f7a1b-06aa-4aed-9fe4-d21baefe35dd",
+    "external_id": "372",
+    "name": "Éder Militão",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "7b93d72b-d968-4ee1-9e4c-70deb620a86f",
+    "external_id": "10168",
+    "name": "Éverton Ribeiro",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe"
+  },
+  {
+    "id": "6dff6b6f-867e-451e-be45-04e4ff8edbe9",
+    "external_id": "44475",
+    "name": "Abdulelah Al Amri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "95d370a7-dc21-4363-bfdb-6c9ef8409c80",
+    "external_id": "44483",
+    "name": "Abdulelah Al Malki",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "3c0c873f-0831-4a3b-a978-78dc52d6c27d",
+    "external_id": "44303",
+    "name": "Abdullah Madu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "649ac7d5-9d8c-4cac-9ed5-99f17921974f",
+    "external_id": "44350",
+    "name": "Abdullah Otayf",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "a56ce64e-5f6d-4b6b-a613-5d1d674c851c",
+    "external_id": "44586",
+    "name": "Abdulrahman Al Obud",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "aa541162-2170-42a3-bb28-138ae7586648",
+    "external_id": "44332",
+    "name": "Ali Al Bulayhi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "c39d3626-efb1-431a-b339-6e878aa11d57",
+    "external_id": "44509",
+    "name": "Ali Al Hassan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "d8fc6ccb-3aa6-4a43-b5fe-8563191a9eaa",
+    "external_id": "44324",
+    "name": "Feras Al Brikan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "c966367b-0b2a-4562-abfe-bacaf8bedcf6",
+    "external_id": "268087",
+    "name": "Haitham Asiri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "8ecf52d6-18f2-4eb6-b3af-cb155903dc08",
+    "external_id": "44362",
+    "name": "Hassan Tambakti",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "199eb536-15cf-4eca-917a-ef72033add42",
+    "external_id": "44347",
+    "name": "Hattan Bahbri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "aaa8dad9-0134-4768-af95-803462837cfd",
+    "external_id": "44349",
+    "name": "Mohamed Kanno",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "41aef21b-7f90-4fd2-bd79-f507e8187f37",
+    "external_id": "44329",
+    "name": "Mohammed Al Burayk",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "f4f4835e-8c06-44f5-b877-742ff7f7378a",
+    "external_id": "44411",
+    "name": "Mohammed Al Owais",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "f6134844-3a45-44ea-b700-d96586faf4d7",
+    "external_id": "44709",
+    "name": "Mohammed Al Yami",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "d3262854-9a33-4699-8cce-ec8514bad020",
+    "external_id": "44339",
+    "name": "Nasser Al Dawsari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "10810820-b19a-4652-8a2d-2044cdd5075c",
+    "external_id": "44338",
+    "name": "Nawaf Al Abid",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "c66e2618-ff49-49cc-9c99-78fa520daa7c",
+    "external_id": "193288",
+    "name": "Nawaf Al Aqidi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "a70aa6b8-9917-4f0d-a0b1-31f0c3bd7bc8",
+    "external_id": "104652",
+    "name": "Riyadh Sharahili",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "444c032d-86a5-461b-ac00-ac14b73dc29d",
+    "external_id": "44551",
+    "name": "Saleh Al Shehri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "af70a076-4762-49f7-89a5-d3bbfa949ae2",
+    "external_id": "44340",
+    "name": "Salem Al Dawsari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "7ab7258b-cff5-42b8-8578-c9635c324a5d",
+    "external_id": "44341",
+    "name": "Salman Al Faraj",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "11e6620c-c7e7-4d20-91f5-11ca9c1191ef",
+    "external_id": "44692",
+    "name": "Sami Al Naji",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "7548c566-0b97-426c-a2aa-6ee24d26d8a9",
+    "external_id": "44594",
+    "name": "Saud Abdulhamid",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "41000c94-8aca-434b-b879-95e5add629af",
+    "external_id": "44309",
+    "name": "Sultan Al Ghannam",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "d0321232-a5e5-4d6c-8fed-9e5be216bf07",
+    "external_id": "44331",
+    "name": "Yasir Al Shahrani",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b030bab6-6654-47d4-b48e-237b273e2818"
+  },
+  {
+    "id": "49eab9fd-834f-42b3-996d-2825d7c0f96b",
+    "external_id": "2527",
+    "name": "Abdelkarim Hassan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "9dbce14f-81b6-4bb7-b394-f6bf34cb1253",
+    "external_id": "2533",
+    "name": "Abdulaziz Hatem",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "cc4becdd-9c8a-42a7-b6a5-6a656ed0d52d",
+    "external_id": "2542",
+    "name": "Ahmed Alaa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "69153e83-64e4-4d6b-8a56-f3e9576de2cb",
+    "external_id": "2544",
+    "name": "Akram Afif",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "97447dc4-0bb9-430e-bc33-732eeb28c8a2",
+    "external_id": "42044",
+    "name": "Ali Asad",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "08a7fae7-42a7-4043-86ec-09c54c692764",
+    "external_id": "2543",
+    "name": "Almoez Ali",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "1e52e030-5916-4de8-b998-ceba19917e4c",
+    "external_id": "2535",
+    "name": "Assim Madibo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "8c2282d6-66b5-40a0-9ac8-a47c034851fc",
+    "external_id": "2536",
+    "name": "Bassam Al Rawi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "ed21c468-c85f-46fb-94fb-88af4c7aaef4",
+    "external_id": "2532",
+    "name": "Boualem Khoukhi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "555d5757-b6c1-4b9f-a7a1-5756978f7c81",
+    "external_id": "2545",
+    "name": "Hassan Al Haydos",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "eeb30ba1-824a-40c5-9d0f-bc20f0dca8e8",
+    "external_id": "175439",
+    "name": "Homam Ahmed",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "406a8bbe-370a-448c-a332-d0a3487aab52",
+    "external_id": "42088",
+    "name": "Ismaeel Mohammad",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "befc5819-adf5-4f49-889d-249759f5988c",
+    "external_id": "200981",
+    "name": "Jassem Gaber",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "4e6b786c-9d0f-4bc9-a580-374125fe095e",
+    "external_id": "2537",
+    "name": "Karim Boudiaf",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "93d00df5-46d0-48e4-81bd-5e9f01cec8ba",
+    "external_id": "42087",
+    "name": "Khalid Muneer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "58c75cbf-ba57-4a46-ae57-1a677721629e",
+    "external_id": "42021",
+    "name": "Meshaal Barsham",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "b35c2ebd-3f08-48bc-9b41-28395b39d0d6",
+    "external_id": "42089",
+    "name": "Mohammed Muntari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "5919e98c-d4c0-4f1b-8422-831b376a5225",
+    "external_id": "42180",
+    "name": "Mohammed Waad",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "509b86ad-e44b-45bb-a885-cee9f99a143f",
+    "external_id": "42043",
+    "name": "Mostafa Meshaal",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "88291683-617b-4668-842d-f47d4b8aecd0",
+    "external_id": "42215",
+    "name": "Musaab Khidir",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "b2efdcbe-ce8e-48e8-af62-678a83a9d573",
+    "external_id": "182330",
+    "name": "Naif Al Hadhrami",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "54242a83-6a4e-4779-94ca-fec596381348",
+    "external_id": "2530",
+    "name": "Pedro Miguel",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "6541a8f6-0a83-4138-8e41-81cd277a4273",
+    "external_id": "2525",
+    "name": "Saad Al Sheeb",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "d90b7206-98f4-455d-ba34-d9b91e882c18",
+    "external_id": "2528",
+    "name": "Salem Al Hajri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "2ff8f059-7a38-4522-ab6e-286bd3b1ffc0",
+    "external_id": "2541",
+    "name": "Tarek Salman",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "5bbe94d0-c401-4733-b051-2bdf20440eea",
+    "external_id": "2526",
+    "name": "Yousef Hassan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b11f5769-20cd-4c21-8754-15e16c177431"
+  },
+  {
+    "id": "87af5d35-6c16-4c3c-af6f-d242aed90ae2",
+    "external_id": "36540",
+    "name": "A. Dari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "34a5d0ab-ac7a-4927-a6dd-7662fc69a960",
+    "external_id": "181421",
+    "name": "A. Ezzalzouli",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "9d77665a-fd78-411d-aed1-e1a1675cb4c7",
+    "external_id": "9",
+    "name": "A. Hakimi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "43230b5b-aa96-4a79-be63-957b4b0edb26",
+    "external_id": "44325",
+    "name": "A. Hamed Allah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "425dc4de-0ccb-4d99-a5a0-f2f7fabe8bb7",
+    "external_id": "412",
+    "name": "A. Harit",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "2062303c-f74f-4050-ac95-2257567f6af1",
+    "external_id": "129678",
+    "name": "A. Ounahi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "52edb441-9af2-4e4d-9af0-80ef87870354",
+    "external_id": "19053",
+    "name": "A. Sabiri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "2711a783-c805-4236-80f2-8d89b6da06b5",
+    "external_id": "2703",
+    "name": "A. Tagnaouti",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "692397ed-e19c-49c6-b587-1189d1a93083",
+    "external_id": "129169",
+    "name": "A. Zaroury",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "48267247-8e94-4d6e-8aa3-5314ea323eb3",
+    "external_id": "36556",
+    "name": "B. Benoun",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "0af7a6c2-3ba9-4495-ad65-be358bc45acf",
+    "external_id": "340573",
+    "name": "B. El Khannouss",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "93aef5eb-2ff8-45a2-8ce6-c080af894aa3",
+    "external_id": "548",
+    "name": "H. Ziyech",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "ddf36952-7e43-486d-9541-1262e589adde",
+    "external_id": "17632",
+    "name": "I. Chair",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "4548bc90-c654-4922-8af5-00c97a92a4bc",
+    "external_id": "31386",
+    "name": "J. El Yamiq",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "e5592be2-9cf1-4eab-8323-44fd6113ad2c",
+    "external_id": "21694",
+    "name": "N. Aguerd",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "67287db9-a08b-4681-a238-aa5b8b118497",
+    "external_id": "545",
+    "name": "N. Mazraoui",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "68e3a46c-cc4f-4a7f-b0c6-4f0c763886b5",
+    "external_id": "8587",
+    "name": "S. Amallah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "5832560d-2d1a-483f-9539-4e051f6c12d6",
+    "external_id": "2710",
+    "name": "S. Boufal",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "1b66333b-bd33-40e9-b862-7e21524f8de4",
+    "external_id": "128478",
+    "name": "W. Cheddira",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "1d581415-989f-4dfe-be54-cc997fb31fe9",
+    "external_id": "135836",
+    "name": "Y. Attiat-Allah",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "9eb893ee-275c-415c-b814-fbb6a998add4",
+    "external_id": "2701",
+    "name": "Y. Bounou",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "48557b6c-5c26-4dec-bdf7-d132502a5b7c",
+    "external_id": "36544",
+    "name": "Y. Jabrane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "47e1186a-cdfc-4711-92ad-2d5944b128cb",
+    "external_id": "243",
+    "name": "Z. Aboukhlal",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc"
+  },
+  {
+    "id": "0a29e9a9-bcfe-48dd-bf97-69451c7e583d",
+    "external_id": "34211",
+    "name": "Cho Gue-Sung",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "932cf8d8-45ba-4417-b3c9-ca5ce13ba20c",
+    "external_id": "34239",
+    "name": "Cho Yu-Min",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "d46b5498-51d8-4e90-b1cd-a55968d0aedc",
+    "external_id": "2894",
+    "name": "Hong Chul",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "1eb085c1-9caa-40f7-a67c-564ee43059ed",
+    "external_id": "24888",
+    "name": "Hwang Hee-Chan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "64d1a979-fe8c-4ffa-b1bf-562c23e81393",
+    "external_id": "2901",
+    "name": "Hwang In-Beom",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "c464483d-3f71-4cbb-8ab7-8d7f6f0f1f35",
+    "external_id": "512",
+    "name": "Jeong Woo-Yeong",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "d1f1b21d-33cf-48cd-986e-e45769efd644",
+    "external_id": "2890",
+    "name": "Jo Hyeon-Woo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "a1715c4b-e2a1-45cd-b266-8a45741c56ca",
+    "external_id": "2903",
+    "name": "Jung Woo-Young",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "4054f37f-5b73-4045-96ba-3ef7f64a041a",
+    "external_id": "2896",
+    "name": "Kim Jin-Su",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "0df2ec52-4675-4133-9a63-8aaa9fe483ca",
+    "external_id": "2912",
+    "name": "Kim Moon-Hwan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "3aa8f7b1-0f56-4410-95d8-301b822caf0b",
+    "external_id": "2892",
+    "name": "Kim Seung-Gyu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "5bcabec6-acb0-4dad-bfd9-7829fc75d789",
+    "external_id": "34417",
+    "name": "Kim Tae-Hwan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "a52100fd-b823-4dbe-ae2f-a006c921cbfc",
+    "external_id": "2898",
+    "name": "Kim Young-Gwon",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "e178fc0f-bef6-4a1c-9de1-882397fc84ba",
+    "external_id": "2913",
+    "name": "Kwon Chang-Hoon",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "3b2c06c6-2ee4-4ec8-bb90-c70393bf9085",
+    "external_id": "2899",
+    "name": "Kwon Kyung-Won",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "c1022893-8665-48da-8a87-bb8f504d5550",
+    "external_id": "2906",
+    "name": "Lee Jae-Sung",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "14b6f6dc-14b9-4326-97eb-53de9ea6fa0d",
+    "external_id": "927",
+    "name": "Lee Kang-In",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "a9d55ac6-4342-4602-820f-bd045a75c2a2",
+    "external_id": "2908",
+    "name": "Na Sang-Ho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "39218491-6b05-4c42-bacc-07653e4585a0",
+    "external_id": "2909",
+    "name": "Paik Seung-Ho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "1c936879-2b1a-458e-a80c-7cc9739fb1ed",
+    "external_id": "186",
+    "name": "Son Heung-Min",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "1ca5a81c-f04a-4319-877d-07096eb05de9",
+    "external_id": "34395",
+    "name": "Son Jun-Ho",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "529872be-55a3-46e2-902e-63402ef1d16b",
+    "external_id": "34374",
+    "name": "Song Bum-Keun",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "56f92059-75e3-46d5-b5c1-2e8496351bd1",
+    "external_id": "34598",
+    "name": "Song Min-Kyu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "c56095b1-49f7-42ba-a9aa-bb458b2da3c1",
+    "external_id": "34504",
+    "name": "Yoon Jong-Gyu",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "b8c5c26e-1404-4b02-833b-c543efecc3f5"
+  },
+  {
+    "id": "bb8d4a13-95b7-41c5-9af5-414c7fba5637",
+    "external_id": "264705",
+    "name": "A. Jashari",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "8ff42a73-ccfb-4866-ab67-297cf76c5536",
+    "external_id": "421",
+    "name": "B. Embolo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "821bd879-5bac-4f2d-bb55-f4552d475bbf",
+    "external_id": "952",
+    "name": "C. Fassnacht",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "c2754111-b743-4c56-b8a8-0e23e8713cdb",
+    "external_id": "957",
+    "name": "D. Sow",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "64c7f21d-72f4-4c1f-9582-c023a87cf1ce",
+    "external_id": "2810",
+    "name": "D. Zakaria",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "ae2ff1aa-907f-4394-b9aa-cf8d3b7e8c87",
+    "external_id": "48372",
+    "name": "E. Cömert",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "1913f477-5e27-49c4-99a2-47d46a6c8357",
+    "external_id": "30405",
+    "name": "E. Fernandes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "79a51c3a-cd78-4583-83fb-d18f923bbe18",
+    "external_id": "48382",
+    "name": "F. Frei",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "13bf1a42-2d87-4db7-aaa6-7162f13cc9a8",
+    "external_id": "163032",
+    "name": "F. Rieder",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "999186dc-211d-4664-a11c-3a78285c1f35",
+    "external_id": "2806",
+    "name": "F. Schär",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "002faee3-e6d1-4d8d-9f7c-efda9edd1eae",
+    "external_id": "25282",
+    "name": "G. Kobel",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "b8df98b2-b161-4159-9a84-e521ffcfc856",
+    "external_id": "1464",
+    "name": "G. Xhaka",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "75aa18db-ce25-481e-9109-852276b05bf9",
+    "external_id": "2801",
+    "name": "J. Omlin",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "1ea5613d-3095-4c1d-a622-8a42d2fe0e79",
+    "external_id": "951",
+    "name": "M. Aebischer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "fbd95265-7831-40f1-b142-ab78376584f4",
+    "external_id": "5",
+    "name": "M. Akanji",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "8b7b29fc-4664-4675-aea6-659689ea29b8",
+    "external_id": "2803",
+    "name": "N. Elvedi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "a76026a8-33ca-4130-ba1e-c0c584bfdcd5",
+    "external_id": "48389",
+    "name": "N. Okafor",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "21397033-44f5-40d5-9708-df1cacef2f86",
+    "external_id": "7313",
+    "name": "P. Köhn",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "778beb8f-db93-4754-8069-e0bcc87248ed",
+    "external_id": "2807",
+    "name": "R. Freuler",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "cde538a8-27ab-46e3-aad1-f5f4f4454039",
+    "external_id": "1631",
+    "name": "R. Rodríguez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "4c1215b7-ed5c-47b0-ad2d-d6dee26818a5",
+    "external_id": "2809",
+    "name": "R. Steffen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "0e68b160-4743-4539-94de-4f7cb741a8c4",
+    "external_id": "48471",
+    "name": "R. Vargas",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "a1238c21-434b-42cf-8566-c8bb5ef878bc",
+    "external_id": "48378",
+    "name": "S. Widmer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "74f113ac-5495-40b6-bbe7-e7a68e1a75e9",
+    "external_id": "307",
+    "name": "X. Shaqiri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "16417e9c-1c66-4c31-b639-53a543fab689",
+    "external_id": "2802",
+    "name": "Y. Sommer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfc78484-67e9-4d86-914b-d5dc57601cf6"
+  },
+  {
+    "id": "4d598564-34ed-4bdf-8b59-846b93323a04",
+    "external_id": "49583",
+    "name": "A. Abdi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "6a89e519-cff4-435d-a0f4-b0774f4d3ac3",
+    "external_id": "2942",
+    "name": "A. Balbouli",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "32ffb5be-9438-4746-973a-f3931f2bfeb1",
+    "external_id": "199310",
+    "name": "A. Ben Slimane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "e4c3fdc7-5da7-452a-a6bf-3490d1b1f3b9",
+    "external_id": "49424",
+    "name": "A. Dahmen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "2a0a8913-6a46-4cbb-ad47-541702166514",
+    "external_id": "43246",
+    "name": "A. Laïdouni",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "2adadaff-65df-4191-b377-3999298febef",
+    "external_id": "2947",
+    "name": "A. Maâloul",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "9015ff9b-21b6-4090-9af5-4ddcc58f2cf4",
+    "external_id": "49610",
+    "name": "B. Ben Saïd",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "0c72fe7c-9981-48c3-a29c-644e3756aac7",
+    "external_id": "49587",
+    "name": "B. Ifa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "4b42621a-f633-49f0-818e-7fb20c6412fa",
+    "external_id": "2945",
+    "name": "D. Bronn",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "e1816088-771f-4298-832d-2d37f891dec3",
+    "external_id": "21587",
+    "name": "E. Skhiri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "527e9cdb-5b71-4439-82f0-0d94e5ef912c",
+    "external_id": "2957",
+    "name": "F. Sassi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "5cb98d78-0364-4d84-b975-5a50fed65d84",
+    "external_id": "180560",
+    "name": "H. Mejbri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "08d93962-be97-4ca0-a1f5-674c2d80adb1",
+    "external_id": "44497",
+    "name": "I. Jebali",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "16906821-5200-4aa1-a41c-694f437f4e27",
+    "external_id": "49404",
+    "name": "M. Ben Romdhane",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "0483c47b-57b3-4a24-8dba-01cb09ca62c0",
+    "external_id": "2952",
+    "name": "M. Dräger",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "1b002000-bc98-46d1-917b-186bdcc59cba",
+    "external_id": "2941",
+    "name": "M. Hassen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "76d4b4d3-6d7b-4138-af30-0e8acd50c88f",
+    "external_id": "8990",
+    "name": "N. Ghandri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "792e127c-5ae3-4d73-967a-b328a095750e",
+    "external_id": "2958",
+    "name": "N. Sliti",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "6465ef35-557e-44cc-97d1-88714e5c3936",
+    "external_id": "16933",
+    "name": "S. Jaziri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "a45ea147-f7f7-46fc-814c-3b4c9e392fb1",
+    "external_id": "2963",
+    "name": "T. Khenissi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "13d97245-2aa4-4f5d-8257-a938ca7f9d5c",
+    "external_id": "2954",
+    "name": "W. Kechrida",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "04ba64cc-0c9d-4fcc-9944-d39b214fe337",
+    "external_id": "22102",
+    "name": "W. Khazri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "11bd3e49-1005-45d3-9ecd-6c9dca8f65fd",
+    "external_id": "2964",
+    "name": "Y. Msakni",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "bfe47f27-6a3c-4bb8-864f-dfe5ca7db0dc"
+  },
+  {
+    "id": "ab5e7616-21ce-4caf-998a-e17b9b2cfac2",
+    "external_id": "6716",
+    "name": "A. Mac Allister",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "5ec173e3-2c22-40f3-aec1-d0faab47e685",
+    "external_id": "30776",
+    "name": "C. Romero",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "554eba92-6895-41b7-9f99-adad4126c4d6",
+    "external_id": "5996",
+    "name": "E. Fernández",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "54702700-c140-45ad-8585-8411ba5d4a53",
+    "external_id": "19599",
+    "name": "E. Martínez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "192a1767-135a-4f48-9c40-c6f003b6d0ef",
+    "external_id": "6002",
+    "name": "E. Palacios",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "00780e1e-d02d-4b4c-9096-fc29de342aa2",
+    "external_id": "2463",
+    "name": "F. Armani",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "cf21656c-5d50-4aa7-8dc3-b5476fa52278",
+    "external_id": "2468",
+    "name": "G. Montiel",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "cfc63385-aa7b-44c7-b752-8f024b763152",
+    "external_id": "2469",
+    "name": "G. Pezzella",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "a32be1b7-3b85-4066-8af4-b8224862cd3b",
+    "external_id": "2476",
+    "name": "G. Rodríguez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "23e273d7-6d98-4240-9f2d-75b6d0bb8bbb",
+    "external_id": "47296",
+    "name": "G. Rulli",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "37865b46-d85a-4ba6-a191-5eae79378285",
+    "external_id": "166",
+    "name": "J. Foyth",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "1f59f1dd-e69a-40ef-a7c4-2b42c4eed4f8",
+    "external_id": "6009",
+    "name": "J. Álvarez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "384abf8b-e9b5-4f43-9af6-f41de545887c",
+    "external_id": "154",
+    "name": "L. Messi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "8f055fce-953c-4d3d-95a6-73fb5ef2558a",
+    "external_id": "271",
+    "name": "L. Paredes",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "a457481f-378b-4497-8b7c-eb448e884f7d",
+    "external_id": "217",
+    "name": "Lautaro Martínez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "4cd3bb19-9e4d-4b2c-8cb3-eabfcb0eb30d",
+    "external_id": "2467",
+    "name": "Lisandro Martínez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "afd1723f-4658-4fa5-a4df-95c09c016cb0",
+    "external_id": "1493",
+    "name": "M. Acuña",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "c0b91c74-2d90-4e7b-a870-4163675b5bf6",
+    "external_id": "6503",
+    "name": "N. Molina",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "a1b2e117-934c-46fe-9a4d-c12833766d73",
+    "external_id": "624",
+    "name": "N. Otamendi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "214114ba-c619-4634-90c9-86c02642b344",
+    "external_id": "529",
+    "name": "N. Tagliafico",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "19a8f111-ab0f-4bac-bb69-dae158aab760",
+    "external_id": "875",
+    "name": "P. Dybala",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "1f5dc58d-62a1-4628-b32d-51d4c4633838",
+    "external_id": "30433",
+    "name": "P. Gómez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "73be9244-5516-43e4-9d59-1a9dfdb446eb",
+    "external_id": "2472",
+    "name": "R. De Paul",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "cbcd1496-43a9-4d24-a846-fc72fc106ebc",
+    "external_id": "6067",
+    "name": "T. Almada",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "501757be-8109-41a1-9884-0e1f45f8e108",
+    "external_id": "53",
+    "name": "Á. Correa",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "9465ba29-5f5d-4356-bd78-71af3580e36b",
+    "external_id": "266",
+    "name": "Á. Di María",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397"
+  },
+  {
+    "id": "d21c4c4a-e617-4922-8990-48be3fe922c8",
+    "external_id": "161928",
+    "name": "Alejandro Balde",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "20b4957d-66b0-421e-b5ed-947d55f9f8b2",
+    "external_id": "135775",
+    "name": "Ansu Fati",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "aebf2c85-547f-4f91-9640-c257fc82e415",
+    "external_id": "622",
+    "name": "Aymeric Laporte",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "b00a03ae-89b5-4465-8a6e-3197ea4f7fa7",
+    "external_id": "930",
+    "name": "Carlos Soler",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "770fe88d-4630-4e10-9b98-76dddfbadd5e",
+    "external_id": "2280",
+    "name": "César Azpilicueta",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "db288a5c-8de9-44ea-995e-da37a9f45dfe",
+    "external_id": "733",
+    "name": "Dani Carvajal",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "b337df7a-675e-4f91-b3f0-eb1e59365509",
+    "external_id": "1323",
+    "name": "Dani Olmo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "58758da8-8a72-4725-bdec-e4e74780cfa5",
+    "external_id": "19465",
+    "name": "David Raya",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "b4f8f7ee-ca37-4018-b740-a4caa04f3bce",
+    "external_id": "619",
+    "name": "Eric García",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "19afcd30-acd9-41e7-ad08-b25152f92d87",
+    "external_id": "931",
+    "name": "Ferran Torres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "3d2c87b2-5d2e-4574-a7fc-e6335986d94a",
+    "external_id": "296667",
+    "name": "Gavi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "19e09eb9-f4cd-48e9-a529-536f13093807",
+    "external_id": "919",
+    "name": "Hugo Guillamón",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "9804f612-5a33-494e-afdc-444eb50a4b04",
+    "external_id": "128",
+    "name": "Jordi Alba",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "803f13fe-72e5-44ff-b38e-9d74c9044306",
+    "external_id": "50",
+    "name": "Koke",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "5c220fda-ceee-4b66-8fb4-27c446aa5e60",
+    "external_id": "746",
+    "name": "Marco Asensio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "323eb993-d896-4ffe-a70f-83953367a6ff",
+    "external_id": "753",
+    "name": "Marcos Llorente",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "dfacea8b-6e1b-470d-82ee-3899efcb41f0",
+    "external_id": "183799",
+    "name": "Nico Williams",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "0a449635-215a-4cc0-b1ef-c7a0aac08e53",
+    "external_id": "2056",
+    "name": "Pablo Sarabia",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "976da24e-80c8-4f56-ab30-96347d3bebdd",
+    "external_id": "46815",
+    "name": "Pau Torres",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "b1734b23-54f6-4101-bfd5-c142da78dbdc",
+    "external_id": "133609",
+    "name": "Pedri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "5c294331-9258-4a68-bde0-1ae375379ad3",
+    "external_id": "18959",
+    "name": "Robert Sánchez",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "ab27f896-6739-433b-a435-677eb1331702",
+    "external_id": "44",
+    "name": "Rodri",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "36f73d1b-5ce1-49a6-acd4-1738afa70555",
+    "external_id": "144",
+    "name": "Sergio Busquets",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "9ac7a74b-1a18-4856-9d04-a87a083b9d2d",
+    "external_id": "47270",
+    "name": "Unai Simón",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "f20db98b-09e6-4429-a649-12a5889fd1be",
+    "external_id": "184226",
+    "name": "Yeremy Pino",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf"
+  },
+  {
+    "id": "0dbce333-bece-442b-860d-fda856698139",
+    "external_id": "25061",
+    "name": "A. Bella-Kotchap",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "a1df4086-929d-4ad1-b391-f1078e4cd546",
+    "external_id": "2285",
+    "name": "A. Rüdiger",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "2a24b7d8-c482-45ed-9ccd-b741378b2431",
+    "external_id": "26236",
+    "name": "C. Günter",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "32fc262e-cbdf-4f50-8e69-56e1a7976360",
+    "external_id": "25158",
+    "name": "D. Raum",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "c19a67fc-f58a-4e9e-b68d-d3e9f838de39",
+    "external_id": "984",
+    "name": "J. Brandt",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "25bfe2ce-c076-4108-96c6-ac920a39a4ef",
+    "external_id": "25635",
+    "name": "J. Hofmann",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "764868ff-155f-483b-8583-7088e231b7d6",
+    "external_id": "502",
+    "name": "J. Kimmich",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "3acbed2a-02e4-47a3-825d-0173c7294e95",
+    "external_id": "181812",
+    "name": "J. Musiala",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "308b34d4-e1fd-4309-8b1a-aaf52ca5851a",
+    "external_id": "7334",
+    "name": "K. Adeyemi",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "ce7c0dd1-cfba-40f2-990b-dbc1b621fa30",
+    "external_id": "978",
+    "name": "K. Havertz",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "3394c51d-c65d-474f-950b-db596a42a255",
+    "external_id": "1800",
+    "name": "K. Trapp",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "1339280c-5468-4a99-940c-f1c0f90b212b",
+    "external_id": "511",
+    "name": "L. Goretzka",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "78cd6a7e-3542-42c4-81a3-532a2f962a63",
+    "external_id": "1144",
+    "name": "L. Klostermann",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "20b4bedf-6cc3-42d2-8acf-53b86eda4b13",
+    "external_id": "2915",
+    "name": "M. Ginter",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "c6378f10-1d3c-400b-8815-8fa1edef224f",
+    "external_id": "16",
+    "name": "M. Götze",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "925a0b64-e978-4b3b-b045-b00eb085c79f",
+    "external_id": "497",
+    "name": "M. Neuer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "142bd878-31c3-42e6-b361-c36f5e6b05be",
+    "external_id": "127",
+    "name": "M. ter Stegen",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "8c0a4c34-8b49-4369-886a-7dbbadb689f8",
+    "external_id": "25391",
+    "name": "N. Füllkrug",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "a66311f4-3a0e-45bf-ac60-5aceb261f18e",
+    "external_id": "26243",
+    "name": "N. Schlotterbeck",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "35ead48e-0239-4382-bf48-57bad9d0e547",
+    "external_id": "506",
+    "name": "N. Süle",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "25798e71-972f-4bac-99c2-a2af5ea82677",
+    "external_id": "510",
+    "name": "S. Gnabry",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "87dc5687-84e2-48bc-8664-24ecd3dcb7ec",
+    "external_id": "261",
+    "name": "T. Kehrer",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "5288403c-7430-400a-8ae4-b3f293301aab",
+    "external_id": "522",
+    "name": "T. Müller",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "14795be8-97a6-461c-88c4-8f9e40d98310",
+    "external_id": "161919",
+    "name": "Y. Moukoko",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18"
+  },
+  {
+    "id": "534ed306-7eda-45da-8f9c-1d4ed584328f",
+    "external_id": "509",
+    "name": "A. Davies",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "ebf2e91c-1aad-4a90-9a18-d585f2bc0ccd",
+    "external_id": "1990",
+    "name": "A. Hutchinson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "6dd13624-a8ca-41dc-a9af-c41b2b8a9e3f",
+    "external_id": "78547",
+    "name": "A. Johnston",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "c6ee1583-c94b-4055-b2b4-75a6dba3f9d4",
+    "external_id": "51295",
+    "name": "D. Cornelius",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "b9214514-62fb-4d8c-a873-280772b31f72",
+    "external_id": "51148",
+    "name": "D. St. Clair",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "c91d16a5-2bfc-4748-9e80-ff4d83105b40",
+    "external_id": "44903",
+    "name": "D. Wotherspoon",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "024856e4-f340-4507-9eff-94ea4943bd4a",
+    "external_id": "328046",
+    "name": "I. Koné",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "627d41dd-d51e-45b5-a2e5-0b68a29bdfc7",
+    "external_id": "67973",
+    "name": "I. Ugbo",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "2a2ecc4d-79bb-45b7-9bdd-d404b5e02faf",
+    "external_id": "8489",
+    "name": "J. David",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "e6915f17-c93c-45e1-9d37-e3478f24fc30",
+    "external_id": "19007",
+    "name": "J. Hoilett",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "dd05769d-6004-44cc-87b1-e730f50a2d83",
+    "external_id": "50817",
+    "name": "J. Osorio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "bde37d82-5566-4a5f-812e-586164cf0276",
+    "external_id": "50778",
+    "name": "J. Pantemis",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "a1327dcf-8d95-4bc7-b8fa-dfc97424ae1e",
+    "external_id": "78494",
+    "name": "J. Waterman",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "f434f1d5-c9cf-4284-bf28-891b867a0e8c",
+    "external_id": "50925",
+    "name": "K. Miller",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "319c5a27-267e-4891-99fd-9bca2349cd08",
+    "external_id": "35766",
+    "name": "L. Cavallini",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "fd48733e-545b-4f66-9ab7-2b45f7d2a6a9",
+    "external_id": "50815",
+    "name": "L. Fraser",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "085298e7-859d-4c99-b364-bacccc22afc2",
+    "external_id": "44798",
+    "name": "L. Millar",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "85e4931b-074e-4270-8fb3-79a51937aa18",
+    "external_id": "51035",
+    "name": "M. Kaye",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "e24c99b6-6ceb-4ace-a48f-b43af6be317e",
+    "external_id": "50816",
+    "name": "R. Laryea",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "b6426fdf-b1f5-4525-b87f-b8bf3e7ee748",
+    "external_id": "35570",
+    "name": "S. Eustáquio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "2d8fba6a-a8de-4251-8538-2868a7a3588a",
+    "external_id": "50792",
+    "name": "S. Piette",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "a3d7adf7-df7b-49ad-af61-4c0459c59604",
+    "external_id": "40440",
+    "name": "S. Vitória",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "d0943d32-df17-46a4-a6ed-e8e3260e4205",
+    "external_id": "51016",
+    "name": "T. Buchanan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fa3cc2fd-f5d0-4e6d-8892-45365a7949b9"
+  },
+  {
+    "id": "2312a826-e308-4c88-9df8-fc60efdd78ce",
+    "external_id": "38123",
+    "name": "A. Hrustić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "59e6a1f3-47a8-4519-9fbb-c033c66a4259",
+    "external_id": "19050",
+    "name": "A. Mooy",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "b1c2da59-4515-45a3-9318-e4ccaadae725",
+    "external_id": "6820",
+    "name": "A. Redmayne",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "43e976d7-6889-4b82-a876-f884dc0e154c",
+    "external_id": "19266",
+    "name": "B. Wright",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "26f718a5-0d3f-4119-b4d7-58a2a3197bd9",
+    "external_id": "6832",
+    "name": "C. Devlin",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "40ae76c9-70d3-4652-a7bf-2d30cc095efd",
+    "external_id": "6888",
+    "name": "C. Goodwin",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "00678512-aa2d-46c8-b7b2-55bd071a1e11",
+    "external_id": "1925",
+    "name": "D. Vukovic",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "6ca7d530-4e64-4a3b-830b-6b3abdc0e64e",
+    "external_id": "14386",
+    "name": "F. Karačić",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "a862ea08-4bbb-4784-a100-650cced95fe9",
+    "external_id": "349987",
+    "name": "G. Kuol",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "00c60a36-1a9f-481b-89a8-bde556496314",
+    "external_id": "20079",
+    "name": "H. Souttar",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "68d58f98-cf17-4532-b3e9-b1f3f95c9a48",
+    "external_id": "19774",
+    "name": "J. Cummings",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "0b9c81c2-6d0d-46df-bc6b-3551bef6d911",
+    "external_id": "2749",
+    "name": "J. Irvine",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "19b42ece-8d32-4914-8a67-f1474a94be8e",
+    "external_id": "6822",
+    "name": "J. King",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "5b21a842-baa7-4f7a-84a8-522dfd6a1bee",
+    "external_id": "2756",
+    "name": "J. Maclaren",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "90a8fccd-4c93-4fc3-a7eb-f05e1e0d42fc",
+    "external_id": "6984",
+    "name": "K. Baccus",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "9d77e074-a3cb-4940-8bf3-ef9a81bb63a3",
+    "external_id": "7038",
+    "name": "K. Rowles",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "564c3dea-bdfc-4e1b-88e6-1515dcac9e9e",
+    "external_id": "44843",
+    "name": "M. Boyle",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "7bcd30f5-145b-4007-a95c-38e07d61f66c",
+    "external_id": "2742",
+    "name": "M. Degenek",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "204ac96b-5101-4f9b-8997-97038a9bbf7a",
+    "external_id": "6993",
+    "name": "M. Duke",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "170d61ec-f700-44e1-8ae4-6d3eb09bf6f4",
+    "external_id": "2751",
+    "name": "M. Leckie",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "698f4ce3-bd6c-46be-ae88-1c53c2b51472",
+    "external_id": "2741",
+    "name": "M. Ryan",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "2837f18e-6493-4ee6-8766-a5a2e31202fe",
+    "external_id": "68041",
+    "name": "M. Tilio",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "cdc15521-4d7c-4001-9cc3-f5adb783737a",
+    "external_id": "6908",
+    "name": "N. Atkinson",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "ecf939b1-a3ab-47ca-9a26-75501dcd240d",
+    "external_id": "6913",
+    "name": "R. McGree",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  },
+  {
+    "id": "62589032-9773-4f85-b08d-6e9bb4004048",
+    "external_id": "6849",
+    "name": "T. Deng",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5"
+  }
+]

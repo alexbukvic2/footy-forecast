@@ -1,0 +1,7 @@
+[
+  { "id": "d4000000-0000-0000-0000-000000000001", "player_id": "f86c09bb-98cb-4ba3-b398-d87544b572d0", "category": "total_top_scorer", "points": 4 },
+  { "id": "d4000000-0000-0000-0000-000000000002", "player_id": "f86c09bb-98cb-4ba3-b398-d87544b572d0", "category": "group_top_scorer", "points": 2 },
+  { "id": "d4000000-0000-0000-0000-000000000003", "player_id": "9cedf3d8-5512-47d8-b9c2-6aca77f055f3", "category": "total_top_scorer", "points": 3 },
+  { "id": "d4000000-0000-0000-0000-000000000004", "player_id": "384abf8b-e9b5-4f43-9af6-f41de545887c", "category": "total_top_scorer", "points": 3 },
+  { "id": "d4000000-0000-0000-0000-000000000005", "player_id": "384abf8b-e9b5-4f43-9af6-f41de545887c", "category": "group_top_scorer", "points": 1 }
+]

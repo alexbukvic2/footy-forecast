@@ -1,0 +1,16 @@
+[
+  {
+    "id": "b2000000-0000-0000-0000-000000000001",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "owner_id": "a1000000-0000-0000-0000-000000000001",
+    "name": "Dev League Alpha",
+    "code": "DEVALPHA"
+  },
+  {
+    "id": "b2000000-0000-0000-0000-000000000002",
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "owner_id": "a1000000-0000-0000-0000-000000000001",
+    "name": "Dev League Beta",
+    "code": "DEVBETA"
+  }
+]

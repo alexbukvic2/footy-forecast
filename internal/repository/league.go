@@ -261,6 +261,21 @@ func (r *LeagueRepository) GetMember(
 	return leagueMemberFromRow(row), nil
 }
 
+// IsMember reports whether userID is a member of leagueID.
+func (r *LeagueRepository) IsMember(
+	ctx context.Context,
+	leagueID, userID uuid.UUID,
+) (bool, error) {
+	_, err := r.GetMember(ctx, leagueID, userID)
+	if err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
 // ListMembers returns all members of a league ordered by joined_at ASC.
 func (r *LeagueRepository) ListMembers(
 	ctx context.Context,

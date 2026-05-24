@@ -1,2 +1,3 @@
 - refresh token?
 - admin role for creating entities
+- display name should be chosen, not derived from google (or take first name as suggestion)

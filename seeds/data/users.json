@@ -1,0 +1,23 @@
+[
+  {
+    "id": "a1000000-0000-0000-0000-000000000001",
+    "cognito_sub": "dev-cognito-sub-alice-00000001",
+    "email": "alice@example.com",
+    "display_name": "Alice",
+    "status": "active"
+  },
+  {
+    "id": "a1000000-0000-0000-0000-000000000002",
+    "cognito_sub": "dev-cognito-sub-bob-000000002",
+    "email": "bob@example.com",
+    "display_name": "Bob",
+    "status": "active"
+  },
+  {
+    "id": "a1000000-0000-0000-0000-000000000003",
+    "cognito_sub": "dev-cognito-sub-carol-0000003",
+    "email": "carol@example.com",
+    "display_name": "Carol",
+    "status": "active"
+  }
+]

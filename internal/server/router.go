@@ -31,6 +31,11 @@ func NewRouter(
 	leagueRepo := repository.NewLeagueRepository(pool)
 	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo)
 
+	fixtureRepo := repository.NewFixtureRepository(pool)
+	predictionRepo := repository.NewPredictionRepository(pool)
+	fixtureSvc := service.NewFixtureService(fixtureRepo, leagueRepo)
+	predictionSvc := service.NewPredictionService(predictionRepo, fixtureRepo, service.RealClock{})
+
 	playerHandicapRepo := repository.NewPlayerHandicapRepository(pool)
 	playerHandicapSvc := service.NewPlayerHandicapService(playerHandicapRepo)
 
@@ -55,6 +60,8 @@ func NewRouter(
 	playerH := handler.NewPlayer(logger, playerSvc)
 	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
 	teamHandicapH := handler.NewTeamHandicap(logger, teamHandicapSvc)
+	fixtureH := handler.NewFixture(logger, fixtureSvc)
+	predictionH := handler.NewPrediction(logger, predictionSvc)
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -77,7 +84,9 @@ func NewRouter(
 	mux.Handle("POST /tournaments", authMW(http.HandlerFunc(tournamentH.Create)))
 	mux.HandleFunc("GET /tournaments", tournamentH.List)
 	mux.HandleFunc("GET /tournaments/{id}", tournamentH.GetByID)
-	mux.HandleFunc("GET /tournaments/slug/{slug}", tournamentH.GetBySlug)
+
+	// Fixtures (protected).
+	mux.Handle("GET /tournaments/{tournamentId}/fixtures", protected(fixtureH.ListForUser))
 
 	// Users (protected).
 	mux.Handle("GET /users/me", protected(userH.Me))
@@ -100,6 +109,10 @@ func NewRouter(
 	mux.Handle("DELETE /leagues/{id}", protected(leagueH.Delete))
 	mux.Handle("POST /leagues/{id}/code", protected(leagueH.RegenerateCode))
 	mux.Handle("DELETE /leagues/{id}/members/{userId}", protected(leagueH.RemoveMember))
+	mux.Handle("GET /leagues/{leagueId}/predictions", protected(fixtureH.ListForLeague))
+
+	// Predictions (protected).
+	mux.Handle("PUT /predictions/{fixtureId}", protected(predictionH.UpsertScore))
 
 	// Apply middleware in outer-to-inner order.
 	return middleware.RequestID(

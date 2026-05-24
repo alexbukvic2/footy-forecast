@@ -1,0 +1,90 @@
+[
+  {
+    "id": "e5000000-0000-0000-0000-000000000001",
+    "external_id": 900001,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "b11f5769-20cd-4c21-8754-15e16c177431",
+    "away_team_id": "9c06a89e-478f-46d7-beb5-93fb31a8c389",
+    "kickoff_at": "2026-06-12T18:00:00Z",
+    "status": "finished",
+    "goals_home": 0,
+    "goals_away": 2
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000002",
+    "external_id": 900002,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08",
+    "away_team_id": "0d3d0364-2daa-4b39-8a7e-b3b26452918c",
+    "kickoff_at": "2026-06-13T13:00:00Z",
+    "status": "finished",
+    "goals_home": 6,
+    "goals_away": 2
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000003",
+    "external_id": 900003,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "5a39c4c5-29b1-4dcc-a56b-e87eafc4fa90",
+    "away_team_id": "17068f50-b788-4f7d-ae50-306acd556d1f",
+    "kickoff_at": "2026-06-13T19:00:00Z",
+    "status": "finished",
+    "goals_home": 1,
+    "goals_away": 1
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000004",
+    "external_id": 900004,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397",
+    "away_team_id": "b030bab6-6654-47d4-b48e-237b273e2818",
+    "kickoff_at": "2026-06-22T10:00:00Z",
+    "status": "finished",
+    "goals_home": 1,
+    "goals_away": 2
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000005",
+    "external_id": 900005,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c",
+    "away_team_id": "fc7af453-7bcf-4b5b-8b14-77974bbb8da5",
+    "kickoff_at": "2026-06-23T18:00:00Z",
+    "status": "finished",
+    "goals_home": 4,
+    "goals_away": 1
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000006",
+    "external_id": 900006,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "a5a731ab-c3bc-4954-87ec-fe42ea3692fe",
+    "away_team_id": "4d400195-0dc8-4734-a647-ecc6e49552f6",
+    "kickoff_at": "2026-06-24T21:00:00Z",
+    "status": "finished",
+    "goals_home": 2,
+    "goals_away": 0
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000007",
+    "external_id": 900007,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "c9cc9c67-8bbd-40ce-b40e-988c2b2381cf",
+    "away_team_id": "4d906e42-1e7a-477c-b5d5-69309bf48d86",
+    "kickoff_at": "2026-06-26T15:00:00Z",
+    "status": "upcoming",
+    "goals_home": null,
+    "goals_away": null
+  },
+  {
+    "id": "e5000000-0000-0000-0000-000000000008",
+    "external_id": 900008,
+    "tournament_id": "019e501a-481e-76ca-a6a8-36e8eeff3aad",
+    "home_team_id": "ec04db1d-2c52-4f0b-b1bb-a78cc470de18",
+    "away_team_id": "8d1e257d-07f1-4924-a899-6aebef726ce2",
+    "kickoff_at": "2026-06-27T15:00:00Z",
+    "status": "upcoming",
+    "goals_home": null,
+    "goals_away": null
+  }
+]

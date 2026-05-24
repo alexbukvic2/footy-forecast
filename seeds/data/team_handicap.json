@@ -1,0 +1,8 @@
+[
+  { "id": "c3000000-0000-0000-0000-000000000001", "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397", "category": "winner",       "points": 5 },
+  { "id": "c3000000-0000-0000-0000-000000000002", "team_id": "c8278dcc-40d1-44fc-aee8-e4f9fdf82397", "category": "semifinalist", "points": 2 },
+  { "id": "c3000000-0000-0000-0000-000000000003", "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c", "category": "winner",       "points": 4 },
+  { "id": "c3000000-0000-0000-0000-000000000004", "team_id": "441bf7ca-6f8a-41c5-aa0f-80c7fe03820c", "category": "semifinalist", "points": 2 },
+  { "id": "c3000000-0000-0000-0000-000000000005", "team_id": "7ce7b681-e4fb-45c1-9345-7c89a1613f08", "category": "playoff",      "points": 3 },
+  { "id": "c3000000-0000-0000-0000-000000000006", "team_id": "b61dc175-4e31-4f49-8203-ac90bef78efc", "category": "group_winner", "points": 1 }
+]
