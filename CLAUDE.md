@@ -21,6 +21,7 @@ Predictions lock at kickoff. Scoring is deterministic and will be updated in nea
 - Go 1.26
 - pgx/v5 + sqlc for DB access (no ORM)
 - goose for migrations
+- oapi-codegen (build-time only) for generating Go types from the OpenAPI spec
 - Postgres 16 on AWS RDS (free tier: db.t4g.micro)
 - AWS Cognito for auth (added in a later phase; not yet wired up)
 - Caddy for TLS termination on EC2
@@ -84,9 +85,45 @@ make test   # tests with race detector
 
 All three must pass. Do not skip `make lint` even if "the change is small."
 
+If you changed `docs/openapi.yaml`, also run:
+
+```bash
+make generate   # regenerates docs/openapi.json and internal/server/oapi/models.gen.go
+```
+
+Commit both regenerated files alongside the spec change.
+
+## OpenAPI
+
+The canonical API contract lives at `docs/openapi.yaml` (OpenAPI 3.1).
+**This is the single source of truth for all HTTP routes.** If there is ever a
+conflict between the spec and Postman, the spec wins.
+
+Spec-first workflow:
+
+1. Update `docs/openapi.yaml` **before** writing any handler code.
+2. Run `make generate` to regenerate `docs/openapi.json` and `internal/server/oapi/models.gen.go`.
+3. Implement the handler using the generated types.
+4. Never edit `models.gen.go` or `openapi.json` directly — both are overwritten on every `make generate`.
+
+Rules:
+- **New route** → add the path and operation to the spec; run `make generate`.
+- **Route removed** → delete the spec entry; run `make generate`.
+- **Request/response shape changed** → update the spec first; run `make generate`.
+- All error responses must `$ref` the shared `ErrorResponse` schema.
+- Public routes must carry `security: []`; protected routes `security: [{bearerAuth: []}]`.
+- All request/response schemas must have explicit types — no `{}` or `any`.
+
+Special public routes (no auth):
+- `GET /openapi.json` — serves `docs/openapi.json` for tooling and mobile SDK generation.
+- `GET /docs` — serves Swagger UI (CDN-loaded) pointed at `/openapi.json`.
+
+Generated files (`docs/openapi.json`, `internal/server/oapi/models.gen.go`) are committed to the repository (same convention as `dbgen/`). CI enforces they are in sync with the spec via a drift check.
+
 ## Postman
 
 The Postman collection lives in `postman/collections/footy-forecast/`.
+Postman is the **test runner**; the OpenAPI spec (above) is the contract.
 Any change that adds, removes, or alters an HTTP route **must** include a
 corresponding Postman update in the same commit:
 
@@ -103,8 +140,11 @@ newly returned IDs into env vars when that ID will be needed by downstream reque
 ## Working with planning artifacts
 
 - All non-trivial features get a plan first, written to `docs/plans/<slug>.md`
-  by the planner. Plans include: goal, data model changes, API endpoints,
-  edge cases, test plan, acceptance criteria.
+  by the planner. Plans include: goal, data model changes, API contract (for any
+  route change), edge cases, test plan, acceptance criteria.
+- **Plans that add, modify, or remove HTTP routes must include an "API Contract"
+  section** per the template in `.claude/agents/planner.md`. The implementer
+  translates this section into `docs/openapi.yaml` before writing handler code.
 - Implementer reads the plan and implements. If the plan is ambiguous or wrong,
   stop and ask — don't paper over it.
 - Reviewer reads the plan + diff and produces a review file. Blocking comments

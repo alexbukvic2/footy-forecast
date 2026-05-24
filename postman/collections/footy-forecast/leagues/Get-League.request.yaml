@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get League
+method: GET
+url: '{{baseUrl}}/leagues/{{leagueId}}'
+order: 3000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'

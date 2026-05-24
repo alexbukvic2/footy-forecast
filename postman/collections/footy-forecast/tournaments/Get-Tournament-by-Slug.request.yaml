@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Tournament by Slug
+method: GET
+url: '{{baseUrl}}/tournaments/slug/{{tournamentSlug}}'
+order: 4000

@@ -1,4 +1,4 @@
-.PHONY: help run build test test-integration test-all lint fmt tidy clean sqlc-gen
+.PHONY: help run build build-linux-arm64 generate test test-integration test-all lint fmt tidy clean sqlc-gen
 
 BINARY := footy-forecast
 PKG := ./...
@@ -7,6 +7,7 @@ help:
 	@echo "Targets:"
 	@echo "  run              - run server locally"
 	@echo "  build            - build binary into ./bin"
+	@echo "  generate         - regenerate openapi.json and oapi models"
 	@echo "  test             - run unit tests (fast)"
 	@echo "  test-integration - run integration tests (needs Docker)"
 	@echo "  test-all         - run both"
@@ -31,11 +32,15 @@ help:
 run:
 	go run ./cmd/server
 
-build:
+generate:
+	go run ./cmd/spec-gen
+	go generate ./internal/server/oapi/...
+
+build: generate
 	mkdir -p bin
 	go build -o bin/$(BINARY) ./cmd/server
 
-build-linux-arm64:
+build-linux-arm64: generate
 	mkdir -p bin
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o bin/$(BINARY)-linux-arm64 ./cmd/server
 

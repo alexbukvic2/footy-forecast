@@ -1,0 +1,16 @@
+$kind: http-request
+name: Update League Name
+method: PATCH
+url: '{{baseUrl}}/leagues/{{leagueId}}'
+order: 4000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Renamed League"
+    }

@@ -1,0 +1,13 @@
+$kind: http-request
+name: Get My Profile
+method: GET
+url: "{{baseUrl}}/users/me"
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.environment.set("userId", jsonData.id);
+    language: text/javascript
+order: 1000
+headers:
+  Authorization: Bearer {{authToken}}

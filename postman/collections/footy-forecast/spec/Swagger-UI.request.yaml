@@ -1,0 +1,5 @@
+$kind: http-request
+name: Swagger UI
+method: GET
+url: '{{baseUrl}}/docs'
+order: 1001

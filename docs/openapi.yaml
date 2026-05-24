@@ -1,0 +1,1112 @@
+openapi: "3.1.0"
+info:
+  title: footy-forecast API
+  version: "0.1.0"
+  description: >
+    Football prediction game API. Predictions lock at kickoff;
+    scoring is deterministic and updated in near real-time.
+servers:
+  - url: http://localhost:8080
+    description: Local development
+
+tags:
+  - name: health
+    description: Liveness and readiness probes
+  - name: tournaments
+    description: Tournament management
+  - name: users
+    description: User profile
+  - name: leagues
+    description: Private prediction leagues
+  - name: players
+    description: Player search within a tournament
+  - name: handicaps
+    description: Player and team handicap point assignments
+  - name: spec
+    description: API spec and documentation endpoints
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+      example:
+        error: "not found"
+
+    Tournament:
+      type: object
+      required: [id, slug, name, status, starts_at, ends_at, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum: [upcoming, in_progress, concluded]
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440000"
+        slug: "world-cup-2026"
+        name: "FIFA World Cup 2026"
+        status: "upcoming"
+        starts_at: "2026-06-11T00:00:00Z"
+        ends_at: "2026-07-19T00:00:00Z"
+        created_at: "2025-01-01T00:00:00Z"
+        updated_at: "2025-01-01T00:00:00Z"
+
+    League:
+      type: object
+      required: [id, tournament_id, owner_id, name, code, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tournament_id:
+          type: string
+          format: uuid
+        owner_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440001"
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        owner_id: "550e8400-e29b-41d4-a716-446655440002"
+        name: "My Prediction League"
+        code: "ABCD1234"
+        created_at: "2025-01-01T00:00:00Z"
+        updated_at: "2025-01-01T00:00:00Z"
+
+    LeagueMember:
+      type: object
+      required: [user_id, role, joined_at]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [owner, member]
+        joined_at:
+          type: string
+          format: date-time
+      example:
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        role: "owner"
+        joined_at: "2025-01-01T00:00:00Z"
+
+    LeagueDetail:
+      allOf:
+        - $ref: '#/components/schemas/League'
+        - type: object
+          required: [members]
+          properties:
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/LeagueMember'
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440001"
+        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        owner_id: "550e8400-e29b-41d4-a716-446655440002"
+        name: "My Prediction League"
+        code: "ABCD1234"
+        created_at: "2025-01-01T00:00:00Z"
+        updated_at: "2025-01-01T00:00:00Z"
+        members:
+          - user_id: "550e8400-e29b-41d4-a716-446655440002"
+            role: "owner"
+            joined_at: "2025-01-01T00:00:00Z"
+
+    User:
+      type: object
+      required: [id, email, display_name, status, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        display_name:
+          type: string
+        status:
+          type: string
+          enum: [active, suspended]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440002"
+        email: "user@example.com"
+        display_name: "John Doe"
+        status: "active"
+        created_at: "2025-01-01T00:00:00Z"
+        updated_at: "2025-01-01T00:00:00Z"
+
+    Player:
+      type: object
+      required: [id, name, team_name, team_logo, handicaps]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        team_name:
+          type: string
+        team_logo:
+          type: string
+        handicaps:
+          type: object
+          additionalProperties:
+            type: integer
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440003"
+        name: "Kylian Mbappe"
+        team_name: "France"
+        team_logo: "https://example.com/france.png"
+        handicaps:
+          group_top_scorer: 5
+          total_top_scorer: 10
+
+    PlayerHandicap:
+      type: object
+      required: [points]
+      properties:
+        points:
+          type: integer
+      example:
+        points: 5
+
+    TeamHandicap:
+      type: object
+      required: [points]
+      properties:
+        points:
+          type: integer
+      example:
+        points: 3
+
+    PlayerHandicapCategory:
+      type: string
+      enum: [group_top_scorer, total_top_scorer]
+      example: group_top_scorer
+
+    TeamHandicapCategory:
+      type: string
+      enum: [group_winner, playoff, semifinalist, winner]
+      example: winner
+
+    TournamentListResponse:
+      type: object
+      required: [tournaments]
+      properties:
+        tournaments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tournament'
+      example:
+        tournaments:
+          - id: "550e8400-e29b-41d4-a716-446655440000"
+            slug: "world-cup-2026"
+            name: "FIFA World Cup 2026"
+            status: "upcoming"
+            starts_at: "2026-06-11T00:00:00Z"
+            ends_at: "2026-07-19T00:00:00Z"
+            created_at: "2025-01-01T00:00:00Z"
+            updated_at: "2025-01-01T00:00:00Z"
+
+    LeagueListResponse:
+      type: object
+      required: [leagues]
+      properties:
+        leagues:
+          type: array
+          items:
+            $ref: '#/components/schemas/League'
+      example:
+        leagues:
+          - id: "550e8400-e29b-41d4-a716-446655440001"
+            tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+            owner_id: "550e8400-e29b-41d4-a716-446655440002"
+            name: "My Prediction League"
+            code: "ABCD1234"
+            created_at: "2025-01-01T00:00:00Z"
+            updated_at: "2025-01-01T00:00:00Z"
+
+    PlayerListResponse:
+      type: object
+      required: [players]
+      properties:
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+      example:
+        players:
+          - id: "550e8400-e29b-41d4-a716-446655440003"
+            name: "Kylian Mbappe"
+            team_name: "France"
+            team_logo: "https://example.com/france.png"
+            handicaps:
+              group_top_scorer: 5
+              total_top_scorer: 10
+
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      operationId: getLiveness
+      tags: [health]
+      security: []
+      responses:
+        '200':
+          description: Process is running
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+              example:
+                status: ok
+
+  /health/ready:
+    get:
+      summary: Readiness probe
+      operationId: getReadiness
+      tags: [health]
+      security: []
+      responses:
+        '200':
+          description: Process is ready to serve traffic
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+              example:
+                status: ready
+        '503':
+          description: Database unreachable
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, reason]
+                properties:
+                  status:
+                    type: string
+                  reason:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments:
+    get:
+      summary: List all tournaments
+      operationId: listTournaments
+      tags: [tournaments]
+      security: []
+      responses:
+        '200':
+          description: List of tournaments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TournamentListResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a tournament
+      operationId: createTournament
+      tags: [tournaments]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slug, name, starts_at, ends_at]
+              properties:
+                slug:
+                  type: string
+                name:
+                  type: string
+                starts_at:
+                  type: string
+                  format: date-time
+                ends_at:
+                  type: string
+                  format: date-time
+            example:
+              slug: "world-cup-2026"
+              name: "FIFA World Cup 2026"
+              starts_at: "2026-06-11T00:00:00Z"
+              ends_at: "2026-07-19T00:00:00Z"
+      responses:
+        '201':
+          description: Tournament created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Tournament with slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{id}:
+    get:
+      summary: Get tournament by ID
+      operationId: getTournamentByID
+      tags: [tournaments]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tournament found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/slug/{slug}:
+    get:
+      summary: Get tournament by slug
+      operationId: getTournamentBySlug
+      tags: [tournaments]
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tournament found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me:
+    get:
+      summary: Get current user profile
+      operationId: getMe
+      tags: [users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues:
+    get:
+      summary: List the caller's leagues
+      operationId: listLeagues
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User's leagues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeagueListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a league
+      operationId: createLeague
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tournament_id, name]
+              properties:
+                tournament_id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+            example:
+              tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+              name: "My Prediction League"
+      responses:
+        '201':
+          description: League created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/League'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/join:
+    post:
+      summary: Join a league via invite code
+      operationId: joinLeague
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  maxLength: 20
+            example:
+              code: "ABCD1234"
+      responses:
+        '200':
+          description: Joined league
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/League'
+        '400':
+          description: Invalid or missing code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found for code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Already a member
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{id}:
+    get:
+      summary: Get league with members
+      operationId: getLeague
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: League with members
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeagueDetail'
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not a member of this league
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Update league name
+      operationId: updateLeagueName
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+            example:
+              name: "Updated League Name"
+      responses:
+        '200':
+          description: League updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/League'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not the league owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a league
+      operationId: deleteLeague
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: League deleted
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not the league owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{id}/code:
+    post:
+      summary: Regenerate league invite code
+      operationId: regenerateLeagueCode
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: League with new invite code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/League'
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not the league owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /leagues/{id}/members/{userId}:
+    delete:
+      summary: Remove a member from a league
+      operationId: removeLeagueMember
+      tags: [leagues]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Member removed
+        '400':
+          description: Invalid UUID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Not the league owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League or member not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournament_id}/players/search:
+    get:
+      summary: Search players in a tournament
+      operationId: searchPlayers
+      tags: [players]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournament_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching players
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerListResponse'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /player-handicaps/{player_id}/{category}:
+    get:
+      summary: Get player handicap by category
+      operationId: getPlayerHandicap
+      tags: [handicaps]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: player_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PlayerHandicapCategory'
+      responses:
+        '200':
+          description: Player handicap
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerHandicap'
+        '400':
+          description: Invalid player ID or category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Handicap not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /team-handicaps/{team_id}/{category}:
+    get:
+      summary: Get team handicap by category
+      operationId: getTeamHandicap
+      tags: [handicaps]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: team_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: category
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/TeamHandicapCategory'
+      responses:
+        '200':
+          description: Team handicap
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamHandicap'
+        '400':
+          description: Invalid team ID or category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Handicap not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /openapi.json:
+    get:
+      summary: Serve OpenAPI spec as JSON
+      operationId: getOpenAPISpec
+      tags: [spec]
+      security: []
+      responses:
+        '200':
+          description: OpenAPI spec as JSON
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /docs:
+    get:
+      summary: Swagger UI
+      operationId: getDocs
+      tags: [spec]
+      security: []
+      responses:
+        '200':
+          description: Swagger UI HTML page
+          content:
+            text/html:
+              schema:
+                type: string

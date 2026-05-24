@@ -1,0 +1,19 @@
+$kind: http-request
+name: Search Players
+method: GET
+url: '{{baseUrl}}/tournaments/{{tournamentId}}/players/search'
+order: 1000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+queryParams:
+  - key: q
+    value: Messi
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      if (jsonData.players && jsonData.players.length > 0) {
+        pm.environment.set("playerId", jsonData.players[0].id);
+      }
+    language: text/javascript

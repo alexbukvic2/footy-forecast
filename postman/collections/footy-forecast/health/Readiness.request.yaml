@@ -1,0 +1,5 @@
+$kind: http-request
+name: Readiness
+method: GET
+url: '{{baseUrl}}/health/ready'
+order: 2000

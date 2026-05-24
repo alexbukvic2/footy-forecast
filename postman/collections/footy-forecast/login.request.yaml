@@ -1,0 +1,13 @@
+$kind: http-request
+url: " https://footy-forecast.auth.eu-central-1.amazoncognito.com/oauth2/token"
+method: POST
+headers:
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    grant_type: authorization_code
+    client_id: 1pcd276t2ml66b6gt93q5v72g8
+    code: 15a420ca-d115-4434-bea4-f49d96e3dd4d
+    redirect_uri: http://localhost:3000/callback
+order: 46505126789119

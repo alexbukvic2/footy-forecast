@@ -1,0 +1,17 @@
+$kind: http-request
+name: Create Tournament
+method: POST
+url: '{{baseUrl}}/tournaments'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "slug": "world-cup-2026",
+      "name": "World Cup 2026",
+      "starts_at": "2026-06-11T00:00:00Z",
+      "ends_at": "2026-07-19T00:00:00Z"
+    }

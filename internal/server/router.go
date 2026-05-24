@@ -55,6 +55,7 @@ func NewRouter(
 	playerH := handler.NewPlayer(logger, playerSvc)
 	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
 	teamHandicapH := handler.NewTeamHandicap(logger, teamHandicapSvc)
+	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
 
@@ -63,6 +64,10 @@ func NewRouter(
 	protected := func(fn http.HandlerFunc) http.Handler {
 		return authMW(fn)
 	}
+
+	// Spec (no auth).
+	mux.HandleFunc("GET /openapi.json", specH.ServeJSON)
+	mux.HandleFunc("GET /docs", specH.ServeUI)
 
 	// Health.
 	mux.HandleFunc("GET /health", healthH.Live)

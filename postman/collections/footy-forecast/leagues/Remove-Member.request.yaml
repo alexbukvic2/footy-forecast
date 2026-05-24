@@ -1,0 +1,8 @@
+$kind: http-request
+name: Remove Member
+method: DELETE
+url: '{{baseUrl}}/leagues/{{leagueId}}/members/{{userId}}'
+order: 8000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'

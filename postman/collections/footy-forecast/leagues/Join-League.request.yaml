@@ -1,0 +1,16 @@
+$kind: http-request
+name: Join League
+method: POST
+url: '{{baseUrl}}/leagues/join'
+order: 7000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "code": "{{leagueCode}}"
+    }

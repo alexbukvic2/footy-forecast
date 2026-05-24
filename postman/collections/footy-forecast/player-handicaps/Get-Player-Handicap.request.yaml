@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get Player Handicap
+method: GET
+url: '{{baseUrl}}/player-handicaps/{{playerId}}/group_top_scorer'
+order: 1000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
