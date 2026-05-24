@@ -18,6 +18,7 @@ FROM score_predictions sp
 JOIN fixtures f ON f.id = sp.fixture_id
 WHERE sp.user_id = $1
   AND f.tournament_id = $2
+ORDER BY sp.fixture_id
 `
 
 type ListPredictionsByUserAndTournamentParams struct {

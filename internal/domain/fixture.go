@@ -23,6 +23,8 @@ type Fixture struct {
 	TournamentID uuid.UUID
 	HomeTeamID   uuid.UUID
 	AwayTeamID   uuid.UUID
+	HomeTeamName string
+	AwayTeamName string
 	KickoffAt    time.Time
 	Status       FixtureStatus
 	GoalsHome    *int

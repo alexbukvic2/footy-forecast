@@ -56,7 +56,7 @@ func NewPredictionService(
 // Returns:
 //   - domain.ErrInvalid if goals_home or goals_away are negative
 //   - domain.ErrNotFound if the fixture does not exist
-//   - domain.ErrForbidden if the fixture has already kicked off
+//   - domain.ErrForbidden if the fixture status is not upcoming, or within 30 minutes of kickoff
 func (s *PredictionService) UpsertScore(
 	ctx context.Context,
 	in domain.UpsertScorePredictionInput,
@@ -73,8 +73,13 @@ func (s *PredictionService) UpsertScore(
 		return nil, fmt.Errorf("get fixture: %w", err)
 	}
 
-	if !s.clock.Now().Before(fixture.KickoffAt) {
-		return nil, fmt.Errorf("fixture %s has already kicked off: %w", in.FixtureID, domain.ErrForbidden)
+	if fixture.Status != domain.FixtureStatusUpcoming {
+		return nil, fmt.Errorf("fixture %s is locked for predictions: %w", in.FixtureID, domain.ErrForbidden)
+	}
+
+	lockAt := fixture.KickoffAt.Add(-30 * time.Minute)
+	if !s.clock.Now().Before(lockAt) {
+		return nil, fmt.Errorf("fixture %s is locked for predictions: %w", in.FixtureID, domain.ErrForbidden)
 	}
 
 	return s.predictions.Upsert(ctx, in)

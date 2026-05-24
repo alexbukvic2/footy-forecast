@@ -69,7 +69,7 @@ func (r *FixtureRepository) ListByTournamentForUser(
 
 	out := make([]*domain.UserFixtureView, 0, len(fixtures))
 	for _, f := range fixtures {
-		v := &domain.UserFixtureView{Fixture: *fixtureFromRow(f)}
+		v := &domain.UserFixtureView{Fixture: *fixtureFromTournamentRow(f)}
 		if p, ok := predByFixture[f.ID]; ok {
 			v.Prediction = p
 		}
@@ -138,6 +138,7 @@ func parseMemberPredictions(raw interface{}) ([]domain.LeagueMemberPrediction, e
 	return out, nil
 }
 
+// fixtureFromRow converts a bare dbgen.Fixture (no team names) — used by GetByID.
 func fixtureFromRow(row dbgen.Fixture) *domain.Fixture {
 	f := &domain.Fixture{
 		ID:           row.ID,
@@ -161,6 +162,31 @@ func fixtureFromRow(row dbgen.Fixture) *domain.Fixture {
 	return f
 }
 
+func fixtureFromTournamentRow(row dbgen.ListFixturesByTournamentRow) *domain.Fixture {
+	f := &domain.Fixture{
+		ID:           row.ID,
+		ExternalID:   row.ExternalID,
+		TournamentID: row.TournamentID,
+		HomeTeamID:   row.HomeTeamID,
+		AwayTeamID:   row.AwayTeamID,
+		HomeTeamName: row.HomeTeamName,
+		AwayTeamName: row.AwayTeamName,
+		KickoffAt:    row.KickoffAt,
+		Status:       domain.FixtureStatus(row.Status),
+		CreatedAt:    row.CreatedAt,
+		UpdatedAt:    row.UpdatedAt,
+	}
+	if row.GoalsHome != nil {
+		v := int(*row.GoalsHome)
+		f.GoalsHome = &v
+	}
+	if row.GoalsAway != nil {
+		v := int(*row.GoalsAway)
+		f.GoalsAway = &v
+	}
+	return f
+}
+
 func fixtureFromLockedRow(row dbgen.ListLockedFixturesByLeagueRow) *domain.Fixture {
 	f := &domain.Fixture{
 		ID:           row.ID,
@@ -168,6 +194,8 @@ func fixtureFromLockedRow(row dbgen.ListLockedFixturesByLeagueRow) *domain.Fixtu
 		TournamentID: row.TournamentID,
 		HomeTeamID:   row.HomeTeamID,
 		AwayTeamID:   row.AwayTeamID,
+		HomeTeamName: row.HomeTeamName,
+		AwayTeamName: row.AwayTeamName,
 		KickoffAt:    row.KickoffAt,
 		Status:       domain.FixtureStatus(row.Status),
 		CreatedAt:    row.CreatedAt,

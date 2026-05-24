@@ -14,3 +14,5 @@ values:
     value: ''
   - key: playerId
     value: ''
+  - key: predictionId
+    value: ''

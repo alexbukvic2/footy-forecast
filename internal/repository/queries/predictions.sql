@@ -13,4 +13,5 @@ SELECT sp.id, sp.user_id, sp.fixture_id, sp.goals_home, sp.goals_away, sp.points
 FROM score_predictions sp
 JOIN fixtures f ON f.id = sp.fixture_id
 WHERE sp.user_id = @user_id
-  AND f.tournament_id = @tournament_id;
+  AND f.tournament_id = @tournament_id
+ORDER BY sp.fixture_id;

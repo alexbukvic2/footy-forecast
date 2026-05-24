@@ -4,8 +4,16 @@ method: POST
 url: '{{baseUrl}}/tournaments'
 order: 1000
 headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
   - key: Content-Type
     value: application/json
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.environment.set("tournamentId", jsonData.id);
+    language: text/javascript
 body:
   type: json
   content: |-

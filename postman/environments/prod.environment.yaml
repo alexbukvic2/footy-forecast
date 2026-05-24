@@ -4,5 +4,7 @@ values:
     value: ''
   - key: authToken
     value: ''
+  - key: tournamentId
+    value: ''
   - key: leagueId
     value: ''

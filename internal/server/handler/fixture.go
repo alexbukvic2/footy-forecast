@@ -43,8 +43,8 @@ type fixtureResponse struct {
 	ID           string    `json:"id"`
 	ExternalID   int64     `json:"external_id"`
 	TournamentID string    `json:"tournament_id"`
-	HomeTeamID   string    `json:"home_team_id"`
-	AwayTeamID   string    `json:"away_team_id"`
+	HomeTeamName string    `json:"home_team_name"`
+	AwayTeamName string    `json:"away_team_name"`
 	KickoffAt    time.Time `json:"kickoff_at"`
 	Status       string    `json:"status"`
 	GoalsHome    *int      `json:"goals_home"`
@@ -56,8 +56,8 @@ func toFixtureResponse(f domain.Fixture) fixtureResponse {
 		ID:           f.ID.String(),
 		ExternalID:   f.ExternalID,
 		TournamentID: f.TournamentID.String(),
-		HomeTeamID:   f.HomeTeamID.String(),
-		AwayTeamID:   f.AwayTeamID.String(),
+		HomeTeamName: f.HomeTeamName,
+		AwayTeamName: f.AwayTeamName,
 		KickoffAt:    f.KickoffAt,
 		Status:       string(f.Status),
 		GoalsHome:    f.GoalsHome,

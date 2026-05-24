@@ -89,11 +89,34 @@ func TestPredictionService_UpsertScore(t *testing.T) {
 		require.ErrorIs(t, err, domain.ErrNotFound)
 	})
 
-	t.Run("returns ErrForbidden when fixture has already kicked off", func(t *testing.T) {
+	t.Run("returns ErrForbidden when fixture status is not upcoming", func(t *testing.T) {
+		t.Parallel()
+		kickoff := time.Date(2027, 6, 11, 18, 0, 0, 0, time.UTC)
+		now := kickoff.Add(-60 * time.Minute) // well before kickoff, but status is finished
+		fixture := &domain.Fixture{ID: uuid.New(), KickoffAt: kickoff, Status: domain.FixtureStatusFinished}
+		svc := service.NewPredictionService(
+			&fakePredictionRepo{},
+			&fakeFixtureGetter{
+				getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Fixture, error) {
+					return fixture, nil
+				},
+			},
+			frozenClock{t: now},
+		)
+		_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{
+			UserID:    uuid.New(),
+			FixtureID: fixture.ID,
+			GoalsHome: 1,
+			GoalsAway: 0,
+		})
+		require.ErrorIs(t, err, domain.ErrForbidden)
+	})
+
+	t.Run("returns ErrForbidden when within 30 minutes of kickoff", func(t *testing.T) {
 		t.Parallel()
 		kickoff := time.Date(2026, 6, 11, 18, 0, 0, 0, time.UTC)
-		now := kickoff.Add(time.Minute) // one minute after kickoff
-		fixture := &domain.Fixture{ID: uuid.New(), KickoffAt: kickoff}
+		now := kickoff.Add(-29 * time.Minute) // inside the 30-minute lock window
+		fixture := &domain.Fixture{ID: uuid.New(), KickoffAt: kickoff, Status: domain.FixtureStatusUpcoming}
 		svc := service.NewPredictionService(
 			&fakePredictionRepo{},
 			&fakeFixtureGetter{
@@ -115,8 +138,8 @@ func TestPredictionService_UpsertScore(t *testing.T) {
 	t.Run("delegates to repo for valid future fixture", func(t *testing.T) {
 		t.Parallel()
 		kickoff := time.Date(2026, 6, 11, 18, 0, 0, 0, time.UTC)
-		now := kickoff.Add(-time.Hour) // one hour before kickoff
-		fixture := &domain.Fixture{ID: uuid.New(), KickoffAt: kickoff}
+		now := kickoff.Add(-31 * time.Minute) // just outside the 30-minute lock window
+		fixture := &domain.Fixture{ID: uuid.New(), KickoffAt: kickoff, Status: domain.FixtureStatusUpcoming}
 		expected := &domain.ScorePrediction{ID: uuid.New(), GoalsHome: 2, GoalsAway: 1}
 
 		svc := service.NewPredictionService(

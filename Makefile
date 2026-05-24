@@ -24,7 +24,7 @@ help:
 	@echo "  migrate-reset            - roll back ALL migrations (destructive)"
 	@echo "  sqlc-gen        - regenerate sqlc code from queries"
 	@echo ""
-	@echo "AWS lifecycle:"
+	@echo "Seeding:"
 	@echo "  seed         - load seeds/data/*.json into the local DB (manual, never runs in CI/prod)"
 	@echo ""
 	@echo "AWS lifecycle:"

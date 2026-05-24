@@ -17,19 +17,18 @@
       },
       "Fixture": {
         "example": {
-          "away_team_id": "550e8400-e29b-41d4-a716-446655440021",
+          "away_team_name": "Argentina",
           "external_id": 1001,
           "goals_away": 1,
           "goals_home": 2,
-          "home_team_id": "550e8400-e29b-41d4-a716-446655440020",
+          "home_team_name": "Brazil",
           "id": "550e8400-e29b-41d4-a716-446655440010",
           "kickoff_at": "2026-06-11T18:00:00Z",
           "status": "finished",
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         },
         "properties": {
-          "away_team_id": {
-            "format": "uuid",
+          "away_team_name": {
             "type": "string"
           },
           "external_id": {
@@ -43,8 +42,7 @@
             "nullable": true,
             "type": "integer"
           },
-          "home_team_id": {
-            "format": "uuid",
+          "home_team_name": {
             "type": "string"
           },
           "id": {
@@ -72,8 +70,8 @@
           "id",
           "external_id",
           "tournament_id",
-          "home_team_id",
-          "away_team_id",
+          "home_team_name",
+          "away_team_name",
           "kickoff_at",
           "status"
         ],
@@ -277,11 +275,11 @@
         "example": {
           "fixtures": [
             {
-              "away_team_id": "550e8400-e29b-41d4-a716-446655440021",
+              "away_team_name": "Argentina",
               "external_id": 1001,
               "goals_away": 1,
               "goals_home": 2,
-              "home_team_id": "550e8400-e29b-41d4-a716-446655440020",
+              "home_team_name": "Brazil",
               "id": "550e8400-e29b-41d4-a716-446655440010",
               "kickoff_at": "2026-06-11T18:00:00Z",
               "predictions": [
@@ -1474,13 +1472,13 @@
         ]
       }
     },
-    "/leagues/{league_id}/predictions": {
+    "/leagues/{leagueId}/predictions": {
       "get": {
         "operationId": "listLeaguePredictions",
         "parameters": [
           {
             "in": "path",
-            "name": "league_id",
+            "name": "leagueId",
             "required": true,
             "schema": {
               "format": "uuid",

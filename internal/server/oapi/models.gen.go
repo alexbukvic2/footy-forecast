@@ -182,11 +182,11 @@ type ErrorResponse struct {
 
 // Fixture defines model for Fixture.
 type Fixture struct {
-	AwayTeamId   openapi_types.UUID `json:"away_team_id"`
+	AwayTeamName string             `json:"away_team_name"`
 	ExternalId   int                `json:"external_id"`
 	GoalsAway    *int               `json:"goals_away,omitempty"`
 	GoalsHome    *int               `json:"goals_home,omitempty"`
-	HomeTeamId   openapi_types.UUID `json:"home_team_id"`
+	HomeTeamName string             `json:"home_team_name"`
 	Id           openapi_types.UUID `json:"id"`
 	KickoffAt    time.Time          `json:"kickoff_at"`
 	Status       FixtureStatus      `json:"status"`
@@ -203,11 +203,11 @@ type FixtureListResponse struct {
 
 // FixtureWithMemberPredictions defines model for FixtureWithMemberPredictions.
 type FixtureWithMemberPredictions struct {
-	AwayTeamId   openapi_types.UUID                 `json:"away_team_id"`
+	AwayTeamName string                             `json:"away_team_name"`
 	ExternalId   int                                `json:"external_id"`
 	GoalsAway    *int                               `json:"goals_away,omitempty"`
 	GoalsHome    *int                               `json:"goals_home,omitempty"`
-	HomeTeamId   openapi_types.UUID                 `json:"home_team_id"`
+	HomeTeamName string                             `json:"home_team_name"`
 	Id           openapi_types.UUID                 `json:"id"`
 	KickoffAt    time.Time                          `json:"kickoff_at"`
 	Predictions  []MemberPrediction                 `json:"predictions"`
@@ -220,11 +220,11 @@ type FixtureWithMemberPredictionsStatus string
 
 // FixtureWithPrediction defines model for FixtureWithPrediction.
 type FixtureWithPrediction struct {
-	AwayTeamId   openapi_types.UUID          `json:"away_team_id"`
+	AwayTeamName string                      `json:"away_team_name"`
 	ExternalId   int                         `json:"external_id"`
 	GoalsAway    *int                        `json:"goals_away,omitempty"`
 	GoalsHome    *int                        `json:"goals_home,omitempty"`
-	HomeTeamId   openapi_types.UUID          `json:"home_team_id"`
+	HomeTeamName string                      `json:"home_team_name"`
 	Id           openapi_types.UUID          `json:"id"`
 	KickoffAt    time.Time                   `json:"kickoff_at"`
 	Prediction   *ScorePrediction            `json:"prediction,omitempty"`
