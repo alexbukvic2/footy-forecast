@@ -1,0 +1,13 @@
+$kind: http-request
+name: Regenerate Invite Code
+method: POST
+url: "{{baseUrl}}/leagues/{{leagueId}}/code"
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.environment.set("leagueCode", jsonData.code);
+    language: text/javascript
+order: 6000
+headers:
+  Authorization: Bearer {{authToken}}

@@ -1,0 +1,12 @@
+$kind: http-request
+url: https://v3.football.api-sports.io/players?season=2022&league=1&page=1
+method: GET
+headers:
+  x-apisports-key: d22f1be11f428cc0567dfab8a78e67d7
+queryParams:
+  season: "2022"
+  league: "1"
+  page: "1"
+auth:
+  type: noauth
+order: 2826773068202171

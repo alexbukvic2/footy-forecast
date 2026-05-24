@@ -1,0 +1,5 @@
+$kind: http-request
+name: Liveness
+method: GET
+url: '{{baseUrl}}/health'
+order: 1000

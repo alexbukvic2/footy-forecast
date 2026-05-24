@@ -1,0 +1,1837 @@
+{
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "example": {
+          "error": "not found"
+        },
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "League": {
+        "example": {
+          "code": "ABCD1234",
+          "created_at": "2025-01-01T00:00:00Z",
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "name": "My Prediction League",
+          "owner_id": "550e8400-e29b-41d4-a716-446655440002",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
+          "updated_at": "2025-01-01T00:00:00Z"
+        },
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "tournament_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tournament_id",
+          "owner_id",
+          "name",
+          "code",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "LeagueDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/League"
+          },
+          {
+            "properties": {
+              "members": {
+                "items": {
+                  "$ref": "#/components/schemas/LeagueMember"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "members"
+            ],
+            "type": "object"
+          }
+        ],
+        "example": {
+          "code": "ABCD1234",
+          "created_at": "2025-01-01T00:00:00Z",
+          "id": "550e8400-e29b-41d4-a716-446655440001",
+          "members": [
+            {
+              "joined_at": "2025-01-01T00:00:00Z",
+              "role": "owner",
+              "user_id": "550e8400-e29b-41d4-a716-446655440002"
+            }
+          ],
+          "name": "My Prediction League",
+          "owner_id": "550e8400-e29b-41d4-a716-446655440002",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
+          "updated_at": "2025-01-01T00:00:00Z"
+        }
+      },
+      "LeagueListResponse": {
+        "example": {
+          "leagues": [
+            {
+              "code": "ABCD1234",
+              "created_at": "2025-01-01T00:00:00Z",
+              "id": "550e8400-e29b-41d4-a716-446655440001",
+              "name": "My Prediction League",
+              "owner_id": "550e8400-e29b-41d4-a716-446655440002",
+              "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
+              "updated_at": "2025-01-01T00:00:00Z"
+            }
+          ]
+        },
+        "properties": {
+          "leagues": {
+            "items": {
+              "$ref": "#/components/schemas/League"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "leagues"
+        ],
+        "type": "object"
+      },
+      "LeagueMember": {
+        "example": {
+          "joined_at": "2025-01-01T00:00:00Z",
+          "role": "owner",
+          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+        },
+        "properties": {
+          "joined_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "owner",
+              "member"
+            ],
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "role",
+          "joined_at"
+        ],
+        "type": "object"
+      },
+      "Player": {
+        "example": {
+          "handicaps": {
+            "group_top_scorer": 5,
+            "total_top_scorer": 10
+          },
+          "id": "550e8400-e29b-41d4-a716-446655440003",
+          "name": "Kylian Mbappe",
+          "team_logo": "https://example.com/france.png",
+          "team_name": "France"
+        },
+        "properties": {
+          "handicaps": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "team_logo": {
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "team_name",
+          "team_logo",
+          "handicaps"
+        ],
+        "type": "object"
+      },
+      "PlayerHandicap": {
+        "example": {
+          "points": 5
+        },
+        "properties": {
+          "points": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "type": "object"
+      },
+      "PlayerHandicapCategory": {
+        "enum": [
+          "group_top_scorer",
+          "total_top_scorer"
+        ],
+        "example": "group_top_scorer",
+        "type": "string"
+      },
+      "PlayerListResponse": {
+        "example": {
+          "players": [
+            {
+              "handicaps": {
+                "group_top_scorer": 5,
+                "total_top_scorer": 10
+              },
+              "id": "550e8400-e29b-41d4-a716-446655440003",
+              "name": "Kylian Mbappe",
+              "team_logo": "https://example.com/france.png",
+              "team_name": "France"
+            }
+          ]
+        },
+        "properties": {
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "players"
+        ],
+        "type": "object"
+      },
+      "TeamHandicap": {
+        "example": {
+          "points": 3
+        },
+        "properties": {
+          "points": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "points"
+        ],
+        "type": "object"
+      },
+      "TeamHandicapCategory": {
+        "enum": [
+          "group_winner",
+          "playoff",
+          "semifinalist",
+          "winner"
+        ],
+        "example": "winner",
+        "type": "string"
+      },
+      "Tournament": {
+        "example": {
+          "created_at": "2025-01-01T00:00:00Z",
+          "ends_at": "2026-07-19T00:00:00Z",
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "name": "FIFA World Cup 2026",
+          "slug": "world-cup-2026",
+          "starts_at": "2026-06-11T00:00:00Z",
+          "status": "upcoming",
+          "updated_at": "2025-01-01T00:00:00Z"
+        },
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "ends_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "starts_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "upcoming",
+              "in_progress",
+              "concluded"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "status",
+          "starts_at",
+          "ends_at",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "TournamentListResponse": {
+        "example": {
+          "tournaments": [
+            {
+              "created_at": "2025-01-01T00:00:00Z",
+              "ends_at": "2026-07-19T00:00:00Z",
+              "id": "550e8400-e29b-41d4-a716-446655440000",
+              "name": "FIFA World Cup 2026",
+              "slug": "world-cup-2026",
+              "starts_at": "2026-06-11T00:00:00Z",
+              "status": "upcoming",
+              "updated_at": "2025-01-01T00:00:00Z"
+            }
+          ]
+        },
+        "properties": {
+          "tournaments": {
+            "items": {
+              "$ref": "#/components/schemas/Tournament"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tournaments"
+        ],
+        "type": "object"
+      },
+      "User": {
+        "example": {
+          "created_at": "2025-01-01T00:00:00Z",
+          "display_name": "John Doe",
+          "email": "user@example.com",
+          "id": "550e8400-e29b-41d4-a716-446655440002",
+          "status": "active",
+          "updated_at": "2025-01-01T00:00:00Z"
+        },
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "email": {
+            "format": "email",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "suspended"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "display_name",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "Football prediction game API. Predictions lock at kickoff; scoring is deterministic and updated in near real-time.\n",
+    "title": "footy-forecast API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/docs": {
+      "get": {
+        "operationId": "getDocs",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Swagger UI HTML page"
+          }
+        },
+        "security": [],
+        "summary": "Swagger UI",
+        "tags": [
+          "spec"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getLiveness",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok"
+                },
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Process is running"
+          }
+        },
+        "security": [],
+        "summary": "Liveness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "getReadiness",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ready"
+                },
+                "schema": {
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Process is ready to serve traffic"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "reason": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "reason"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Database unreachable"
+          }
+        },
+        "security": [],
+        "summary": "Readiness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/leagues": {
+      "get": {
+        "operationId": "listLeagues",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeagueListResponse"
+                }
+              }
+            },
+            "description": "User's leagues"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List the caller's leagues",
+        "tags": [
+          "leagues"
+        ]
+      },
+      "post": {
+        "operationId": "createLeague",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "My Prediction League",
+                "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+              },
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "tournament_id": {
+                    "format": "uuid",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "tournament_id",
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/League"
+                }
+              }
+            },
+            "description": "League created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create a league",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/leagues/join": {
+      "post": {
+        "operationId": "joinLeague",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "code": "ABCD1234"
+              },
+              "schema": {
+                "properties": {
+                  "code": {
+                    "maxLength": 20,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/League"
+                }
+              }
+            },
+            "description": "Joined league"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid or missing code"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found for code"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Already a member"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Join a league via invite code",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/leagues/{id}": {
+      "delete": {
+        "operationId": "deleteLeague",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "League deleted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid UUID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not the league owner"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete a league",
+        "tags": [
+          "leagues"
+        ]
+      },
+      "get": {
+        "operationId": "getLeague",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeagueDetail"
+                }
+              }
+            },
+            "description": "League with members"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid UUID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not a member of this league"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get league with members",
+        "tags": [
+          "leagues"
+        ]
+      },
+      "patch": {
+        "operationId": "updateLeagueName",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "name": "Updated League Name"
+              },
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/League"
+                }
+              }
+            },
+            "description": "League updated"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not the league owner"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update league name",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/leagues/{id}/code": {
+      "post": {
+        "operationId": "regenerateLeagueCode",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/League"
+                }
+              }
+            },
+            "description": "League with new invite code"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid UUID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not the league owner"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Regenerate league invite code",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/leagues/{id}/members/{userId}": {
+      "delete": {
+        "operationId": "removeLeagueMember",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Member removed"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid UUID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not the league owner"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League or member not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Remove a member from a league",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "getOpenAPISpec",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OpenAPI spec as JSON"
+          }
+        },
+        "security": [],
+        "summary": "Serve OpenAPI spec as JSON",
+        "tags": [
+          "spec"
+        ]
+      }
+    },
+    "/player-handicaps/{player_id}/{category}": {
+      "get": {
+        "operationId": "getPlayerHandicap",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "player_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PlayerHandicapCategory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerHandicap"
+                }
+              }
+            },
+            "description": "Player handicap"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid player ID or category"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Handicap not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get player handicap by category",
+        "tags": [
+          "handicaps"
+        ]
+      }
+    },
+    "/team-handicaps/{team_id}/{category}": {
+      "get": {
+        "operationId": "getTeamHandicap",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "team_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TeamHandicapCategory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamHandicap"
+                }
+              }
+            },
+            "description": "Team handicap"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid team ID or category"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Handicap not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get team handicap by category",
+        "tags": [
+          "handicaps"
+        ]
+      }
+    },
+    "/tournaments": {
+      "get": {
+        "operationId": "listTournaments",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TournamentListResponse"
+                }
+              }
+            },
+            "description": "List of tournaments"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [],
+        "summary": "List all tournaments",
+        "tags": [
+          "tournaments"
+        ]
+      },
+      "post": {
+        "operationId": "createTournament",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "ends_at": "2026-07-19T00:00:00Z",
+                "name": "FIFA World Cup 2026",
+                "slug": "world-cup-2026",
+                "starts_at": "2026-06-11T00:00:00Z"
+              },
+              "schema": {
+                "properties": {
+                  "ends_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "starts_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "slug",
+                  "name",
+                  "starts_at",
+                  "ends_at"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            },
+            "description": "Tournament created"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid input"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament with slug already exists"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Create a tournament",
+        "tags": [
+          "tournaments"
+        ]
+      }
+    },
+    "/tournaments/slug/{slug}": {
+      "get": {
+        "operationId": "getTournamentBySlug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            },
+            "description": "Tournament found"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [],
+        "summary": "Get tournament by slug",
+        "tags": [
+          "tournaments"
+        ]
+      }
+    },
+    "/tournaments/{id}": {
+      "get": {
+        "operationId": "getTournamentByID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tournament"
+                }
+              }
+            },
+            "description": "Tournament found"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid UUID"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [],
+        "summary": "Get tournament by ID",
+        "tags": [
+          "tournaments"
+        ]
+      }
+    },
+    "/tournaments/{tournament_id}/players/search": {
+      "get": {
+        "operationId": "searchPlayers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournament_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerListResponse"
+                }
+              }
+            },
+            "description": "Matching players"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Search players in a tournament",
+        "tags": [
+          "players"
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Current user profile"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get current user profile",
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Local development",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Liveness and readiness probes",
+      "name": "health"
+    },
+    {
+      "description": "Tournament management",
+      "name": "tournaments"
+    },
+    {
+      "description": "User profile",
+      "name": "users"
+    },
+    {
+      "description": "Private prediction leagues",
+      "name": "leagues"
+    },
+    {
+      "description": "Player search within a tournament",
+      "name": "players"
+    },
+    {
+      "description": "Player and team handicap point assignments",
+      "name": "handicaps"
+    },
+    {
+      "description": "API spec and documentation endpoints",
+      "name": "spec"
+    }
+  ]
+}

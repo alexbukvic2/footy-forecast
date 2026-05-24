@@ -1,0 +1,23 @@
+$kind: http-request
+name: Create League
+method: POST
+url: "{{baseUrl}}/leagues"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: |-
+      var jsonData = pm.response.json();
+      pm.environment.set("leagueId", jsonData.id);
+    language: text/javascript
+order: 1000
+headers:
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tournament_id": "{{tournamentId}}",
+      "name": "My League"
+    }

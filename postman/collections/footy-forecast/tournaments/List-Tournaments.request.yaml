@@ -1,0 +1,5 @@
+$kind: http-request
+name: List Tournaments
+method: GET
+url: '{{baseUrl}}/tournaments'
+order: 2000

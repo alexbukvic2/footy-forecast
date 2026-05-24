@@ -1,7 +1,7 @@
 # Binaries
 /bin/
 /dist/
-footy-forecast
+/footy-forecast
 
 # Go
 *.exe

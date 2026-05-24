@@ -1,0 +1,11 @@
+$kind: http-request
+url: https://v3.football.api-sports.io/teams?league={{league_id}}&season={{season}}
+method: GET
+headers:
+  x-apisports-key: d22f1be11f428cc0567dfab8a78e67d7
+queryParams:
+  league: "{{league_id}}"
+  season: "{{season}}"
+auth:
+  type: noauth
+order: 3442953126392495
