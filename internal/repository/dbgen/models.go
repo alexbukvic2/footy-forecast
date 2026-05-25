@@ -420,6 +420,14 @@ type PlayerHandicap struct {
 	Points   int32
 }
 
+type PlayerOutcome struct {
+	ID           uuid.UUID
+	TournamentID uuid.UUID
+	Category     PlayerHandicapCategory
+	PlayerID     uuid.UUID
+	RecordedAt   time.Time
+}
+
 type PlayerPrediction struct {
 	ID           uuid.UUID
 	UserID       uuid.UUID
@@ -429,6 +437,18 @@ type PlayerPrediction struct {
 	Points       *int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	GroupLetter  *string
+}
+
+type ScorePrediction struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	FixtureID uuid.UUID
+	GoalsHome int32
+	GoalsAway int32
+	Points    *int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type Team struct {
@@ -436,6 +456,7 @@ type Team struct {
 	Name         string
 	Logo         string
 	TournamentID uuid.UUID
+	GroupLetter  *string
 }
 
 type TeamHandicap struct {
@@ -443,6 +464,14 @@ type TeamHandicap struct {
 	TeamID   uuid.UUID
 	Category TeamHandicapCategory
 	Points   int32
+}
+
+type TeamOutcome struct {
+	ID           uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	TeamID       uuid.UUID
+	RecordedAt   time.Time
 }
 
 type TeamPrediction struct {
@@ -454,6 +483,8 @@ type TeamPrediction struct {
 	Points       *int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	GroupLetter  *string
+	SlotIndex    int16
 }
 
 type Tournament struct {

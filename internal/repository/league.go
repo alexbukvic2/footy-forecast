@@ -308,6 +308,18 @@ func (r *LeagueRepository) ListMembersForPredictions(
 	return out, nil
 }
 
+// IsMember reports whether the user is a member of the given league.
+func (r *LeagueRepository) IsMember(ctx context.Context, leagueID, userID uuid.UUID) (bool, error) {
+	_, err := r.GetMember(ctx, leagueID, userID)
+	if errors.Is(err, domain.ErrNotFound) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("check membership: %w", err)
+	}
+	return true, nil
+}
+
 func leagueFromRow(row dbgen.League) *domain.League {
 	return &domain.League{
 		ID:           row.ID,

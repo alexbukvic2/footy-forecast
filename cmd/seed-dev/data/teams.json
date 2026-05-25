@@ -1,0 +1,338 @@
+[
+  {
+    "id": "2f721a51-9aaf-4cab-86e8-9fea0fb1b29f",
+    "name": "Canada",
+    "logo": "https://media.api-sports.io/football/teams/5529.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "B"
+  },
+  {
+    "id": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+    "name": "Bosnia & Herzegovina",
+    "logo": "https://media.api-sports.io/football/teams/1113.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "B"
+  },
+  {
+    "id": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+    "name": "Qatar",
+    "logo": "https://media.api-sports.io/football/teams/1569.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "B"
+  },
+  {
+    "id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+    "name": "Switzerland",
+    "logo": "https://media.api-sports.io/football/teams/15.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "B"
+  },
+  {
+    "id": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+    "name": "Brazil",
+    "logo": "https://media.api-sports.io/football/teams/6.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "C"
+  },
+  {
+    "id": "8214b191-5790-4095-8f62-5a6eb56dda35",
+    "name": "Morocco",
+    "logo": "https://media.api-sports.io/football/teams/31.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "C"
+  },
+  {
+    "id": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+    "name": "Haiti",
+    "logo": "https://media.api-sports.io/football/teams/2386.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "C"
+  },
+  {
+    "id": "b824fb76-e220-4a93-a231-d8109737a6e2",
+    "name": "Scotland",
+    "logo": "https://media.api-sports.io/football/teams/1108.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "C"
+  },
+  {
+    "id": "12d0bebf-3a01-48f6-8ee0-2df8c7e563b5",
+    "name": "USA",
+    "logo": "https://media.api-sports.io/football/teams/2384.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "D"
+  },
+  {
+    "id": "81281845-7463-4595-b8f4-7d2c73593f31",
+    "name": "Paraguay",
+    "logo": "https://media.api-sports.io/football/teams/2380.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "D"
+  },
+  {
+    "id": "6a2be3b0-f500-4bc1-8d0c-84adb759bd77",
+    "name": "Australia",
+    "logo": "https://media.api-sports.io/football/teams/20.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "D"
+  },
+  {
+    "id": "e083b342-e482-442a-a3fb-a556438c14bc",
+    "name": "Türkiye",
+    "logo": "https://media.api-sports.io/football/teams/777.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "D"
+  },
+  {
+    "id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51",
+    "name": "Germany",
+    "logo": "https://media.api-sports.io/football/teams/25.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "E"
+  },
+  {
+    "id": "723e06e9-5219-4630-8bcf-d7391be47840",
+    "name": "Curaçao",
+    "logo": "https://media.api-sports.io/football/teams/5530.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "E"
+  },
+  {
+    "id": "f6b4d0e9-9cc6-4983-9cbf-845ad49c47a6",
+    "name": "Ivory Coast",
+    "logo": "https://media.api-sports.io/football/teams/1501.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "E"
+  },
+  {
+    "id": "1ee063ad-1bd1-422b-b20c-23363e36572d",
+    "name": "Ecuador",
+    "logo": "https://media.api-sports.io/football/teams/2382.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "E"
+  },
+  {
+    "id": "6386368d-daec-433a-8115-06d24451c2e5",
+    "name": "Netherlands",
+    "logo": "https://media.api-sports.io/football/teams/1118.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "F"
+  },
+  {
+    "id": "a1aaae66-bf39-4690-920e-65c4d97a3705",
+    "name": "Japan",
+    "logo": "https://media.api-sports.io/football/teams/12.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "F"
+  },
+  {
+    "id": "23ae4801-3e88-44d1-bade-297e2e68faac",
+    "name": "Sweden",
+    "logo": "https://media.api-sports.io/football/teams/5.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "F"
+  },
+  {
+    "id": "ab6ce035-4e52-4aa8-b963-cfd21d5c0eea",
+    "name": "Tunisia",
+    "logo": "https://media.api-sports.io/football/teams/28.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "F"
+  },
+  {
+    "id": "4c95f9bd-5803-4461-9e23-640e9f38ba37",
+    "name": "Belgium",
+    "logo": "https://media.api-sports.io/football/teams/1.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "G"
+  },
+  {
+    "id": "796303a1-72a3-4740-8f47-0c8e1ead5137",
+    "name": "Egypt",
+    "logo": "https://media.api-sports.io/football/teams/32.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "G"
+  },
+  {
+    "id": "efb67693-9e60-4dbe-8d85-04be3f182def",
+    "name": "Iran",
+    "logo": "https://media.api-sports.io/football/teams/22.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "G"
+  },
+  {
+    "id": "f7b333b2-e857-4832-a322-28c8ff735297",
+    "name": "New Zealand",
+    "logo": "https://media.api-sports.io/football/teams/4673.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "G"
+  },
+  {
+    "id": "1fc6d88a-7989-44f1-ab0c-ef0c7348f82e",
+    "name": "Spain",
+    "logo": "https://media.api-sports.io/football/teams/9.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "H"
+  },
+  {
+    "id": "66d42dae-b140-4631-bfe9-36e787bb09fb",
+    "name": "Cape Verde Islands",
+    "logo": "https://media.api-sports.io/football/teams/1533.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "H"
+  },
+  {
+    "id": "617e5085-4cab-421f-9791-d4232ac1d32f",
+    "name": "Saudi Arabia",
+    "logo": "https://media.api-sports.io/football/teams/23.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "H"
+  },
+  {
+    "id": "e3c8a17a-0b03-4ea3-b0a2-e16e80232e82",
+    "name": "Uruguay",
+    "logo": "https://media.api-sports.io/football/teams/7.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "H"
+  },
+  {
+    "id": "27cf84db-ad5c-44a3-87f9-32a517733bbb",
+    "name": "France",
+    "logo": "https://media.api-sports.io/football/teams/2.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "I"
+  },
+  {
+    "id": "63c2e744-5552-420c-a18c-a59db7468da6",
+    "name": "Senegal",
+    "logo": "https://media.api-sports.io/football/teams/13.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "I"
+  },
+  {
+    "id": "e4f747c0-cb92-4f2e-814d-4a870fe6e371",
+    "name": "Iraq",
+    "logo": "https://media.api-sports.io/football/teams/1567.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "I"
+  },
+  {
+    "id": "0ef77409-b8e4-4607-8b68-1f2c0e742b30",
+    "name": "Norway",
+    "logo": "https://media.api-sports.io/football/teams/1090.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "I"
+  },
+  {
+    "id": "e25ff3f8-d3a5-4940-8037-8c484804c093",
+    "name": "Argentina",
+    "logo": "https://media.api-sports.io/football/teams/26.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "J"
+  },
+  {
+    "id": "51d6436a-37a7-4f81-b735-ce3df6ab565c",
+    "name": "Algeria",
+    "logo": "https://media.api-sports.io/football/teams/1532.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "J"
+  },
+  {
+    "id": "edacb8e7-035b-48b3-acc0-08a0ca8e9ba9",
+    "name": "Austria",
+    "logo": "https://media.api-sports.io/football/teams/775.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "J"
+  },
+  {
+    "id": "0434cb80-1162-4614-831a-ebe60c4fea25",
+    "name": "Jordan",
+    "logo": "https://media.api-sports.io/football/teams/1548.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "J"
+  },
+  {
+    "id": "97236949-fb15-476c-9680-9f8134b13b37",
+    "name": "Portugal",
+    "logo": "https://media.api-sports.io/football/teams/27.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "K"
+  },
+  {
+    "id": "bccca2cb-419e-49c9-ac3f-ca93676bb1b7",
+    "name": "Congo DR",
+    "logo": "https://media.api-sports.io/football/teams/1508.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "K"
+  },
+  {
+    "id": "bf68d283-cc5c-49d3-9d34-1817b1271a05",
+    "name": "Uzbekistan",
+    "logo": "https://media.api-sports.io/football/teams/1568.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "K"
+  },
+  {
+    "id": "2360ff4b-a100-4b65-a01b-fa79b39af5e8",
+    "name": "Colombia",
+    "logo": "https://media.api-sports.io/football/teams/8.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "K"
+  },
+  {
+    "id": "ba31703c-47d7-47d2-b0ec-32381db03ea2",
+    "name": "England",
+    "logo": "https://media.api-sports.io/football/teams/10.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "L"
+  },
+  {
+    "id": "4f816cd1-5c92-4fcc-abaa-6c96a1e3115d",
+    "name": "Croatia",
+    "logo": "https://media.api-sports.io/football/teams/3.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "L"
+  },
+  {
+    "id": "54807110-1b9b-4e13-979d-262335c49d6b",
+    "name": "Ghana",
+    "logo": "https://media.api-sports.io/football/teams/1504.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "L"
+  },
+  {
+    "id": "4774adc9-0468-4a28-b911-4879a043ad62",
+    "name": "Panama",
+    "logo": "https://media.api-sports.io/football/teams/11.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "L"
+  },
+  {
+    "id": "11fe28ff-3b8e-4862-9a98-be8d1024a1c2",
+    "name": "Mexico",
+    "logo": "https://media.api-sports.io/football/teams/16.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "A"
+  },
+  {
+    "id": "7a54a441-9a70-4287-a536-940144792006",
+    "name": "South Africa",
+    "logo": "https://media.api-sports.io/football/teams/1531.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "A"
+  },
+  {
+    "id": "e73417fb-53ae-4178-8fbe-fb451f400e44",
+    "name": "South Korea",
+    "logo": "https://media.api-sports.io/football/teams/17.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "A"
+  },
+  {
+    "id": "9f44c6d9-99d0-4124-857b-2bf0a2d26d8d",
+    "name": "Czech Republic",
+    "logo": "https://media.api-sports.io/football/teams/770.png",
+    "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761",
+    "group_letter": "A"
+  }
+]

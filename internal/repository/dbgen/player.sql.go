@@ -7,25 +7,41 @@ package dbgen
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const getPlayerByID = `-- name: GetPlayerByID :one
-SELECT id, external_id, name, tournament_id, team_id, created_at, updated_at
-FROM players
-WHERE id = $1
+SELECT p.id, p.external_id, p.name, p.tournament_id, p.team_id,
+       t.group_letter,
+       p.created_at, p.updated_at
+FROM players p
+JOIN teams t ON t.id = p.team_id
+WHERE p.id = $1
 `
 
-func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (Player, error) {
+type GetPlayerByIDRow struct {
+	ID           uuid.UUID
+	ExternalID   string
+	Name         string
+	TournamentID uuid.UUID
+	TeamID       uuid.UUID
+	GroupLetter  *string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (GetPlayerByIDRow, error) {
 	row := q.db.QueryRow(ctx, getPlayerByID, id)
-	var i Player
+	var i GetPlayerByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.ExternalID,
 		&i.Name,
 		&i.TournamentID,
 		&i.TeamID,
+		&i.GroupLetter,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

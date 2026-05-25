@@ -12,6 +12,26 @@ import (
 	"github.com/google/uuid"
 )
 
+const countPlayoffWildcards = `-- name: CountPlayoffWildcards :one
+SELECT COUNT(*)::int FROM team_predictions
+WHERE tournament_id = $1
+  AND user_id       = $2
+  AND category      = 'playoff'
+  AND slot_index    = 2
+`
+
+type CountPlayoffWildcardsParams struct {
+	TournamentID uuid.UUID
+	UserID       uuid.UUID
+}
+
+func (q *Queries) CountPlayoffWildcards(ctx context.Context, arg CountPlayoffWildcardsParams) (int32, error) {
+	row := q.db.QueryRow(ctx, countPlayoffWildcards, arg.TournamentID, arg.UserID)
+	var column_1 int32
+	err := row.Scan(&column_1)
+	return column_1, err
+}
+
 const listLeagueMembersForPredictions = `-- name: ListLeagueMembersForPredictions :many
 SELECT lm.user_id, u.display_name
 FROM league_members lm
@@ -46,21 +66,23 @@ func (q *Queries) ListLeagueMembersForPredictions(ctx context.Context, leagueID 
 }
 
 const listPlayerPredictionsByLeague = `-- name: ListPlayerPredictionsByLeague :many
-SELECT lm.user_id, pp.category, pp.pick AS player_id,
+SELECT lm.user_id, pp.category, pp.group_letter, pp.pick AS player_id,
        p.name AS player_name, pp.points
 FROM league_members lm
 JOIN leagues l ON l.id = lm.league_id
-JOIN player_predictions pp ON pp.user_id = lm.user_id AND pp.tournament_id = l.tournament_id
+JOIN player_predictions pp
+    ON pp.user_id = lm.user_id AND pp.tournament_id = l.tournament_id
 JOIN players p ON p.id = pp.pick
 WHERE lm.league_id = $1
 `
 
 type ListPlayerPredictionsByLeagueRow struct {
-	UserID     uuid.UUID
-	Category   PlayerHandicapCategory
-	PlayerID   uuid.UUID
-	PlayerName string
-	Points     *int32
+	UserID      uuid.UUID
+	Category    PlayerHandicapCategory
+	GroupLetter *string
+	PlayerID    uuid.UUID
+	PlayerName  string
+	Points      *int32
 }
 
 func (q *Queries) ListPlayerPredictionsByLeague(ctx context.Context, leagueID uuid.UUID) ([]ListPlayerPredictionsByLeagueRow, error) {
@@ -75,6 +97,7 @@ func (q *Queries) ListPlayerPredictionsByLeague(ctx context.Context, leagueID uu
 		if err := rows.Scan(
 			&i.UserID,
 			&i.Category,
+			&i.GroupLetter,
 			&i.PlayerID,
 			&i.PlayerName,
 			&i.Points,
@@ -91,7 +114,7 @@ func (q *Queries) ListPlayerPredictionsByLeague(ctx context.Context, leagueID uu
 
 const listPlayerPredictionsByTournamentForUser = `-- name: ListPlayerPredictionsByTournamentForUser :many
 SELECT pp.id, pp.user_id, pp.tournament_id, pp.category, pp.pick,
-       p.name AS pick_name, pp.points, pp.created_at, pp.updated_at
+       pp.group_letter, p.name AS pick_name, pp.points, pp.created_at, pp.updated_at
 FROM player_predictions pp
 JOIN players p ON p.id = pp.pick
 WHERE pp.tournament_id = $1 AND pp.user_id = $2
@@ -108,6 +131,7 @@ type ListPlayerPredictionsByTournamentForUserRow struct {
 	TournamentID uuid.UUID
 	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
 	PickName     string
 	Points       *int32
 	CreatedAt    time.Time
@@ -129,6 +153,7 @@ func (q *Queries) ListPlayerPredictionsByTournamentForUser(ctx context.Context, 
 			&i.TournamentID,
 			&i.Category,
 			&i.Pick,
+			&i.GroupLetter,
 			&i.PickName,
 			&i.Points,
 			&i.CreatedAt,
@@ -145,21 +170,24 @@ func (q *Queries) ListPlayerPredictionsByTournamentForUser(ctx context.Context, 
 }
 
 const listTeamPredictionsByLeague = `-- name: ListTeamPredictionsByLeague :many
-SELECT lm.user_id, tp.category, tp.pick AS team_id,
-       t.name AS team_name, tp.points
+SELECT lm.user_id, tp.category, tp.group_letter, tp.slot_index,
+       tp.pick AS team_id, t.name AS team_name, tp.points
 FROM league_members lm
 JOIN leagues l ON l.id = lm.league_id
-JOIN team_predictions tp ON tp.user_id = lm.user_id AND tp.tournament_id = l.tournament_id
+JOIN team_predictions tp
+    ON tp.user_id = lm.user_id AND tp.tournament_id = l.tournament_id
 JOIN teams t ON t.id = tp.pick
 WHERE lm.league_id = $1
 `
 
 type ListTeamPredictionsByLeagueRow struct {
-	UserID   uuid.UUID
-	Category TeamHandicapCategory
-	TeamID   uuid.UUID
-	TeamName string
-	Points   *int32
+	UserID      uuid.UUID
+	Category    TeamHandicapCategory
+	GroupLetter *string
+	SlotIndex   int16
+	TeamID      uuid.UUID
+	TeamName    string
+	Points      *int32
 }
 
 func (q *Queries) ListTeamPredictionsByLeague(ctx context.Context, leagueID uuid.UUID) ([]ListTeamPredictionsByLeagueRow, error) {
@@ -174,6 +202,8 @@ func (q *Queries) ListTeamPredictionsByLeague(ctx context.Context, leagueID uuid
 		if err := rows.Scan(
 			&i.UserID,
 			&i.Category,
+			&i.GroupLetter,
+			&i.SlotIndex,
 			&i.TeamID,
 			&i.TeamName,
 			&i.Points,
@@ -190,7 +220,8 @@ func (q *Queries) ListTeamPredictionsByLeague(ctx context.Context, leagueID uuid
 
 const listTeamPredictionsByTournamentForUser = `-- name: ListTeamPredictionsByTournamentForUser :many
 SELECT tp.id, tp.user_id, tp.tournament_id, tp.category, tp.pick,
-       t.name AS pick_name, tp.points, tp.created_at, tp.updated_at
+       tp.group_letter, tp.slot_index, t.name AS pick_name,
+       tp.points, tp.created_at, tp.updated_at
 FROM team_predictions tp
 JOIN teams t ON t.id = tp.pick
 WHERE tp.tournament_id = $1 AND tp.user_id = $2
@@ -207,6 +238,8 @@ type ListTeamPredictionsByTournamentForUserRow struct {
 	TournamentID uuid.UUID
 	Category     TeamHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
+	SlotIndex    int16
 	PickName     string
 	Points       *int32
 	CreatedAt    time.Time
@@ -228,6 +261,8 @@ func (q *Queries) ListTeamPredictionsByTournamentForUser(ctx context.Context, ar
 			&i.TournamentID,
 			&i.Category,
 			&i.Pick,
+			&i.GroupLetter,
+			&i.SlotIndex,
 			&i.PickName,
 			&i.Points,
 			&i.CreatedAt,
@@ -243,54 +278,57 @@ func (q *Queries) ListTeamPredictionsByTournamentForUser(ctx context.Context, ar
 	return items, nil
 }
 
-const upsertPlayerPrediction = `-- name: UpsertPlayerPrediction :one
+const upsertPlayerPredictionGroup = `-- name: UpsertPlayerPredictionGroup :one
 WITH ins AS (
-    INSERT INTO player_predictions (user_id, tournament_id, category, pick)
-    VALUES ($1, $2, $3, $4)
-    ON CONFLICT (user_id, tournament_id, category) DO UPDATE
-        SET pick       = EXCLUDED.pick,
-            updated_at = now()
-    RETURNING id, user_id, tournament_id, category, pick, points, created_at, updated_at
+    INSERT INTO player_predictions (user_id, tournament_id, category, pick, group_letter)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (user_id, tournament_id, category, group_letter)
+        WHERE group_letter IS NOT NULL
+    DO UPDATE SET pick = EXCLUDED.pick, updated_at = now()
+    RETURNING id, user_id, tournament_id, category, pick, group_letter, points, created_at, updated_at
 )
 SELECT ins.id, ins.user_id, ins.tournament_id, ins.category, ins.pick,
-       p.name AS pick_name, ins.points, ins.created_at, ins.updated_at
-FROM ins
-JOIN players p ON p.id = ins.pick
+       ins.group_letter, p.name AS pick_name, ins.points, ins.created_at, ins.updated_at
+FROM ins JOIN players p ON p.id = ins.pick
 `
 
-type UpsertPlayerPredictionParams struct {
+type UpsertPlayerPredictionGroupParams struct {
 	UserID       uuid.UUID
 	TournamentID uuid.UUID
 	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
 }
 
-type UpsertPlayerPredictionRow struct {
+type UpsertPlayerPredictionGroupRow struct {
 	ID           uuid.UUID
 	UserID       uuid.UUID
 	TournamentID uuid.UUID
 	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
 	PickName     string
 	Points       *int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
 
-func (q *Queries) UpsertPlayerPrediction(ctx context.Context, arg UpsertPlayerPredictionParams) (UpsertPlayerPredictionRow, error) {
-	row := q.db.QueryRow(ctx, upsertPlayerPrediction,
+func (q *Queries) UpsertPlayerPredictionGroup(ctx context.Context, arg UpsertPlayerPredictionGroupParams) (UpsertPlayerPredictionGroupRow, error) {
+	row := q.db.QueryRow(ctx, upsertPlayerPredictionGroup,
 		arg.UserID,
 		arg.TournamentID,
 		arg.Category,
 		arg.Pick,
+		arg.GroupLetter,
 	)
-	var i UpsertPlayerPredictionRow
+	var i UpsertPlayerPredictionGroupRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.TournamentID,
 		&i.Category,
 		&i.Pick,
+		&i.GroupLetter,
 		&i.PickName,
 		&i.Points,
 		&i.CreatedAt,
@@ -299,54 +337,179 @@ func (q *Queries) UpsertPlayerPrediction(ctx context.Context, arg UpsertPlayerPr
 	return i, err
 }
 
-const upsertTeamPrediction = `-- name: UpsertTeamPrediction :one
+const upsertPlayerPredictionNoGroup = `-- name: UpsertPlayerPredictionNoGroup :one
 WITH ins AS (
-    INSERT INTO team_predictions (user_id, tournament_id, category, pick)
+    INSERT INTO player_predictions (user_id, tournament_id, category, pick)
     VALUES ($1, $2, $3, $4)
-    ON CONFLICT (user_id, tournament_id, category) DO UPDATE
-        SET pick       = EXCLUDED.pick,
-            updated_at = now()
-    RETURNING id, user_id, tournament_id, category, pick, points, created_at, updated_at
+    ON CONFLICT (user_id, tournament_id, category)
+        WHERE group_letter IS NULL
+    DO UPDATE SET pick = EXCLUDED.pick, updated_at = now()
+    RETURNING id, user_id, tournament_id, category, pick, group_letter, points, created_at, updated_at
 )
 SELECT ins.id, ins.user_id, ins.tournament_id, ins.category, ins.pick,
-       t.name AS pick_name, ins.points, ins.created_at, ins.updated_at
-FROM ins
-JOIN teams t ON t.id = ins.pick
+       ins.group_letter, p.name AS pick_name, ins.points, ins.created_at, ins.updated_at
+FROM ins JOIN players p ON p.id = ins.pick
 `
 
-type UpsertTeamPredictionParams struct {
+type UpsertPlayerPredictionNoGroupParams struct {
 	UserID       uuid.UUID
 	TournamentID uuid.UUID
-	Category     TeamHandicapCategory
+	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
 }
 
-type UpsertTeamPredictionRow struct {
+type UpsertPlayerPredictionNoGroupRow struct {
 	ID           uuid.UUID
 	UserID       uuid.UUID
 	TournamentID uuid.UUID
-	Category     TeamHandicapCategory
+	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
 	PickName     string
 	Points       *int32
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
 
-func (q *Queries) UpsertTeamPrediction(ctx context.Context, arg UpsertTeamPredictionParams) (UpsertTeamPredictionRow, error) {
-	row := q.db.QueryRow(ctx, upsertTeamPrediction,
+func (q *Queries) UpsertPlayerPredictionNoGroup(ctx context.Context, arg UpsertPlayerPredictionNoGroupParams) (UpsertPlayerPredictionNoGroupRow, error) {
+	row := q.db.QueryRow(ctx, upsertPlayerPredictionNoGroup,
 		arg.UserID,
 		arg.TournamentID,
 		arg.Category,
 		arg.Pick,
 	)
-	var i UpsertTeamPredictionRow
+	var i UpsertPlayerPredictionNoGroupRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
 		&i.TournamentID,
 		&i.Category,
 		&i.Pick,
+		&i.GroupLetter,
+		&i.PickName,
+		&i.Points,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const upsertTeamPredictionGroup = `-- name: UpsertTeamPredictionGroup :one
+WITH ins AS (
+    INSERT INTO team_predictions (user_id, tournament_id, category, pick, group_letter, slot_index)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    ON CONFLICT (user_id, tournament_id, category, group_letter, slot_index)
+        WHERE group_letter IS NOT NULL
+    DO UPDATE SET pick = EXCLUDED.pick, updated_at = now()
+    RETURNING id, user_id, tournament_id, category, pick, group_letter, slot_index, points, created_at, updated_at
+)
+SELECT ins.id, ins.user_id, ins.tournament_id, ins.category, ins.pick,
+       ins.group_letter, ins.slot_index, t.name AS pick_name, ins.points, ins.created_at, ins.updated_at
+FROM ins JOIN teams t ON t.id = ins.pick
+`
+
+type UpsertTeamPredictionGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	Pick         uuid.UUID
+	GroupLetter  *string
+	SlotIndex    int16
+}
+
+type UpsertTeamPredictionGroupRow struct {
+	ID           uuid.UUID
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	Pick         uuid.UUID
+	GroupLetter  *string
+	SlotIndex    int16
+	PickName     string
+	Points       *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) UpsertTeamPredictionGroup(ctx context.Context, arg UpsertTeamPredictionGroupParams) (UpsertTeamPredictionGroupRow, error) {
+	row := q.db.QueryRow(ctx, upsertTeamPredictionGroup,
+		arg.UserID,
+		arg.TournamentID,
+		arg.Category,
+		arg.Pick,
+		arg.GroupLetter,
+		arg.SlotIndex,
+	)
+	var i UpsertTeamPredictionGroupRow
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.TournamentID,
+		&i.Category,
+		&i.Pick,
+		&i.GroupLetter,
+		&i.SlotIndex,
+		&i.PickName,
+		&i.Points,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const upsertTeamPredictionNoGroup = `-- name: UpsertTeamPredictionNoGroup :one
+WITH ins AS (
+    INSERT INTO team_predictions (user_id, tournament_id, category, pick, slot_index)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (user_id, tournament_id, category, slot_index)
+        WHERE group_letter IS NULL
+    DO UPDATE SET pick = EXCLUDED.pick, updated_at = now()
+    RETURNING id, user_id, tournament_id, category, pick, group_letter, slot_index, points, created_at, updated_at
+)
+SELECT ins.id, ins.user_id, ins.tournament_id, ins.category, ins.pick,
+       ins.group_letter, ins.slot_index, t.name AS pick_name, ins.points, ins.created_at, ins.updated_at
+FROM ins JOIN teams t ON t.id = ins.pick
+`
+
+type UpsertTeamPredictionNoGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	Pick         uuid.UUID
+	SlotIndex    int16
+}
+
+type UpsertTeamPredictionNoGroupRow struct {
+	ID           uuid.UUID
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	Pick         uuid.UUID
+	GroupLetter  *string
+	SlotIndex    int16
+	PickName     string
+	Points       *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) UpsertTeamPredictionNoGroup(ctx context.Context, arg UpsertTeamPredictionNoGroupParams) (UpsertTeamPredictionNoGroupRow, error) {
+	row := q.db.QueryRow(ctx, upsertTeamPredictionNoGroup,
+		arg.UserID,
+		arg.TournamentID,
+		arg.Category,
+		arg.Pick,
+		arg.SlotIndex,
+	)
+	var i UpsertTeamPredictionNoGroupRow
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.TournamentID,
+		&i.Category,
+		&i.Pick,
+		&i.GroupLetter,
+		&i.SlotIndex,
 		&i.PickName,
 		&i.Points,
 		&i.CreatedAt,

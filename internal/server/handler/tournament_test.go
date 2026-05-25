@@ -27,10 +27,6 @@ type fakeTournamentService struct {
 		context.Context,
 		uuid.UUID,
 	) (*domain.Tournament, error)
-	getBySlugFn func(
-		context.Context,
-		string,
-	) (*domain.Tournament, error)
 	listFn func(context.Context) ([]*domain.Tournament, error)
 }
 
@@ -45,12 +41,6 @@ func (f *fakeTournamentService) GetByID(
 	id uuid.UUID,
 ) (*domain.Tournament, error) {
 	return f.getByIDFn(ctx, id)
-}
-func (f *fakeTournamentService) GetBySlug(
-	ctx context.Context,
-	slug string,
-) (*domain.Tournament, error) {
-	return f.getBySlugFn(ctx, slug)
 }
 func (f *fakeTournamentService) List(ctx context.Context) ([]*domain.Tournament, error) {
 	return f.listFn(ctx)
@@ -269,83 +259,6 @@ func TestTournament_GetByID(t *testing.T) {
 			rec := getWithPathValue(t, h.GetByID, "/tournaments/"+id.String(), "id", id.String())
 
 			require.Equal(t, http.StatusNotFound, rec.Code)
-		},
-	)
-}
-
-func TestTournament_GetBySlug(t *testing.T) {
-	t.Parallel()
-
-	t.Run(
-		"returns 200 with the tournament", func(t *testing.T) {
-			t.Parallel()
-			found := &domain.Tournament{
-				ID:     uuid.New(),
-				Slug:   "world-cup-2026",
-				Name:   "FIFA World Cup 2026",
-				Status: domain.TournamentStatusUpcoming,
-			}
-			svc := &fakeTournamentService{
-				getBySlugFn: func(
-					_ context.Context,
-					slug string,
-				) (*domain.Tournament, error) {
-					require.Equal(t, "world-cup-2026", slug)
-					return found, nil
-				},
-			}
-			h := handler.NewTournament(silentLogger(), svc)
-
-			rec := getWithPathValue(
-				t, h.GetBySlug,
-				"/tournaments/slug/world-cup-2026", "slug", "world-cup-2026",
-			)
-
-			require.Equal(t, http.StatusOK, rec.Code)
-		},
-	)
-
-	t.Run(
-		"returns 404 when service returns ErrNotFound", func(t *testing.T) {
-			t.Parallel()
-			svc := &fakeTournamentService{
-				getBySlugFn: func(
-					context.Context,
-					string,
-				) (*domain.Tournament, error) {
-					return nil, domain.ErrNotFound
-				},
-			}
-			h := handler.NewTournament(silentLogger(), svc)
-
-			rec := getWithPathValue(
-				t, h.GetBySlug,
-				"/tournaments/slug/missing", "slug", "missing",
-			)
-
-			require.Equal(t, http.StatusNotFound, rec.Code)
-		},
-	)
-
-	t.Run(
-		"returns 400 when service returns ErrInvalid", func(t *testing.T) {
-			t.Parallel()
-			svc := &fakeTournamentService{
-				getBySlugFn: func(
-					context.Context,
-					string,
-				) (*domain.Tournament, error) {
-					return nil, domain.ErrInvalid
-				},
-			}
-			h := handler.NewTournament(silentLogger(), svc)
-
-			rec := getWithPathValue(
-				t, h.GetBySlug,
-				"/tournaments/slug/BAD", "slug", "BAD",
-			)
-
-			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
 	)
 }

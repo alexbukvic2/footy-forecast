@@ -50,28 +50,9 @@ func TestTournamentRepository_CRUD(t *testing.T) {
 	)
 
 	t.Run(
-		"get by id returns the tournament", func(t *testing.T) {
-			created, err := repo.GetBySlug(ctx, params.Slug)
-			require.NoError(t, err)
-
-			got, err := repo.GetByID(ctx, created.ID)
-			require.NoError(t, err)
-			require.Equal(t, created.ID, got.ID)
-			require.Equal(t, created.Slug, got.Slug)
-		},
-	)
-
-	t.Run(
 		"get by id with unknown id returns ErrNotFound", func(t *testing.T) {
 			_, err := repo.GetByID(ctx, uuid.New())
 			require.True(t, errors.Is(err, domain.ErrNotFound), "got %T %v", err, err)
-		},
-	)
-
-	t.Run(
-		"get by slug with unknown slug returns ErrNotFound", func(t *testing.T) {
-			_, err := repo.GetBySlug(ctx, "does-not-exist")
-			require.True(t, errors.Is(err, domain.ErrNotFound))
 		},
 	)
 

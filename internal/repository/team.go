@@ -25,10 +25,7 @@ func NewTeamRepository(pool *db.Pool) *TeamRepository {
 
 // GetByID fetches a team by its UUID.
 // Returns domain.ErrNotFound if no row exists.
-func (r *TeamRepository) GetByID(
-	ctx context.Context,
-	id uuid.UUID,
-) (*domain.Team, error) {
+func (r *TeamRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Team, error) {
 	row, err := r.q.GetTeamByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -41,5 +38,22 @@ func (r *TeamRepository) GetByID(
 		Name:         row.Name,
 		Logo:         row.Logo,
 		TournamentID: row.TournamentID,
+		GroupLetter:  row.GroupLetter,
 	}, nil
+}
+
+// ListGroupLettersByTournament returns sorted distinct group letters for teams in a tournament.
+// Returns empty slice when no teams have a group_letter assigned.
+func (r *TeamRepository) ListGroupLettersByTournament(ctx context.Context, tournamentID uuid.UUID) ([]string, error) {
+	rows, err := r.q.ListGroupLettersByTournament(ctx, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("list group letters: %w", err)
+	}
+	out := make([]string, 0, len(rows))
+	for _, ptr := range rows {
+		if ptr != nil {
+			out = append(out, *ptr)
+		}
+	}
+	return out, nil
 }

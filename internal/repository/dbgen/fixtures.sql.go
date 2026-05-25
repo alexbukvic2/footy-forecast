@@ -26,3 +26,169 @@ func (q *Queries) GetFirstKickoffByTournament(ctx context.Context, tournamentID 
 	err := row.Scan(&kickoff_at)
 	return kickoff_at, err
 }
+
+const getFixtureByID = `-- name: GetFixtureByID :one
+SELECT id, external_id, tournament_id, home_team_id, away_team_id,
+       kickoff_at, status, goals_home, goals_away, created_at, updated_at
+FROM fixtures WHERE id = $1
+`
+
+func (q *Queries) GetFixtureByID(ctx context.Context, id uuid.UUID) (Fixture, error) {
+	row := q.db.QueryRow(ctx, getFixtureByID, id)
+	var i Fixture
+	err := row.Scan(
+		&i.ID,
+		&i.ExternalID,
+		&i.TournamentID,
+		&i.HomeTeamID,
+		&i.AwayTeamID,
+		&i.KickoffAt,
+		&i.Status,
+		&i.GoalsHome,
+		&i.GoalsAway,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const listFixturesByTournament = `-- name: ListFixturesByTournament :many
+SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
+       home_t.name AS home_team_name, away_t.name AS away_team_name,
+       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at
+FROM fixtures f
+JOIN teams home_t ON home_t.id = f.home_team_id
+JOIN teams away_t ON away_t.id = f.away_team_id
+WHERE f.tournament_id = $1 ORDER BY f.kickoff_at
+`
+
+type ListFixturesByTournamentRow struct {
+	ID           uuid.UUID
+	ExternalID   int64
+	TournamentID uuid.UUID
+	HomeTeamID   uuid.UUID
+	AwayTeamID   uuid.UUID
+	HomeTeamName string
+	AwayTeamName string
+	KickoffAt    time.Time
+	Status       FixtureStatus
+	GoalsHome    *int32
+	GoalsAway    *int32
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uuid.UUID) ([]ListFixturesByTournamentRow, error) {
+	rows, err := q.db.Query(ctx, listFixturesByTournament, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListFixturesByTournamentRow{}
+	for rows.Next() {
+		var i ListFixturesByTournamentRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ExternalID,
+			&i.TournamentID,
+			&i.HomeTeamID,
+			&i.AwayTeamID,
+			&i.HomeTeamName,
+			&i.AwayTeamName,
+			&i.KickoffAt,
+			&i.Status,
+			&i.GoalsHome,
+			&i.GoalsAway,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listLockedFixturesByLeague = `-- name: ListLockedFixturesByLeague :many
+SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
+       home_t.name AS home_team_name, away_t.name AS away_team_name,
+       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at,
+       coalesce(json_agg(json_build_object(
+           'user_id', lm.user_id,
+           'display_name', u.display_name,
+           'goals_home', sp.goals_home,
+           'goals_away', sp.goals_away,
+           'points', sp.points
+       ) ORDER BY (lm.user_id = $1) DESC, u.display_name ASC), '[]'::json)::text
+       AS member_predictions
+FROM fixtures f
+JOIN teams home_t ON home_t.id = f.home_team_id
+JOIN teams away_t ON away_t.id = f.away_team_id
+JOIN leagues l ON l.tournament_id = f.tournament_id
+JOIN league_members lm ON lm.league_id = l.id
+JOIN users u ON u.id = lm.user_id
+LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_id
+WHERE l.id = $2 AND f.status IN ('in_progress', 'finished')
+GROUP BY f.id, home_t.name, away_t.name
+ORDER BY f.kickoff_at DESC
+`
+
+type ListLockedFixturesByLeagueParams struct {
+	RequestingUserID uuid.UUID
+	LeagueID         uuid.UUID
+}
+
+type ListLockedFixturesByLeagueRow struct {
+	ID                uuid.UUID
+	ExternalID        int64
+	TournamentID      uuid.UUID
+	HomeTeamID        uuid.UUID
+	AwayTeamID        uuid.UUID
+	HomeTeamName      string
+	AwayTeamName      string
+	KickoffAt         time.Time
+	Status            FixtureStatus
+	GoalsHome         *int32
+	GoalsAway         *int32
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	MemberPredictions string
+}
+
+func (q *Queries) ListLockedFixturesByLeague(ctx context.Context, arg ListLockedFixturesByLeagueParams) ([]ListLockedFixturesByLeagueRow, error) {
+	rows, err := q.db.Query(ctx, listLockedFixturesByLeague, arg.RequestingUserID, arg.LeagueID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListLockedFixturesByLeagueRow{}
+	for rows.Next() {
+		var i ListLockedFixturesByLeagueRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.ExternalID,
+			&i.TournamentID,
+			&i.HomeTeamID,
+			&i.AwayTeamID,
+			&i.HomeTeamName,
+			&i.AwayTeamName,
+			&i.KickoffAt,
+			&i.Status,
+			&i.GoalsHome,
+			&i.GoalsAway,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.MemberPredictions,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

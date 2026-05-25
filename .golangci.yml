@@ -25,3 +25,9 @@ linters:
         linters:
           - gosec
           - gocyclo
+      - path: cmd/seed/
+        linters:
+          - revive
+          - unused
+          - gosec
+          - gocritic

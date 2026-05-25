@@ -24,10 +24,6 @@ type TournamentService interface {
 		ctx context.Context,
 		id uuid.UUID,
 	) (*domain.Tournament, error)
-	GetBySlug(
-		ctx context.Context,
-		slug string,
-	) (*domain.Tournament, error)
 	List(ctx context.Context) ([]*domain.Tournament, error)
 }
 
@@ -144,20 +140,6 @@ func (h *Tournament) GetByID(
 	}
 
 	t, err := h.svc.GetByID(r.Context(), id)
-	if err != nil {
-		writeError(w, r, h.logger, err)
-		return
-	}
-	writeJSON(w, http.StatusOK, toTournamentResponse(t))
-}
-
-// GetBySlug handles GET /tournaments/slug/{slug}.
-func (h *Tournament) GetBySlug(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	slug := r.PathValue("slug")
-	t, err := h.svc.GetBySlug(r.Context(), slug)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return

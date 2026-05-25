@@ -25,10 +25,6 @@ type fakeRepo struct {
 		context.Context,
 		uuid.UUID,
 	) (*domain.Tournament, error)
-	getBySlugFn func(
-		context.Context,
-		string,
-	) (*domain.Tournament, error)
 	listFn func(context.Context) ([]*domain.Tournament, error)
 }
 
@@ -43,12 +39,6 @@ func (f *fakeRepo) GetByID(
 	id uuid.UUID,
 ) (*domain.Tournament, error) {
 	return f.getByIDFn(ctx, id)
-}
-func (f *fakeRepo) GetBySlug(
-	ctx context.Context,
-	slug string,
-) (*domain.Tournament, error) {
-	return f.getBySlugFn(ctx, slug)
 }
 func (f *fakeRepo) List(ctx context.Context) ([]*domain.Tournament, error) {
 	return f.listFn(ctx)
@@ -195,34 +185,4 @@ func TestTournamentService_Create_PropagatesConflict(t *testing.T) {
 
 	_, err := svc.Create(context.Background(), validInput())
 	require.ErrorIs(t, err, domain.ErrConflict)
-}
-
-func TestTournamentService_GetBySlug_NormalizesSlug(t *testing.T) {
-	t.Parallel()
-
-	var receivedSlug string
-	repo := &fakeRepo{
-		getBySlugFn: func(
-			_ context.Context,
-			slug string,
-		) (*domain.Tournament, error) {
-			receivedSlug = slug
-			return &domain.Tournament{Slug: slug}, nil
-		},
-	}
-	svc := service.NewTournamentService(repo)
-
-	_, err := svc.GetBySlug(context.Background(), "  WORLD-CUP-2026  ")
-	require.NoError(t, err)
-	require.Equal(t, "world-cup-2026", receivedSlug)
-}
-
-func TestTournamentService_GetBySlug_InvalidSlug(t *testing.T) {
-	t.Parallel()
-
-	repo := &fakeRepo{}
-	svc := service.NewTournamentService(repo)
-
-	_, err := svc.GetBySlug(context.Background(), "not a slug")
-	require.ErrorIs(t, err, domain.ErrInvalid)
 }
