@@ -8,6 +8,7 @@
 - [ ] Historical leaderboard snapshots (point-in-time rank history).
 - [ ] Pagination of leaderboard results.
 - [ ] Tie-breaking by secondary criteria (e.g. earliest prediction submission). Ties share a rank.]
+- [ ] Fixtures in group have group, but what about quarter finals, etc?
 
 ### Profile page
 - [ ] Change display name

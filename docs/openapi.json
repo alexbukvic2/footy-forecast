@@ -19,12 +19,14 @@
         "example": {
           "away_team_name": "France",
           "external_id": 90001,
-          "goals_away": null,
-          "goals_home": null,
+          "goals_away": 1,
+          "goals_home": 2,
           "home_team_name": "Argentina",
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "kickoff_at": "2026-06-01T15:00:00Z",
-          "status": "upcoming",
+          "prediction_locked": true,
+          "round": "Group Stage - 1",
+          "status": "finished",
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         },
         "properties": {
@@ -53,6 +55,12 @@
             "format": "date-time",
             "type": "string"
           },
+          "prediction_locked": {
+            "type": "boolean"
+          },
+          "round": {
+            "type": "string"
+          },
           "status": {
             "enum": [
               "upcoming",
@@ -72,8 +80,10 @@
           "tournament_id",
           "home_team_name",
           "away_team_name",
+          "round",
           "kickoff_at",
-          "status"
+          "status",
+          "prediction_locked"
         ],
         "type": "object"
       },
@@ -959,13 +969,19 @@
         "example": {
           "away_team_name": "France",
           "external_id": 90001,
-          "goals_away": null,
-          "goals_home": null,
+          "goals_away": 1,
+          "goals_home": 2,
           "home_team_name": "Argentina",
           "id": "550e8400-e29b-41d4-a716-446655440011",
-          "kickoff_at": "2026-06-01T15:00:00Z",
-          "prediction": null,
-          "status": "upcoming",
+          "kickoff_at": "2026-05-20T19:00:00Z",
+          "prediction": {
+            "fixture_id": "550e8400-e29b-41d4-a716-446655440011",
+            "goals_away": 0,
+            "goals_home": 2,
+            "id": "550e8400-e29b-41d4-a716-446655440020",
+            "points": 1
+          },
+          "status": "finished",
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         }
       }
@@ -2531,6 +2547,40 @@
           "200": {
             "content": {
               "application/json": {
+                "example": [
+                  {
+                    "away_team_name": "France",
+                    "external_id": 90001,
+                    "goals_away": 1,
+                    "goals_home": 2,
+                    "home_team_name": "Argentina",
+                    "id": "550e8400-e29b-41d4-a716-446655440011",
+                    "kickoff_at": "2026-05-20T19:00:00Z",
+                    "prediction": {
+                      "fixture_id": "550e8400-e29b-41d4-a716-446655440011",
+                      "goals_away": 0,
+                      "goals_home": 2,
+                      "id": "550e8400-e29b-41d4-a716-446655440020",
+                      "points": 1
+                    },
+                    "prediction_locked": true,
+                    "status": "finished",
+                    "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "away_team_name": "Germany",
+                    "external_id": 90002,
+                    "goals_away": null,
+                    "goals_home": null,
+                    "home_team_name": "Brazil",
+                    "id": "550e8400-e29b-41d4-a716-446655440012",
+                    "kickoff_at": "2026-06-17T17:00:00Z",
+                    "prediction": null,
+                    "prediction_locked": false,
+                    "status": "upcoming",
+                    "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+                  }
+                ],
                 "schema": {
                   "items": {
                     "$ref": "#/components/schemas/UserFixtureViewResponse"

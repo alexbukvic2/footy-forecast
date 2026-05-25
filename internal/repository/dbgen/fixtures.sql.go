@@ -28,8 +28,8 @@ func (q *Queries) GetFirstKickoffByTournament(ctx context.Context, tournamentID 
 }
 
 const getFixtureByID = `-- name: GetFixtureByID :one
-SELECT id, external_id, tournament_id, home_team_id, away_team_id,
-       kickoff_at, status, goals_home, goals_away, created_at, updated_at
+SELECT id, external_id, tournament_id, home_team_id, away_team_id, round,
+       kickoff_at, status, prediction_locked, goals_home, goals_away, created_at, updated_at
 FROM fixtures WHERE id = $1
 `
 
@@ -42,8 +42,10 @@ func (q *Queries) GetFixtureByID(ctx context.Context, id uuid.UUID) (Fixture, er
 		&i.TournamentID,
 		&i.HomeTeamID,
 		&i.AwayTeamID,
+		&i.Round,
 		&i.KickoffAt,
 		&i.Status,
+		&i.PredictionLocked,
 		&i.GoalsHome,
 		&i.GoalsAway,
 		&i.CreatedAt,
@@ -55,7 +57,7 @@ func (q *Queries) GetFixtureByID(ctx context.Context, id uuid.UUID) (Fixture, er
 const listFixturesByTournament = `-- name: ListFixturesByTournament :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at
+       f.round, f.kickoff_at, f.status, f.prediction_locked, f.goals_home, f.goals_away, f.created_at, f.updated_at
 FROM fixtures f
 JOIN teams home_t ON home_t.id = f.home_team_id
 JOIN teams away_t ON away_t.id = f.away_team_id
@@ -63,19 +65,21 @@ WHERE f.tournament_id = $1 ORDER BY f.kickoff_at
 `
 
 type ListFixturesByTournamentRow struct {
-	ID           uuid.UUID
-	ExternalID   int64
-	TournamentID uuid.UUID
-	HomeTeamID   uuid.UUID
-	AwayTeamID   uuid.UUID
-	HomeTeamName string
-	AwayTeamName string
-	KickoffAt    time.Time
-	Status       FixtureStatus
-	GoalsHome    *int32
-	GoalsAway    *int32
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID               uuid.UUID
+	ExternalID       int64
+	TournamentID     uuid.UUID
+	HomeTeamID       uuid.UUID
+	AwayTeamID       uuid.UUID
+	HomeTeamName     string
+	AwayTeamName     string
+	Round            string
+	KickoffAt        time.Time
+	Status           FixtureStatus
+	PredictionLocked bool
+	GoalsHome        *int32
+	GoalsAway        *int32
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uuid.UUID) ([]ListFixturesByTournamentRow, error) {
@@ -95,8 +99,10 @@ func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uui
 			&i.AwayTeamID,
 			&i.HomeTeamName,
 			&i.AwayTeamName,
+			&i.Round,
 			&i.KickoffAt,
 			&i.Status,
+			&i.PredictionLocked,
 			&i.GoalsHome,
 			&i.GoalsAway,
 			&i.CreatedAt,
@@ -115,7 +121,7 @@ func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uui
 const listLockedFixturesByLeague = `-- name: ListLockedFixturesByLeague :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at,
+       f.round, f.kickoff_at, f.status, f.prediction_locked, f.goals_home, f.goals_away, f.created_at, f.updated_at,
        coalesce(json_agg(json_build_object(
            'user_id', lm.user_id,
            'display_name', u.display_name,
@@ -149,8 +155,10 @@ type ListLockedFixturesByLeagueRow struct {
 	AwayTeamID        uuid.UUID
 	HomeTeamName      string
 	AwayTeamName      string
+	Round             string
 	KickoffAt         time.Time
 	Status            FixtureStatus
+	PredictionLocked  bool
 	GoalsHome         *int32
 	GoalsAway         *int32
 	CreatedAt         time.Time
@@ -175,8 +183,10 @@ func (q *Queries) ListLockedFixturesByLeague(ctx context.Context, arg ListLocked
 			&i.AwayTeamID,
 			&i.HomeTeamName,
 			&i.AwayTeamName,
+			&i.Round,
 			&i.KickoffAt,
 			&i.Status,
+			&i.PredictionLocked,
 			&i.GoalsHome,
 			&i.GoalsAway,
 			&i.CreatedAt,

@@ -18,19 +18,21 @@ const (
 
 // Fixture represents a scheduled or completed football match.
 type Fixture struct {
-	ID           uuid.UUID
-	ExternalID   int64
-	TournamentID uuid.UUID
-	HomeTeamID   uuid.UUID
-	AwayTeamID   uuid.UUID
-	HomeTeamName string
-	AwayTeamName string
-	KickoffAt    time.Time
-	Status       FixtureStatus
-	GoalsHome    *int
-	GoalsAway    *int
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID               uuid.UUID
+	ExternalID       int64
+	TournamentID     uuid.UUID
+	HomeTeamID       uuid.UUID
+	AwayTeamID       uuid.UUID
+	HomeTeamName     string
+	AwayTeamName     string
+	Round            string
+	KickoffAt        time.Time
+	Status           FixtureStatus
+	PredictionLocked bool
+	GoalsHome        *int
+	GoalsAway        *int
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 // UserFixtureView pairs a fixture with the requesting user's score prediction (nil if none).

@@ -182,15 +182,17 @@ type ErrorResponse struct {
 
 // FixtureResponse defines model for FixtureResponse.
 type FixtureResponse struct {
-	AwayTeamName string                `json:"away_team_name"`
-	ExternalId   int                   `json:"external_id"`
-	GoalsAway    *int                  `json:"goals_away,omitempty"`
-	GoalsHome    *int                  `json:"goals_home,omitempty"`
-	HomeTeamName string                `json:"home_team_name"`
-	Id           openapi_types.UUID    `json:"id"`
-	KickoffAt    time.Time             `json:"kickoff_at"`
-	Status       FixtureResponseStatus `json:"status"`
-	TournamentId openapi_types.UUID    `json:"tournament_id"`
+	AwayTeamName     string                `json:"away_team_name"`
+	ExternalId       int                   `json:"external_id"`
+	GoalsAway        *int                  `json:"goals_away,omitempty"`
+	GoalsHome        *int                  `json:"goals_home,omitempty"`
+	HomeTeamName     string                `json:"home_team_name"`
+	Id               openapi_types.UUID    `json:"id"`
+	KickoffAt        time.Time             `json:"kickoff_at"`
+	PredictionLocked bool                  `json:"prediction_locked"`
+	Round            string                `json:"round"`
+	Status           FixtureResponseStatus `json:"status"`
+	TournamentId     openapi_types.UUID    `json:"tournament_id"`
 }
 
 // FixtureResponseStatus defines model for FixtureResponse.Status.
@@ -221,16 +223,18 @@ type LeagueDetail struct {
 
 // LeagueFixtureViewResponse defines model for LeagueFixtureViewResponse.
 type LeagueFixtureViewResponse struct {
-	AwayTeamName string                          `json:"away_team_name"`
-	ExternalId   int                             `json:"external_id"`
-	GoalsAway    *int                            `json:"goals_away,omitempty"`
-	GoalsHome    *int                            `json:"goals_home,omitempty"`
-	HomeTeamName string                          `json:"home_team_name"`
-	Id           openapi_types.UUID              `json:"id"`
-	KickoffAt    time.Time                       `json:"kickoff_at"`
-	Predictions  []LeagueMemberScorePrediction   `json:"predictions"`
-	Status       LeagueFixtureViewResponseStatus `json:"status"`
-	TournamentId openapi_types.UUID              `json:"tournament_id"`
+	AwayTeamName     string                          `json:"away_team_name"`
+	ExternalId       int                             `json:"external_id"`
+	GoalsAway        *int                            `json:"goals_away,omitempty"`
+	GoalsHome        *int                            `json:"goals_home,omitempty"`
+	HomeTeamName     string                          `json:"home_team_name"`
+	Id               openapi_types.UUID              `json:"id"`
+	KickoffAt        time.Time                       `json:"kickoff_at"`
+	PredictionLocked bool                            `json:"prediction_locked"`
+	Predictions      []LeagueMemberScorePrediction   `json:"predictions"`
+	Round            string                          `json:"round"`
+	Status           LeagueFixtureViewResponseStatus `json:"status"`
+	TournamentId     openapi_types.UUID              `json:"tournament_id"`
 }
 
 // LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
@@ -430,16 +434,18 @@ type UserStatus string
 
 // UserFixtureViewResponse defines model for UserFixtureViewResponse.
 type UserFixtureViewResponse struct {
-	AwayTeamName string                        `json:"away_team_name"`
-	ExternalId   int                           `json:"external_id"`
-	GoalsAway    *int                          `json:"goals_away,omitempty"`
-	GoalsHome    *int                          `json:"goals_home,omitempty"`
-	HomeTeamName string                        `json:"home_team_name"`
-	Id           openapi_types.UUID            `json:"id"`
-	KickoffAt    time.Time                     `json:"kickoff_at"`
-	Prediction   ScorePredictionResponse       `json:"prediction"`
-	Status       UserFixtureViewResponseStatus `json:"status"`
-	TournamentId openapi_types.UUID            `json:"tournament_id"`
+	AwayTeamName     string                        `json:"away_team_name"`
+	ExternalId       int                           `json:"external_id"`
+	GoalsAway        *int                          `json:"goals_away,omitempty"`
+	GoalsHome        *int                          `json:"goals_home,omitempty"`
+	HomeTeamName     string                        `json:"home_team_name"`
+	Id               openapi_types.UUID            `json:"id"`
+	KickoffAt        time.Time                     `json:"kickoff_at"`
+	Prediction       ScorePredictionResponse       `json:"prediction"`
+	PredictionLocked bool                          `json:"prediction_locked"`
+	Round            string                        `json:"round"`
+	Status           UserFixtureViewResponseStatus `json:"status"`
+	TournamentId     openapi_types.UUID            `json:"tournament_id"`
 }
 
 // UserFixtureViewResponseStatus defines model for UserFixtureViewResponse.Status.
