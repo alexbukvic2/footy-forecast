@@ -13,6 +13,48 @@ const (
 	BearerAuthScopes bearerAuthContextKey = "bearerAuth.Scopes"
 )
 
+// Defines values for FixtureResponseStatus.
+const (
+	FixtureResponseStatusFinished   FixtureResponseStatus = "finished"
+	FixtureResponseStatusInProgress FixtureResponseStatus = "in_progress"
+	FixtureResponseStatusUpcoming   FixtureResponseStatus = "upcoming"
+)
+
+// Valid indicates whether the value is a known member of the FixtureResponseStatus enum.
+func (e FixtureResponseStatus) Valid() bool {
+	switch e {
+	case FixtureResponseStatusFinished:
+		return true
+	case FixtureResponseStatusInProgress:
+		return true
+	case FixtureResponseStatusUpcoming:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for LeagueFixtureViewResponseStatus.
+const (
+	LeagueFixtureViewResponseStatusFinished   LeagueFixtureViewResponseStatus = "finished"
+	LeagueFixtureViewResponseStatusInProgress LeagueFixtureViewResponseStatus = "in_progress"
+	LeagueFixtureViewResponseStatusUpcoming   LeagueFixtureViewResponseStatus = "upcoming"
+)
+
+// Valid indicates whether the value is a known member of the LeagueFixtureViewResponseStatus enum.
+func (e LeagueFixtureViewResponseStatus) Valid() bool {
+	switch e {
+	case LeagueFixtureViewResponseStatusFinished:
+		return true
+	case LeagueFixtureViewResponseStatusInProgress:
+		return true
+	case LeagueFixtureViewResponseStatusUpcoming:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for LeagueMemberRole.
 const (
 	Member LeagueMemberRole = "member"
@@ -75,19 +117,19 @@ func (e TeamHandicapCategory) Valid() bool {
 
 // Defines values for TournamentStatus.
 const (
-	Concluded  TournamentStatus = "concluded"
-	InProgress TournamentStatus = "in_progress"
-	Upcoming   TournamentStatus = "upcoming"
+	TournamentStatusConcluded  TournamentStatus = "concluded"
+	TournamentStatusInProgress TournamentStatus = "in_progress"
+	TournamentStatusUpcoming   TournamentStatus = "upcoming"
 )
 
 // Valid indicates whether the value is a known member of the TournamentStatus enum.
 func (e TournamentStatus) Valid() bool {
 	switch e {
-	case Concluded:
+	case TournamentStatusConcluded:
 		return true
-	case InProgress:
+	case TournamentStatusInProgress:
 		return true
-	case Upcoming:
+	case TournamentStatusUpcoming:
 		return true
 	default:
 		return false
@@ -112,10 +154,47 @@ func (e UserStatus) Valid() bool {
 	}
 }
 
+// Defines values for UserFixtureViewResponseStatus.
+const (
+	UserFixtureViewResponseStatusFinished   UserFixtureViewResponseStatus = "finished"
+	UserFixtureViewResponseStatusInProgress UserFixtureViewResponseStatus = "in_progress"
+	UserFixtureViewResponseStatusUpcoming   UserFixtureViewResponseStatus = "upcoming"
+)
+
+// Valid indicates whether the value is a known member of the UserFixtureViewResponseStatus enum.
+func (e UserFixtureViewResponseStatus) Valid() bool {
+	switch e {
+	case UserFixtureViewResponseStatusFinished:
+		return true
+	case UserFixtureViewResponseStatusInProgress:
+		return true
+	case UserFixtureViewResponseStatusUpcoming:
+		return true
+	default:
+		return false
+	}
+}
+
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
 	Error string `json:"error"`
 }
+
+// FixtureResponse defines model for FixtureResponse.
+type FixtureResponse struct {
+	AwayTeamName string                `json:"away_team_name"`
+	ExternalId   int                   `json:"external_id"`
+	GoalsAway    *int                  `json:"goals_away,omitempty"`
+	GoalsHome    *int                  `json:"goals_home,omitempty"`
+	HomeTeamName string                `json:"home_team_name"`
+	Id           openapi_types.UUID    `json:"id"`
+	KickoffAt    time.Time             `json:"kickoff_at"`
+	Status       FixtureResponseStatus `json:"status"`
+	TournamentId openapi_types.UUID    `json:"tournament_id"`
+}
+
+// FixtureResponseStatus defines model for FixtureResponse.Status.
+type FixtureResponseStatus string
 
 // League defines model for League.
 type League struct {
@@ -139,6 +218,23 @@ type LeagueDetail struct {
 	TournamentId openapi_types.UUID `json:"tournament_id"`
 	UpdatedAt    time.Time          `json:"updated_at"`
 }
+
+// LeagueFixtureViewResponse defines model for LeagueFixtureViewResponse.
+type LeagueFixtureViewResponse struct {
+	AwayTeamName string                          `json:"away_team_name"`
+	ExternalId   int                             `json:"external_id"`
+	GoalsAway    *int                            `json:"goals_away,omitempty"`
+	GoalsHome    *int                            `json:"goals_home,omitempty"`
+	HomeTeamName string                          `json:"home_team_name"`
+	Id           openapi_types.UUID              `json:"id"`
+	KickoffAt    time.Time                       `json:"kickoff_at"`
+	Predictions  []LeagueMemberScorePrediction   `json:"predictions"`
+	Status       LeagueFixtureViewResponseStatus `json:"status"`
+	TournamentId openapi_types.UUID              `json:"tournament_id"`
+}
+
+// LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
+type LeagueFixtureViewResponseStatus string
 
 // LeagueListItem defines model for LeagueListItem.
 type LeagueListItem struct {
@@ -176,6 +272,15 @@ type LeagueMemberPlayerPick struct {
 	PlayerName  *string             `json:"player_name,omitempty"`
 	Points      *int                `json:"points,omitempty"`
 	UserId      openapi_types.UUID  `json:"user_id"`
+}
+
+// LeagueMemberScorePrediction defines model for LeagueMemberScorePrediction.
+type LeagueMemberScorePrediction struct {
+	DisplayName string             `json:"display_name"`
+	GoalsAway   *int               `json:"goals_away,omitempty"`
+	GoalsHome   *int               `json:"goals_home,omitempty"`
+	Points      *int               `json:"points,omitempty"`
+	UserId      openapi_types.UUID `json:"user_id"`
 }
 
 // LeagueMemberTeamPick defines model for LeagueMemberTeamPick.
@@ -239,6 +344,15 @@ type PlayerPredictionView struct {
 	Points     *int                   `json:"points,omitempty"`
 }
 
+// ScorePredictionResponse defines model for ScorePredictionResponse.
+type ScorePredictionResponse struct {
+	FixtureId openapi_types.UUID `json:"fixture_id"`
+	GoalsAway int                `json:"goals_away"`
+	GoalsHome int                `json:"goals_home"`
+	Id        openapi_types.UUID `json:"id"`
+	Points    *int               `json:"points,omitempty"`
+}
+
 // TeamHandicap defines model for TeamHandicap.
 type TeamHandicap struct {
 	Points int `json:"points"`
@@ -290,6 +404,12 @@ type UpsertPlayerPredictionRequest struct {
 	PlayerId openapi_types.UUID `json:"player_id"`
 }
 
+// UpsertScorePredictionRequest defines model for UpsertScorePredictionRequest.
+type UpsertScorePredictionRequest struct {
+	GoalsAway int `json:"goals_away"`
+	GoalsHome int `json:"goals_home"`
+}
+
 // UpsertTeamPredictionRequest defines model for UpsertTeamPredictionRequest.
 type UpsertTeamPredictionRequest struct {
 	TeamId openapi_types.UUID `json:"team_id"`
@@ -307,6 +427,23 @@ type User struct {
 
 // UserStatus defines model for User.Status.
 type UserStatus string
+
+// UserFixtureViewResponse defines model for UserFixtureViewResponse.
+type UserFixtureViewResponse struct {
+	AwayTeamName string                        `json:"away_team_name"`
+	ExternalId   int                           `json:"external_id"`
+	GoalsAway    *int                          `json:"goals_away,omitempty"`
+	GoalsHome    *int                          `json:"goals_home,omitempty"`
+	HomeTeamName string                        `json:"home_team_name"`
+	Id           openapi_types.UUID            `json:"id"`
+	KickoffAt    time.Time                     `json:"kickoff_at"`
+	Prediction   ScorePredictionResponse       `json:"prediction"`
+	Status       UserFixtureViewResponseStatus `json:"status"`
+	TournamentId openapi_types.UUID            `json:"tournament_id"`
+}
+
+// UserFixtureViewResponseStatus defines model for UserFixtureViewResponse.Status.
+type UserFixtureViewResponseStatus string
 
 // bearerAuthContextKey is the context key for bearerAuth security scheme
 type bearerAuthContextKey string
@@ -348,6 +485,9 @@ type JoinLeagueJSONRequestBody JoinLeagueJSONBody
 
 // UpdateLeagueNameJSONRequestBody defines body for UpdateLeagueName for application/json ContentType.
 type UpdateLeagueNameJSONRequestBody UpdateLeagueNameJSONBody
+
+// UpsertScorePredictionJSONRequestBody defines body for UpsertScorePrediction for application/json ContentType.
+type UpsertScorePredictionJSONRequestBody = UpsertScorePredictionRequest
 
 // CreateTournamentJSONRequestBody defines body for CreateTournament for application/json ContentType.
 type CreateTournamentJSONRequestBody CreateTournamentJSONBody

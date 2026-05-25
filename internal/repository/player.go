@@ -42,6 +42,7 @@ func (r *PlayerRepository) GetByID(
 		Name:         row.Name,
 		TournamentID: row.TournamentID,
 		TeamID:       row.TeamID,
+		GroupLetter:  row.GroupLetter,
 	}, nil
 }
 

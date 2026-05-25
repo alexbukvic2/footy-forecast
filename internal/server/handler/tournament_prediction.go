@@ -16,12 +16,30 @@ import (
 
 // TournamentPredictionSvc is the subset of service.TournamentPredictionService the handler uses.
 type TournamentPredictionSvc interface {
-	UpsertPlayerPrediction(ctx context.Context, in domain.UpsertPlayerPredictionInput) (*domain.PlayerPrediction, error)
-	UpsertTeamPrediction(ctx context.Context, in domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error)
-	ListPlayerPredictionsForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.PlayerPredictionView, error)
-	ListTeamPredictionsForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.TeamPredictionView, error)
-	ListLeaguePlayerPredictions(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeaguePlayerCategoryView, error)
-	ListLeagueTeamPredictions(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeagueTeamCategoryView, error)
+	UpsertPlayerPrediction(
+		ctx context.Context,
+		in domain.UpsertPlayerPredictionInput,
+	) (*domain.PlayerPrediction, error)
+	UpsertTeamPrediction(
+		ctx context.Context,
+		in domain.UpsertTeamPredictionInput,
+	) (*domain.TeamPrediction, error)
+	ListPlayerPredictionsForUser(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) ([]*domain.PlayerPredictionView, error)
+	ListTeamPredictionsForUser(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) ([]*domain.TeamPredictionView, error)
+	ListLeaguePlayerPredictions(
+		ctx context.Context,
+		leagueID, requestingUserID uuid.UUID,
+	) ([]*domain.LeaguePlayerCategoryView, error)
+	ListLeagueTeamPredictions(
+		ctx context.Context,
+		leagueID, requestingUserID uuid.UUID,
+	) ([]*domain.LeagueTeamCategoryView, error)
 }
 
 // TournamentPrediction is the HTTP handler for tournament-level prediction routes.
@@ -31,7 +49,10 @@ type TournamentPrediction struct {
 }
 
 // NewTournamentPrediction constructs a TournamentPrediction handler.
-func NewTournamentPrediction(logger *slog.Logger, svc TournamentPredictionSvc) *TournamentPrediction {
+func NewTournamentPrediction(
+	logger *slog.Logger,
+	svc TournamentPredictionSvc,
+) *TournamentPrediction {
 	return &TournamentPrediction{logger: logger, svc: svc}
 }
 
@@ -179,8 +200,11 @@ func toLeagueMemberTeamPickResponse(p domain.LeagueMemberTeamPick) leagueMemberT
 
 // ---------- Handlers ----------
 
-// UpsertPlayer handles PUT /tournaments/{tournamentId}/predictions/players/{category}.
-func (h *TournamentPrediction) UpsertPlayer(w http.ResponseWriter, r *http.Request) {
+// UpsertPlayerPredictions handles PUT /tournaments/{tournamentId}/predictions/players/{category}.
+func (h *TournamentPrediction) UpsertPlayerPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -212,12 +236,14 @@ func (h *TournamentPrediction) UpsertPlayer(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	pred, err := h.svc.UpsertPlayerPrediction(r.Context(), domain.UpsertPlayerPredictionInput{
-		UserID:       caller.ID,
-		TournamentID: tournamentID,
-		Category:     category,
-		Pick:         playerID,
-	})
+	pred, err := h.svc.UpsertPlayerPrediction(
+		r.Context(), domain.UpsertPlayerPredictionInput{
+			UserID:       caller.ID,
+			TournamentID: tournamentID,
+			Category:     category,
+			Pick:         playerID,
+		},
+	)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
@@ -225,8 +251,11 @@ func (h *TournamentPrediction) UpsertPlayer(w http.ResponseWriter, r *http.Reque
 	writeJSON(w, http.StatusOK, toPlayerPredictionResponse(pred))
 }
 
-// UpsertTeam handles PUT /tournaments/{tournamentId}/predictions/teams/{category}.
-func (h *TournamentPrediction) UpsertTeam(w http.ResponseWriter, r *http.Request) {
+// UpsertTeamPredictions handles PUT /tournaments/{tournamentId}/predictions/teams/{category}.
+func (h *TournamentPrediction) UpsertTeamPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -258,12 +287,14 @@ func (h *TournamentPrediction) UpsertTeam(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	pred, err := h.svc.UpsertTeamPrediction(r.Context(), domain.UpsertTeamPredictionInput{
-		UserID:       caller.ID,
-		TournamentID: tournamentID,
-		Category:     category,
-		Pick:         teamID,
-	})
+	pred, err := h.svc.UpsertTeamPrediction(
+		r.Context(), domain.UpsertTeamPredictionInput{
+			UserID:       caller.ID,
+			TournamentID: tournamentID,
+			Category:     category,
+			Pick:         teamID,
+		},
+	)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
@@ -271,8 +302,11 @@ func (h *TournamentPrediction) UpsertTeam(w http.ResponseWriter, r *http.Request
 	writeJSON(w, http.StatusOK, toTeamPredictionResponse(pred))
 }
 
-// ListMyPlayers handles GET /tournaments/{tournamentId}/predictions/players.
-func (h *TournamentPrediction) ListMyPlayers(w http.ResponseWriter, r *http.Request) {
+// ListMyPlayerPredictions handles GET /tournaments/{tournamentId}/predictions/players.
+func (h *TournamentPrediction) ListMyPlayerPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -298,8 +332,11 @@ func (h *TournamentPrediction) ListMyPlayers(w http.ResponseWriter, r *http.Requ
 	writeJSON(w, http.StatusOK, out)
 }
 
-// ListMyTeams handles GET /tournaments/{tournamentId}/predictions/teams.
-func (h *TournamentPrediction) ListMyTeams(w http.ResponseWriter, r *http.Request) {
+// ListMyTeamPredictions handles GET /tournaments/{tournamentId}/predictions/teams.
+func (h *TournamentPrediction) ListMyTeamPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -325,8 +362,11 @@ func (h *TournamentPrediction) ListMyTeams(w http.ResponseWriter, r *http.Reques
 	writeJSON(w, http.StatusOK, out)
 }
 
-// ListLeaguePlayers handles GET /leagues/{leagueId}/predictions/players.
-func (h *TournamentPrediction) ListLeaguePlayers(w http.ResponseWriter, r *http.Request) {
+// ListLeaguePlayerPredictions handles GET /leagues/{leagueId}/predictions/players.
+func (h *TournamentPrediction) ListLeaguePlayerPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -351,16 +391,21 @@ func (h *TournamentPrediction) ListLeaguePlayers(w http.ResponseWriter, r *http.
 		for _, p := range v.Predictions {
 			preds = append(preds, toLeagueMemberPlayerPickResponse(p))
 		}
-		out = append(out, leaguePlayerCategoryViewResponse{
-			Category:    string(v.Category),
-			Predictions: preds,
-		})
+		out = append(
+			out, leaguePlayerCategoryViewResponse{
+				Category:    string(v.Category),
+				Predictions: preds,
+			},
+		)
 	}
 	writeJSON(w, http.StatusOK, out)
 }
 
-// ListLeagueTeams handles GET /leagues/{leagueId}/predictions/teams.
-func (h *TournamentPrediction) ListLeagueTeams(w http.ResponseWriter, r *http.Request) {
+// ListLeagueTeamPredictions handles GET /leagues/{leagueId}/predictions/teams.
+func (h *TournamentPrediction) ListLeagueTeamPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -385,10 +430,12 @@ func (h *TournamentPrediction) ListLeagueTeams(w http.ResponseWriter, r *http.Re
 		for _, p := range v.Predictions {
 			preds = append(preds, toLeagueMemberTeamPickResponse(p))
 		}
-		out = append(out, leagueTeamCategoryViewResponse{
-			Category:    string(v.Category),
-			Predictions: preds,
-		})
+		out = append(
+			out, leagueTeamCategoryViewResponse{
+				Category:    string(v.Category),
+				Predictions: preds,
+			},
+		)
 	}
 	writeJSON(w, http.StatusOK, out)
 }

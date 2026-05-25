@@ -26,10 +26,6 @@ type TournamentRepo interface {
 		ctx context.Context,
 		id uuid.UUID,
 	) (*domain.Tournament, error)
-	GetBySlug(
-		ctx context.Context,
-		slug string,
-	) (*domain.Tournament, error)
 	List(ctx context.Context) ([]*domain.Tournament, error)
 }
 
@@ -81,18 +77,6 @@ func (s *TournamentService) GetByID(
 	id uuid.UUID,
 ) (*domain.Tournament, error) {
 	return s.repo.GetByID(ctx, id)
-}
-
-// GetBySlug returns the tournament with the given slug, or domain.ErrNotFound.
-func (s *TournamentService) GetBySlug(
-	ctx context.Context,
-	slug string,
-) (*domain.Tournament, error) {
-	slug = strings.TrimSpace(strings.ToLower(slug))
-	if err := validateSlug(slug); err != nil {
-		return nil, err
-	}
-	return s.repo.GetBySlug(ctx, slug)
 }
 
 // List returns all tournaments.

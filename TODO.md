@@ -1,12 +1,27 @@
-# BACKEND
-- refresh token?
-- admin role for creating entities
+# Backend
 
-## features
-- profile page:
-  * change display name
+## Core
+- [ ] Refresh token handling - caching user, how do we manage cache memory? What if there are many users?
+- [ ] Admin role for entity creation
 
-# MOBILE
-- share button in mobile app: share link to entity, share link to app with entity preloaded
-- when code for join is entered, if wait do not wait for clicking join button, just join immediately
-- on sign up ask for display name, propose first name from SSO profile
+## Features
+- [ ] Historical leaderboard snapshots (point-in-time rank history).
+- [ ] Pagination of leaderboard results.
+- [ ] Tie-breaking by secondary criteria (e.g. earliest prediction submission). Ties share a rank.]
+
+### Profile page
+- [ ] Change display name
+
+---
+
+# Mobile
+
+## Core
+- [ ] Share button: share link to entity, or deep link to app with entity preloaded
+- [x] Auto-join on valid code entry — skip the manual "Join" button confirm
+
+## Onboarding
+- [ ] Sign-up flow: prompt for display name, pre-fill from SSO profile first name
+
+
+"be protagonist, not just a spectator"

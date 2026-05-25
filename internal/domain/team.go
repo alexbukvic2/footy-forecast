@@ -8,4 +8,5 @@ type Team struct {
 	Name         string
 	Logo         string
 	TournamentID uuid.UUID
+	GroupLetter  *string
 }

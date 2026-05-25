@@ -103,7 +103,6 @@ components:
 | GET | `/health/ready` | None | Readiness — checks DB |
 | GET | `/tournaments` | None | List all |
 | GET | `/tournaments/{id}` | None | By UUID |
-| GET | `/tournaments/slug/{slug}` | None | By slug |
 | POST | `/tournaments` | Bearer | Create |
 | GET | `/users/me` | Bearer | Current user profile |
 | GET | `/leagues` | Bearer | User's leagues |

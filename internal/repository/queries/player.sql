@@ -1,7 +1,10 @@
 -- name: GetPlayerByID :one
-SELECT id, external_id, name, tournament_id, team_id, created_at, updated_at
-FROM players
-WHERE id = @id;
+SELECT p.id, p.external_id, p.name, p.tournament_id, p.team_id,
+       t.group_letter,
+       p.created_at, p.updated_at
+FROM players p
+JOIN teams t ON t.id = p.team_id
+WHERE p.id = @id;
 
 -- name: SearchPlayers :many
 -- @escaped_query: wildcard-escaped term for ILIKE filtering

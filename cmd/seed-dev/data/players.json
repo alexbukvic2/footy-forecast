@@ -1,0 +1,74 @@
+[
+  {
+    "id": "00000002-0000-0000-0000-000000000001",
+    "external_id": "seed-p01",
+    "name": "Luca Ricci",
+    "team_id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000002",
+    "external_id": "seed-p02",
+    "name": "Marco Conti",
+    "team_id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000003",
+    "external_id": "seed-p03",
+    "name": "James White",
+    "team_id": "b824fb76-e220-4a93-a231-d8109737a6e2"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000004",
+    "external_id": "seed-p04",
+    "name": "Oliver Brown",
+    "team_id": "b824fb76-e220-4a93-a231-d8109737a6e2"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000005",
+    "external_id": "seed-p05",
+    "name": "Hugo Muller",
+    "team_id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000006",
+    "external_id": "seed-p06",
+    "name": "Felix Bauer",
+    "team_id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000007",
+    "external_id": "seed-p07",
+    "name": "Diego Santos",
+    "team_id": "69be9966-3cfb-474f-a9fa-2e1436a53c39"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000008",
+    "external_id": "seed-p08",
+    "name": "Carlos Lima",
+    "team_id": "69be9966-3cfb-474f-a9fa-2e1436a53c39"
+  },
+  {
+    "id": "00000002-0000-0000-0000-000000000009",
+    "external_id": "seed-p09",
+    "name": "Karim Hassan",
+    "team_id": "8214b191-5790-4095-8f62-5a6eb56dda35"
+  },
+  {
+    "id": "00000002-0000-0000-0000-00000000000a",
+    "external_id": "seed-p10",
+    "name": "Omar Saidi",
+    "team_id": "8214b191-5790-4095-8f62-5a6eb56dda35"
+  },
+  {
+    "id": "00000002-0000-0000-0000-00000000000b",
+    "external_id": "seed-p11",
+    "name": "Takeshi Ito",
+    "team_id": "a1aaae66-bf39-4690-920e-65c4d97a3705"
+  },
+  {
+    "id": "00000002-0000-0000-0000-00000000000c",
+    "external_id": "seed-p12",
+    "name": "Kenji Suzuki",
+    "team_id": "a1aaae66-bf39-4690-920e-65c4d97a3705"
+  }
+]

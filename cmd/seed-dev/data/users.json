@@ -1,0 +1,32 @@
+[
+  {
+    "id": "00000004-0000-0000-0000-000000000001",
+    "cognito_sub": "seed-user-alice",
+    "email": "alice@seed.local",
+    "display_name": "Alice Johnson"
+  },
+  {
+    "id": "00000004-0000-0000-0000-000000000002",
+    "cognito_sub": "seed-user-bob",
+    "email": "bob@seed.local",
+    "display_name": "Bob Smith"
+  },
+  {
+    "id": "00000004-0000-0000-0000-000000000003",
+    "cognito_sub": "seed-user-charlie",
+    "email": "charlie@seed.local",
+    "display_name": "Charlie Brown"
+  },
+  {
+    "id": "00000004-0000-0000-0000-000000000004",
+    "cognito_sub": "seed-user-diana",
+    "email": "diana@seed.local",
+    "display_name": "Diana Prince"
+  },
+  {
+    "id": "00000004-0000-0000-0000-000000000005",
+    "cognito_sub": "seed-user-eve",
+    "email": "eve@seed.local",
+    "display_name": "Eve Wilson"
+  }
+]

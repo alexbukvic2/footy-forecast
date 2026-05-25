@@ -15,6 +15,68 @@
         ],
         "type": "object"
       },
+      "FixtureResponse": {
+        "example": {
+          "away_team_name": "France",
+          "external_id": 90001,
+          "goals_away": null,
+          "goals_home": null,
+          "home_team_name": "Argentina",
+          "id": "550e8400-e29b-41d4-a716-446655440011",
+          "kickoff_at": "2026-06-01T15:00:00Z",
+          "status": "upcoming",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "properties": {
+          "away_team_name": {
+            "type": "string"
+          },
+          "external_id": {
+            "type": "integer"
+          },
+          "goals_away": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "goals_home": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "home_team_name": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "kickoff_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "upcoming",
+              "in_progress",
+              "finished"
+            ],
+            "type": "string"
+          },
+          "tournament_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "external_id",
+          "tournament_id",
+          "home_team_name",
+          "away_team_name",
+          "kickoff_at",
+          "status"
+        ],
+        "type": "object"
+      },
       "League": {
         "example": {
           "code": "ABCD1234",
@@ -99,6 +161,47 @@
           "owner_id": "550e8400-e29b-41d4-a716-446655440002",
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
           "updated_at": "2025-01-01T00:00:00Z"
+        }
+      },
+      "LeagueFixtureViewResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FixtureResponse"
+          },
+          {
+            "properties": {
+              "predictions": {
+                "items": {
+                  "$ref": "#/components/schemas/LeagueMemberScorePrediction"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "predictions"
+            ],
+            "type": "object"
+          }
+        ],
+        "example": {
+          "away_team_name": "Germany",
+          "external_id": 90001,
+          "goals_away": 1,
+          "goals_home": 2,
+          "home_team_name": "Brazil",
+          "id": "550e8400-e29b-41d4-a716-446655440011",
+          "kickoff_at": "2026-06-01T15:00:00Z",
+          "predictions": [
+            {
+              "display_name": "alice",
+              "goals_away": 1,
+              "goals_home": 2,
+              "points": 3,
+              "user_id": "550e8400-e29b-41d4-a716-446655440002"
+            }
+          ],
+          "status": "finished",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         }
       },
       "LeagueListItem": {
@@ -208,6 +311,41 @@
           "player_name": {
             "nullable": true,
             "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "user_id",
+          "display_name"
+        ],
+        "type": "object"
+      },
+      "LeagueMemberScorePrediction": {
+        "example": {
+          "display_name": "alice",
+          "goals_away": 1,
+          "goals_home": 2,
+          "points": 3,
+          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+        },
+        "properties": {
+          "display_name": {
+            "type": "string"
+          },
+          "goals_away": {
+            "nullable": true,
+            "type": "integer"
+          },
+          "goals_home": {
+            "nullable": true,
+            "type": "integer"
           },
           "points": {
             "nullable": true,
@@ -483,6 +621,42 @@
         ],
         "type": "object"
       },
+      "ScorePredictionResponse": {
+        "example": {
+          "fixture_id": "550e8400-e29b-41d4-a716-446655440011",
+          "goals_away": 1,
+          "goals_home": 2,
+          "id": "550e8400-e29b-41d4-a716-446655440010",
+          "points": null
+        },
+        "properties": {
+          "fixture_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "goals_away": {
+            "type": "integer"
+          },
+          "goals_home": {
+            "type": "integer"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "points": {
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "fixture_id",
+          "goals_home",
+          "goals_away"
+        ],
+        "type": "object"
+      },
       "TeamHandicap": {
         "example": {
           "points": 3
@@ -681,6 +855,27 @@
         ],
         "type": "object"
       },
+      "UpsertScorePredictionRequest": {
+        "example": {
+          "goals_away": 1,
+          "goals_home": 2
+        },
+        "properties": {
+          "goals_away": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "goals_home": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "goals_home",
+          "goals_away"
+        ],
+        "type": "object"
+      },
       "UpsertTeamPredictionRequest": {
         "example": {
           "team_id": "550e8400-e29b-41d4-a716-446655440004"
@@ -742,6 +937,37 @@
           "updated_at"
         ],
         "type": "object"
+      },
+      "UserFixtureViewResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FixtureResponse"
+          },
+          {
+            "properties": {
+              "prediction": {
+                "$ref": "#/components/schemas/ScorePredictionResponse",
+                "nullable": true
+              }
+            },
+            "required": [
+              "prediction"
+            ],
+            "type": "object"
+          }
+        ],
+        "example": {
+          "away_team_name": "France",
+          "external_id": 90001,
+          "goals_away": null,
+          "goals_home": null,
+          "home_team_name": "Argentina",
+          "id": "550e8400-e29b-41d4-a716-446655440011",
+          "kickoff_at": "2026-06-01T15:00:00Z",
+          "prediction": null,
+          "status": "upcoming",
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+        }
       }
     },
     "securitySchemes": {
@@ -1561,6 +1787,86 @@
         ]
       }
     },
+    "/leagues/{leagueId}/predictions": {
+      "get": {
+        "operationId": "listLeagueScorePredictions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "leagueId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LeagueFixtureViewResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Locked fixtures with each member's score prediction"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid league ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not a member of the league"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List locked fixtures for a league with all members' score predictions",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
     "/leagues/{leagueId}/predictions/players": {
       "get": {
         "operationId": "listLeaguePlayerPredictions",
@@ -1828,6 +2134,103 @@
         ]
       }
     },
+    "/predictions/{fixtureId}": {
+      "put": {
+        "operationId": "upsertScorePrediction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fixtureId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertScorePredictionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScorePredictionResponse"
+                }
+              }
+            },
+            "description": "Prediction upserted"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid fixture ID or negative goals"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Predictions locked (within 30 minutes of kickoff)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Fixture not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Upsert a score prediction for a fixture",
+        "tags": [
+          "predictions"
+        ]
+      }
+    },
     "/team-handicaps/{team_id}/{category}": {
       "get": {
         "operationId": "getTeamHandicap",
@@ -2047,58 +2450,6 @@
         ]
       }
     },
-    "/tournaments/slug/{slug}": {
-      "get": {
-        "operationId": "getTournamentBySlug",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "slug",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Tournament"
-                }
-              }
-            },
-            "description": "Tournament found"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Tournament not found"
-          },
-          "500": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Internal server error"
-          }
-        },
-        "security": [],
-        "summary": "Get tournament by slug",
-        "tags": [
-          "tournaments"
-        ]
-      }
-    },
     "/tournaments/{id}": {
       "get": {
         "operationId": "getTournamentByID",
@@ -2159,6 +2510,76 @@
         "summary": "Get tournament by ID",
         "tags": [
           "tournaments"
+        ]
+      }
+    },
+    "/tournaments/{tournamentId}/fixtures": {
+      "get": {
+        "operationId": "listFixturesForUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserFixtureViewResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "List of fixtures with the caller's prediction (null if not yet submitted)"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List fixtures for a tournament with the caller's score predictions",
+        "tags": [
+          "fixtures"
         ]
       }
     },

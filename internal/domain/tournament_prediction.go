@@ -14,6 +14,7 @@ type PlayerPrediction struct {
 	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
 	PickName     string
+	GroupLetter  *string
 	Points       *int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -25,13 +26,15 @@ type UpsertPlayerPredictionInput struct {
 	TournamentID uuid.UUID
 	Category     PlayerHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
 }
 
 // PlayerPredictionView is one category row in the personal listing.
 // Prediction is nil when the user has not yet predicted for this category.
 type PlayerPredictionView struct {
-	Category   PlayerHandicapCategory
-	Prediction *PlayerPrediction
+	Category    PlayerHandicapCategory
+	GroupLetter *string
+	Prediction  *PlayerPrediction
 }
 
 // LeagueMemberPlayerPick is one member's pick within a league category view.
@@ -46,6 +49,7 @@ type LeagueMemberPlayerPick struct {
 // LeaguePlayerCategoryView is one category row in the league listing.
 type LeaguePlayerCategoryView struct {
 	Category    PlayerHandicapCategory
+	GroupLetter *string
 	Predictions []LeagueMemberPlayerPick
 }
 
@@ -57,6 +61,8 @@ type TeamPrediction struct {
 	Category     TeamHandicapCategory
 	Pick         uuid.UUID
 	PickName     string
+	GroupLetter  *string
+	SlotIndex    int
 	Points       *int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -68,13 +74,17 @@ type UpsertTeamPredictionInput struct {
 	TournamentID uuid.UUID
 	Category     TeamHandicapCategory
 	Pick         uuid.UUID
+	GroupLetter  *string
+	SlotIndex    int
 }
 
 // TeamPredictionView is one category row in the personal listing.
 // Prediction is nil when the user has not yet predicted for this category.
 type TeamPredictionView struct {
-	Category   TeamHandicapCategory
-	Prediction *TeamPrediction
+	Category    TeamHandicapCategory
+	GroupLetter *string
+	SlotIndex   int
+	Prediction  *TeamPrediction
 }
 
 // LeagueMemberTeamPick is one member's pick within a league category view.
@@ -89,27 +99,32 @@ type LeagueMemberTeamPick struct {
 // LeagueTeamCategoryView is one category row in the league listing.
 type LeagueTeamCategoryView struct {
 	Category    TeamHandicapCategory
+	GroupLetter *string
+	SlotIndex   int
 	Predictions []LeagueMemberTeamPick
 }
 
 // PlayerLeaguePick is a raw row from the league player predictions query.
 // Used internally by the service to build LeaguePlayerCategoryView.
 type PlayerLeaguePick struct {
-	UserID     uuid.UUID
-	Category   PlayerHandicapCategory
-	PlayerID   uuid.UUID
-	PlayerName string
-	Points     *int
+	UserID      uuid.UUID
+	Category    PlayerHandicapCategory
+	GroupLetter *string
+	PlayerID    uuid.UUID
+	PlayerName  string
+	Points      *int
 }
 
 // TeamLeaguePick is a raw row from the league team predictions query.
 // Used internally by the service to build LeagueTeamCategoryView.
 type TeamLeaguePick struct {
-	UserID   uuid.UUID
-	Category TeamHandicapCategory
-	TeamID   uuid.UUID
-	TeamName string
-	Points   *int
+	UserID      uuid.UUID
+	Category    TeamHandicapCategory
+	GroupLetter *string
+	SlotIndex   int
+	TeamID      uuid.UUID
+	TeamName    string
+	Points      *int
 }
 
 // LeagueMemberDisplay carries a league member's user ID and display name.

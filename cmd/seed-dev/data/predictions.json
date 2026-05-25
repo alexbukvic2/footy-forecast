@@ -1,0 +1,408 @@
+{
+  "player_predictions": [
+    {
+      "comment": "Alice: group_top_scorer Group B → Luca Ricci (Switzerland)",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000001",
+      "group_letter": "B"
+    },
+    {
+      "comment": "Alice: group_top_scorer Group C → Diego Santos (Brazil)",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000007",
+      "group_letter": "C"
+    },
+    {
+      "comment": "Alice: total_top_scorer → Luca Ricci",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "total_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000001",
+      "group_letter": null
+    },
+    {
+      "comment": "Bob: total_top_scorer → James White",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "total_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000003",
+      "group_letter": null
+    }
+  ],
+  "team_predictions": [
+    {
+      "comment": "Alice: group_winner Group B → Switzerland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "group_winner",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Alice: group_winner Group C → Brazil",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "group_winner",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Alice: playoff Group B slot 0 → Switzerland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "playoff",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Alice: playoff Group B slot 1 → Bosnia",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "playoff",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": "B",
+      "slot_index": 1
+    },
+    {
+      "comment": "Alice: playoff Group C slot 0 → Brazil",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "playoff",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Alice: playoff Group C slot 1 → Morocco",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "playoff",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 1
+    },
+    {
+      "comment": "Alice: semifinalist slot 0 → Switzerland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "semifinalist",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Alice: semifinalist slot 1 → Brazil",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "semifinalist",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": null,
+      "slot_index": 1
+    },
+    {
+      "comment": "Alice: winner → Switzerland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "category": "winner",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: group_winner Group B → Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "group_winner",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: group_winner Group C → Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "group_winner",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: playoff Group B slot 0 → Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "playoff",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: playoff Group B slot 1 → Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "playoff",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 1
+    },
+    {
+      "comment": "Bob: playoff Group C slot 0 → Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "playoff",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: playoff Group C slot 1 → Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "playoff",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 1
+    },
+    {
+      "comment": "Bob: semifinalist slot 0 → Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "semifinalist",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Bob: semifinalist slot 1 → Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "semifinalist",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": null,
+      "slot_index": 1
+    },
+    {
+      "comment": "Bob: winner → Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "category": "winner",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: group_winner Group B → Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "group_winner",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: group_winner Group C → Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "group_winner",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: playoff Group B slot 0 → Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "playoff",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: playoff Group B slot 1 → Qatar (upset)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "playoff",
+      "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+      "group_letter": "B",
+      "slot_index": 1
+    },
+    {
+      "comment": "Charlie: playoff Group C slot 0 → Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "playoff",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: playoff Group C slot 1 → Haiti (upset)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "playoff",
+      "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+      "group_letter": "C",
+      "slot_index": 1
+    },
+    {
+      "comment": "Charlie: semifinalist slot 0 → Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "semifinalist",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Charlie: semifinalist slot 1 → Haiti",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "semifinalist",
+      "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+      "group_letter": null,
+      "slot_index": 1
+    },
+    {
+      "comment": "Charlie: winner → Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "winner",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: group_winner Group B → Qatar (big upset)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "group_winner",
+      "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: group_winner Group C → Haiti (big upset)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "group_winner",
+      "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: playoff Group B slot 0 → Qatar",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "playoff",
+      "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+      "group_letter": "B",
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: playoff Group B slot 1 → Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "playoff",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": "B",
+      "slot_index": 1
+    },
+    {
+      "comment": "Diana: playoff Group C slot 0 → Haiti",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "playoff",
+      "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+      "group_letter": "C",
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: playoff Group C slot 1 → Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "playoff",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 1
+    },
+    {
+      "comment": "Diana: semifinalist slot 0 → Qatar",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "semifinalist",
+      "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+      "group_letter": null,
+      "slot_index": 0
+    },
+    {
+      "comment": "Diana: semifinalist slot 1 → Haiti",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "semifinalist",
+      "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
+      "group_letter": null,
+      "slot_index": 1
+    },
+    {
+      "comment": "Diana: winner → Qatar",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "winner",
+      "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
+      "group_letter": null,
+      "slot_index": 0
+    }
+  ],
+  "score_predictions": [
+    {
+      "comment": "Alice: Canada 2-0 Bosnia",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 2,
+      "goals_away": 0
+    },
+    {
+      "comment": "Alice: Brazil 1-0 Morocco",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 1,
+      "goals_away": 0
+    },
+    {
+      "comment": "Alice: Qatar 2-1 Switzerland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
+      "goals_home": 2,
+      "goals_away": 1
+    },
+    {
+      "comment": "Alice: USA 2-1 Paraguay",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "goals_home": 2,
+      "goals_away": 1
+    },
+    {
+      "comment": "Alice: Haiti 1-0 Scotland",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "goals_home": 1,
+      "goals_away": 0
+    },
+    {
+      "comment": "Alice: Australia 1-1 Türkiye",
+      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 1,
+      "goals_away": 1
+    },
+    {
+      "comment": "Bob: Canada 1-1 Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 1,
+      "goals_away": 1
+    },
+    {
+      "comment": "Bob: Brazil 2-0 Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 2,
+      "goals_away": 0
+    },
+    {
+      "comment": "Bob: Qatar 0-1 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
+      "goals_home": 0,
+      "goals_away": 1
+    },
+    {
+      "comment": "Bob: USA 2-2 Paraguay",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "goals_home": 2,
+      "goals_away": 2
+    },
+    {
+      "comment": "Charlie: Canada 3-1 Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 3,
+      "goals_away": 1
+    },
+    {
+      "comment": "Charlie: Brazil 1-1 Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 1,
+      "goals_away": 1
+    }
+  ]
+}

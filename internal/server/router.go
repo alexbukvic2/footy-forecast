@@ -42,12 +42,16 @@ func NewRouter(
 
 	teamRepo := repository.NewTeamRepository(pool)
 	fixtureRepo := repository.NewFixtureRepository(pool)
+	predictionRepo := repository.NewPredictionRepository(pool)
+	predictionSvc := service.NewPredictionService(predictionRepo, fixtureRepo, service.RealClock{})
+	fixtureSvc := service.NewFixtureService(fixtureRepo, leagueRepo)
 	playerPredictionRepo := repository.NewPlayerPredictionRepository(pool)
 	teamPredictionRepo := repository.NewTeamPredictionRepository(pool)
 	tournamentPredictionSvc := service.NewTournamentPredictionService(
 		playerPredictionRepo,
 		teamPredictionRepo,
 		playerRepo,
+		teamRepo,
 		teamRepo,
 		fixtureRepo,
 		leagueRepo,
@@ -70,6 +74,8 @@ func NewRouter(
 	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
 	teamHandicapH := handler.NewTeamHandicap(logger, teamHandicapSvc)
 	tournamentPredictionH := handler.NewTournamentPrediction(logger, tournamentPredictionSvc)
+	scorePredictionH := handler.NewScorePrediction(logger, predictionSvc)
+	fixtureH := handler.NewFixture(logger, fixtureSvc)
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -92,7 +98,6 @@ func NewRouter(
 	mux.Handle("POST /tournaments", authMW(http.HandlerFunc(tournamentH.Create)))
 	mux.HandleFunc("GET /tournaments", tournamentH.List)
 	mux.HandleFunc("GET /tournaments/{id}", tournamentH.GetByID)
-	mux.HandleFunc("GET /tournaments/slug/{slug}", tournamentH.GetBySlug)
 
 	// Users (protected).
 	mux.Handle("GET /users/me", protected(userH.Me))
@@ -107,12 +112,32 @@ func NewRouter(
 	mux.Handle("GET /team-handicaps/{team_id}/{category}", protected(teamHandicapH.Get))
 
 	// Tournament predictions (protected).
-	mux.Handle("PUT /tournaments/{tournamentId}/predictions/players/{category}", protected(tournamentPredictionH.UpsertPlayer))
-	mux.Handle("GET /tournaments/{tournamentId}/predictions/players", protected(tournamentPredictionH.ListMyPlayers))
-	mux.Handle("PUT /tournaments/{tournamentId}/predictions/teams/{category}", protected(tournamentPredictionH.UpsertTeam))
-	mux.Handle("GET /tournaments/{tournamentId}/predictions/teams", protected(tournamentPredictionH.ListMyTeams))
-	mux.Handle("GET /leagues/{leagueId}/predictions/players", protected(tournamentPredictionH.ListLeaguePlayers))
-	mux.Handle("GET /leagues/{leagueId}/predictions/teams", protected(tournamentPredictionH.ListLeagueTeams))
+	mux.Handle(
+		"PUT /tournaments/{tournamentId}/predictions/players/{category}",
+		protected(tournamentPredictionH.UpsertPlayerPredictions),
+	)
+	mux.Handle(
+		"GET /tournaments/{tournamentId}/predictions/players",
+		protected(tournamentPredictionH.ListMyPlayerPredictions),
+	)
+	mux.Handle(
+		"PUT /tournaments/{tournamentId}/predictions/teams/{category}",
+		protected(tournamentPredictionH.UpsertTeamPredictions),
+	)
+	mux.Handle(
+		"GET /tournaments/{tournamentId}/predictions/teams",
+		protected(tournamentPredictionH.ListMyTeamPredictions),
+	)
+	mux.Handle(
+		"GET /leagues/{leagueId}/predictions/players",
+		protected(tournamentPredictionH.ListLeaguePlayerPredictions),
+	)
+	mux.Handle("GET /leagues/{leagueId}/predictions/teams", protected(tournamentPredictionH.ListLeagueTeamPredictions))
+
+	// Score predictions (protected).
+	mux.Handle("PUT /predictions/{fixtureId}", protected(scorePredictionH.UpsertScore))
+	mux.Handle("GET /tournaments/{tournamentId}/fixtures", protected(fixtureH.ListForUser))
+	mux.Handle("GET /leagues/{leagueId}/predictions", protected(fixtureH.ListForLeague))
 
 	// Leagues (protected).
 	mux.Handle("POST /leagues", protected(leagueH.Create))

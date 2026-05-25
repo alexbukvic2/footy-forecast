@@ -12,7 +12,7 @@ import (
 )
 
 const getTeamByID = `-- name: GetTeamByID :one
-SELECT id, name, logo, tournament_id
+SELECT id, name, logo, tournament_id, group_letter
 FROM teams
 WHERE id = $1
 `
@@ -25,6 +25,35 @@ func (q *Queries) GetTeamByID(ctx context.Context, id uuid.UUID) (Team, error) {
 		&i.Name,
 		&i.Logo,
 		&i.TournamentID,
+		&i.GroupLetter,
 	)
 	return i, err
+}
+
+const listGroupLettersByTournament = `-- name: ListGroupLettersByTournament :many
+SELECT DISTINCT group_letter
+FROM teams
+WHERE tournament_id = $1
+  AND group_letter IS NOT NULL
+ORDER BY group_letter ASC
+`
+
+func (q *Queries) ListGroupLettersByTournament(ctx context.Context, tournamentID uuid.UUID) ([]*string, error) {
+	rows, err := q.db.Query(ctx, listGroupLettersByTournament, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []*string{}
+	for rows.Next() {
+		var group_letter *string
+		if err := rows.Scan(&group_letter); err != nil {
+			return nil, err
+		}
+		items = append(items, group_letter)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

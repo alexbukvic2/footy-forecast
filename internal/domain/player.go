@@ -8,6 +8,7 @@ type Player struct {
 	Name         string
 	TournamentID uuid.UUID
 	TeamID       uuid.UUID
+	GroupLetter  *string
 }
 
 // PlayerSearchResult carries player data together with the joined team columns

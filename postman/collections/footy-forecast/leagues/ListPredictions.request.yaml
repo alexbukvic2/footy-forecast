@@ -1,14 +1,10 @@
-name: List Predictions (league view)
-request:
-  method: GET
-  url:
-    raw: "{{baseUrl}}/leagues/{{leagueId}}/predictions"
-    host:
-      - "{{baseUrl}}"
-    path:
-      - leagues
-      - "{{leagueId}}"
-      - predictions
-  header:
-    - key: Authorization
-      value: "Bearer {{authToken}}"
+$kind: http-request
+name: List Score Predictions
+method: GET
+url: '{{baseUrl}}/leagues/{{leagueId}}/predictions'
+auth:
+  type: noauth
+order: 6000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'

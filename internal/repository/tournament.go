@@ -82,22 +82,6 @@ func (r *TournamentRepository) GetByID(
 	return tournamentFromRow(row), nil
 }
 
-// GetBySlug fetches a tournament by its URL slug.
-// Returns domain.ErrNotFound if no row exists.
-func (r *TournamentRepository) GetBySlug(
-	ctx context.Context,
-	slug string,
-) (*domain.Tournament, error) {
-	row, err := r.q.GetTournamentBySlug(ctx, slug)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("tournament %q: %w", slug, domain.ErrNotFound)
-		}
-		return nil, fmt.Errorf("get tournament: %w", err)
-	}
-	return tournamentFromRow(row), nil
-}
-
 // List returns all tournaments ordered by start date (most recent first).
 func (r *TournamentRepository) List(ctx context.Context) ([]*domain.Tournament, error) {
 	rows, err := r.q.ListTournaments(ctx)
