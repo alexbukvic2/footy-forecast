@@ -171,7 +171,7 @@ func (s *TournamentPredictionService) lockAt(
 		return time.Time{}, false, fmt.Errorf("get first kickoff: %w", err)
 	}
 	lockAt := firstKickoff.Add(-30 * time.Minute)
-	return lockAt, false, nil
+	return lockAt, !s.clock.Now().Before(lockAt), nil
 }
 
 // UpsertPlayerPrediction validates and saves a player tournament prediction.
