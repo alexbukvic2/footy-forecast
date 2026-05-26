@@ -662,6 +662,25 @@
         ],
         "type": "object"
       },
+      "PlayerPredictionsListResponse": {
+        "properties": {
+          "locked": {
+            "description": "Whether predictions are locked (first kickoff is within 30 minutes or has passed).",
+            "type": "boolean"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/PlayerPredictionView"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "locked",
+          "predictions"
+        ],
+        "type": "object"
+      },
       "ScorePredictionResponse": {
         "example": {
           "fixture_id": "550e8400-e29b-41d4-a716-446655440011",
@@ -773,6 +792,25 @@
         },
         "required": [
           "category"
+        ],
+        "type": "object"
+      },
+      "TeamPredictionsListResponse": {
+        "properties": {
+          "locked": {
+            "description": "Whether predictions are locked (first kickoff is within 30 minutes or has passed).",
+            "type": "boolean"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/TeamPredictionView"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "locked",
+          "predictions"
         ],
         "type": "object"
       },
@@ -2597,14 +2635,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/PlayerPredictionView"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/PlayerPredictionsListResponse"
                 }
               }
             },
-            "description": "Player predictions for all categories"
+            "description": "Player predictions for all categories with lock status"
           },
           "400": {
             "content": {
@@ -2765,14 +2800,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/TeamPredictionView"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/TeamPredictionsListResponse"
                 }
               }
             },
-            "description": "Team predictions for all categories"
+            "description": "Team predictions for all categories with lock status"
           },
           "400": {
             "content": {
@@ -2930,6 +2962,15 @@
           {
             "in": "query",
             "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter results to players whose team is in this group (e.g. \"A\"). Omit to search all groups.",
+            "in": "query",
+            "name": "group",
             "required": false,
             "schema": {
               "type": "string"

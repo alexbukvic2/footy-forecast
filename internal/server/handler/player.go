@@ -47,7 +47,7 @@ func toPlayerResponse(p *domain.PlayerSearchResult) playerResponse {
 
 // ---------- Handlers ----------
 
-// Search handles GET /tournaments/{tournament_id}/players/search?q=<string>.
+// Search handles GET /tournaments/{tournament_id}/players/search?q=<string>&group=<letter>.
 func (h *Player) Search(w http.ResponseWriter, r *http.Request) {
 	tournamentID, err := parseUUIDPathValue(r, "tournament_id")
 	if err != nil {
@@ -57,9 +57,15 @@ func (h *Player) Search(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query().Get("q")
 
+	var groupLetter *string
+	if g := r.URL.Query().Get("group"); g != "" {
+		groupLetter = &g
+	}
+
 	players, err := h.svc.Search(r.Context(), domain.SearchPlayersInput{
 		TournamentID: tournamentID,
 		Query:        q,
+		GroupLetter:  groupLetter,
 	})
 	if err != nil {
 		writeError(w, r, h.logger, err)

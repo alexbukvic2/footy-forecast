@@ -499,7 +499,7 @@ func TestTournamentPredictionService_ListPlayerPredictionsForUser_AllCategories(
 
 	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
 
-	views, err := svc.ListPlayerPredictionsForUser(context.Background(), tournamentID, userID)
+	_, views, err := svc.ListPlayerPredictionsForUser(context.Background(), tournamentID, userID)
 	require.NoError(t, err)
 	require.Len(t, views, len(domain.AllPlayerHandicapCategories))
 
@@ -529,7 +529,7 @@ func TestTournamentPredictionService_ListTeamPredictionsForUser_AllCategories(t 
 
 	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
 
-	views, err := svc.ListTeamPredictionsForUser(context.Background(), tournamentID, userID)
+	_, views, err := svc.ListTeamPredictionsForUser(context.Background(), tournamentID, userID)
 	require.NoError(t, err)
 	require.Len(t, views, 9) // 1 group "A": 1 group_winner + 3 playoff + 4 semifinalist + 1 winner
 	for _, v := range views {
@@ -637,4 +637,162 @@ func TestTournamentPredictionService_ListLeaguePlayerPredictions_AfterLock(t *te
 	// Alice has no prediction.
 	require.Equal(t, alice, found.Predictions[1].UserID)
 	require.Nil(t, found.Predictions[1].PlayerID)
+}
+
+// ---------- Group cross-conflict tests ----------
+
+func TestTournamentPredictionService_UpsertTeam_CrossConflict_PlayoffBlocksGroupWinner(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	teamID := uuid.New()
+	groupA := "A"
+
+	// Existing: the same team is already a playoff pick in group A.
+	tpRepo := &fakeTeamPredictionRepo{
+		upsertFn: func(_ context.Context, _ domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error) {
+			return &domain.TeamPrediction{}, nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return []*domain.TeamPrediction{
+				{
+					Category:    domain.TeamHandicapCategoryPlayoff,
+					GroupLetter: &groupA,
+					SlotIndex:   0,
+					Pick:        teamID,
+				},
+			}, nil
+		},
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return nil, nil
+		},
+	}
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			return &domain.Team{ID: teamID, TournamentID: tournamentID, GroupLetter: &groupA}, nil
+		},
+	}
+
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
+		UserID:       userID,
+		TournamentID: tournamentID,
+		Category:     domain.TeamHandicapCategoryGroupWinner,
+		Pick:         teamID,
+		GroupLetter:  &groupA,
+		SlotIndex:    0,
+	})
+	require.True(t, errors.Is(err, domain.ErrInvalid), "expected ErrInvalid, got: %v", err)
+}
+
+func TestTournamentPredictionService_UpsertTeam_CrossConflict_GroupWinnerBlocksPlayoff(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	teamID := uuid.New()
+	groupA := "A"
+
+	// Existing: the same team is already picked as group_winner in group A.
+	tpRepo := &fakeTeamPredictionRepo{
+		upsertFn: func(_ context.Context, _ domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error) {
+			return &domain.TeamPrediction{}, nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return []*domain.TeamPrediction{
+				{
+					Category:    domain.TeamHandicapCategoryGroupWinner,
+					GroupLetter: &groupA,
+					SlotIndex:   0,
+					Pick:        teamID,
+				},
+			}, nil
+		},
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return nil, nil
+		},
+	}
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			return &domain.Team{ID: teamID, TournamentID: tournamentID, GroupLetter: &groupA}, nil
+		},
+	}
+
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
+		UserID:       userID,
+		TournamentID: tournamentID,
+		Category:     domain.TeamHandicapCategoryPlayoff,
+		Pick:         teamID,
+		GroupLetter:  &groupA,
+		SlotIndex:    0,
+	})
+	require.True(t, errors.Is(err, domain.ErrInvalid), "expected ErrInvalid, got: %v", err)
+}
+
+func TestTournamentPredictionService_BulkUpsertTeams_CrossConflict_InBatch(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	teamID := uuid.New()
+	groupA := "A"
+
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			return &domain.Team{ID: teamID, TournamentID: tournamentID, GroupLetter: &groupA}, nil
+		},
+	}
+	tpRepo := &fakeTeamPredictionRepo{
+		upsertFn: func(_ context.Context, _ domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error) {
+			return &domain.TeamPrediction{}, nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return nil, nil // no prior picks
+		},
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return nil, nil
+		},
+	}
+
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	// Same team picked as group_winner AND playoff in the same batch.
+	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
+		{Category: domain.TeamHandicapCategoryGroupWinner, GroupLetter: &groupA, SlotIndex: 0, TeamID: &teamID},
+		{Category: domain.TeamHandicapCategoryPlayoff, GroupLetter: &groupA, SlotIndex: 1, TeamID: &teamID},
+	})
+	require.True(t, errors.Is(err, domain.ErrInvalid), "expected ErrInvalid, got: %v", err)
+}
+
+func TestTournamentPredictionService_BulkUpsertTeams_CrossConflict_AgainstExisting(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	teamID := uuid.New()
+	groupA := "A"
+
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			return &domain.Team{ID: teamID, TournamentID: tournamentID, GroupLetter: &groupA}, nil
+		},
+	}
+	// DB already has a group_winner pick for teamID in group A.
+	tpRepo := &fakeTeamPredictionRepo{
+		upsertFn: func(_ context.Context, _ domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error) {
+			return &domain.TeamPrediction{}, nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return []*domain.TeamPrediction{
+				{Category: domain.TeamHandicapCategoryGroupWinner, GroupLetter: &groupA, SlotIndex: 0, Pick: teamID},
+			}, nil
+		},
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return nil, nil
+		},
+	}
+
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	// Batch tries to add the same team as a playoff pick.
+	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
+		{Category: domain.TeamHandicapCategoryPlayoff, GroupLetter: &groupA, SlotIndex: 0, TeamID: &teamID},
+	})
+	require.True(t, errors.Is(err, domain.ErrInvalid), "expected ErrInvalid, got: %v", err)
 }

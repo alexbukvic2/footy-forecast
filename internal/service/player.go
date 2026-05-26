@@ -14,7 +14,7 @@ import (
 
 // PlayerRepo is the subset of the repository that PlayerService needs.
 type PlayerRepo interface {
-	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string) ([]*domain.PlayerSearchResult, error)
+	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string) ([]*domain.PlayerSearchResult, error)
 }
 
 // defaultHandicapPoints is returned for any player+category pair that has no handicap row.
@@ -56,7 +56,7 @@ func (s *PlayerService) Search(
 	}
 
 	escaped := escapeWildcards(in.Query)
-	players, err := s.players.Search(ctx, in.TournamentID, escaped, in.Query)
+	players, err := s.players.Search(ctx, in.TournamentID, escaped, in.Query, in.GroupLetter)
 	if err != nil {
 		return nil, fmt.Errorf("search players: %w", err)
 	}

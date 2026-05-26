@@ -54,7 +54,8 @@ WITH top_players AS (
     FROM players p
     JOIN teams t ON t.id = p.team_id
     WHERE p.tournament_id = $2
-      AND unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($3) || '%' ESCAPE '\'
+      AND ($3 = '' OR t.group_letter = $3)
+      AND unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($4) || '%' ESCAPE '\'
     ORDER BY similarity(unaccent_immutable(p.name), unaccent_immutable($1)) DESC
     LIMIT 5
 )
@@ -72,6 +73,7 @@ ORDER BY similarity(unaccent_immutable(tp.name), unaccent_immutable($1)) DESC
 type SearchPlayersParams struct {
 	RawQuery     string
 	TournamentID uuid.UUID
+	GroupLetter  interface{}
 	EscapedQuery string
 }
 
@@ -86,8 +88,14 @@ type SearchPlayersRow struct {
 
 // @escaped_query: wildcard-escaped term for ILIKE filtering
 // @raw_query:     original trimmed term for similarity ranking (must not be escaped)
+// @group_letter:  optional group filter; empty string means search all groups
 func (q *Queries) SearchPlayers(ctx context.Context, arg SearchPlayersParams) ([]SearchPlayersRow, error) {
-	rows, err := q.db.Query(ctx, searchPlayers, arg.RawQuery, arg.TournamentID, arg.EscapedQuery)
+	rows, err := q.db.Query(ctx, searchPlayers,
+		arg.RawQuery,
+		arg.TournamentID,
+		arg.GroupLetter,
+		arg.EscapedQuery,
+	)
 	if err != nil {
 		return nil, err
 	}

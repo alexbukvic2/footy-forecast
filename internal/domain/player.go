@@ -26,4 +26,5 @@ type PlayerSearchResult struct {
 type SearchPlayersInput struct {
 	TournamentID uuid.UUID
 	Query        string
+	GroupLetter  *string // optional; nil means search all groups
 }

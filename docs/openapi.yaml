@@ -394,6 +394,30 @@ components:
       items:
         $ref: '#/components/schemas/BulkTeamPredictionItem'
 
+    PlayerPredictionsListResponse:
+      type: object
+      required: [locked, predictions]
+      properties:
+        locked:
+          type: boolean
+          description: Whether predictions are locked (first kickoff is within 30 minutes or has passed).
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerPredictionView'
+
+    TeamPredictionsListResponse:
+      type: object
+      required: [locked, predictions]
+      properties:
+        locked:
+          type: boolean
+          description: Whether predictions are locked (first kickoff is within 30 minutes or has passed).
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamPredictionView'
+
     PlayerPredictionView:
       type: object
       required: [category]
@@ -1333,6 +1357,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: group
+          in: query
+          required: false
+          description: Filter results to players whose team is in this group (e.g. "A"). Omit to search all groups.
+          schema:
+            type: string
       responses:
         '200':
           description: Matching players
@@ -1530,13 +1560,11 @@ paths:
             format: uuid
       responses:
         '200':
-          description: Player predictions for all categories
+          description: Player predictions for all categories with lock status
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PlayerPredictionView'
+                $ref: '#/components/schemas/PlayerPredictionsListResponse'
         '400':
           description: Invalid tournament ID
           content:
@@ -1630,13 +1658,11 @@ paths:
             format: uuid
       responses:
         '200':
-          description: Team predictions for all categories
+          description: Team predictions for all categories with lock status
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TeamPredictionView'
+                $ref: '#/components/schemas/TeamPredictionsListResponse'
         '400':
           description: Invalid tournament ID
           content:

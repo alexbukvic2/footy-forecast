@@ -372,6 +372,13 @@ type PlayerPredictionView struct {
 	Points     *int                `json:"points,omitempty"`
 }
 
+// PlayerPredictionsListResponse defines model for PlayerPredictionsListResponse.
+type PlayerPredictionsListResponse struct {
+	// Locked Whether predictions are locked (first kickoff is within 30 minutes or has passed).
+	Locked      bool                   `json:"locked"`
+	Predictions []PlayerPredictionView `json:"predictions"`
+}
+
 // ScorePredictionResponse defines model for ScorePredictionResponse.
 type ScorePredictionResponse struct {
 	FixtureId openapi_types.UUID `json:"fixture_id"`
@@ -404,6 +411,13 @@ type TeamPredictionView struct {
 	Points   *int                `json:"points,omitempty"`
 	TeamId   *openapi_types.UUID `json:"team_id,omitempty"`
 	TeamName *string             `json:"team_name,omitempty"`
+}
+
+// TeamPredictionsListResponse defines model for TeamPredictionsListResponse.
+type TeamPredictionsListResponse struct {
+	// Locked Whether predictions are locked (first kickoff is within 30 minutes or has passed).
+	Locked      bool                 `json:"locked"`
+	Predictions []TeamPredictionView `json:"predictions"`
 }
 
 // TeamWithHandicaps defines model for TeamWithHandicaps.
@@ -503,6 +517,9 @@ type CreateTournamentJSONBody struct {
 // SearchPlayersParams defines parameters for SearchPlayers.
 type SearchPlayersParams struct {
 	Q *string `form:"q,omitempty" json:"q,omitempty"`
+
+	// Group Filter results to players whose team is in this group (e.g. "A"). Omit to search all groups.
+	Group *string `form:"group,omitempty" json:"group,omitempty"`
 }
 
 // CreateLeagueJSONRequestBody defines body for CreateLeague for application/json ContentType.

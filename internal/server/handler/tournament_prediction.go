@@ -29,11 +29,11 @@ type TournamentPredictionSvc interface {
 	ListPlayerPredictionsForUser(
 		ctx context.Context,
 		tournamentID, userID uuid.UUID,
-	) ([]*domain.PlayerPredictionView, error)
+	) (locked bool, views []*domain.PlayerPredictionView, err error)
 	ListTeamPredictionsForUser(
 		ctx context.Context,
 		tournamentID, userID uuid.UUID,
-	) ([]*domain.TeamPredictionView, error)
+	) (locked bool, views []*domain.TeamPredictionView, err error)
 	ListLeaguePlayerPredictions(
 		ctx context.Context,
 		leagueID, requestingUserID uuid.UUID,
@@ -90,6 +90,16 @@ type leagueMemberTeamPickResponse struct {
 	TeamID      *string `json:"team_id"`
 	TeamName    *string `json:"team_name"`
 	Points      *int    `json:"points"`
+}
+
+type playerPredictionsListResponse struct {
+	Locked      bool                           `json:"locked"`
+	Predictions []playerPredictionViewResponse `json:"predictions"`
+}
+
+type teamPredictionsListResponse struct {
+	Locked      bool                         `json:"locked"`
+	Predictions []teamPredictionViewResponse `json:"predictions"`
 }
 
 type leaguePlayerCategoryViewResponse struct {
@@ -319,17 +329,17 @@ func (h *TournamentPrediction) ListMyPlayerPredictions(
 		return
 	}
 
-	views, err := h.svc.ListPlayerPredictionsForUser(r.Context(), tournamentID, caller.ID)
+	locked, views, err := h.svc.ListPlayerPredictionsForUser(r.Context(), tournamentID, caller.ID)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
 	}
 
-	out := make([]playerPredictionViewResponse, 0, len(views))
+	preds := make([]playerPredictionViewResponse, 0, len(views))
 	for _, v := range views {
-		out = append(out, toPlayerPredictionViewResponse(v))
+		preds = append(preds, toPlayerPredictionViewResponse(v))
 	}
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, playerPredictionsListResponse{Locked: locked, Predictions: preds})
 }
 
 // ListMyTeamPredictions handles GET /tournaments/{tournamentId}/predictions/teams.
@@ -349,17 +359,17 @@ func (h *TournamentPrediction) ListMyTeamPredictions(
 		return
 	}
 
-	views, err := h.svc.ListTeamPredictionsForUser(r.Context(), tournamentID, caller.ID)
+	locked, views, err := h.svc.ListTeamPredictionsForUser(r.Context(), tournamentID, caller.ID)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
 	}
 
-	out := make([]teamPredictionViewResponse, 0, len(views))
+	preds := make([]teamPredictionViewResponse, 0, len(views))
 	for _, v := range views {
-		out = append(out, toTeamPredictionViewResponse(v))
+		preds = append(preds, toTeamPredictionViewResponse(v))
 	}
-	writeJSON(w, http.StatusOK, out)
+	writeJSON(w, http.StatusOK, teamPredictionsListResponse{Locked: locked, Predictions: preds})
 }
 
 // ListLeaguePlayerPredictions handles GET /leagues/{leagueId}/predictions/players.

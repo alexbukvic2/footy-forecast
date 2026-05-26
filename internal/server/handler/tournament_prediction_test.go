@@ -34,12 +34,12 @@ type fakeTournamentPredictionSvc struct {
 		context.Context,
 		uuid.UUID,
 		uuid.UUID,
-	) ([]*domain.PlayerPredictionView, error)
+	) (bool, []*domain.PlayerPredictionView, error)
 	ListMyTeamPredictionsFn func(
 		context.Context,
 		uuid.UUID,
 		uuid.UUID,
-	) ([]*domain.TeamPredictionView, error)
+	) (bool, []*domain.TeamPredictionView, error)
 	ListLeaguePlayerPredictionsFn func(
 		context.Context,
 		uuid.UUID,
@@ -69,13 +69,13 @@ func (f *fakeTournamentPredictionSvc) BulkUpsertTeamPredictions(
 func (f *fakeTournamentPredictionSvc) ListPlayerPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
-) ([]*domain.PlayerPredictionView, error) {
+) (bool, []*domain.PlayerPredictionView, error) {
 	return f.listMyPlayersFn(ctx, tournamentID, userID)
 }
 func (f *fakeTournamentPredictionSvc) ListTeamPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
-) ([]*domain.TeamPredictionView, error) {
+) (bool, []*domain.TeamPredictionView, error) {
 	return f.ListMyTeamPredictionsFn(ctx, tournamentID, userID)
 }
 func (f *fakeTournamentPredictionSvc) ListLeaguePlayerPredictions(
@@ -520,8 +520,8 @@ func TestTournamentPrediction_ListMyPlayers(t *testing.T) {
 				listMyPlayersFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.PlayerPredictionView, error) {
-					return views, nil
+				) (bool, []*domain.PlayerPredictionView, error) {
+					return false, views, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
@@ -531,12 +531,14 @@ func TestTournamentPrediction_ListMyPlayers(t *testing.T) {
 			)
 
 			require.Equal(t, http.StatusOK, rec.Code)
-			var resp []map[string]any
+			var resp map[string]any
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Len(t, resp, 2)
-			require.Equal(t, "group_top_scorer", resp[0]["category"])
-			require.Equal(t, playerID.String(), resp[0]["player_id"])
-			require.Nil(t, resp[1]["player_id"])
+			require.Equal(t, false, resp["locked"])
+			preds := resp["predictions"].([]any)
+			require.Len(t, preds, 2)
+			require.Equal(t, "group_top_scorer", preds[0].(map[string]any)["category"])
+			require.Equal(t, playerID.String(), preds[0].(map[string]any)["player_id"])
+			require.Nil(t, preds[1].(map[string]any)["player_id"])
 		},
 	)
 
@@ -586,8 +588,8 @@ func TestTournamentPrediction_ListMyTeamPredictions(t *testing.T) {
 				ListMyTeamPredictionsFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.TeamPredictionView, error) {
-					return views, nil
+				) (bool, []*domain.TeamPredictionView, error) {
+					return false, views, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
@@ -597,11 +599,13 @@ func TestTournamentPrediction_ListMyTeamPredictions(t *testing.T) {
 			)
 
 			require.Equal(t, http.StatusOK, rec.Code)
-			var resp []map[string]any
+			var resp map[string]any
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Len(t, resp, 1)
-			require.Equal(t, "winner", resp[0]["category"])
-			require.Nil(t, resp[0]["team_id"])
+			require.Equal(t, false, resp["locked"])
+			preds := resp["predictions"].([]any)
+			require.Len(t, preds, 1)
+			require.Equal(t, "winner", preds[0].(map[string]any)["category"])
+			require.Nil(t, preds[0].(map[string]any)["team_id"])
 		},
 	)
 

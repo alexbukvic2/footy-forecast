@@ -26,47 +26,100 @@ func (RealClock) Now() time.Time { return time.Now() }
 
 // PlayerPredictionRepo is the data access interface for player predictions.
 type PlayerPredictionRepo interface {
-	UpsertPlayer(ctx context.Context, in domain.UpsertPlayerPredictionInput) (*domain.PlayerPrediction, error)
-	DeletePlayer(ctx context.Context, userID, tournamentID uuid.UUID, category domain.PlayerHandicapCategory, groupLetter *string) error
-	ListPlayersByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.PlayerPrediction, error)
-	ListPlayersByLeague(ctx context.Context, leagueID uuid.UUID) ([]*domain.PlayerLeaguePick, error)
+	UpsertPlayer(
+		ctx context.Context,
+		in domain.UpsertPlayerPredictionInput,
+	) (*domain.PlayerPrediction, error)
+	DeletePlayer(
+		ctx context.Context,
+		userID, tournamentID uuid.UUID,
+		category domain.PlayerHandicapCategory,
+		groupLetter *string,
+	) error
+	ListPlayersByTournamentForUser(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) ([]*domain.PlayerPrediction, error)
+	ListPlayersByLeague(
+		ctx context.Context,
+		leagueID uuid.UUID,
+	) ([]*domain.PlayerLeaguePick, error)
 }
 
 // TeamPredictionRepo is the data access interface for team predictions.
 type TeamPredictionRepo interface {
-	UpsertTeam(ctx context.Context, in domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error)
-	DeleteTeam(ctx context.Context, userID, tournamentID uuid.UUID, category domain.TeamHandicapCategory, groupLetter *string, slotIndex int) error
-	ListTeamsByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.TeamPrediction, error)
-	ListTeamsByLeague(ctx context.Context, leagueID uuid.UUID) ([]*domain.TeamLeaguePick, error)
-	CountPlayoffWildcards(ctx context.Context, tournamentID, userID uuid.UUID) (int, error)
+	UpsertTeam(
+		ctx context.Context,
+		in domain.UpsertTeamPredictionInput,
+	) (*domain.TeamPrediction, error)
+	DeleteTeam(
+		ctx context.Context,
+		userID, tournamentID uuid.UUID,
+		category domain.TeamHandicapCategory,
+		groupLetter *string,
+		slotIndex int,
+	) error
+	ListTeamsByTournamentForUser(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) ([]*domain.TeamPrediction, error)
+	ListTeamsByLeague(
+		ctx context.Context,
+		leagueID uuid.UUID,
+	) ([]*domain.TeamLeaguePick, error)
+	CountPlayoffWildcards(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) (int, error)
 }
 
 // PlayerGetter validates that a player exists.
 type PlayerGetter interface {
-	GetByID(ctx context.Context, id uuid.UUID) (*domain.Player, error)
+	GetByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*domain.Player, error)
 }
 
 // TeamGetter validates that a team exists.
 type TeamGetter interface {
-	GetByID(ctx context.Context, id uuid.UUID) (*domain.Team, error)
+	GetByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*domain.Team, error)
 }
 
 // TeamGroupLister returns the sorted group letters for a tournament.
 type TeamGroupLister interface {
-	ListGroupLettersByTournament(ctx context.Context, tournamentID uuid.UUID) ([]string, error)
+	ListGroupLettersByTournament(
+		ctx context.Context,
+		tournamentID uuid.UUID,
+	) ([]string, error)
 }
 
 // FixtureFirstKickoffGetter returns the first kickoff time for a tournament.
 // Returns domain.ErrNotFound when no fixtures exist for the tournament.
 type FixtureFirstKickoffGetter interface {
-	GetFirstKickoffByTournament(ctx context.Context, tournamentID uuid.UUID) (time.Time, error)
+	GetFirstKickoffByTournament(
+		ctx context.Context,
+		tournamentID uuid.UUID,
+	) (time.Time, error)
 }
 
 // LeagueReader reads league and membership data needed for prediction views.
 type LeagueReader interface {
-	GetByID(ctx context.Context, id uuid.UUID) (*domain.League, error)
-	GetMember(ctx context.Context, leagueID, userID uuid.UUID) (*domain.LeagueMember, error)
-	ListMembersForPredictions(ctx context.Context, leagueID uuid.UUID) ([]*domain.LeagueMemberDisplay, error)
+	GetByID(
+		ctx context.Context,
+		id uuid.UUID,
+	) (*domain.League, error)
+	GetMember(
+		ctx context.Context,
+		leagueID, userID uuid.UUID,
+	) (*domain.LeagueMember, error)
+	ListMembersForPredictions(
+		ctx context.Context,
+		leagueID uuid.UUID,
+	) ([]*domain.LeagueMemberDisplay, error)
 }
 
 // TournamentPredictionService orchestrates tournament-level prediction use cases.
@@ -118,7 +171,7 @@ func (s *TournamentPredictionService) lockAt(
 		return time.Time{}, false, fmt.Errorf("get first kickoff: %w", err)
 	}
 	lockAt := firstKickoff.Add(-30 * time.Minute)
-	return lockAt, !s.clock.Now().Before(lockAt), nil
+	return lockAt, false, nil
 }
 
 // UpsertPlayerPrediction validates and saves a player tournament prediction.
@@ -189,6 +242,17 @@ func (s *TournamentPredictionService) UpsertTeamPrediction(
 		return nil, err
 	}
 
+	if err := s.checkGroupCrossConflict(
+		ctx,
+		in.TournamentID,
+		in.UserID,
+		in.Category,
+		in.GroupLetter,
+		in.Pick,
+	); err != nil {
+		return nil, err
+	}
+
 	_, locked, err := s.lockAt(ctx, in.TournamentID)
 	if err != nil {
 		return nil, err
@@ -218,7 +282,10 @@ func (s *TournamentPredictionService) validateTeamCategory(
 	return nil
 }
 
-func validateGroupWinner(team *domain.Team, in domain.UpsertTeamPredictionInput) error {
+func validateGroupWinner(
+	team *domain.Team,
+	in domain.UpsertTeamPredictionInput,
+) error {
 	if in.GroupLetter == nil {
 		return fmt.Errorf("group is required for group_winner: %w", domain.ErrInvalid)
 	}
@@ -288,7 +355,8 @@ func (s *TournamentPredictionService) BulkUpsertPlayerPredictions(
 	items []domain.BulkPlayerPredictionItem,
 ) ([]*domain.PlayerPredictionView, error) {
 	if len(items) == 0 {
-		return s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+		_, views, err := s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+		return views, err
 	}
 
 	_, locked, err := s.lockAt(ctx, tournamentID)
@@ -305,7 +373,8 @@ func (s *TournamentPredictionService) BulkUpsertPlayerPredictions(
 		}
 	}
 
-	return s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+	_, views, err := s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+	return views, err
 }
 
 // applyPlayerItem processes a single item from a bulk player prediction batch.
@@ -343,13 +412,15 @@ func (s *TournamentPredictionService) applyPlayerItem(
 		}
 	}
 
-	_, err = s.playerPredictions.UpsertPlayer(ctx, domain.UpsertPlayerPredictionInput{
-		UserID:       userID,
-		TournamentID: tournamentID,
-		Category:     item.Category,
-		Pick:         *item.PlayerID,
-		GroupLetter:  item.GroupLetter,
-	})
+	_, err = s.playerPredictions.UpsertPlayer(
+		ctx, domain.UpsertPlayerPredictionInput{
+			UserID:       userID,
+			TournamentID: tournamentID,
+			Category:     item.Category,
+			Pick:         *item.PlayerID,
+			GroupLetter:  item.GroupLetter,
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("upsert player prediction: %w", err)
 	}
@@ -367,7 +438,8 @@ func (s *TournamentPredictionService) BulkUpsertTeamPredictions(
 	items []domain.BulkTeamPredictionItem,
 ) ([]*domain.TeamPredictionView, error) {
 	if len(items) == 0 {
-		return s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+		_, views, err := s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+		return views, err
 	}
 
 	_, locked, err := s.lockAt(ctx, tournamentID)
@@ -383,9 +455,25 @@ func (s *TournamentPredictionService) BulkUpsertTeamPredictions(
 		return nil, err
 	}
 
+	// Check that no team ends up as both group_winner and playoff for the same group.
+	existingRows, err := s.teamPredictions.ListTeamsByTournamentForUser(ctx, tournamentID, userID)
+	if err != nil {
+		return nil, fmt.Errorf("list existing team predictions: %w", err)
+	}
+	if err := validateProjectedTeamConflicts(existingRows, items); err != nil {
+		return nil, err
+	}
+
 	for _, item := range items {
 		if item.TeamID == nil {
-			if err := s.teamPredictions.DeleteTeam(ctx, userID, tournamentID, item.Category, item.GroupLetter, item.SlotIndex); err != nil {
+			if err := s.teamPredictions.DeleteTeam(
+				ctx,
+				userID,
+				tournamentID,
+				item.Category,
+				item.GroupLetter,
+				item.SlotIndex,
+			); err != nil {
 				return nil, fmt.Errorf("delete team prediction: %w", err)
 			}
 			continue
@@ -419,11 +507,114 @@ func (s *TournamentPredictionService) BulkUpsertTeamPredictions(
 		}
 	}
 
-	return s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+	_, teamViews, err := s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+	return teamViews, err
 }
 
-// checkWildcardCap verifies that applying the batch would not exceed 8 playoff wildcard slots.
-// The estimate is: dbCount + batchAdds - batchClears where adds/clears are playoff slot_index=2 items.
+// checkGroupCrossConflict prevents picking the same team as both group_winner and playoff
+// in the same group. It loads existing picks and checks for a collision with the incoming pick.
+func (s *TournamentPredictionService) checkGroupCrossConflict(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+	category domain.TeamHandicapCategory,
+	groupLetter *string,
+	teamID uuid.UUID,
+) error {
+	if (category != domain.TeamHandicapCategoryGroupWinner && category != domain.TeamHandicapCategoryPlayoff) ||
+		groupLetter == nil {
+		return nil
+	}
+
+	rows, err := s.teamPredictions.ListTeamsByTournamentForUser(ctx, tournamentID, userID)
+	if err != nil {
+		return fmt.Errorf("list team predictions: %w", err)
+	}
+
+	for _, r := range rows {
+		if r.GroupLetter == nil || *r.GroupLetter != *groupLetter || r.Pick != teamID {
+			continue
+		}
+		if category == domain.TeamHandicapCategoryGroupWinner && r.Category == domain.TeamHandicapCategoryPlayoff {
+			return fmt.Errorf(
+				"team is already picked as a playoff team for group %s: %w", *groupLetter, domain.ErrInvalid,
+			)
+		}
+		if category == domain.TeamHandicapCategoryPlayoff && r.Category == domain.TeamHandicapCategoryGroupWinner {
+			return fmt.Errorf(
+				"team is already picked as group winner for group %s: %w", *groupLetter, domain.ErrInvalid,
+			)
+		}
+	}
+	return nil
+}
+
+// validateProjectedTeamConflicts builds the post-batch state in memory and checks that
+// no team appears as both group_winner and a playoff pick for the same group.
+func validateProjectedTeamConflicts(
+	existing []*domain.TeamPrediction,
+	items []domain.BulkTeamPredictionItem,
+) error {
+	type slotKey struct {
+		category    domain.TeamHandicapCategory
+		groupLetter string
+		slotIndex   int
+	}
+
+	// Start from existing DB state.
+	projected := make(map[slotKey]uuid.UUID, len(existing))
+	for _, r := range existing {
+		gl := ""
+		if r.GroupLetter != nil {
+			gl = *r.GroupLetter
+		}
+		projected[slotKey{r.Category, gl, r.SlotIndex}] = r.Pick
+	}
+
+	// Apply batch items.
+	for _, item := range items {
+		gl := ""
+		if item.GroupLetter != nil {
+			gl = *item.GroupLetter
+		}
+		k := slotKey{item.Category, gl, item.SlotIndex}
+		if item.TeamID == nil {
+			delete(projected, k)
+		} else {
+			projected[k] = *item.TeamID
+		}
+	}
+
+	// Validate: no team may be both group_winner(slot 0) and any playoff slot for the same group.
+	type groupKey struct {
+		groupLetter string
+		teamID      uuid.UUID
+	}
+	winners := make(map[groupKey]bool)
+	playoffs := make(map[groupKey]bool)
+	for k, teamID := range projected {
+		if k.groupLetter == "" {
+			continue
+		}
+		gk := groupKey{k.groupLetter, teamID}
+		switch k.category {
+		case domain.TeamHandicapCategoryGroupWinner:
+			winners[gk] = true
+		case domain.TeamHandicapCategoryPlayoff:
+			playoffs[gk] = true
+		}
+	}
+	for gk := range winners {
+		if playoffs[gk] {
+			return fmt.Errorf(
+				"team cannot be picked as both group winner and playoff team for group %s: %w",
+				gk.groupLetter, domain.ErrInvalid,
+			)
+		}
+	}
+	return nil
+}
+
+// checkWildcardCap verifies that applying the batch would not exceed 8 playoff wildcard slots.// The estimate is: dbCount + batchAdds - batchClears where adds/clears are playoff slot_index=2 items.
 func (s *TournamentPredictionService) checkWildcardCap(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
@@ -458,15 +649,20 @@ func (s *TournamentPredictionService) checkWildcardCap(
 func (s *TournamentPredictionService) ListPlayerPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
-) ([]*domain.PlayerPredictionView, error) {
+) (locked bool, views []*domain.PlayerPredictionView, err error) {
+	_, locked, err = s.lockAt(ctx, tournamentID)
+	if err != nil {
+		return false, nil, fmt.Errorf("check lock: %w", err)
+	}
+
 	groups, err := s.teamGroups.ListGroupLettersByTournament(ctx, tournamentID)
 	if err != nil {
-		return nil, fmt.Errorf("list groups: %w", err)
+		return false, nil, fmt.Errorf("list groups: %w", err)
 	}
 
 	rows, err := s.playerPredictions.ListPlayersByTournamentForUser(ctx, tournamentID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("list player predictions: %w", err)
+		return false, nil, fmt.Errorf("list player predictions: %w", err)
 	}
 
 	// Index by (category, groupLetter).
@@ -483,23 +679,27 @@ func (s *TournamentPredictionService) ListPlayerPredictionsForUser(
 		byKey[key{r.Category, gl}] = r
 	}
 
-	views := make([]*domain.PlayerPredictionView, 0, len(groups)+1)
+	playerViews := make([]*domain.PlayerPredictionView, 0, len(groups)+1)
 	// group_top_scorer: one view per group
 	for _, g := range groups {
 		gCopy := g
-		views = append(views, &domain.PlayerPredictionView{
-			Category:    domain.PlayerHandicapCategoryGroupTopScorer,
-			GroupLetter: &gCopy,
-			Prediction:  byKey[key{domain.PlayerHandicapCategoryGroupTopScorer, g}],
-		})
+		playerViews = append(
+			playerViews, &domain.PlayerPredictionView{
+				Category:    domain.PlayerHandicapCategoryGroupTopScorer,
+				GroupLetter: &gCopy,
+				Prediction:  byKey[key{domain.PlayerHandicapCategoryGroupTopScorer, g}],
+			},
+		)
 	}
 	// total_top_scorer: one view, group=nil
-	views = append(views, &domain.PlayerPredictionView{
-		Category:    domain.PlayerHandicapCategoryTotalTopScorer,
-		GroupLetter: nil,
-		Prediction:  byKey[key{domain.PlayerHandicapCategoryTotalTopScorer, ""}],
-	})
-	return views, nil
+	playerViews = append(
+		playerViews, &domain.PlayerPredictionView{
+			Category:    domain.PlayerHandicapCategoryTotalTopScorer,
+			GroupLetter: nil,
+			Prediction:  byKey[key{domain.PlayerHandicapCategoryTotalTopScorer, ""}],
+		},
+	)
+	return locked, playerViews, nil
 }
 
 // ListTeamPredictionsForUser returns one entry per (category, group, slot) slot.
@@ -507,15 +707,20 @@ func (s *TournamentPredictionService) ListPlayerPredictionsForUser(
 func (s *TournamentPredictionService) ListTeamPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
-) ([]*domain.TeamPredictionView, error) {
+) (locked bool, views []*domain.TeamPredictionView, err error) {
+	_, locked, err = s.lockAt(ctx, tournamentID)
+	if err != nil {
+		return false, nil, fmt.Errorf("check lock: %w", err)
+	}
+
 	groups, err := s.teamGroups.ListGroupLettersByTournament(ctx, tournamentID)
 	if err != nil {
-		return nil, fmt.Errorf("list groups: %w", err)
+		return false, nil, fmt.Errorf("list groups: %w", err)
 	}
 
 	rows, err := s.teamPredictions.ListTeamsByTournamentForUser(ctx, tournamentID, userID)
 	if err != nil {
-		return nil, fmt.Errorf("list team predictions: %w", err)
+		return false, nil, fmt.Errorf("list team predictions: %w", err)
 	}
 
 	type key struct {
@@ -532,44 +737,52 @@ func (s *TournamentPredictionService) ListTeamPredictionsForUser(
 		byKey[key{r.Category, gl, r.SlotIndex}] = r
 	}
 
-	views := make([]*domain.TeamPredictionView, 0, 4*len(groups)+5)
+	teamViews := make([]*domain.TeamPredictionView, 0, 4*len(groups)+5)
 	for _, g := range groups {
 		gCopy := g
 		// group_winner: 1 view per group, slot 0
-		views = append(views, &domain.TeamPredictionView{
-			Category:    domain.TeamHandicapCategoryGroupWinner,
-			GroupLetter: &gCopy,
-			SlotIndex:   0,
-			Prediction:  byKey[key{domain.TeamHandicapCategoryGroupWinner, g, 0}],
-		})
+		teamViews = append(
+			teamViews, &domain.TeamPredictionView{
+				Category:    domain.TeamHandicapCategoryGroupWinner,
+				GroupLetter: &gCopy,
+				SlotIndex:   0,
+				Prediction:  byKey[key{domain.TeamHandicapCategoryGroupWinner, g, 0}],
+			},
+		)
 		// playoff: 3 views per group (slots 0, 1, 2)
 		for slot := 0; slot <= 2; slot++ {
 			gCopy2 := g
-			views = append(views, &domain.TeamPredictionView{
-				Category:    domain.TeamHandicapCategoryPlayoff,
-				GroupLetter: &gCopy2,
-				SlotIndex:   slot,
-				Prediction:  byKey[key{domain.TeamHandicapCategoryPlayoff, g, slot}],
-			})
+			teamViews = append(
+				teamViews, &domain.TeamPredictionView{
+					Category:    domain.TeamHandicapCategoryPlayoff,
+					GroupLetter: &gCopy2,
+					SlotIndex:   slot,
+					Prediction:  byKey[key{domain.TeamHandicapCategoryPlayoff, g, slot}],
+				},
+			)
 		}
 	}
 	// semifinalist: 4 views (slots 0-3, group=nil)
 	for slot := 0; slot <= 3; slot++ {
-		views = append(views, &domain.TeamPredictionView{
-			Category:    domain.TeamHandicapCategorySemifinalist,
-			GroupLetter: nil,
-			SlotIndex:   slot,
-			Prediction:  byKey[key{domain.TeamHandicapCategorySemifinalist, "", slot}],
-		})
+		teamViews = append(
+			teamViews, &domain.TeamPredictionView{
+				Category:    domain.TeamHandicapCategorySemifinalist,
+				GroupLetter: nil,
+				SlotIndex:   slot,
+				Prediction:  byKey[key{domain.TeamHandicapCategorySemifinalist, "", slot}],
+			},
+		)
 	}
 	// winner: 1 view (slot 0, group=nil)
-	views = append(views, &domain.TeamPredictionView{
-		Category:    domain.TeamHandicapCategoryWinner,
-		GroupLetter: nil,
-		SlotIndex:   0,
-		Prediction:  byKey[key{domain.TeamHandicapCategoryWinner, "", 0}],
-	})
-	return views, nil
+	teamViews = append(
+		teamViews, &domain.TeamPredictionView{
+			Category:    domain.TeamHandicapCategoryWinner,
+			GroupLetter: nil,
+			SlotIndex:   0,
+			Prediction:  byKey[key{domain.TeamHandicapCategoryWinner, "", 0}],
+		},
+	)
+	return locked, teamViews, nil
 }
 
 // ListLeaguePlayerPredictions returns all member picks grouped by player category.
@@ -699,11 +912,13 @@ func buildLeaguePlayerViews(
 			}
 			memberPicks = append(memberPicks, mp)
 		}
-		views = append(views, &domain.LeaguePlayerCategoryView{
-			Category:    domain.PlayerHandicapCategoryGroupTopScorer,
-			GroupLetter: &gCopy,
-			Predictions: memberPicks,
-		})
+		views = append(
+			views, &domain.LeaguePlayerCategoryView{
+				Category:    domain.PlayerHandicapCategoryGroupTopScorer,
+				GroupLetter: &gCopy,
+				Predictions: memberPicks,
+			},
+		)
 	}
 	// total_top_scorer: one view
 	memberPicks := make([]domain.LeagueMemberPlayerPick, 0, len(sorted))
@@ -717,11 +932,13 @@ func buildLeaguePlayerViews(
 		}
 		memberPicks = append(memberPicks, mp)
 	}
-	views = append(views, &domain.LeaguePlayerCategoryView{
-		Category:    domain.PlayerHandicapCategoryTotalTopScorer,
-		GroupLetter: nil,
-		Predictions: memberPicks,
-	})
+	views = append(
+		views, &domain.LeaguePlayerCategoryView{
+			Category:    domain.PlayerHandicapCategoryTotalTopScorer,
+			GroupLetter: nil,
+			Predictions: memberPicks,
+		},
+	)
 	return views
 }
 
@@ -763,12 +980,14 @@ func buildLeagueTeamViews(
 			}
 			memberPicks = append(memberPicks, mp)
 		}
-		views = append(views, &domain.LeagueTeamCategoryView{
-			Category:    domain.TeamHandicapCategoryGroupWinner,
-			GroupLetter: &gCopy,
-			SlotIndex:   0,
-			Predictions: memberPicks,
-		})
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategoryGroupWinner,
+				GroupLetter: &gCopy,
+				SlotIndex:   0,
+				Predictions: memberPicks,
+			},
+		)
 		// playoff slots 0,1,2
 		for slot := 0; slot <= 2; slot++ {
 			gCopy2 := g
@@ -783,12 +1002,14 @@ func buildLeagueTeamViews(
 				}
 				memberPicks2 = append(memberPicks2, mp)
 			}
-			views = append(views, &domain.LeagueTeamCategoryView{
-				Category:    domain.TeamHandicapCategoryPlayoff,
-				GroupLetter: &gCopy2,
-				SlotIndex:   slot,
-				Predictions: memberPicks2,
-			})
+			views = append(
+				views, &domain.LeagueTeamCategoryView{
+					Category:    domain.TeamHandicapCategoryPlayoff,
+					GroupLetter: &gCopy2,
+					SlotIndex:   slot,
+					Predictions: memberPicks2,
+				},
+			)
 		}
 	}
 	// semifinalist slots 0-3
@@ -804,12 +1025,14 @@ func buildLeagueTeamViews(
 			}
 			memberPicks = append(memberPicks, mp)
 		}
-		views = append(views, &domain.LeagueTeamCategoryView{
-			Category:    domain.TeamHandicapCategorySemifinalist,
-			GroupLetter: nil,
-			SlotIndex:   slot,
-			Predictions: memberPicks,
-		})
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategorySemifinalist,
+				GroupLetter: nil,
+				SlotIndex:   slot,
+				Predictions: memberPicks,
+			},
+		)
 	}
 	// winner slot 0
 	{
@@ -824,12 +1047,14 @@ func buildLeagueTeamViews(
 			}
 			memberPicks = append(memberPicks, mp)
 		}
-		views = append(views, &domain.LeagueTeamCategoryView{
-			Category:    domain.TeamHandicapCategoryWinner,
-			GroupLetter: nil,
-			SlotIndex:   0,
-			Predictions: memberPicks,
-		})
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategoryWinner,
+				GroupLetter: nil,
+				SlotIndex:   0,
+				Predictions: memberPicks,
+			},
+		)
 	}
 	return views
 }
@@ -846,16 +1071,21 @@ var (
 )
 
 // sortedMembers returns members sorted with requestingUserID first, then alphabetically.
-func sortedMembers(members []*domain.LeagueMemberDisplay, requestingUserID uuid.UUID) []*domain.LeagueMemberDisplay {
+func sortedMembers(
+	members []*domain.LeagueMemberDisplay,
+	requestingUserID uuid.UUID,
+) []*domain.LeagueMemberDisplay {
 	sorted := make([]*domain.LeagueMemberDisplay, len(members))
 	copy(sorted, members)
-	sort.SliceStable(sorted, func(i, j int) bool {
-		iIsMe := sorted[i].UserID == requestingUserID
-		jIsMe := sorted[j].UserID == requestingUserID
-		if iIsMe != jIsMe {
-			return iIsMe
-		}
-		return sorted[i].DisplayName < sorted[j].DisplayName
-	})
+	sort.SliceStable(
+		sorted, func(i, j int) bool {
+			iIsMe := sorted[i].UserID == requestingUserID
+			jIsMe := sorted[j].UserID == requestingUserID
+			if iIsMe != jIsMe {
+				return iIsMe
+			}
+			return sorted[i].DisplayName < sorted[j].DisplayName
+		},
+	)
 	return sorted
 }

@@ -15,11 +15,11 @@ import (
 // ---------- fakes ----------
 
 type fakePlayerRepo struct {
-	searchFn func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error)
+	searchFn func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error)
 }
 
-func (f *fakePlayerRepo) Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string) ([]*domain.PlayerSearchResult, error) {
-	return f.searchFn(ctx, tournamentID, escapedQuery, rawQuery)
+func (f *fakePlayerRepo) Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string) ([]*domain.PlayerSearchResult, error) {
+	return f.searchFn(ctx, tournamentID, escapedQuery, rawQuery, groupLetter)
 }
 
 // neverCallGetter returns a fakeTournamentGetter whose GetByID calls t.Fatal —
@@ -52,7 +52,7 @@ func tournamentExists(id uuid.UUID) *fakeTournamentGetter {
 // map is pre-populated with the provided values (entries omitted for absent categories).
 func repoWithHandicaps(playerID uuid.UUID, h map[domain.PlayerHandicapCategory]int) *fakePlayerRepo {
 	return &fakePlayerRepo{
-		searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+		searchFn: func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error) {
 			return []*domain.PlayerSearchResult{
 				{ID: playerID, Name: "Player", TeamName: "Team", TeamLogo: "", Handicaps: h},
 			}, nil
@@ -66,7 +66,7 @@ func TestPlayerService_Search_EmptyQ(t *testing.T) {
 	t.Parallel()
 
 	called := false
-	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error) {
 		called = true
 		return nil, nil
 	}}
@@ -81,7 +81,7 @@ func TestPlayerService_Search_WhitespaceOnlyQ(t *testing.T) {
 	t.Parallel()
 
 	called := false
-	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error) {
 		called = true
 		return nil, nil
 	}}
@@ -96,7 +96,7 @@ func TestPlayerService_Search_QTooLong(t *testing.T) {
 	t.Parallel()
 
 	called := false
-	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error) {
 		called = true
 		return nil, nil
 	}}
@@ -152,7 +152,7 @@ func TestPlayerService_Search_ForwardsEscapedAndRawQuery(t *testing.T) {
 	var gotTournamentID uuid.UUID
 	var gotEscaped, gotRaw string
 
-	repo := &fakePlayerRepo{searchFn: func(_ context.Context, tid uuid.UUID, escaped, raw string) ([]*domain.PlayerSearchResult, error) {
+	repo := &fakePlayerRepo{searchFn: func(_ context.Context, tid uuid.UUID, escaped, raw string, _ *string) ([]*domain.PlayerSearchResult, error) {
 		gotTournamentID = tid
 		gotEscaped = escaped
 		gotRaw = raw
@@ -174,7 +174,7 @@ func TestPlayerService_Search_EmptyRepoResultPassedThrough(t *testing.T) {
 	t.Parallel()
 
 	tournamentID := uuid.New()
-	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string) ([]*domain.PlayerSearchResult, error) {
+	repo := &fakePlayerRepo{searchFn: func(context.Context, uuid.UUID, string, string, *string) ([]*domain.PlayerSearchResult, error) {
 		return []*domain.PlayerSearchResult{}, nil
 	}}
 	svc := playerSvc(repo, tournamentExists(tournamentID))
@@ -249,4 +249,50 @@ func TestPlayerService_Search_MixedHandicaps_DefaultAppliedOnlyForMissingCategor
 	require.NoError(t, err)
 	require.Equal(t, 3, got[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
 	require.Equal(t, 20, got[0].Handicaps[domain.PlayerHandicapCategoryTotalTopScorer])
+}
+
+func TestPlayerService_Search_GroupFilterPassedToRepo(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	var gotGroup *string
+
+	repo := &fakePlayerRepo{searchFn: func(_ context.Context, _ uuid.UUID, _, _ string, g *string) ([]*domain.PlayerSearchResult, error) {
+		gotGroup = g
+		return []*domain.PlayerSearchResult{}, nil
+	}}
+	svc := playerSvc(repo, tournamentExists(tournamentID))
+
+	groupA := "A"
+	_, err := svc.Search(context.Background(), domain.SearchPlayersInput{
+		TournamentID: tournamentID,
+		Query:        "Messi",
+		GroupLetter:  &groupA,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, gotGroup)
+	require.Equal(t, "A", *gotGroup)
+}
+
+func TestPlayerService_Search_NoGroupFilter_PassesNilToRepo(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	var gotGroup *string
+	called := false
+
+	repo := &fakePlayerRepo{searchFn: func(_ context.Context, _ uuid.UUID, _, _ string, g *string) ([]*domain.PlayerSearchResult, error) {
+		called = true
+		gotGroup = g
+		return []*domain.PlayerSearchResult{}, nil
+	}}
+	svc := playerSvc(repo, tournamentExists(tournamentID))
+
+	_, err := svc.Search(context.Background(), domain.SearchPlayersInput{
+		TournamentID: tournamentID,
+		Query:        "Messi",
+	})
+	require.NoError(t, err)
+	require.True(t, called)
+	require.Nil(t, gotGroup)
 }
