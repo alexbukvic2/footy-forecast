@@ -78,14 +78,20 @@ type TournamentGetter interface {
 type LeagueService struct {
 	leagues     LeagueRepo
 	tournaments TournamentGetter
+	leaderboard LeaderboardRepo
 }
 
 // NewLeagueService constructs a LeagueService.
 func NewLeagueService(
 	leagues LeagueRepo,
 	tournaments TournamentGetter,
+	leaderboard ...LeaderboardRepo,
 ) *LeagueService {
-	return &LeagueService{leagues: leagues, tournaments: tournaments}
+	svc := &LeagueService{leagues: leagues, tournaments: tournaments}
+	if len(leaderboard) > 0 {
+		svc.leaderboard = leaderboard[0]
+	}
+	return svc
 }
 
 const (
@@ -214,12 +220,38 @@ func (s *LeagueService) GetLeague(
 	return league, members, nil
 }
 
-// ListLeaguesForUser returns all leagues the user is a member of.
+// ListLeaguesForUser returns all leagues the user is a member of, enriched
+// with the user's current leaderboard position in each league.
 func (s *LeagueService) ListLeaguesForUser(
 	ctx context.Context,
 	userID uuid.UUID,
-) ([]*domain.League, error) {
-	return s.leagues.ListForUser(ctx, userID)
+) ([]*domain.LeagueSummary, error) {
+	leagues, err := s.leagues.ListForUser(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("list leagues for user: %w", err)
+	}
+
+	// Build the result with default position 1 for all.
+	summaries := make([]*domain.LeagueSummary, 0, len(leagues))
+	leagueIDs := make([]uuid.UUID, 0, len(leagues))
+	for _, l := range leagues {
+		summaries = append(summaries, &domain.LeagueSummary{League: l, MyPosition: 1})
+		leagueIDs = append(leagueIDs, l.ID)
+	}
+
+	if s.leaderboard != nil && len(leagueIDs) > 0 {
+		positions, err := s.leaderboard.GetUserPositionsInLeagues(ctx, userID, leagueIDs)
+		if err != nil {
+			return nil, fmt.Errorf("get user positions in leagues: %w", err)
+		}
+		for _, summary := range summaries {
+			if pos, ok := positions[summary.ID]; ok {
+				summary.MyPosition = pos
+			}
+		}
+	}
+
+	return summaries, nil
 }
 
 // UpdateLeagueName renames a league. Only the owner may do this.

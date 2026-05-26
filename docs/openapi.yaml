@@ -24,6 +24,8 @@ tags:
     description: Player and team handicap point assignments
   - name: predictions
     description: Tournament-level player and team predictions
+  - name: leaderboard
+    description: Per-league and global tournament leaderboards
   - name: spec
     description: API spec and documentation endpoints
 
@@ -157,11 +159,14 @@ components:
       allOf:
         - $ref: '#/components/schemas/League'
         - type: object
-          required: [member_count]
+          required: [member_count, my_position]
           properties:
             member_count:
               type: integer
               description: Total number of members in this league.
+            my_position:
+              type: integer
+              description: Requesting user's DENSE_RANK position in this league. Equals 1 when all members are tied at 0.
       example:
         id: "550e8400-e29b-41d4-a716-446655440001"
         tournament_id: "550e8400-e29b-41d4-a716-446655440000"
@@ -171,6 +176,58 @@ components:
         created_at: "2025-01-01T00:00:00Z"
         updated_at: "2025-01-01T00:00:00Z"
         member_count: 3
+        my_position: 1
+
+    LeaderboardEntry:
+      type: object
+      required: [position, user_id, display_name, score_points, player_points, team_points, total_points]
+      properties:
+        position:
+          type: integer
+          description: DENSE_RANK position (1-based; ties share position).
+        user_id:
+          type: string
+          format: uuid
+        display_name:
+          type: string
+        score_points:
+          type: integer
+          description: Points from score predictions.
+        player_points:
+          type: integer
+          description: Points from player predictions.
+        team_points:
+          type: integer
+          description: Points from team predictions.
+        total_points:
+          type: integer
+          description: Sum of the three category totals.
+      example:
+        position: 1
+        user_id: "550e8400-e29b-41d4-a716-446655440002"
+        display_name: "John Doe"
+        score_points: 10
+        player_points: 5
+        team_points: 3
+        total_points: 18
+
+    LeagueLeaderboardResponse:
+      type: object
+      required: [leaderboard]
+      properties:
+        leaderboard:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaderboardEntry'
+
+    TournamentLeaderboardResponse:
+      type: object
+      required: [leaderboard]
+      properties:
+        leaderboard:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaderboardEntry'
 
     User:
       type: object
@@ -1992,3 +2049,100 @@ paths:
             text/html:
               schema:
                 type: string
+
+  /leagues/{leagueId}/leaderboard:
+    get:
+      summary: Get league leaderboard
+      operationId: getLeagueLeaderboard
+      tags: [leaderboard]
+      security: [{bearerAuth: []}]
+      parameters:
+        - name: leagueId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: League leaderboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeagueLeaderboardResponse'
+        '400':
+          description: Invalid leagueId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden (not a member)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/leaderboard:
+    get:
+      summary: Get global tournament leaderboard
+      operationId: getTournamentLeaderboard
+      tags: [leaderboard]
+      security: [{bearerAuth: []}]
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tournament leaderboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TournamentLeaderboardResponse'
+        '400':
+          description: Invalid tournamentId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+

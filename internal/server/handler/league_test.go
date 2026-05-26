@@ -21,7 +21,7 @@ import (
 type fakeLeagueService struct {
 	createLeagueFn       func(context.Context, uuid.UUID, domain.CreateLeagueInput) (*domain.League, error)
 	getLeagueFn          func(context.Context, uuid.UUID, uuid.UUID) (*domain.League, []*domain.LeagueMember, error)
-	listLeaguesForUserFn func(context.Context, uuid.UUID) ([]*domain.League, error)
+	listLeaguesForUserFn func(context.Context, uuid.UUID) ([]*domain.LeagueSummary, error)
 	updateLeagueNameFn   func(context.Context, uuid.UUID, uuid.UUID, string) (*domain.League, error)
 	deleteLeagueFn       func(context.Context, uuid.UUID, uuid.UUID) error
 	regenerateCodeFn     func(context.Context, uuid.UUID, uuid.UUID) (*domain.League, error)
@@ -35,7 +35,7 @@ func (f *fakeLeagueService) CreateLeague(ctx context.Context, userID uuid.UUID, 
 func (f *fakeLeagueService) GetLeague(ctx context.Context, leagueID, requesterID uuid.UUID) (*domain.League, []*domain.LeagueMember, error) {
 	return f.getLeagueFn(ctx, leagueID, requesterID)
 }
-func (f *fakeLeagueService) ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]*domain.League, error) {
+func (f *fakeLeagueService) ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]*domain.LeagueSummary, error) {
 	return f.listLeaguesForUserFn(ctx, userID)
 }
 func (f *fakeLeagueService) UpdateLeagueName(ctx context.Context, leagueID, requesterID uuid.UUID, name string) (*domain.League, error) {
@@ -284,11 +284,16 @@ func TestLeague_Get(t *testing.T) {
 func TestLeague_List(t *testing.T) {
 	t.Parallel()
 
-	t.Run("returns 200 with leagues", func(t *testing.T) {
+	t.Run("returns 200 with leagues and my_position", func(t *testing.T) {
 		t.Parallel()
+		l1 := aLeague()
+		l2 := aLeague()
 		svc := &fakeLeagueService{
-			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.League, error) {
-				return []*domain.League{aLeague(), aLeague()}, nil
+			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.LeagueSummary, error) {
+				return []*domain.LeagueSummary{
+					{League: l1, MyPosition: 2},
+					{League: l2, MyPosition: 1},
+				}, nil
 			},
 		}
 		h := handler.NewLeague(silentLogger(), svc)
@@ -304,13 +309,15 @@ func TestLeague_List(t *testing.T) {
 		}
 		require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
 		require.Len(t, resp.Leagues, 2)
+		require.Equal(t, float64(2), resp.Leagues[0]["my_position"])
+		require.Equal(t, float64(1), resp.Leagues[1]["my_position"])
 	})
 
 	t.Run("returns empty list when no leagues", func(t *testing.T) {
 		t.Parallel()
 		svc := &fakeLeagueService{
-			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.League, error) {
-				return []*domain.League{}, nil
+			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.LeagueSummary, error) {
+				return []*domain.LeagueSummary{}, nil
 			},
 		}
 		h := handler.NewLeague(silentLogger(), svc)
@@ -326,7 +333,7 @@ func TestLeague_List(t *testing.T) {
 	t.Run("returns 500 on service error", func(t *testing.T) {
 		t.Parallel()
 		svc := &fakeLeagueService{
-			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.League, error) {
+			listLeaguesForUserFn: func(context.Context, uuid.UUID) ([]*domain.LeagueSummary, error) {
 				return nil, context.DeadlineExceeded
 			},
 		}

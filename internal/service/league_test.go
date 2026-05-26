@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -440,4 +441,65 @@ func TestLeagueService_RemoveMember_OwnerRemovesMember(t *testing.T) {
 	err := svc.RemoveMember(context.Background(), leagueID, memberID, ownerID)
 	require.NoError(t, err)
 	require.True(t, removed)
+}
+
+// ---------- fakeLeaderboardRepo for ListLeaguesForUser tests ----------
+
+type fakeLeaderboardRepoForLeague struct {
+	positions map[uuid.UUID]int
+	err       error
+}
+
+func (f *fakeLeaderboardRepoForLeague) GetForLeague(_ context.Context, _ uuid.UUID) ([]*domain.LeaderboardEntry, error) {
+	return nil, nil
+}
+func (f *fakeLeaderboardRepoForLeague) GetForTournament(_ context.Context, _ uuid.UUID) ([]*domain.LeaderboardEntry, error) {
+	return nil, nil
+}
+func (f *fakeLeaderboardRepoForLeague) GetUserPositionsInLeagues(_ context.Context, _ uuid.UUID, _ []uuid.UUID) (map[uuid.UUID]int, error) {
+	return f.positions, f.err
+}
+
+// ---------- ListLeaguesForUser ----------
+
+func TestLeagueService_ListLeaguesForUser_MyPositionPopulated(t *testing.T) {
+	t.Parallel()
+
+	userID := uuid.New()
+	lg1 := &domain.League{ID: uuid.New(), OwnerID: userID, Name: "L1", Code: "L1CODE"}
+	lg2 := &domain.League{ID: uuid.New(), OwnerID: userID, Name: "L2", Code: "L2CODE"}
+
+	positions := map[uuid.UUID]int{lg1.ID: 3, lg2.ID: 1}
+
+	repo := &fakeLeagueRepo{
+		listForUserFn: func(_ context.Context, _ uuid.UUID) ([]*domain.League, error) {
+			return []*domain.League{lg1, lg2}, nil
+		},
+	}
+	lbRepo := &fakeLeaderboardRepoForLeague{positions: positions}
+	svc := service.NewLeagueService(repo, &fakeTournamentGetter{}, lbRepo)
+
+	summaries, err := svc.ListLeaguesForUser(context.Background(), userID)
+	require.NoError(t, err)
+	require.Len(t, summaries, 2)
+	require.Equal(t, 3, summaries[0].MyPosition)
+	require.Equal(t, 1, summaries[1].MyPosition)
+}
+
+func TestLeagueService_ListLeaguesForUser_LeaderboardRepoError(t *testing.T) {
+	t.Parallel()
+
+	userID := uuid.New()
+	lg := &domain.League{ID: uuid.New(), OwnerID: userID, Name: "L1", Code: "L1CODE"}
+
+	repo := &fakeLeagueRepo{
+		listForUserFn: func(_ context.Context, _ uuid.UUID) ([]*domain.League, error) {
+			return []*domain.League{lg}, nil
+		},
+	}
+	lbRepo := &fakeLeaderboardRepoForLeague{err: errors.New("db failure")}
+	svc := service.NewLeagueService(repo, &fakeTournamentGetter{}, lbRepo)
+
+	_, err := svc.ListLeaguesForUser(context.Background(), userID)
+	require.Error(t, err)
 }

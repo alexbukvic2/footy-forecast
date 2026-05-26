@@ -223,6 +223,27 @@ type FixtureResponse struct {
 // FixtureResponseStatus defines model for FixtureResponse.Status.
 type FixtureResponseStatus string
 
+// LeaderboardEntry defines model for LeaderboardEntry.
+type LeaderboardEntry struct {
+	DisplayName string `json:"display_name"`
+
+	// PlayerPoints Points from player predictions.
+	PlayerPoints int `json:"player_points"`
+
+	// Position DENSE_RANK position (1-based; ties share position).
+	Position int `json:"position"`
+
+	// ScorePoints Points from score predictions.
+	ScorePoints int `json:"score_points"`
+
+	// TeamPoints Points from team predictions.
+	TeamPoints int `json:"team_points"`
+
+	// TotalPoints Sum of the three category totals.
+	TotalPoints int                `json:"total_points"`
+	UserId      openapi_types.UUID `json:"user_id"`
+}
+
 // League defines model for League.
 type League struct {
 	Code         string             `json:"code"`
@@ -265,6 +286,11 @@ type LeagueFixtureViewResponse struct {
 // LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
 type LeagueFixtureViewResponseStatus string
 
+// LeagueLeaderboardResponse defines model for LeagueLeaderboardResponse.
+type LeagueLeaderboardResponse struct {
+	Leaderboard []LeaderboardEntry `json:"leaderboard"`
+}
+
 // LeagueListItem defines model for LeagueListItem.
 type LeagueListItem struct {
 	Code      string             `json:"code"`
@@ -272,7 +298,10 @@ type LeagueListItem struct {
 	Id        openapi_types.UUID `json:"id"`
 
 	// MemberCount Total number of members in this league.
-	MemberCount  int                `json:"member_count"`
+	MemberCount int `json:"member_count"`
+
+	// MyPosition Requesting user's DENSE_RANK position in this league. Equals 1 when all members are tied at 0.
+	MyPosition   int                `json:"my_position"`
 	Name         string             `json:"name"`
 	OwnerId      openapi_types.UUID `json:"owner_id"`
 	TournamentId openapi_types.UUID `json:"tournament_id"`
@@ -445,6 +474,11 @@ type Tournament struct {
 
 // TournamentStatus defines model for Tournament.Status.
 type TournamentStatus string
+
+// TournamentLeaderboardResponse defines model for TournamentLeaderboardResponse.
+type TournamentLeaderboardResponse struct {
+	Leaderboard []LeaderboardEntry `json:"leaderboard"`
+}
 
 // TournamentListResponse defines model for TournamentListResponse.
 type TournamentListResponse struct {
