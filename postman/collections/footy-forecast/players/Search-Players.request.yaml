@@ -13,6 +13,10 @@ queryParams:
     value: ''
     disabled: true
     description: 'Optional: filter by group letter, e.g. "A". Leave disabled to search all groups.'
+  - key: hasHandicap
+    value: 'true'
+    disabled: true
+    description: 'Optional: when true, only return players that have at least one handicap row.'
 scripts:
   - type: afterResponse
     code: -

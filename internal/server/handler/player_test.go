@@ -46,12 +46,14 @@ func TestPlayer_Search_HappyPath(t *testing.T) {
 	t.Parallel()
 
 	tournamentID := uuid.New()
+	groupA := "A"
 	players := []*domain.PlayerSearchResult{
 		{
-			ID:       uuid.New(),
-			Name:     "Kylian Mbappé",
-			TeamName: "France",
-			TeamLogo: "<svg/>",
+			ID:          uuid.New(),
+			Name:        "Kylian Mbappé",
+			TeamName:    "France",
+			TeamLogo:    "<svg/>",
+			GroupLetter: &groupA,
 			Handicaps: map[domain.PlayerHandicapCategory]int{
 				domain.PlayerHandicapCategoryGroupTopScorer: 5,
 				domain.PlayerHandicapCategoryTotalTopScorer: 20,
@@ -79,6 +81,7 @@ func TestPlayer_Search_HappyPath(t *testing.T) {
 	require.Equal(t, players[0].ID.String(), resp.Players[0]["id"])
 	require.Equal(t, "France", resp.Players[0]["team_name"])
 	require.Equal(t, "<svg/>", resp.Players[0]["team_logo"])
+	require.Equal(t, "A", resp.Players[0]["group"])
 	require.Contains(t, resp.Players[0], "handicaps", "handicaps must always be present in response")
 	require.Equal(t, tournamentID, gotInput.TournamentID)
 	require.Equal(t, "mbappe", gotInput.Query)
@@ -167,9 +170,76 @@ func TestPlayer_Search_ServiceReturnsErrInvalid(t *testing.T) {
 	}
 	h := handler.NewPlayer(silentLogger(), svc)
 
+	// service returns ErrInvalid (e.g. q too long) → 400
 	rec := getPlayerSearch(t, h.Search, tournamentID.String(), "")
 
 	require.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestPlayer_Search_EmptyQAllowed(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	var gotInput domain.SearchPlayersInput
+	svc := &fakePlayerService{
+		searchFn: func(_ context.Context, in domain.SearchPlayersInput) ([]*domain.PlayerSearchResult, error) {
+			gotInput = in
+			return []*domain.PlayerSearchResult{}, nil
+		},
+	}
+	h := handler.NewPlayer(silentLogger(), svc)
+
+	rec := getPlayerSearch(t, h.Search, tournamentID.String(), "")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.Equal(t, "", gotInput.Query)
+}
+
+func TestPlayer_Search_HasHandicapPassedToService(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	var gotInput domain.SearchPlayersInput
+	svc := &fakePlayerService{
+		searchFn: func(_ context.Context, in domain.SearchPlayersInput) ([]*domain.PlayerSearchResult, error) {
+			gotInput = in
+			return []*domain.PlayerSearchResult{}, nil
+		},
+	}
+	h := handler.NewPlayer(silentLogger(), svc)
+
+	req := httptest.NewRequest(http.MethodGet, "/tournaments/"+tournamentID.String()+"/players/search?hasHandicap=true", nil)
+	req.SetPathValue("tournament_id", tournamentID.String())
+	req = authedRequest(req)
+	rec := httptest.NewRecorder()
+	h.Search(rec, req)
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	require.True(t, gotInput.HasHandicap)
+}
+
+func TestPlayer_Search_GroupNullWhenNotSet(t *testing.T) {
+	t.Parallel()
+
+	tournamentID := uuid.New()
+	svc := &fakePlayerService{
+		searchFn: func(context.Context, domain.SearchPlayersInput) ([]*domain.PlayerSearchResult, error) {
+			return []*domain.PlayerSearchResult{
+				{ID: uuid.New(), Name: "X", TeamName: "T", GroupLetter: nil, Handicaps: map[domain.PlayerHandicapCategory]int{}},
+			}, nil
+		},
+	}
+	h := handler.NewPlayer(silentLogger(), svc)
+
+	rec := getPlayerSearch(t, h.Search, tournamentID.String(), "x")
+
+	require.Equal(t, http.StatusOK, rec.Code)
+	var resp struct {
+		Players []map[string]any `json:"players"`
+	}
+	require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
+	require.Len(t, resp.Players, 1)
+	require.Nil(t, resp.Players[0]["group"])
 }
 
 func TestPlayer_Search_ServiceReturnsErrNotFound(t *testing.T) {

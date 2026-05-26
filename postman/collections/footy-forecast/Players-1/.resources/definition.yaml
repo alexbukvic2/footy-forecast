@@ -1,0 +1,9 @@
+$kind: collection
+name: Players
+auth:
+  - id: caacaca0-7b07-40a7-bdb4-79c8dd4a4091
+    type: bearer
+    name: Bearer Token
+    credentials:
+      token: "{{authToken}}"
+order: 2987352322473983

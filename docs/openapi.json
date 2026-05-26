@@ -538,6 +538,7 @@
       },
       "Player": {
         "example": {
+          "group": "C",
           "handicaps": {
             "group_top_scorer": 5,
             "total_top_scorer": 10
@@ -548,6 +549,11 @@
           "team_name": "France"
         },
         "properties": {
+          "group": {
+            "description": "Group letter of the player's team (e.g. \"A\"), or null if not applicable.",
+            "nullable": true,
+            "type": "string"
+          },
           "handicaps": {
             "additionalProperties": {
               "type": "integer"
@@ -2974,6 +2980,15 @@
             "required": false,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "description": "When true, only return players that have at least one handicap row.",
+            "in": "query",
+            "name": "hasHandicap",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           }
         ],

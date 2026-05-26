@@ -50,31 +50,34 @@ func (q *Queries) GetPlayerByID(ctx context.Context, id uuid.UUID) (GetPlayerByI
 
 const searchPlayers = `-- name: SearchPlayers :many
 WITH top_players AS (
-    SELECT p.id, p.name, t.name AS team_name, t.logo AS team_logo, p.tournament_id
+    SELECT p.id, p.name, t.name AS team_name, t.logo AS team_logo, t.group_letter, p.tournament_id
     FROM players p
     JOIN teams t ON t.id = p.team_id
-    WHERE p.tournament_id = $2
-      AND ($3 = '' OR t.group_letter = $3)
-      AND unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($4) || '%' ESCAPE '\'
-    ORDER BY similarity(unaccent_immutable(p.name), unaccent_immutable($1)) DESC
-    LIMIT 5
+    WHERE p.tournament_id = $4
+      AND ($5 = '' OR t.group_letter = $5)
+      AND ($2 = '' OR unaccent_immutable(p.name) ILIKE '%' || unaccent_immutable($2) || '%' ESCAPE '\')
+    ORDER BY CASE WHEN $2 = '' THEN p.name ELSE NULL END,
+             CASE WHEN $2 <> '' THEN similarity(unaccent_immutable(p.name), unaccent_immutable($3)) ELSE NULL END DESC
 )
-SELECT tp.id, tp.name, tp.team_name, tp.team_logo, tp.tournament_id,
+SELECT tp.id, tp.name, tp.team_name, tp.team_logo, tp.group_letter, tp.tournament_id,
        coalesce(
            json_object_agg(ph.category, ph.points) FILTER (WHERE ph.category IS NOT NULL),
            '{}'::json
        )::text AS handicaps
 FROM top_players tp
 LEFT JOIN player_handicap ph ON ph.player_id = tp.id
-GROUP BY tp.id, tp.name, tp.team_name, tp.team_logo, tp.tournament_id
-ORDER BY similarity(unaccent_immutable(tp.name), unaccent_immutable($1)) DESC
+GROUP BY tp.id, tp.name, tp.team_name, tp.team_logo, tp.group_letter, tp.tournament_id
+HAVING NOT $1 OR count(ph.player_id) > 0
+ORDER BY CASE WHEN $2 = '' THEN tp.name ELSE NULL END,
+         CASE WHEN $2 <> '' THEN similarity(unaccent_immutable(tp.name), unaccent_immutable($3)) ELSE NULL END DESC
 `
 
 type SearchPlayersParams struct {
+	HasHandicap  interface{}
+	EscapedQuery interface{}
 	RawQuery     string
 	TournamentID uuid.UUID
 	GroupLetter  interface{}
-	EscapedQuery string
 }
 
 type SearchPlayersRow struct {
@@ -82,19 +85,22 @@ type SearchPlayersRow struct {
 	Name         string
 	TeamName     string
 	TeamLogo     string
+	GroupLetter  *string
 	TournamentID uuid.UUID
 	Handicaps    string
 }
 
-// @escaped_query: wildcard-escaped term for ILIKE filtering
+// @escaped_query: wildcard-escaped term for ILIKE filtering; empty string skips name filter
 // @raw_query:     original trimmed term for similarity ranking (must not be escaped)
 // @group_letter:  optional group filter; empty string means search all groups
+// @has_handicap:  when true, only return players with at least one handicap row
 func (q *Queries) SearchPlayers(ctx context.Context, arg SearchPlayersParams) ([]SearchPlayersRow, error) {
 	rows, err := q.db.Query(ctx, searchPlayers,
+		arg.HasHandicap,
+		arg.EscapedQuery,
 		arg.RawQuery,
 		arg.TournamentID,
 		arg.GroupLetter,
-		arg.EscapedQuery,
 	)
 	if err != nil {
 		return nil, err
@@ -108,6 +114,7 @@ func (q *Queries) SearchPlayers(ctx context.Context, arg SearchPlayersParams) ([
 			&i.Name,
 			&i.TeamName,
 			&i.TeamLogo,
+			&i.GroupLetter,
 			&i.TournamentID,
 			&i.Handicaps,
 		); err != nil {

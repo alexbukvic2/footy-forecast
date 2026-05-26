@@ -341,6 +341,8 @@ type LeagueTeamCategoryView struct {
 
 // Player defines model for Player.
 type Player struct {
+	// Group Group letter of the player's team (e.g. "A"), or null if not applicable.
+	Group     *string            `json:"group,omitempty"`
 	Handicaps map[string]int     `json:"handicaps"`
 	Id        openapi_types.UUID `json:"id"`
 	Name      string             `json:"name"`
@@ -520,6 +522,9 @@ type SearchPlayersParams struct {
 
 	// Group Filter results to players whose team is in this group (e.g. "A"). Omit to search all groups.
 	Group *string `form:"group,omitempty" json:"group,omitempty"`
+
+	// HasHandicap When true, only return players that have at least one handicap row.
+	HasHandicap *bool `form:"hasHandicap,omitempty" json:"hasHandicap,omitempty"`
 }
 
 // CreateLeagueJSONRequestBody defines body for CreateLeague for application/json ContentType.

@@ -32,6 +32,7 @@ type playerResponse struct {
 	Name      string                                `json:"name"`
 	TeamName  string                                `json:"team_name"`
 	TeamLogo  string                                `json:"team_logo"`
+	Group     *string                               `json:"group"`
 	Handicaps map[domain.PlayerHandicapCategory]int `json:"handicaps"`
 }
 
@@ -41,6 +42,7 @@ func toPlayerResponse(p *domain.PlayerSearchResult) playerResponse {
 		Name:      p.Name,
 		TeamName:  p.TeamName,
 		TeamLogo:  p.TeamLogo,
+		Group:     p.GroupLetter,
 		Handicaps: p.Handicaps,
 	}
 }
@@ -62,10 +64,13 @@ func (h *Player) Search(w http.ResponseWriter, r *http.Request) {
 		groupLetter = &g
 	}
 
+	hasHandicap := r.URL.Query().Get("hasHandicap") == "true"
+
 	players, err := h.svc.Search(r.Context(), domain.SearchPlayersInput{
 		TournamentID: tournamentID,
 		Query:        q,
 		GroupLetter:  groupLetter,
+		HasHandicap:  hasHandicap,
 	})
 	if err != nil {
 		writeError(w, r, h.logger, err)

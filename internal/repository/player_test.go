@@ -84,7 +84,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		insertPlayer("ext-2", "Ronaldo", tournamentAID, portugalID)
 		insertPlayer("ext-3", "Mason Mount", tournamentAID, englandID)
 
-		players, err := repo.Search(ctx, tournamentAID, "ess", "ess")
+		players, err := repo.Search(ctx, tournamentAID, "ess", "ess", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Equal(t, "Lionel Messi", players[0].Name)
@@ -93,7 +93,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 	})
 
 	t.Run("search is case-insensitive", func(t *testing.T) {
-		players, err := repo.Search(ctx, tournamentAID, "MESSI", "MESSI")
+		players, err := repo.Search(ctx, tournamentAID, "MESSI", "MESSI", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Equal(t, "Lionel Messi", players[0].Name)
@@ -105,7 +105,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		insertPlayer("ext-b-1", "John Doe", tournamentBID, brazilID)
 		insertPlayer("ext-a-4", "John Smith", tournamentAID, usaID)
 
-		playersA, err := repo.Search(ctx, tournamentAID, "john", "john")
+		playersA, err := repo.Search(ctx, tournamentAID, "john", "john", nil, false)
 		require.NoError(t, err)
 		require.Len(t, playersA, 1)
 		require.Equal(t, "John Smith", playersA[0].Name)
@@ -118,7 +118,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 			insertPlayer(uuid.New().String(), "Player Son "+uuid.New().String(), tournamentAID, genericID)
 		}
 
-		players, err := repo.Search(ctx, tournamentAID, "Son", "Son")
+		players, err := repo.Search(ctx, tournamentAID, "Son", "Son", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 5)
 		// Each result must have a non-empty TeamName from the JOIN — verifies the
@@ -129,14 +129,14 @@ func TestPlayerRepository_Search(t *testing.T) {
 	})
 
 	t.Run("returns empty slice on no match", func(t *testing.T) {
-		players, err := repo.Search(ctx, tournamentAID, "zzznomatch", "zzznomatch")
+		players, err := repo.Search(ctx, tournamentAID, "zzznomatch", "zzznomatch", nil, false)
 		require.NoError(t, err)
 		require.NotNil(t, players)
 		require.Empty(t, players)
 	})
 
 	t.Run("returns empty slice for nonexistent tournament", func(t *testing.T) {
-		players, err := repo.Search(ctx, uuid.New(), "Messi", "Messi")
+		players, err := repo.Search(ctx, uuid.New(), "Messi", "Messi", nil, false)
 		require.NoError(t, err)
 		require.NotNil(t, players)
 		require.Empty(t, players)
@@ -146,9 +146,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		franceID := insertTeam(t, pool, ctx, "France", "<svg>flag</svg>", tournamentAID)
 		insertPlayer("ext-mbappe", "Kylian Mbappé", tournamentAID, franceID)
 
-		// unaccent_immutable maps "mbappe" → matches "Mbappé"; verifies the JOIN
-		// correctly returns team_name and team_logo from the teams row.
-		players, err := repo.Search(ctx, tournamentAID, "mbappe", "mbappe")
+		players, err := repo.Search(ctx, tournamentAID, "mbappe", "mbappe", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Equal(t, "Kylian Mbappé", players[0].Name)
@@ -162,7 +160,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryGroupTopScorer, 7)
 		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryTotalTopScorer, 15)
 
-		players, err := repo.Search(ctx, tournamentAID, "yamal", "yamal")
+		players, err := repo.Search(ctx, tournamentAID, "yamal", "yamal", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Equal(t, 7, players[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
@@ -174,7 +172,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		playerID := insertPlayer("ext-musiala", "Jamal Musiala", tournamentAID, germanyID)
 		insertPlayerHandicap(playerID, domain.PlayerHandicapCategoryGroupTopScorer, 3)
 
-		players, err := repo.Search(ctx, tournamentAID, "musiala", "musiala")
+		players, err := repo.Search(ctx, tournamentAID, "musiala", "musiala", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Equal(t, 3, players[0].Handicaps[domain.PlayerHandicapCategoryGroupTopScorer])
@@ -186,7 +184,7 @@ func TestPlayerRepository_Search(t *testing.T) {
 		italyID := insertTeam(t, pool, ctx, "Italy", "<svg>ita</svg>", tournamentAID)
 		insertPlayer("ext-barella", "Nicolo Barella", tournamentAID, italyID)
 
-		players, err := repo.Search(ctx, tournamentAID, "barella", "barella")
+		players, err := repo.Search(ctx, tournamentAID, "barella", "barella", nil, false)
 		require.NoError(t, err)
 		require.Len(t, players, 1)
 		require.Empty(t, players[0].Handicaps, "repo must return empty map, not nil, for players with no handicap rows")

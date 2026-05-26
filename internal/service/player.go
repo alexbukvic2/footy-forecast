@@ -14,12 +14,27 @@ import (
 
 // PlayerRepo is the subset of the repository that PlayerService needs.
 type PlayerRepo interface {
-	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string) ([]*domain.PlayerSearchResult, error)
+	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string, hasHandicap bool) ([]*domain.PlayerSearchResult, error)
 }
 
-// defaultHandicapPoints is returned for any player+category pair that has no handicap row.
-// Placing this here keeps the business rule colocated with the code that applies it.
-const defaultHandicapPoints = 20
+// defaultPlayerHandicapPoints maps each player handicap category to the points
+// returned when no handicap row exists for a player in that category.
+// Business rule: group scorer slots are cheaper (20 pts) than the overall top-scorer (100 pts).
+var defaultPlayerHandicapPoints = map[domain.PlayerHandicapCategory]int{
+	domain.PlayerHandicapCategoryGroupTopScorer: 20,
+	domain.PlayerHandicapCategoryTotalTopScorer: 100,
+}
+
+// FillDefaultPlayerHandicaps ensures every known category is present in p.Handicaps,
+// inserting the per-category default for any that are missing.
+// It is exported so other service packages can reuse the same rule.
+func FillDefaultPlayerHandicaps(p *domain.PlayerSearchResult) {
+	for cat, def := range defaultPlayerHandicapPoints {
+		if _, ok := p.Handicaps[cat]; !ok {
+			p.Handicaps[cat] = def
+		}
+	}
+}
 
 // PlayerService orchestrates player search use cases.
 type PlayerService struct {
@@ -44,10 +59,7 @@ func (s *PlayerService) Search(
 ) ([]*domain.PlayerSearchResult, error) {
 	in.Query = strings.TrimSpace(in.Query)
 
-	switch n := utf8.RuneCountInString(in.Query); {
-	case n == 0:
-		return nil, fmt.Errorf("q must not be empty: %w", domain.ErrInvalid)
-	case n > maxPlayerQueryRunes:
+	if utf8.RuneCountInString(in.Query) > maxPlayerQueryRunes {
 		return nil, fmt.Errorf("q must be at most %d characters: %w", maxPlayerQueryRunes, domain.ErrInvalid)
 	}
 
@@ -56,17 +68,13 @@ func (s *PlayerService) Search(
 	}
 
 	escaped := escapeWildcards(in.Query)
-	players, err := s.players.Search(ctx, in.TournamentID, escaped, in.Query, in.GroupLetter)
+	players, err := s.players.Search(ctx, in.TournamentID, escaped, in.Query, in.GroupLetter, in.HasHandicap)
 	if err != nil {
 		return nil, fmt.Errorf("search players: %w", err)
 	}
 
 	for _, p := range players {
-		for _, cat := range domain.AllPlayerHandicapCategories {
-			if _, ok := p.Handicaps[cat]; !ok {
-				p.Handicaps[cat] = defaultHandicapPoints
-			}
-		}
+		FillDefaultPlayerHandicaps(p)
 	}
 
 	return players, nil

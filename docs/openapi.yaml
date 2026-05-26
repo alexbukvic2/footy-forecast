@@ -214,6 +214,10 @@ components:
           type: string
         team_logo:
           type: string
+        group:
+          type: string
+          nullable: true
+          description: Group letter of the player's team (e.g. "A"), or null if not applicable.
         handicaps:
           type: object
           additionalProperties:
@@ -223,6 +227,7 @@ components:
         name: "Kylian Mbappe"
         team_name: "France"
         team_logo: "https://example.com/france.png"
+        group: "C"
         handicaps:
           group_top_scorer: 5
           total_top_scorer: 10
@@ -1363,6 +1368,12 @@ paths:
           description: Filter results to players whose team is in this group (e.g. "A"). Omit to search all groups.
           schema:
             type: string
+        - name: hasHandicap
+          in: query
+          required: false
+          description: When true, only return players that have at least one handicap row.
+          schema:
+            type: boolean
       responses:
         '200':
           description: Matching players

@@ -1,0 +1,5 @@
+$kind: http-request
+name: Player Search
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/players/search"
+method: GET
+order: 1779802528342
