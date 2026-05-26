@@ -32,6 +32,104 @@ func (q *Queries) CountPlayoffWildcards(ctx context.Context, arg CountPlayoffWil
 	return column_1, err
 }
 
+const deletePlayerPredictionGroup = `-- name: DeletePlayerPredictionGroup :exec
+DELETE FROM player_predictions
+WHERE user_id       = $1
+  AND tournament_id = $2
+  AND category      = $3
+  AND group_letter  = $4
+`
+
+type DeletePlayerPredictionGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     PlayerHandicapCategory
+	GroupLetter  *string
+}
+
+func (q *Queries) DeletePlayerPredictionGroup(ctx context.Context, arg DeletePlayerPredictionGroupParams) error {
+	_, err := q.db.Exec(ctx, deletePlayerPredictionGroup,
+		arg.UserID,
+		arg.TournamentID,
+		arg.Category,
+		arg.GroupLetter,
+	)
+	return err
+}
+
+const deletePlayerPredictionNoGroup = `-- name: DeletePlayerPredictionNoGroup :exec
+DELETE FROM player_predictions
+WHERE user_id       = $1
+  AND tournament_id = $2
+  AND category      = $3
+  AND group_letter  IS NULL
+`
+
+type DeletePlayerPredictionNoGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     PlayerHandicapCategory
+}
+
+func (q *Queries) DeletePlayerPredictionNoGroup(ctx context.Context, arg DeletePlayerPredictionNoGroupParams) error {
+	_, err := q.db.Exec(ctx, deletePlayerPredictionNoGroup, arg.UserID, arg.TournamentID, arg.Category)
+	return err
+}
+
+const deleteTeamPredictionGroup = `-- name: DeleteTeamPredictionGroup :exec
+DELETE FROM team_predictions
+WHERE user_id       = $1
+  AND tournament_id = $2
+  AND category      = $3
+  AND group_letter  = $4
+  AND slot_index    = $5
+`
+
+type DeleteTeamPredictionGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	GroupLetter  *string
+	SlotIndex    int16
+}
+
+func (q *Queries) DeleteTeamPredictionGroup(ctx context.Context, arg DeleteTeamPredictionGroupParams) error {
+	_, err := q.db.Exec(ctx, deleteTeamPredictionGroup,
+		arg.UserID,
+		arg.TournamentID,
+		arg.Category,
+		arg.GroupLetter,
+		arg.SlotIndex,
+	)
+	return err
+}
+
+const deleteTeamPredictionNoGroup = `-- name: DeleteTeamPredictionNoGroup :exec
+DELETE FROM team_predictions
+WHERE user_id       = $1
+  AND tournament_id = $2
+  AND category      = $3
+  AND group_letter  IS NULL
+  AND slot_index    = $4
+`
+
+type DeleteTeamPredictionNoGroupParams struct {
+	UserID       uuid.UUID
+	TournamentID uuid.UUID
+	Category     TeamHandicapCategory
+	SlotIndex    int16
+}
+
+func (q *Queries) DeleteTeamPredictionNoGroup(ctx context.Context, arg DeleteTeamPredictionNoGroupParams) error {
+	_, err := q.db.Exec(ctx, deleteTeamPredictionNoGroup,
+		arg.UserID,
+		arg.TournamentID,
+		arg.Category,
+		arg.SlotIndex,
+	)
+	return err
+}
+
 const listLeagueMembersForPredictions = `-- name: ListLeagueMembersForPredictions :many
 SELECT lm.user_id, u.display_name
 FROM league_members lm

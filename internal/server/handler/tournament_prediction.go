@@ -16,14 +16,16 @@ import (
 
 // TournamentPredictionSvc is the subset of service.TournamentPredictionService the handler uses.
 type TournamentPredictionSvc interface {
-	UpsertPlayerPrediction(
+	BulkUpsertPlayerPredictions(
 		ctx context.Context,
-		in domain.UpsertPlayerPredictionInput,
-	) (*domain.PlayerPrediction, error)
-	UpsertTeamPrediction(
+		tournamentID, userID uuid.UUID,
+		items []domain.BulkPlayerPredictionItem,
+	) ([]*domain.PlayerPredictionView, error)
+	BulkUpsertTeamPredictions(
 		ctx context.Context,
-		in domain.UpsertTeamPredictionInput,
-	) (*domain.TeamPrediction, error)
+		tournamentID, userID uuid.UUID,
+		items []domain.BulkTeamPredictionItem,
+	) ([]*domain.TeamPredictionView, error)
 	ListPlayerPredictionsForUser(
 		ctx context.Context,
 		tournamentID, userID uuid.UUID,
@@ -58,26 +60,9 @@ func NewTournamentPrediction(
 
 // ---------- DTOs ----------
 
-type playerPredictionResponse struct {
-	ID           string `json:"id"`
-	TournamentID string `json:"tournament_id"`
-	Category     string `json:"category"`
-	PlayerID     string `json:"player_id"`
-	PlayerName   string `json:"player_name"`
-	Points       *int   `json:"points"`
-}
-
-type teamPredictionResponse struct {
-	ID           string `json:"id"`
-	TournamentID string `json:"tournament_id"`
-	Category     string `json:"category"`
-	TeamID       string `json:"team_id"`
-	TeamName     string `json:"team_name"`
-	Points       *int   `json:"points"`
-}
-
 type playerPredictionViewResponse struct {
 	Category   string  `json:"category"`
+	Group      *string `json:"group,omitempty"`
 	PlayerID   *string `json:"player_id"`
 	PlayerName *string `json:"player_name"`
 	Points     *int    `json:"points"`
@@ -85,6 +70,7 @@ type playerPredictionViewResponse struct {
 
 type teamPredictionViewResponse struct {
 	Category string  `json:"category"`
+	Group    *string `json:"group,omitempty"`
 	TeamID   *string `json:"team_id"`
 	TeamName *string `json:"team_name"`
 	Points   *int    `json:"points"`
@@ -108,39 +94,35 @@ type leagueMemberTeamPickResponse struct {
 
 type leaguePlayerCategoryViewResponse struct {
 	Category    string                           `json:"category"`
+	Group       *string                          `json:"group,omitempty"`
 	Predictions []leagueMemberPlayerPickResponse `json:"predictions"`
 }
 
 type leagueTeamCategoryViewResponse struct {
 	Category    string                         `json:"category"`
+	Group       *string                        `json:"group,omitempty"`
 	Predictions []leagueMemberTeamPickResponse `json:"predictions"`
 }
 
-func toPlayerPredictionResponse(p *domain.PlayerPrediction) playerPredictionResponse {
-	return playerPredictionResponse{
-		ID:           p.ID.String(),
-		TournamentID: p.TournamentID.String(),
-		Category:     string(p.Category),
-		PlayerID:     p.Pick.String(),
-		PlayerName:   p.PickName,
-		Points:       p.Points,
-	}
+// ---------- request DTOs ----------
+
+type bulkPlayerPredictionItemRequest struct {
+	Category    string  `json:"category"`
+	GroupLetter *string `json:"group_letter"`
+	PlayerID    *string `json:"player_id"`
 }
 
-func toTeamPredictionResponse(p *domain.TeamPrediction) teamPredictionResponse {
-	return teamPredictionResponse{
-		ID:           p.ID.String(),
-		TournamentID: p.TournamentID.String(),
-		Category:     string(p.Category),
-		TeamID:       p.Pick.String(),
-		TeamName:     p.PickName,
-		Points:       p.Points,
-	}
+type bulkTeamPredictionItemRequest struct {
+	Category    string  `json:"category"`
+	GroupLetter *string `json:"group_letter"`
+	SlotIndex   int     `json:"slot_index"`
+	TeamID      *string `json:"team_id"`
 }
 
 func toPlayerPredictionViewResponse(v *domain.PlayerPredictionView) playerPredictionViewResponse {
 	resp := playerPredictionViewResponse{
 		Category: string(v.Category),
+		Group:    v.GroupLetter,
 	}
 	if v.Prediction != nil {
 		id := v.Prediction.Pick.String()
@@ -154,6 +136,7 @@ func toPlayerPredictionViewResponse(v *domain.PlayerPredictionView) playerPredic
 func toTeamPredictionViewResponse(v *domain.TeamPredictionView) teamPredictionViewResponse {
 	resp := teamPredictionViewResponse{
 		Category: string(v.Category),
+		Group:    v.GroupLetter,
 	}
 	if v.Prediction != nil {
 		id := v.Prediction.Pick.String()
@@ -200,8 +183,8 @@ func toLeagueMemberTeamPickResponse(p domain.LeagueMemberTeamPick) leagueMemberT
 
 // ---------- Handlers ----------
 
-// UpsertPlayerPredictions handles PUT /tournaments/{tournamentId}/predictions/players/{category}.
-func (h *TournamentPrediction) UpsertPlayerPredictions(
+// BulkUpsertPlayerPredictions handles PUT /tournaments/{tournamentId}/predictions/players.
+func (h *TournamentPrediction) BulkUpsertPlayerPredictions(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -217,42 +200,49 @@ func (h *TournamentPrediction) UpsertPlayerPredictions(
 		return
 	}
 
-	category, err := domain.ParsePlayerHandicapCategory(r.PathValue("category"))
-	if err != nil {
-		writeError(w, r, h.logger, fmt.Errorf("invalid category %q: %w", r.PathValue("category"), domain.ErrInvalid))
-		return
-	}
-
-	var req struct {
-		PlayerID string `json:"player_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	var rawItems []bulkPlayerPredictionItemRequest
+	if err := json.NewDecoder(r.Body).Decode(&rawItems); err != nil {
 		writeError(w, r, h.logger, fmt.Errorf("invalid JSON body: %w", domain.ErrInvalid))
 		return
 	}
-	playerID, err := uuid.Parse(req.PlayerID)
-	if err != nil {
-		writeError(w, r, h.logger, fmt.Errorf("invalid player_id: %w", domain.ErrInvalid))
-		return
+
+	items := make([]domain.BulkPlayerPredictionItem, 0, len(rawItems))
+	for i, raw := range rawItems {
+		cat, err := domain.ParsePlayerHandicapCategory(raw.Category)
+		if err != nil {
+			writeError(w, r, h.logger, fmt.Errorf("item %d: invalid category %q: %w", i, raw.Category, domain.ErrInvalid))
+			return
+		}
+		item := domain.BulkPlayerPredictionItem{
+			Category:    cat,
+			GroupLetter: raw.GroupLetter,
+		}
+		if raw.PlayerID != nil {
+			id, err := uuid.Parse(*raw.PlayerID)
+			if err != nil {
+				writeError(w, r, h.logger, fmt.Errorf("item %d: invalid player_id: %w", i, domain.ErrInvalid))
+				return
+			}
+			item.PlayerID = &id
+		}
+		items = append(items, item)
 	}
 
-	pred, err := h.svc.UpsertPlayerPrediction(
-		r.Context(), domain.UpsertPlayerPredictionInput{
-			UserID:       caller.ID,
-			TournamentID: tournamentID,
-			Category:     category,
-			Pick:         playerID,
-		},
-	)
+	views, err := h.svc.BulkUpsertPlayerPredictions(r.Context(), tournamentID, caller.ID, items)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, toPlayerPredictionResponse(pred))
+
+	out := make([]playerPredictionViewResponse, 0, len(views))
+	for _, v := range views {
+		out = append(out, toPlayerPredictionViewResponse(v))
+	}
+	writeJSON(w, http.StatusOK, out)
 }
 
-// UpsertTeamPredictions handles PUT /tournaments/{tournamentId}/predictions/teams/{category}.
-func (h *TournamentPrediction) UpsertTeamPredictions(
+// BulkUpsertTeamPredictions handles PUT /tournaments/{tournamentId}/predictions/teams.
+func (h *TournamentPrediction) BulkUpsertTeamPredictions(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -268,39 +258,49 @@ func (h *TournamentPrediction) UpsertTeamPredictions(
 		return
 	}
 
-	category, err := domain.ParseTeamHandicapCategory(r.PathValue("category"))
-	if err != nil {
-		writeError(w, r, h.logger, fmt.Errorf("invalid category %q: %w", r.PathValue("category"), domain.ErrInvalid))
-		return
-	}
-
-	var req struct {
-		TeamID string `json:"team_id"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	var rawItems []bulkTeamPredictionItemRequest
+	if err := json.NewDecoder(r.Body).Decode(&rawItems); err != nil {
 		writeError(w, r, h.logger, fmt.Errorf("invalid JSON body: %w", domain.ErrInvalid))
 		return
 	}
-	teamID, err := uuid.Parse(req.TeamID)
-	if err != nil {
-		writeError(w, r, h.logger, fmt.Errorf("invalid team_id: %w", domain.ErrInvalid))
-		return
+
+	items := make([]domain.BulkTeamPredictionItem, 0, len(rawItems))
+	for i, raw := range rawItems {
+		cat, err := domain.ParseTeamHandicapCategory(raw.Category)
+		if err != nil {
+			writeError(w, r, h.logger, fmt.Errorf("item %d: invalid category %q: %w", i, raw.Category, domain.ErrInvalid))
+			return
+		}
+		item := domain.BulkTeamPredictionItem{
+			Category:    cat,
+			GroupLetter: raw.GroupLetter,
+			SlotIndex:   raw.SlotIndex,
+		}
+		if raw.TeamID != nil {
+			id, err := uuid.Parse(*raw.TeamID)
+			if err != nil {
+				writeError(w, r, h.logger, fmt.Errorf("item %d: invalid team_id: %w", i, domain.ErrInvalid))
+				return
+			}
+			item.TeamID = &id
+		}
+		items = append(items, item)
 	}
 
-	pred, err := h.svc.UpsertTeamPrediction(
-		r.Context(), domain.UpsertTeamPredictionInput{
-			UserID:       caller.ID,
-			TournamentID: tournamentID,
-			Category:     category,
-			Pick:         teamID,
-		},
-	)
+	views, err := h.svc.BulkUpsertTeamPredictions(r.Context(), tournamentID, caller.ID, items)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, toTeamPredictionResponse(pred))
+
+	out := make([]teamPredictionViewResponse, 0, len(views))
+	for _, v := range views {
+		out = append(out, toTeamPredictionViewResponse(v))
+	}
+	writeJSON(w, http.StatusOK, out)
 }
+
+// ---------- Handlers ----------
 
 // ListMyPlayerPredictions handles GET /tournaments/{tournamentId}/predictions/players.
 func (h *TournamentPrediction) ListMyPlayerPredictions(
@@ -394,6 +394,7 @@ func (h *TournamentPrediction) ListLeaguePlayerPredictions(
 		out = append(
 			out, leaguePlayerCategoryViewResponse{
 				Category:    string(v.Category),
+				Group:       v.GroupLetter,
 				Predictions: preds,
 			},
 		)
@@ -433,6 +434,7 @@ func (h *TournamentPrediction) ListLeagueTeamPredictions(
 		out = append(
 			out, leagueTeamCategoryViewResponse{
 				Category:    string(v.Category),
+				Group:       v.GroupLetter,
 				Predictions: preds,
 			},
 		)

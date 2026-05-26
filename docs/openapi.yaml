@@ -236,14 +236,55 @@ components:
       example:
         points: 5
 
-    TeamHandicap:
+    TeamHandicapItem:
       type: object
-      required: [points]
+      required: [category, points]
       properties:
+        category:
+          $ref: '#/components/schemas/TeamHandicapCategory'
         points:
           type: integer
       example:
+        category: "winner"
         points: 3
+
+    TeamWithHandicaps:
+      type: object
+      required: [id, name, logo, handicaps]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        logo:
+          type: string
+        group_letter:
+          type: string
+          nullable: true
+        handicaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamHandicapItem'
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440010"
+        name: "France"
+        logo: "https://example.com/france.png"
+        group_letter: "A"
+        handicaps:
+          - category: "winner"
+            points: 20
+          - category: "semifinalist"
+            points: 10
+
+    TeamListResponse:
+      type: object
+      required: [teams]
+      properties:
+        teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamWithHandicaps'
 
     PlayerHandicapCategory:
       type: string
@@ -311,81 +352,47 @@ components:
               group_top_scorer: 5
               total_top_scorer: 10
 
-    UpsertPlayerPredictionRequest:
+    BulkPlayerPredictionItem:
       type: object
-      required: [player_id]
+      required: [category]
       properties:
-        player_id:
-          type: string
-          format: uuid
-      example:
-        player_id: "550e8400-e29b-41d4-a716-446655440003"
-
-    UpsertTeamPredictionRequest:
-      type: object
-      required: [team_id]
-      properties:
-        team_id:
-          type: string
-          format: uuid
-      example:
-        team_id: "550e8400-e29b-41d4-a716-446655440004"
-
-    PlayerPredictionResponse:
-      type: object
-      required: [id, tournament_id, category, player_id, player_name]
-      properties:
-        id:
-          type: string
-          format: uuid
-        tournament_id:
-          type: string
-          format: uuid
         category:
           $ref: '#/components/schemas/PlayerHandicapCategory'
+        group_letter:
+          type: string
+          nullable: true
         player_id:
           type: string
           format: uuid
-        player_name:
-          type: string
-        points:
-          type: integer
           nullable: true
-      example:
-        id: "550e8400-e29b-41d4-a716-446655440010"
-        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
-        category: "group_top_scorer"
-        player_id: "550e8400-e29b-41d4-a716-446655440003"
-        player_name: "Lionel Messi"
-        points: null
+          description: "null clears the slot"
 
-    TeamPredictionResponse:
+    BulkUpsertPlayerPredictionsRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/BulkPlayerPredictionItem'
+
+    BulkTeamPredictionItem:
       type: object
-      required: [id, tournament_id, category, team_id, team_name]
+      required: [category, slot_index]
       properties:
-        id:
-          type: string
-          format: uuid
-        tournament_id:
-          type: string
-          format: uuid
         category:
           $ref: '#/components/schemas/TeamHandicapCategory'
+        group_letter:
+          type: string
+          nullable: true
+        slot_index:
+          type: integer
         team_id:
           type: string
           format: uuid
-        team_name:
-          type: string
-        points:
-          type: integer
           nullable: true
-      example:
-        id: "550e8400-e29b-41d4-a716-446655440011"
-        tournament_id: "550e8400-e29b-41d4-a716-446655440000"
-        category: "winner"
-        team_id: "550e8400-e29b-41d4-a716-446655440004"
-        team_name: "Argentina"
-        points: null
+          description: "null clears the slot"
+
+    BulkUpsertTeamPredictionsRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/BulkTeamPredictionItem'
 
     PlayerPredictionView:
       type: object
@@ -393,6 +400,9 @@ components:
       properties:
         category:
           $ref: '#/components/schemas/PlayerHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present only for group-scoped categories.
         player_id:
           type: string
           format: uuid
@@ -405,6 +415,7 @@ components:
           nullable: true
       example:
         category: "group_top_scorer"
+        group: "A"
         player_id: "550e8400-e29b-41d4-a716-446655440003"
         player_name: "Lionel Messi"
         points: null
@@ -415,6 +426,9 @@ components:
       properties:
         category:
           $ref: '#/components/schemas/TeamHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present only for group-scoped categories.
         team_id:
           type: string
           format: uuid
@@ -426,7 +440,8 @@ components:
           type: integer
           nullable: true
       example:
-        category: "winner"
+        category: "group_winner"
+        group: "A"
         team_id: "550e8400-e29b-41d4-a716-446655440004"
         team_name: "Argentina"
         points: null
@@ -489,12 +504,16 @@ components:
       properties:
         category:
           $ref: '#/components/schemas/PlayerHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present only for group-scoped categories.
         predictions:
           type: array
           items:
             $ref: '#/components/schemas/LeagueMemberPlayerPick'
       example:
         category: "group_top_scorer"
+        group: "A"
         predictions:
           - user_id: "550e8400-e29b-41d4-a716-446655440002"
             display_name: "me"
@@ -508,12 +527,16 @@ components:
       properties:
         category:
           $ref: '#/components/schemas/TeamHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present only for group-scoped categories.
         predictions:
           type: array
           items:
             $ref: '#/components/schemas/LeagueMemberTeamPick'
       example:
-        category: "winner"
+        category: "group_winner"
+        group: "A"
         predictions:
           - user_id: "550e8400-e29b-41d4-a716-446655440002"
             display_name: "me"
@@ -1342,6 +1365,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /tournaments/{tournament_id}/teams:
+    get:
+      summary: List all teams for a tournament with their handicaps
+      operationId: listTeams
+      tags: [tournaments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournament_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of teams with handicaps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamListResponse'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /player-handicaps/{player_id}/{category}:
     get:
       summary: Get player handicap by category
@@ -1393,61 +1456,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /team-handicaps/{team_id}/{category}:
-    get:
-      summary: Get team handicap by category
-      operationId: getTeamHandicap
-      tags: [handicaps]
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: team_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: category
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/TeamHandicapCategory'
-      responses:
-        '200':
-          description: Team handicap
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TeamHandicap'
-        '400':
-          description: Invalid team ID or category
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Handicap not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /tournaments/{tournamentId}/predictions/players/{category}:
+  /tournaments/{tournamentId}/predictions/players:
     put:
-      summary: Upsert player tournament prediction
-      operationId: upsertPlayerPrediction
+      summary: Bulk upsert player tournament predictions
+      operationId: bulkUpsertPlayerPredictions
       tags: [predictions]
       security:
         - bearerAuth: []
@@ -1458,24 +1470,21 @@ paths:
           schema:
             type: string
             format: uuid
-        - name: category
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/PlayerHandicapCategory'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpsertPlayerPredictionRequest'
+              $ref: '#/components/schemas/BulkUpsertPlayerPredictionsRequest'
       responses:
         '200':
-          description: Player prediction saved
+          description: Current player predictions after applying the batch
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlayerPredictionResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerPredictionView'
         '400':
           description: Invalid input
           content:
@@ -1506,8 +1515,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /tournaments/{tournamentId}/predictions/players:
     get:
       summary: List my player predictions for a tournament
       operationId: listMyPlayerPredictions
@@ -1549,10 +1556,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /tournaments/{tournamentId}/predictions/teams/{category}:
+  /tournaments/{tournamentId}/predictions/teams:
     put:
-      summary: Upsert team tournament prediction
-      operationId: upsertTeamPrediction
+      summary: Bulk upsert team tournament predictions
+      operationId: bulkUpsertTeamPredictions
       tags: [predictions]
       security:
         - bearerAuth: []
@@ -1563,24 +1570,21 @@ paths:
           schema:
             type: string
             format: uuid
-        - name: category
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/TeamHandicapCategory'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpsertTeamPredictionRequest'
+              $ref: '#/components/schemas/BulkUpsertTeamPredictionsRequest'
       responses:
         '200':
-          description: Team prediction saved
+          description: Current team predictions after applying the batch
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeamPredictionResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamPredictionView'
         '400':
           description: Invalid input
           content:
@@ -1594,7 +1598,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Predictions locked
+          description: Predictions locked or wildcard cap exceeded
           content:
             application/json:
               schema:
@@ -1611,8 +1615,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /tournaments/{tournamentId}/predictions/teams:
     get:
       summary: List my team predictions for a tournament
       operationId: listMyTeamPredictions

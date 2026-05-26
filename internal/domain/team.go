@@ -10,3 +10,15 @@ type Team struct {
 	TournamentID uuid.UUID
 	GroupLetter  *string
 }
+
+// TeamHandicapItem is a single handicap entry embedded in a team response.
+type TeamHandicapItem struct {
+	Category TeamHandicapCategory
+	Points   int
+}
+
+// TeamWithHandicaps is a Team enriched with all its handicap assignments.
+type TeamWithHandicaps struct {
+	Team
+	Handicaps []TeamHandicapItem
+}

@@ -1,18 +1,19 @@
 $kind: http-request
-name: Upsert Team Prediction
+name: Bulk Upsert Team Predictions
 method: PUT
-url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/teams/winner"
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/teams"
 auth:
   type: noauth
 order: 1000
 headers:
-  - key: Authorization
-    value: "Bearer {{authToken}}"
-  - key: Content-Type
-    value: application/json
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
 body:
   type: json
   content: |-
-    {
-      "team_id": "{{teamId}}"
-    }
+    [
+      { "category": "group_winner", "group_letter": "A", "slot_index": 0, "team_id": "{{teamId}}" },
+      { "category": "playoff", "group_letter": "A", "slot_index": 0, "team_id": "{{teamId}}" },
+      { "category": "semifinalist", "group_letter": null, "slot_index": 0, "team_id": "{{teamId}}" },
+      { "category": "winner", "group_letter": null, "slot_index": 0, "team_id": "{{teamId}}" }
+    ]

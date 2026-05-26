@@ -27,6 +27,7 @@ func (RealClock) Now() time.Time { return time.Now() }
 // PlayerPredictionRepo is the data access interface for player predictions.
 type PlayerPredictionRepo interface {
 	UpsertPlayer(ctx context.Context, in domain.UpsertPlayerPredictionInput) (*domain.PlayerPrediction, error)
+	DeletePlayer(ctx context.Context, userID, tournamentID uuid.UUID, category domain.PlayerHandicapCategory, groupLetter *string) error
 	ListPlayersByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.PlayerPrediction, error)
 	ListPlayersByLeague(ctx context.Context, leagueID uuid.UUID) ([]*domain.PlayerLeaguePick, error)
 }
@@ -34,6 +35,7 @@ type PlayerPredictionRepo interface {
 // TeamPredictionRepo is the data access interface for team predictions.
 type TeamPredictionRepo interface {
 	UpsertTeam(ctx context.Context, in domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error)
+	DeleteTeam(ctx context.Context, userID, tournamentID uuid.UUID, category domain.TeamHandicapCategory, groupLetter *string, slotIndex int) error
 	ListTeamsByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.TeamPrediction, error)
 	ListTeamsByLeague(ctx context.Context, leagueID uuid.UUID) ([]*domain.TeamLeaguePick, error)
 	CountPlayoffWildcards(ctx context.Context, tournamentID, userID uuid.UUID) (int, error)
@@ -271,6 +273,182 @@ func validateWinner(in domain.UpsertTeamPredictionInput) error {
 	}
 	if in.SlotIndex != 0 {
 		return fmt.Errorf("slot must be 0 for winner: %w", domain.ErrInvalid)
+	}
+	return nil
+}
+
+// BulkUpsertPlayerPredictions validates and saves a batch of player tournament predictions.
+// Items with nil PlayerID clear (delete) the slot; items with a non-nil PlayerID upsert it.
+// Returns the full player prediction view after applying the batch.
+// Returns domain.ErrForbidden if predictions are locked.
+// Returns domain.ErrNotFound / domain.ErrInvalid for the first invalid item encountered.
+func (s *TournamentPredictionService) BulkUpsertPlayerPredictions(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+	items []domain.BulkPlayerPredictionItem,
+) ([]*domain.PlayerPredictionView, error) {
+	if len(items) == 0 {
+		return s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+	}
+
+	_, locked, err := s.lockAt(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	if locked {
+		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
+	}
+
+	for _, item := range items {
+		if err := s.applyPlayerItem(ctx, tournamentID, userID, item); err != nil {
+			return nil, err
+		}
+	}
+
+	return s.ListPlayerPredictionsForUser(ctx, tournamentID, userID)
+}
+
+// applyPlayerItem processes a single item from a bulk player prediction batch.
+func (s *TournamentPredictionService) applyPlayerItem(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+	item domain.BulkPlayerPredictionItem,
+) error {
+	if item.PlayerID == nil {
+		return s.playerPredictions.DeletePlayer(ctx, userID, tournamentID, item.Category, item.GroupLetter)
+	}
+
+	player, err := s.players.GetByID(ctx, *item.PlayerID)
+	if err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
+			return fmt.Errorf("player %s not found in this tournament: %w", *item.PlayerID, domain.ErrNotFound)
+		}
+		return fmt.Errorf("get player: %w", err)
+	}
+	if player.TournamentID != tournamentID {
+		return fmt.Errorf("player %s not found in this tournament: %w", *item.PlayerID, domain.ErrNotFound)
+	}
+
+	switch item.Category {
+	case domain.PlayerHandicapCategoryGroupTopScorer:
+		if item.GroupLetter == nil {
+			return fmt.Errorf("group is required for group_top_scorer: %w", domain.ErrInvalid)
+		}
+		if player.GroupLetter == nil || *player.GroupLetter != *item.GroupLetter {
+			return fmt.Errorf("player's team is not in group %s: %w", *item.GroupLetter, domain.ErrNotFound)
+		}
+	case domain.PlayerHandicapCategoryTotalTopScorer:
+		if item.GroupLetter != nil {
+			return fmt.Errorf("group must be null for total_top_scorer: %w", domain.ErrInvalid)
+		}
+	}
+
+	_, err = s.playerPredictions.UpsertPlayer(ctx, domain.UpsertPlayerPredictionInput{
+		UserID:       userID,
+		TournamentID: tournamentID,
+		Category:     item.Category,
+		Pick:         *item.PlayerID,
+		GroupLetter:  item.GroupLetter,
+	})
+	if err != nil {
+		return fmt.Errorf("upsert player prediction: %w", err)
+	}
+	return nil
+}
+
+// BulkUpsertTeamPredictions validates and saves a batch of team tournament predictions.
+// Items with nil TeamID clear (delete) the slot; items with a non-nil TeamID upsert it.
+// Returns the full team prediction view after applying the batch.
+// Returns domain.ErrForbidden if predictions are locked or the wildcard cap (8) would be exceeded.
+// Returns domain.ErrNotFound / domain.ErrInvalid for the first invalid item encountered.
+func (s *TournamentPredictionService) BulkUpsertTeamPredictions(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+	items []domain.BulkTeamPredictionItem,
+) ([]*domain.TeamPredictionView, error) {
+	if len(items) == 0 {
+		return s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+	}
+
+	_, locked, err := s.lockAt(ctx, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	if locked {
+		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
+	}
+
+	// Check wildcard cap before persisting anything.
+	if err := s.checkWildcardCap(ctx, tournamentID, userID, items); err != nil {
+		return nil, err
+	}
+
+	for _, item := range items {
+		if item.TeamID == nil {
+			if err := s.teamPredictions.DeleteTeam(ctx, userID, tournamentID, item.Category, item.GroupLetter, item.SlotIndex); err != nil {
+				return nil, fmt.Errorf("delete team prediction: %w", err)
+			}
+			continue
+		}
+
+		team, err := s.teams.GetByID(ctx, *item.TeamID)
+		if err != nil {
+			if errors.Is(err, domain.ErrNotFound) {
+				return nil, fmt.Errorf("team %s not found in this tournament: %w", *item.TeamID, domain.ErrNotFound)
+			}
+			return nil, fmt.Errorf("get team: %w", err)
+		}
+		if team.TournamentID != tournamentID {
+			return nil, fmt.Errorf("team %s not found in this tournament: %w", *item.TeamID, domain.ErrNotFound)
+		}
+
+		in := domain.UpsertTeamPredictionInput{
+			UserID:       userID,
+			TournamentID: tournamentID,
+			Category:     item.Category,
+			Pick:         *item.TeamID,
+			GroupLetter:  item.GroupLetter,
+			SlotIndex:    item.SlotIndex,
+		}
+		if err := s.validateTeamCategory(ctx, team, in); err != nil {
+			return nil, err
+		}
+
+		if _, err := s.teamPredictions.UpsertTeam(ctx, in); err != nil {
+			return nil, fmt.Errorf("upsert team prediction: %w", err)
+		}
+	}
+
+	return s.ListTeamPredictionsForUser(ctx, tournamentID, userID)
+}
+
+// checkWildcardCap verifies that applying the batch would not exceed 8 playoff wildcard slots.
+// The estimate is: dbCount + batchAdds - batchClears where adds/clears are playoff slot_index=2 items.
+func (s *TournamentPredictionService) checkWildcardCap(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+	items []domain.BulkTeamPredictionItem,
+) error {
+	var batchAdds, batchClears int
+	for _, item := range items {
+		if item.Category == domain.TeamHandicapCategoryPlayoff && item.SlotIndex == 2 {
+			if item.TeamID != nil {
+				batchAdds++
+			} else {
+				batchClears++
+			}
+		}
+	}
+	if batchAdds == 0 {
+		return nil // no wildcards being added; nothing to check
+	}
+
+	dbCount, err := s.teamPredictions.CountPlayoffWildcards(ctx, tournamentID, userID)
+	if err != nil {
+		return fmt.Errorf("count wildcards: %w", err)
+	}
+	if dbCount+batchAdds-batchClears > 8 {
+		return fmt.Errorf("maximum 8 wildcard picks reached: %w", domain.ErrForbidden)
 	}
 	return nil
 }

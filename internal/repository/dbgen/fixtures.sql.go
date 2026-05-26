@@ -33,9 +33,25 @@ SELECT id, external_id, tournament_id, home_team_id, away_team_id, round,
 FROM fixtures WHERE id = $1
 `
 
-func (q *Queries) GetFixtureByID(ctx context.Context, id uuid.UUID) (Fixture, error) {
+type GetFixtureByIDRow struct {
+	ID               uuid.UUID
+	ExternalID       int64
+	TournamentID     uuid.UUID
+	HomeTeamID       uuid.UUID
+	AwayTeamID       uuid.UUID
+	Round            string
+	KickoffAt        time.Time
+	Status           FixtureStatus
+	PredictionLocked bool
+	GoalsHome        *int32
+	GoalsAway        *int32
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+}
+
+func (q *Queries) GetFixtureByID(ctx context.Context, id uuid.UUID) (GetFixtureByIDRow, error) {
 	row := q.db.QueryRow(ctx, getFixtureByID, id)
-	var i Fixture
+	var i GetFixtureByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.ExternalID,

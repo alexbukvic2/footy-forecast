@@ -138,7 +138,7 @@ func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, re
 	return out, nil
 }
 
-func fixtureFromModel(f dbgen.Fixture) *domain.Fixture {
+func fixtureFromModel(f dbgen.GetFixtureByIDRow) *domain.Fixture {
 	fix := &domain.Fixture{
 		ID:               f.ID,
 		ExternalID:       f.ExternalID,

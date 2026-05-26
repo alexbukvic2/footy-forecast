@@ -120,6 +120,35 @@ func (r *PlayerPredictionRepository) ListPlayersByLeague(
 	return out, nil
 }
 
+// DeletePlayer deletes a player prediction for the given slot.
+// If no row exists, the call is a no-op (idempotent).
+func (r *PlayerPredictionRepository) DeletePlayer(
+	ctx context.Context,
+	userID, tournamentID uuid.UUID,
+	category domain.PlayerHandicapCategory,
+	groupLetter *string,
+) error {
+	if groupLetter != nil {
+		if err := r.q.DeletePlayerPredictionGroup(ctx, dbgen.DeletePlayerPredictionGroupParams{
+			UserID:       userID,
+			TournamentID: tournamentID,
+			Category:     dbgen.PlayerHandicapCategory(category),
+			GroupLetter:  groupLetter,
+		}); err != nil {
+			return fmt.Errorf("delete player prediction: %w", err)
+		}
+		return nil
+	}
+	if err := r.q.DeletePlayerPredictionNoGroup(ctx, dbgen.DeletePlayerPredictionNoGroupParams{
+		UserID:       userID,
+		TournamentID: tournamentID,
+		Category:     dbgen.PlayerHandicapCategory(category),
+	}); err != nil {
+		return fmt.Errorf("delete player prediction: %w", err)
+	}
+	return nil
+}
+
 func playerPredictionFromGroupRow(row dbgen.UpsertPlayerPredictionGroupRow) *domain.PlayerPrediction {
 	p := &domain.PlayerPrediction{
 		ID:           row.ID,
@@ -286,6 +315,38 @@ func (r *TeamPredictionRepository) CountPlayoffWildcards(
 		return 0, fmt.Errorf("count playoff wildcards: %w", err)
 	}
 	return int(n), nil
+}
+
+// DeleteTeam deletes a team prediction for the given slot.
+// If no row exists, the call is a no-op (idempotent).
+func (r *TeamPredictionRepository) DeleteTeam(
+	ctx context.Context,
+	userID, tournamentID uuid.UUID,
+	category domain.TeamHandicapCategory,
+	groupLetter *string,
+	slotIndex int,
+) error {
+	if groupLetter != nil {
+		if err := r.q.DeleteTeamPredictionGroup(ctx, dbgen.DeleteTeamPredictionGroupParams{
+			UserID:       userID,
+			TournamentID: tournamentID,
+			Category:     dbgen.TeamHandicapCategory(category),
+			GroupLetter:  groupLetter,
+			SlotIndex:    int16(slotIndex), //nolint:gosec
+		}); err != nil {
+			return fmt.Errorf("delete team prediction: %w", err)
+		}
+		return nil
+	}
+	if err := r.q.DeleteTeamPredictionNoGroup(ctx, dbgen.DeleteTeamPredictionNoGroupParams{
+		UserID:       userID,
+		TournamentID: tournamentID,
+		Category:     dbgen.TeamHandicapCategory(category),
+		SlotIndex:    int16(slotIndex), //nolint:gosec
+	}); err != nil {
+		return fmt.Errorf("delete team prediction: %w", err)
+	}
+	return nil
 }
 
 func teamPredictionFromGroupRow(row dbgen.UpsertTeamPredictionGroupRow) *domain.TeamPrediction {

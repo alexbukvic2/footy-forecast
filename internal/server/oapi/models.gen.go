@@ -175,6 +175,31 @@ func (e UserFixtureViewResponseStatus) Valid() bool {
 	}
 }
 
+// BulkPlayerPredictionItem defines model for BulkPlayerPredictionItem.
+type BulkPlayerPredictionItem struct {
+	Category    PlayerHandicapCategory `json:"category"`
+	GroupLetter *string                `json:"group_letter,omitempty"`
+
+	// PlayerId null clears the slot
+	PlayerId *openapi_types.UUID `json:"player_id,omitempty"`
+}
+
+// BulkTeamPredictionItem defines model for BulkTeamPredictionItem.
+type BulkTeamPredictionItem struct {
+	Category    TeamHandicapCategory `json:"category"`
+	GroupLetter *string              `json:"group_letter,omitempty"`
+	SlotIndex   int                  `json:"slot_index"`
+
+	// TeamId null clears the slot
+	TeamId *openapi_types.UUID `json:"team_id,omitempty"`
+}
+
+// BulkUpsertPlayerPredictionsRequest defines model for BulkUpsertPlayerPredictionsRequest.
+type BulkUpsertPlayerPredictionsRequest = []BulkPlayerPredictionItem
+
+// BulkUpsertTeamPredictionsRequest defines model for BulkUpsertTeamPredictionsRequest.
+type BulkUpsertTeamPredictionsRequest = []BulkTeamPredictionItem
+
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -298,13 +323,19 @@ type LeagueMemberTeamPick struct {
 
 // LeaguePlayerCategoryView defines model for LeaguePlayerCategoryView.
 type LeaguePlayerCategoryView struct {
-	Category    PlayerHandicapCategory   `json:"category"`
+	Category PlayerHandicapCategory `json:"category"`
+
+	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	Group       *string                  `json:"group,omitempty"`
 	Predictions []LeagueMemberPlayerPick `json:"predictions"`
 }
 
 // LeagueTeamCategoryView defines model for LeagueTeamCategoryView.
 type LeagueTeamCategoryView struct {
-	Category    TeamHandicapCategory   `json:"category"`
+	Category TeamHandicapCategory `json:"category"`
+
+	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	Group       *string                `json:"group,omitempty"`
 	Predictions []LeagueMemberTeamPick `json:"predictions"`
 }
 
@@ -330,22 +361,15 @@ type PlayerListResponse struct {
 	Players []Player `json:"players"`
 }
 
-// PlayerPredictionResponse defines model for PlayerPredictionResponse.
-type PlayerPredictionResponse struct {
-	Category     PlayerHandicapCategory `json:"category"`
-	Id           openapi_types.UUID     `json:"id"`
-	PlayerId     openapi_types.UUID     `json:"player_id"`
-	PlayerName   string                 `json:"player_name"`
-	Points       *int                   `json:"points,omitempty"`
-	TournamentId openapi_types.UUID     `json:"tournament_id"`
-}
-
 // PlayerPredictionView defines model for PlayerPredictionView.
 type PlayerPredictionView struct {
-	Category   PlayerHandicapCategory `json:"category"`
-	PlayerId   *openapi_types.UUID    `json:"player_id,omitempty"`
-	PlayerName *string                `json:"player_name,omitempty"`
-	Points     *int                   `json:"points,omitempty"`
+	Category PlayerHandicapCategory `json:"category"`
+
+	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	Group      *string             `json:"group,omitempty"`
+	PlayerId   *openapi_types.UUID `json:"player_id,omitempty"`
+	PlayerName *string             `json:"player_name,omitempty"`
+	Points     *int                `json:"points,omitempty"`
 }
 
 // ScorePredictionResponse defines model for ScorePredictionResponse.
@@ -357,30 +381,38 @@ type ScorePredictionResponse struct {
 	Points    *int               `json:"points,omitempty"`
 }
 
-// TeamHandicap defines model for TeamHandicap.
-type TeamHandicap struct {
-	Points int `json:"points"`
-}
-
 // TeamHandicapCategory defines model for TeamHandicapCategory.
 type TeamHandicapCategory string
 
-// TeamPredictionResponse defines model for TeamPredictionResponse.
-type TeamPredictionResponse struct {
-	Category     TeamHandicapCategory `json:"category"`
-	Id           openapi_types.UUID   `json:"id"`
-	Points       *int                 `json:"points,omitempty"`
-	TeamId       openapi_types.UUID   `json:"team_id"`
-	TeamName     string               `json:"team_name"`
-	TournamentId openapi_types.UUID   `json:"tournament_id"`
+// TeamHandicapItem defines model for TeamHandicapItem.
+type TeamHandicapItem struct {
+	Category TeamHandicapCategory `json:"category"`
+	Points   int                  `json:"points"`
+}
+
+// TeamListResponse defines model for TeamListResponse.
+type TeamListResponse struct {
+	Teams []TeamWithHandicaps `json:"teams"`
 }
 
 // TeamPredictionView defines model for TeamPredictionView.
 type TeamPredictionView struct {
 	Category TeamHandicapCategory `json:"category"`
-	Points   *int                 `json:"points,omitempty"`
-	TeamId   *openapi_types.UUID  `json:"team_id,omitempty"`
-	TeamName *string              `json:"team_name,omitempty"`
+
+	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	Group    *string             `json:"group,omitempty"`
+	Points   *int                `json:"points,omitempty"`
+	TeamId   *openapi_types.UUID `json:"team_id,omitempty"`
+	TeamName *string             `json:"team_name,omitempty"`
+}
+
+// TeamWithHandicaps defines model for TeamWithHandicaps.
+type TeamWithHandicaps struct {
+	GroupLetter *string            `json:"group_letter,omitempty"`
+	Handicaps   []TeamHandicapItem `json:"handicaps"`
+	Id          openapi_types.UUID `json:"id"`
+	Logo        string             `json:"logo"`
+	Name        string             `json:"name"`
 }
 
 // Tournament defines model for Tournament.
@@ -403,20 +435,10 @@ type TournamentListResponse struct {
 	Tournaments []Tournament `json:"tournaments"`
 }
 
-// UpsertPlayerPredictionRequest defines model for UpsertPlayerPredictionRequest.
-type UpsertPlayerPredictionRequest struct {
-	PlayerId openapi_types.UUID `json:"player_id"`
-}
-
 // UpsertScorePredictionRequest defines model for UpsertScorePredictionRequest.
 type UpsertScorePredictionRequest struct {
 	GoalsAway int `json:"goals_away"`
 	GoalsHome int `json:"goals_home"`
-}
-
-// UpsertTeamPredictionRequest defines model for UpsertTeamPredictionRequest.
-type UpsertTeamPredictionRequest struct {
-	TeamId openapi_types.UUID `json:"team_id"`
 }
 
 // User defines model for User.
@@ -498,8 +520,8 @@ type UpsertScorePredictionJSONRequestBody = UpsertScorePredictionRequest
 // CreateTournamentJSONRequestBody defines body for CreateTournament for application/json ContentType.
 type CreateTournamentJSONRequestBody CreateTournamentJSONBody
 
-// UpsertPlayerPredictionJSONRequestBody defines body for UpsertPlayerPrediction for application/json ContentType.
-type UpsertPlayerPredictionJSONRequestBody = UpsertPlayerPredictionRequest
+// BulkUpsertPlayerPredictionsJSONRequestBody defines body for BulkUpsertPlayerPredictions for application/json ContentType.
+type BulkUpsertPlayerPredictionsJSONRequestBody = BulkUpsertPlayerPredictionsRequest
 
-// UpsertTeamPredictionJSONRequestBody defines body for UpsertTeamPrediction for application/json ContentType.
-type UpsertTeamPredictionJSONRequestBody = UpsertTeamPredictionRequest
+// BulkUpsertTeamPredictionsJSONRequestBody defines body for BulkUpsertTeamPredictions for application/json ContentType.
+type BulkUpsertTeamPredictionsJSONRequestBody = BulkUpsertTeamPredictionsRequest

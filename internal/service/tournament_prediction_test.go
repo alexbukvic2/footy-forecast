@@ -17,12 +17,19 @@ import (
 
 type fakePlayerPredictionRepo struct {
 	upsertFn                  func(context.Context, domain.UpsertPlayerPredictionInput) (*domain.PlayerPrediction, error)
+	deleteFn                  func(context.Context, uuid.UUID, uuid.UUID, domain.PlayerHandicapCategory, *string) error
 	listByTournamentForUserFn func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.PlayerPrediction, error)
 	listByLeagueFn            func(context.Context, uuid.UUID) ([]*domain.PlayerLeaguePick, error)
 }
 
 func (f *fakePlayerPredictionRepo) UpsertPlayer(ctx context.Context, in domain.UpsertPlayerPredictionInput) (*domain.PlayerPrediction, error) {
 	return f.upsertFn(ctx, in)
+}
+func (f *fakePlayerPredictionRepo) DeletePlayer(ctx context.Context, userID, tournamentID uuid.UUID, category domain.PlayerHandicapCategory, groupLetter *string) error {
+	if f.deleteFn != nil {
+		return f.deleteFn(ctx, userID, tournamentID, category, groupLetter)
+	}
+	return nil
 }
 func (f *fakePlayerPredictionRepo) ListPlayersByTournamentForUser(ctx context.Context, tID, uID uuid.UUID) ([]*domain.PlayerPrediction, error) {
 	return f.listByTournamentForUserFn(ctx, tID, uID)
@@ -33,6 +40,7 @@ func (f *fakePlayerPredictionRepo) ListPlayersByLeague(ctx context.Context, lID 
 
 type fakeTeamPredictionRepo struct {
 	upsertFn                  func(context.Context, domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error)
+	deleteFn                  func(context.Context, uuid.UUID, uuid.UUID, domain.TeamHandicapCategory, *string, int) error
 	listByTournamentForUserFn func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.TeamPrediction, error)
 	listByLeagueFn            func(context.Context, uuid.UUID) ([]*domain.TeamLeaguePick, error)
 	countWildcardsFn          func(context.Context, uuid.UUID, uuid.UUID) (int, error)
@@ -40,6 +48,12 @@ type fakeTeamPredictionRepo struct {
 
 func (f *fakeTeamPredictionRepo) UpsertTeam(ctx context.Context, in domain.UpsertTeamPredictionInput) (*domain.TeamPrediction, error) {
 	return f.upsertFn(ctx, in)
+}
+func (f *fakeTeamPredictionRepo) DeleteTeam(ctx context.Context, userID, tournamentID uuid.UUID, category domain.TeamHandicapCategory, groupLetter *string, slotIndex int) error {
+	if f.deleteFn != nil {
+		return f.deleteFn(ctx, userID, tournamentID, category, groupLetter, slotIndex)
+	}
+	return nil
 }
 func (f *fakeTeamPredictionRepo) ListTeamsByTournamentForUser(ctx context.Context, tID, uID uuid.UUID) ([]*domain.TeamPrediction, error) {
 	return f.listByTournamentForUserFn(ctx, tID, uID)
@@ -320,6 +334,152 @@ func TestTournamentPredictionService_UpsertTeam_Locked(t *testing.T) {
 		Pick:         teamID,
 	})
 	require.True(t, errors.Is(err, domain.ErrForbidden))
+}
+
+// ---------- BulkUpsertPlayerPredictions tests ----------
+
+func TestTournamentPredictionService_BulkUpsertPlayers_Locked(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	playerID := uuid.New()
+
+	players := &fakePlayerGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Player, error) {
+			return &domain.Player{ID: playerID, TournamentID: tournamentID}, nil
+		},
+	}
+	firstKickoff := time.Now().Add(-90 * time.Minute)
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+
+	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, []domain.BulkPlayerPredictionItem{
+		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: &playerID},
+	})
+	require.True(t, errors.Is(err, domain.ErrForbidden))
+}
+
+func TestTournamentPredictionService_BulkUpsertPlayers_EmptyBatch(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+
+	ppRepo := &fakePlayerPredictionRepo{
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.PlayerPrediction, error) {
+			return nil, nil
+		},
+	}
+	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	views, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, nil)
+	require.NoError(t, err)
+	require.NotNil(t, views)
+}
+
+func TestTournamentPredictionService_BulkUpsertPlayers_ClearSlot(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+
+	deleted := false
+	ppRepo := &fakePlayerPredictionRepo{
+		deleteFn: func(_ context.Context, _, _ uuid.UUID, _ domain.PlayerHandicapCategory, _ *string) error {
+			deleted = true
+			return nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.PlayerPrediction, error) {
+			return nil, nil
+		},
+	}
+	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, []domain.BulkPlayerPredictionItem{
+		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: nil},
+	})
+	require.NoError(t, err)
+	require.True(t, deleted)
+}
+
+func TestTournamentPredictionService_BulkUpsertPlayers_PlayerWrongTournament(t *testing.T) {
+	tournamentID := uuid.New()
+	playerID := uuid.New()
+
+	players := &fakePlayerGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Player, error) {
+			return &domain.Player{ID: playerID, TournamentID: uuid.New()}, nil
+		},
+	}
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, uuid.New(), []domain.BulkPlayerPredictionItem{
+		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: &playerID},
+	})
+	require.True(t, errors.Is(err, domain.ErrNotFound))
+}
+
+// ---------- BulkUpsertTeamPredictions tests ----------
+
+func TestTournamentPredictionService_BulkUpsertTeams_Locked(t *testing.T) {
+	tournamentID := uuid.New()
+	teamID := uuid.New()
+
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			return &domain.Team{ID: teamID, TournamentID: tournamentID}, nil
+		},
+	}
+	firstKickoff := time.Now().Add(-90 * time.Minute)
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+
+	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, uuid.New(), []domain.BulkTeamPredictionItem{
+		{Category: domain.TeamHandicapCategoryWinner, SlotIndex: 0, TeamID: &teamID},
+	})
+	require.True(t, errors.Is(err, domain.ErrForbidden))
+}
+
+func TestTournamentPredictionService_BulkUpsertTeams_WildcardCapExceeded(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+	teamID := uuid.New()
+
+	teams := &fakeTeamGetter{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.Team, error) {
+			groupA := "A"
+			return &domain.Team{ID: teamID, TournamentID: tournamentID, GroupLetter: &groupA}, nil
+		},
+	}
+	tpRepo := &fakeTeamPredictionRepo{
+		countWildcardsFn: func(_ context.Context, _, _ uuid.UUID) (int, error) { return 8, nil },
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return nil, nil
+		},
+	}
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
+
+	groupA := "A"
+	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
+		{Category: domain.TeamHandicapCategoryPlayoff, GroupLetter: &groupA, SlotIndex: 2, TeamID: &teamID},
+	})
+	require.True(t, errors.Is(err, domain.ErrForbidden))
+}
+
+func TestTournamentPredictionService_BulkUpsertTeams_ClearSlot(t *testing.T) {
+	tournamentID := uuid.New()
+	userID := uuid.New()
+
+	deleted := false
+	tpRepo := &fakeTeamPredictionRepo{
+		deleteFn: func(_ context.Context, _, _ uuid.UUID, _ domain.TeamHandicapCategory, _ *string, _ int) error {
+			deleted = true
+			return nil
+		},
+		listByTournamentForUserFn: func(_ context.Context, _, _ uuid.UUID) ([]*domain.TeamPrediction, error) {
+			return nil, nil
+		},
+	}
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+
+	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
+		{Category: domain.TeamHandicapCategoryWinner, SlotIndex: 0, TeamID: nil},
+	})
+	require.NoError(t, err)
+	require.True(t, deleted)
 }
 
 // ---------- ListPlayerPredictionsForUser tests ----------

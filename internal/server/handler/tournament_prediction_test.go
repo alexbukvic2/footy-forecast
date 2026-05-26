@@ -18,14 +18,18 @@ import (
 // ---------- fake service ----------
 
 type fakeTournamentPredictionSvc struct {
-	upsertPlayerFn func(
+	bulkUpsertPlayersFn func(
 		context.Context,
-		domain.UpsertPlayerPredictionInput,
-	) (*domain.PlayerPrediction, error)
-	upsertTeamFn func(
+		uuid.UUID,
+		uuid.UUID,
+		[]domain.BulkPlayerPredictionItem,
+	) ([]*domain.PlayerPredictionView, error)
+	bulkUpsertTeamsFn func(
 		context.Context,
-		domain.UpsertTeamPredictionInput,
-	) (*domain.TeamPrediction, error)
+		uuid.UUID,
+		uuid.UUID,
+		[]domain.BulkTeamPredictionItem,
+	) ([]*domain.TeamPredictionView, error)
 	listMyPlayersFn func(
 		context.Context,
 		uuid.UUID,
@@ -48,17 +52,19 @@ type fakeTournamentPredictionSvc struct {
 	) ([]*domain.LeagueTeamCategoryView, error)
 }
 
-func (f *fakeTournamentPredictionSvc) UpsertPlayerPrediction(
+func (f *fakeTournamentPredictionSvc) BulkUpsertPlayerPredictions(
 	ctx context.Context,
-	in domain.UpsertPlayerPredictionInput,
-) (*domain.PlayerPrediction, error) {
-	return f.upsertPlayerFn(ctx, in)
+	tournamentID, userID uuid.UUID,
+	items []domain.BulkPlayerPredictionItem,
+) ([]*domain.PlayerPredictionView, error) {
+	return f.bulkUpsertPlayersFn(ctx, tournamentID, userID, items)
 }
-func (f *fakeTournamentPredictionSvc) UpsertTeamPrediction(
+func (f *fakeTournamentPredictionSvc) BulkUpsertTeamPredictions(
 	ctx context.Context,
-	in domain.UpsertTeamPredictionInput,
-) (*domain.TeamPrediction, error) {
-	return f.upsertTeamFn(ctx, in)
+	tournamentID, userID uuid.UUID,
+	items []domain.BulkTeamPredictionItem,
+) ([]*domain.TeamPredictionView, error) {
+	return f.bulkUpsertTeamsFn(ctx, tournamentID, userID, items)
 }
 func (f *fakeTournamentPredictionSvc) ListPlayerPredictionsForUser(
 	ctx context.Context,
@@ -127,69 +133,119 @@ func getAuthedWithPathValues(
 
 // ---------- fixtures ----------
 
-func aPlayerPrediction(
+func aPlayerPredictionView(
 	tournamentID uuid.UUID,
 	cat domain.PlayerHandicapCategory,
 	playerID uuid.UUID,
-) *domain.PlayerPrediction {
-	return &domain.PlayerPrediction{
-		ID:           uuid.New(),
-		UserID:       uuid.New(),
-		TournamentID: tournamentID,
-		Category:     cat,
-		Pick:         playerID,
-		PickName:     "Test Player",
+) *domain.PlayerPredictionView {
+	return &domain.PlayerPredictionView{
+		Category: cat,
+		Prediction: &domain.PlayerPrediction{
+			ID:           uuid.New(),
+			UserID:       uuid.New(),
+			TournamentID: tournamentID,
+			Category:     cat,
+			Pick:         playerID,
+			PickName:     "Test Player",
+		},
 	}
 }
 
-func aTeamPrediction(
+func aTeamPredictionView(
 	tournamentID uuid.UUID,
 	cat domain.TeamHandicapCategory,
 	teamID uuid.UUID,
-) *domain.TeamPrediction {
-	return &domain.TeamPrediction{
-		ID:           uuid.New(),
-		UserID:       uuid.New(),
-		TournamentID: tournamentID,
-		Category:     cat,
-		Pick:         teamID,
-		PickName:     "Test Team",
+) *domain.TeamPredictionView {
+	return &domain.TeamPredictionView{
+		Category: cat,
+		Prediction: &domain.TeamPrediction{
+			ID:           uuid.New(),
+			UserID:       uuid.New(),
+			TournamentID: tournamentID,
+			Category:     cat,
+			Pick:         teamID,
+			PickName:     "Test Team",
+		},
 	}
 }
 
-// ---------- UpsertPlayerPredictions ----------
+// ---------- BulkUpsertPlayerPredictions ----------
 
-func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
+func TestTournamentPrediction_BulkUpsertPlayers(t *testing.T) {
 	t.Parallel()
 
 	tournamentID := uuid.New()
 	playerID := uuid.New()
-	const category = "group_top_scorer"
 
 	t.Run(
 		"returns 200 on success", func(t *testing.T) {
 			t.Parallel()
-			pred := aPlayerPrediction(tournamentID, domain.PlayerHandicapCategoryGroupTopScorer, playerID)
+			view := aPlayerPredictionView(tournamentID, domain.PlayerHandicapCategoryTotalTopScorer, playerID)
 			svc := &fakeTournamentPredictionSvc{
-				upsertPlayerFn: func(
+				bulkUpsertPlayersFn: func(
 					_ context.Context,
-					_ domain.UpsertPlayerPredictionInput,
-				) (*domain.PlayerPrediction, error) {
-					return pred, nil
+					_, _ uuid.UUID,
+					_ []domain.BulkPlayerPredictionItem,
+				) ([]*domain.PlayerPredictionView, error) {
+					return []*domain.PlayerPredictionView{view}, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{
+				{"category": "total_top_scorer", "player_id": playerID.String()},
+			}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"player_id": playerID.String()},
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusOK, rec.Code)
-			var resp map[string]any
+			var resp []map[string]any
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Equal(t, pred.ID.String(), resp["id"])
-			require.Equal(t, category, resp["category"])
-			require.Equal(t, playerID.String(), resp["player_id"])
+			require.Len(t, resp, 1)
+			require.Equal(t, "total_top_scorer", resp[0]["category"])
+			require.Equal(t, playerID.String(), resp[0]["player_id"])
+		},
+	)
+
+	t.Run(
+		"accepts null player_id to clear slot", func(t *testing.T) {
+			t.Parallel()
+			svc := &fakeTournamentPredictionSvc{
+				bulkUpsertPlayersFn: func(
+					_ context.Context,
+					_, _ uuid.UUID,
+					items []domain.BulkPlayerPredictionItem,
+				) ([]*domain.PlayerPredictionView, error) {
+					require.Len(t, items, 1)
+					require.Nil(t, items[0].PlayerID)
+					return []*domain.PlayerPredictionView{}, nil
+				},
+			}
+			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{
+				{"category": "total_top_scorer", "player_id": nil},
+			}
+			rec := putJSONAuthedWithPathValues(
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
+			)
+			require.Equal(t, http.StatusOK, rec.Code)
+		},
+	)
+
+	t.Run(
+		"returns 400 on malformed JSON", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodPut, "/tournaments/"+tournamentID.String()+"/predictions/players", strings.NewReader("not-json"))
+			req.Header.Set("Content-Type", "application/json")
+			req = authedRequest(req)
+			req.SetPathValue("tournamentId", tournamentID.String())
+			rec := httptest.NewRecorder()
+			h.BulkUpsertPlayerPredictions(rec, req)
+			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
 	)
 
@@ -197,23 +253,11 @@ func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
 		"returns 400 on invalid category", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			body := []map[string]any{{"category": "bad_cat", "player_id": playerID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players/bad_cat",
-				[]string{"tournamentId", tournamentID.String(), "category", "bad_cat"},
-				map[string]any{"player_id": playerID.String()},
-			)
-			require.Equal(t, http.StatusBadRequest, rec.Code)
-		},
-	)
-
-	t.Run(
-		"returns 400 on invalid tournament ID", func(t *testing.T) {
-			t.Parallel()
-			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/bad-uuid/predictions/players/"+category,
-				[]string{"tournamentId", "bad-uuid", "category", category},
-				map[string]any{"player_id": playerID.String()},
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
@@ -223,10 +267,11 @@ func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
 		"returns 400 on invalid player_id", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			body := []map[string]any{{"category": "total_top_scorer", "player_id": "not-a-uuid"}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"player_id": "not-a-uuid"},
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
@@ -236,18 +281,16 @@ func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
 		"returns 403 when locked", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				upsertPlayerFn: func(
-					_ context.Context,
-					_ domain.UpsertPlayerPredictionInput,
-				) (*domain.PlayerPrediction, error) {
+				bulkUpsertPlayersFn: func(_ context.Context, _, _ uuid.UUID, _ []domain.BulkPlayerPredictionItem) ([]*domain.PlayerPredictionView, error) {
 					return nil, domain.ErrForbidden
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{{"category": "total_top_scorer", "player_id": playerID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"player_id": playerID.String()},
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusForbidden, rec.Code)
 		},
@@ -257,18 +300,16 @@ func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
 		"returns 404 when player not found", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				upsertPlayerFn: func(
-					_ context.Context,
-					_ domain.UpsertPlayerPredictionInput,
-				) (*domain.PlayerPrediction, error) {
+				bulkUpsertPlayersFn: func(_ context.Context, _, _ uuid.UUID, _ []domain.BulkPlayerPredictionItem) ([]*domain.PlayerPredictionView, error) {
 					return nil, domain.ErrNotFound
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{{"category": "total_top_scorer", "player_id": playerID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"player_id": playerID.String()},
+				t, h.BulkUpsertPlayerPredictions, "/tournaments/"+tournamentID.String()+"/predictions/players",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusNotFound, rec.Code)
 		},
@@ -278,54 +319,94 @@ func TestTournamentPrediction_UpsertPlayer(t *testing.T) {
 		"returns 401 when unauthenticated", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			raw, _ := json.Marshal(map[string]any{"player_id": playerID.String()})
-			req := httptest.NewRequest(
-				http.MethodPut,
-				"/tournaments/"+tournamentID.String()+"/predictions/players/"+category,
-				strings.NewReader(string(raw)),
-			)
+			raw, _ := json.Marshal([]map[string]any{{"category": "total_top_scorer", "player_id": playerID.String()}})
+			req := httptest.NewRequest(http.MethodPut, "/tournaments/"+tournamentID.String()+"/predictions/players", strings.NewReader(string(raw)))
 			req.Header.Set("Content-Type", "application/json")
 			req.SetPathValue("tournamentId", tournamentID.String())
-			req.SetPathValue("category", category)
 			rec := httptest.NewRecorder()
-			h.UpsertPlayerPredictions(rec, req)
+			h.BulkUpsertPlayerPredictions(rec, req)
 			require.Equal(t, http.StatusUnauthorized, rec.Code)
 		},
 	)
 }
 
-// ---------- UpsertTeamPredictions ----------
+// ---------- BulkUpsertTeamPredictions ----------
 
-func TestTournamentPrediction_UpsertTeam(t *testing.T) {
+func TestTournamentPrediction_BulkUpsertTeams(t *testing.T) {
 	t.Parallel()
 
 	tournamentID := uuid.New()
 	teamID := uuid.New()
-	const category = "winner"
 
 	t.Run(
 		"returns 200 on success", func(t *testing.T) {
 			t.Parallel()
-			pred := aTeamPrediction(tournamentID, domain.TeamHandicapCategoryWinner, teamID)
+			view := aTeamPredictionView(tournamentID, domain.TeamHandicapCategoryWinner, teamID)
 			svc := &fakeTournamentPredictionSvc{
-				upsertTeamFn: func(
+				bulkUpsertTeamsFn: func(
 					_ context.Context,
-					_ domain.UpsertTeamPredictionInput,
-				) (*domain.TeamPrediction, error) {
-					return pred, nil
+					_, _ uuid.UUID,
+					_ []domain.BulkTeamPredictionItem,
+				) ([]*domain.TeamPredictionView, error) {
+					return []*domain.TeamPredictionView{view}, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{
+				{"category": "winner", "slot_index": 0, "team_id": teamID.String()},
+			}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"team_id": teamID.String()},
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusOK, rec.Code)
-			var resp map[string]any
+			var resp []map[string]any
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Equal(t, pred.ID.String(), resp["id"])
-			require.Equal(t, teamID.String(), resp["team_id"])
+			require.Len(t, resp, 1)
+			require.Equal(t, "winner", resp[0]["category"])
+			require.Equal(t, teamID.String(), resp[0]["team_id"])
+		},
+	)
+
+	t.Run(
+		"accepts null team_id to clear slot", func(t *testing.T) {
+			t.Parallel()
+			svc := &fakeTournamentPredictionSvc{
+				bulkUpsertTeamsFn: func(
+					_ context.Context,
+					_, _ uuid.UUID,
+					items []domain.BulkTeamPredictionItem,
+				) ([]*domain.TeamPredictionView, error) {
+					require.Len(t, items, 1)
+					require.Nil(t, items[0].TeamID)
+					return []*domain.TeamPredictionView{}, nil
+				},
+			}
+			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{
+				{"category": "winner", "slot_index": 0, "team_id": nil},
+			}
+			rec := putJSONAuthedWithPathValues(
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
+			)
+			require.Equal(t, http.StatusOK, rec.Code)
+		},
+	)
+
+	t.Run(
+		"returns 400 on malformed JSON", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodPut, "/tournaments/"+tournamentID.String()+"/predictions/teams", strings.NewReader("not-json"))
+			req.Header.Set("Content-Type", "application/json")
+			req = authedRequest(req)
+			req.SetPathValue("tournamentId", tournamentID.String())
+			rec := httptest.NewRecorder()
+			h.BulkUpsertTeamPredictions(rec, req)
+			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
 	)
 
@@ -333,23 +414,11 @@ func TestTournamentPrediction_UpsertTeam(t *testing.T) {
 		"returns 400 on invalid category", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			body := []map[string]any{{"category": "bad_cat", "slot_index": 0, "team_id": teamID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams/bad_cat",
-				[]string{"tournamentId", tournamentID.String(), "category", "bad_cat"},
-				map[string]any{"team_id": teamID.String()},
-			)
-			require.Equal(t, http.StatusBadRequest, rec.Code)
-		},
-	)
-
-	t.Run(
-		"returns 400 on invalid tournament ID", func(t *testing.T) {
-			t.Parallel()
-			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/bad-uuid/predictions/teams/"+category,
-				[]string{"tournamentId", "bad-uuid", "category", category},
-				map[string]any{"team_id": teamID.String()},
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
@@ -359,10 +428,11 @@ func TestTournamentPrediction_UpsertTeam(t *testing.T) {
 		"returns 400 on invalid team_id", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			body := []map[string]any{{"category": "winner", "slot_index": 0, "team_id": "not-a-uuid"}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"team_id": "not-a-uuid"},
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusBadRequest, rec.Code)
 		},
@@ -372,17 +442,12 @@ func TestTournamentPrediction_UpsertTeam(t *testing.T) {
 		"returns 401 when unauthenticated", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			raw, _ := json.Marshal(map[string]any{"team_id": teamID.String()})
-			req := httptest.NewRequest(
-				http.MethodPut,
-				"/tournaments/"+tournamentID.String()+"/predictions/teams/"+category,
-				strings.NewReader(string(raw)),
-			)
+			raw, _ := json.Marshal([]map[string]any{{"category": "winner", "slot_index": 0, "team_id": teamID.String()}})
+			req := httptest.NewRequest(http.MethodPut, "/tournaments/"+tournamentID.String()+"/predictions/teams", strings.NewReader(string(raw)))
 			req.Header.Set("Content-Type", "application/json")
 			req.SetPathValue("tournamentId", tournamentID.String())
-			req.SetPathValue("category", category)
 			rec := httptest.NewRecorder()
-			h.UpsertTeamPredictions(rec, req)
+			h.BulkUpsertTeamPredictions(rec, req)
 			require.Equal(t, http.StatusUnauthorized, rec.Code)
 		},
 	)
@@ -391,18 +456,16 @@ func TestTournamentPrediction_UpsertTeam(t *testing.T) {
 		"returns 403 when locked", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				upsertTeamFn: func(
-					_ context.Context,
-					_ domain.UpsertTeamPredictionInput,
-				) (*domain.TeamPrediction, error) {
+				bulkUpsertTeamsFn: func(_ context.Context, _, _ uuid.UUID, _ []domain.BulkTeamPredictionItem) ([]*domain.TeamPredictionView, error) {
 					return nil, domain.ErrForbidden
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{{"category": "winner", "slot_index": 0, "team_id": teamID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"team_id": teamID.String()},
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusForbidden, rec.Code)
 		},
@@ -412,18 +475,16 @@ func TestTournamentPrediction_UpsertTeam(t *testing.T) {
 		"returns 404 when team not found", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				upsertTeamFn: func(
-					_ context.Context,
-					_ domain.UpsertTeamPredictionInput,
-				) (*domain.TeamPrediction, error) {
+				bulkUpsertTeamsFn: func(_ context.Context, _, _ uuid.UUID, _ []domain.BulkTeamPredictionItem) ([]*domain.TeamPredictionView, error) {
 					return nil, domain.ErrNotFound
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			body := []map[string]any{{"category": "winner", "slot_index": 0, "team_id": teamID.String()}}
 			rec := putJSONAuthedWithPathValues(
-				t, h.UpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams/"+category,
-				[]string{"tournamentId", tournamentID.String(), "category", category},
-				map[string]any{"team_id": teamID.String()},
+				t, h.BulkUpsertTeamPredictions, "/tournaments/"+tournamentID.String()+"/predictions/teams",
+				[]string{"tournamentId", tournamentID.String()},
+				body,
 			)
 			require.Equal(t, http.StatusNotFound, rec.Code)
 		},

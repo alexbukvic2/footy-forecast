@@ -378,14 +378,14 @@ type Fixture struct {
 	TournamentID     uuid.UUID
 	HomeTeamID       uuid.UUID
 	AwayTeamID       uuid.UUID
-	Round            string
 	KickoffAt        time.Time
 	Status           FixtureStatus
-	PredictionLocked bool
 	GoalsHome        *int32
 	GoalsAway        *int32
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	Round            string
+	PredictionLocked bool
 }
 
 type League struct {
