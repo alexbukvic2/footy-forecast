@@ -92,6 +92,36 @@ WHERE tournament_id = @tournament_id
   AND category      = 'playoff'
   AND slot_index    = 2;
 
+-- name: DeletePlayerPredictionGroup :exec
+DELETE FROM player_predictions
+WHERE user_id       = @user_id
+  AND tournament_id = @tournament_id
+  AND category      = @category
+  AND group_letter  = @group_letter;
+
+-- name: DeletePlayerPredictionNoGroup :exec
+DELETE FROM player_predictions
+WHERE user_id       = @user_id
+  AND tournament_id = @tournament_id
+  AND category      = @category
+  AND group_letter  IS NULL;
+
+-- name: DeleteTeamPredictionGroup :exec
+DELETE FROM team_predictions
+WHERE user_id       = @user_id
+  AND tournament_id = @tournament_id
+  AND category      = @category
+  AND group_letter  = @group_letter
+  AND slot_index    = @slot_index;
+
+-- name: DeleteTeamPredictionNoGroup :exec
+DELETE FROM team_predictions
+WHERE user_id       = @user_id
+  AND tournament_id = @tournament_id
+  AND category      = @category
+  AND group_letter  IS NULL
+  AND slot_index    = @slot_index;
+
 -- name: ListLeagueMembersForPredictions :many
 SELECT lm.user_id, u.display_name
 FROM league_members lm

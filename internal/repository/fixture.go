@@ -138,17 +138,19 @@ func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, re
 	return out, nil
 }
 
-func fixtureFromModel(f dbgen.Fixture) *domain.Fixture {
+func fixtureFromModel(f dbgen.GetFixtureByIDRow) *domain.Fixture {
 	fix := &domain.Fixture{
-		ID:           f.ID,
-		ExternalID:   f.ExternalID,
-		TournamentID: f.TournamentID,
-		HomeTeamID:   f.HomeTeamID,
-		AwayTeamID:   f.AwayTeamID,
-		KickoffAt:    f.KickoffAt,
-		Status:       domain.FixtureStatus(f.Status),
-		CreatedAt:    f.CreatedAt,
-		UpdatedAt:    f.UpdatedAt,
+		ID:               f.ID,
+		ExternalID:       f.ExternalID,
+		TournamentID:     f.TournamentID,
+		HomeTeamID:       f.HomeTeamID,
+		AwayTeamID:       f.AwayTeamID,
+		Round:            f.Round,
+		KickoffAt:        f.KickoffAt,
+		Status:           domain.FixtureStatus(f.Status),
+		PredictionLocked: f.PredictionLocked,
+		CreatedAt:        f.CreatedAt,
+		UpdatedAt:        f.UpdatedAt,
 	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
@@ -163,17 +165,19 @@ func fixtureFromModel(f dbgen.Fixture) *domain.Fixture {
 
 func fixtureFromListRow(f dbgen.ListFixturesByTournamentRow) *domain.Fixture {
 	fix := &domain.Fixture{
-		ID:           f.ID,
-		ExternalID:   f.ExternalID,
-		TournamentID: f.TournamentID,
-		HomeTeamID:   f.HomeTeamID,
-		AwayTeamID:   f.AwayTeamID,
-		HomeTeamName: f.HomeTeamName,
-		AwayTeamName: f.AwayTeamName,
-		KickoffAt:    f.KickoffAt,
-		Status:       domain.FixtureStatus(f.Status),
-		CreatedAt:    f.CreatedAt,
-		UpdatedAt:    f.UpdatedAt,
+		ID:               f.ID,
+		ExternalID:       f.ExternalID,
+		TournamentID:     f.TournamentID,
+		HomeTeamID:       f.HomeTeamID,
+		AwayTeamID:       f.AwayTeamID,
+		HomeTeamName:     f.HomeTeamName,
+		AwayTeamName:     f.AwayTeamName,
+		Round:            f.Round,
+		KickoffAt:        f.KickoffAt,
+		Status:           domain.FixtureStatus(f.Status),
+		PredictionLocked: f.PredictionLocked,
+		CreatedAt:        f.CreatedAt,
+		UpdatedAt:        f.UpdatedAt,
 	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
@@ -188,17 +192,19 @@ func fixtureFromListRow(f dbgen.ListFixturesByTournamentRow) *domain.Fixture {
 
 func fixtureFromLockedRow(f dbgen.ListLockedFixturesByLeagueRow) *domain.Fixture {
 	fix := &domain.Fixture{
-		ID:           f.ID,
-		ExternalID:   f.ExternalID,
-		TournamentID: f.TournamentID,
-		HomeTeamID:   f.HomeTeamID,
-		AwayTeamID:   f.AwayTeamID,
-		HomeTeamName: f.HomeTeamName,
-		AwayTeamName: f.AwayTeamName,
-		KickoffAt:    f.KickoffAt,
-		Status:       domain.FixtureStatus(f.Status),
-		CreatedAt:    f.CreatedAt,
-		UpdatedAt:    f.UpdatedAt,
+		ID:               f.ID,
+		ExternalID:       f.ExternalID,
+		TournamentID:     f.TournamentID,
+		HomeTeamID:       f.HomeTeamID,
+		AwayTeamID:       f.AwayTeamID,
+		HomeTeamName:     f.HomeTeamName,
+		AwayTeamName:     f.AwayTeamName,
+		Round:            f.Round,
+		KickoffAt:        f.KickoffAt,
+		Status:           domain.FixtureStatus(f.Status),
+		PredictionLocked: f.PredictionLocked,
+		CreatedAt:        f.CreatedAt,
+		UpdatedAt:        f.UpdatedAt,
 	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)

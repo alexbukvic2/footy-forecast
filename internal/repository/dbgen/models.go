@@ -373,17 +373,19 @@ func AllUserStatusValues() []UserStatus {
 }
 
 type Fixture struct {
-	ID           uuid.UUID
-	ExternalID   int64
-	TournamentID uuid.UUID
-	HomeTeamID   uuid.UUID
-	AwayTeamID   uuid.UUID
-	KickoffAt    time.Time
-	Status       FixtureStatus
-	GoalsHome    *int32
-	GoalsAway    *int32
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID               uuid.UUID
+	ExternalID       int64
+	TournamentID     uuid.UUID
+	HomeTeamID       uuid.UUID
+	AwayTeamID       uuid.UUID
+	KickoffAt        time.Time
+	Status           FixtureStatus
+	GoalsHome        *int32
+	GoalsAway        *int32
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	Round            string
+	PredictionLocked bool
 }
 
 type League struct {

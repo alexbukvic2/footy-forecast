@@ -46,19 +46,31 @@ func (r *PlayerRepository) GetByID(
 	}, nil
 }
 
+// PlayerRepo is the subset of the repository that PlayerService needs.
+
 // Search returns up to 5 players in the given tournament whose name fuzzy-matches query.
 // escapedQuery has SQL wildcard characters escaped (for ILIKE); rawQuery is the original
-// trimmed input used for similarity ranking. Both are provided by the caller (service layer).
+// trimmed input used for similarity ranking. groupLetter, when non-nil, restricts results
+// to players whose team is in that group. hasHandicap, when true, restricts to players
+// with at least one handicap row. Both are provided by the caller (service layer).
 // Returns an empty (non-nil) slice when nothing matches.
 func (r *PlayerRepository) Search(
 	ctx context.Context,
 	tournamentID uuid.UUID,
 	escapedQuery, rawQuery string,
+	groupLetter *string,
+	hasHandicap bool,
 ) ([]*domain.PlayerSearchResult, error) {
+	gl := ""
+	if groupLetter != nil {
+		gl = *groupLetter
+	}
 	rows, err := r.q.SearchPlayers(ctx, dbgen.SearchPlayersParams{
 		TournamentID: tournamentID,
 		EscapedQuery: escapedQuery,
 		RawQuery:     rawQuery,
+		GroupLetter:  gl,
+		HasHandicap:  hasHandicap,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("search players: %w", err)
@@ -90,6 +102,7 @@ func playerSearchResultFromRow(row dbgen.SearchPlayersRow) (*domain.PlayerSearch
 		TournamentID: row.TournamentID,
 		TeamName:     row.TeamName,
 		TeamLogo:     row.TeamLogo,
+		GroupLetter:  row.GroupLetter,
 		Handicaps:    h,
 	}, nil
 }

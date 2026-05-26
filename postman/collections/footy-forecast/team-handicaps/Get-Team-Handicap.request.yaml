@@ -1,8 +1,0 @@
-$kind: http-request
-name: Get Team Handicap
-method: GET
-url: '{{baseUrl}}/team-handicaps/{{teamId}}/winner'
-order: 1000
-headers:
-  - key: Authorization
-    value: 'Bearer {{authToken}}'

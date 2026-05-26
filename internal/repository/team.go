@@ -57,3 +57,41 @@ func (r *TeamRepository) ListGroupLettersByTournament(ctx context.Context, tourn
 	}
 	return out, nil
 }
+
+// ListWithHandicapsByTournament returns all teams for the tournament with their handicaps.
+// Teams with no handicap rows will have an empty Handicaps slice.
+func (r *TeamRepository) ListWithHandicapsByTournament(ctx context.Context, tournamentID uuid.UUID) ([]domain.TeamWithHandicaps, error) {
+	rows, err := r.q.ListTeamsWithHandicapsByTournament(ctx, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("list teams with handicaps: %w", err)
+	}
+
+	// Collapse LEFT JOIN rows (one per team×handicap) into per-team entries.
+	index := make(map[uuid.UUID]int, len(rows))
+	out := make([]domain.TeamWithHandicaps, 0, len(rows))
+
+	for _, row := range rows {
+		idx, seen := index[row.ID]
+		if !seen {
+			out = append(out, domain.TeamWithHandicaps{
+				Team: domain.Team{
+					ID:           row.ID,
+					Name:         row.Name,
+					Logo:         row.Logo,
+					TournamentID: row.TournamentID,
+					GroupLetter:  row.GroupLetter,
+				},
+				Handicaps: []domain.TeamHandicapItem{},
+			})
+			idx = len(out) - 1
+			index[row.ID] = idx
+		}
+		if row.HandicapCategory != nil && row.HandicapPoints != nil {
+			out[idx].Handicaps = append(out[idx].Handicaps, domain.TeamHandicapItem{
+				Category: domain.TeamHandicapCategory(*row.HandicapCategory),
+				Points:   int(*row.HandicapPoints),
+			})
+		}
+	}
+	return out, nil
+}

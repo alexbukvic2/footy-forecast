@@ -8,7 +8,9 @@
     "kickoff_at": "2026-05-18 19:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "6d9fedd2-5187-4f2b-ad7e-f56845de3706",
@@ -19,7 +21,9 @@
     "kickoff_at": "2026-05-19 02:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 2,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "681553ba-c3e9-4799-b2df-7473897b3baa",
@@ -30,7 +34,9 @@
     "kickoff_at": "2026-05-19 19:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 0,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "0f104789-7427-47fc-973c-0b6f115aa29a",
@@ -41,7 +47,9 @@
     "kickoff_at": "2026-05-20 01:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 3,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
@@ -52,7 +60,9 @@
     "kickoff_at": "2026-05-20 19:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
@@ -63,7 +73,9 @@
     "kickoff_at": "2026-05-20 22:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 2,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 1",
+    "locked": true
   },
   {
     "id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
@@ -74,7 +86,9 @@
     "kickoff_at": "2026-05-21 01:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 0,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
@@ -85,7 +99,9 @@
     "kickoff_at": "2026-05-21 04:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 2
+    "goals_away": 2,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "c49ae229-73d1-47fa-95d4-7b2c49eefd9b",
@@ -96,7 +112,9 @@
     "kickoff_at": "2026-05-21 17:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 2,
-    "goals_away": 2
+    "goals_away": 2,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "09167786-da07-4be2-8975-f9fe706c4146",
@@ -107,7 +125,9 @@
     "kickoff_at": "2026-05-21 20:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 3,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "1b59ac94-7c0f-496b-8b1a-204a1f2661ee",
@@ -118,7 +138,9 @@
     "kickoff_at": "2026-05-21 23:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 0,
-    "goals_away": 2
+    "goals_away": 2,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "2240a249-4a26-483c-8393-5e99f0fe08f4",
@@ -129,7 +151,9 @@
     "kickoff_at": "2026-05-22 02:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 3
+    "goals_away": 3,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "801b106a-f4b9-4975-b16f-6ca1d6a4c3d7",
@@ -140,7 +164,9 @@
     "kickoff_at": "2026-05-22 16:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 4,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "d3046169-56e6-4304-b6b4-5f067067afb2",
@@ -151,7 +177,9 @@
     "kickoff_at": "2026-05-22 19:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 2,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "40c3fb8f-f6c2-4354-8ac1-f57712f35925",
@@ -162,7 +190,9 @@
     "kickoff_at": "2026-05-22 22:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 0,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 2",
+    "locked": true
   },
   {
     "id": "970583f7-f766-42de-af14-7933be205457",
@@ -173,7 +203,9 @@
     "kickoff_at": "2026-05-23 01:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 3",
+    "locked": true
   },
   {
     "id": "eecdfdff-60fa-4e63-986a-26cd141233b1",
@@ -184,7 +216,9 @@
     "kickoff_at": "2026-05-23 19:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 3,
-    "goals_away": 2
+    "goals_away": 2,
+    "round": "Group Stage - 3",
+    "locked": true
   },
   {
     "id": "93a79b18-27ef-495a-9e7a-75cd47fea134",
@@ -195,7 +229,9 @@
     "kickoff_at": "2026-05-23 22:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 2,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 3",
+    "locked": true
   },
   {
     "id": "33fd3039-1d13-46e3-8da4-dcc1245ea713",
@@ -206,7 +242,9 @@
     "kickoff_at": "2026-05-24 01:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 1,
-    "goals_away": 1
+    "goals_away": 1,
+    "round": "Group Stage - 3",
+    "locked": true
   },
   {
     "id": "595f6d91-865c-4171-b14f-b4c55903f048",
@@ -217,7 +255,9 @@
     "kickoff_at": "2026-05-24 04:00:00.000000 +00:00",
     "status": "finished",
     "goals_home": 0,
-    "goals_away": 0
+    "goals_away": 0,
+    "round": "Group Stage - 3",
+    "locked": true
   },
   {
     "id": "705a66fb-d727-4a99-9e3a-3cee7c005e60",
@@ -226,7 +266,8 @@
     "home_team_id": "97236949-fb15-476c-9680-9f8134b13b37",
     "away_team_id": "bccca2cb-419e-49c9-ac3f-ca93676bb1b7",
     "kickoff_at": "2026-06-17 17:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "5b4d5fc4-f590-4dc7-8de9-c33fd6cbb1b9",
@@ -235,7 +276,8 @@
     "home_team_id": "ba31703c-47d7-47d2-b0ec-32381db03ea2",
     "away_team_id": "4f816cd1-5c92-4fcc-abaa-6c96a1e3115d",
     "kickoff_at": "2026-06-17 20:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "cc9a6fd8-39ca-40fa-8418-f929c5dfc193",
@@ -244,7 +286,8 @@
     "home_team_id": "54807110-1b9b-4e13-979d-262335c49d6b",
     "away_team_id": "4774adc9-0468-4a28-b911-4879a043ad62",
     "kickoff_at": "2026-06-17 23:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "14f39eaa-d84d-462e-80e9-0ca614ccc341",
@@ -253,7 +296,8 @@
     "home_team_id": "bf68d283-cc5c-49d3-9d34-1817b1271a05",
     "away_team_id": "2360ff4b-a100-4b65-a01b-fa79b39af5e8",
     "kickoff_at": "2026-06-18 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "61f4ce62-7c74-41ce-9edd-d5846ab4aed6",
@@ -262,7 +306,8 @@
     "home_team_id": "9f44c6d9-99d0-4124-857b-2bf0a2d26d8d",
     "away_team_id": "7a54a441-9a70-4287-a536-940144792006",
     "kickoff_at": "2026-06-18 16:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "e1d60fe9-2ba6-4f9e-b20e-129997cfe1ed",
@@ -271,7 +316,8 @@
     "home_team_id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
     "away_team_id": "c5444452-de4d-47f7-a177-b4a4c19c2699",
     "kickoff_at": "2026-06-18 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "8465f30c-cefe-4399-b757-4fc605ee12db",
@@ -280,7 +326,8 @@
     "home_team_id": "2f721a51-9aaf-4cab-86e8-9fea0fb1b29f",
     "away_team_id": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
     "kickoff_at": "2026-06-18 22:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 4"
   },
   {
     "id": "837c392d-72cf-4cc7-8e35-a81551526143",
@@ -289,7 +336,8 @@
     "home_team_id": "11fe28ff-3b8e-4862-9a98-be8d1024a1c2",
     "away_team_id": "e73417fb-53ae-4178-8fbe-fb451f400e44",
     "kickoff_at": "2026-06-19 01:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "d74ef5ea-70cd-4bec-bfc9-e51b825beb61",
@@ -298,7 +346,8 @@
     "home_team_id": "12d0bebf-3a01-48f6-8ee0-2df8c7e563b5",
     "away_team_id": "6a2be3b0-f500-4bc1-8d0c-84adb759bd77",
     "kickoff_at": "2026-06-19 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "be954463-8e36-4317-bf40-1ecc8fdecad2",
@@ -307,7 +356,8 @@
     "home_team_id": "b824fb76-e220-4a93-a231-d8109737a6e2",
     "away_team_id": "8214b191-5790-4095-8f62-5a6eb56dda35",
     "kickoff_at": "2026-06-19 22:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "e862e720-cc30-4a27-9260-39ded8749dad",
@@ -316,7 +366,8 @@
     "home_team_id": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
     "away_team_id": "2a27b663-66cd-4602-909a-7755d7d2df6b",
     "kickoff_at": "2026-06-20 00:30:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "c23db38d-3c15-406b-8e20-0e3480fc4a66",
@@ -325,7 +376,8 @@
     "home_team_id": "e083b342-e482-442a-a3fb-a556438c14bc",
     "away_team_id": "81281845-7463-4595-b8f4-7d2c73593f31",
     "kickoff_at": "2026-06-20 03:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "ebe45666-ed41-47b3-a9ef-f49d65d1a3a1",
@@ -334,7 +386,8 @@
     "home_team_id": "6386368d-daec-433a-8115-06d24451c2e5",
     "away_team_id": "23ae4801-3e88-44d1-bade-297e2e68faac",
     "kickoff_at": "2026-06-20 17:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "d174bb5e-fa9a-4413-b810-4b22d5a6ab9f",
@@ -343,7 +396,8 @@
     "home_team_id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51",
     "away_team_id": "f6b4d0e9-9cc6-4983-9cbf-845ad49c47a6",
     "kickoff_at": "2026-06-20 20:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 5"
   },
   {
     "id": "90eb9fcd-610d-482f-a3b8-625d3b9c4f81",
@@ -352,7 +406,8 @@
     "home_team_id": "1ee063ad-1bd1-422b-b20c-23363e36572d",
     "away_team_id": "723e06e9-5219-4630-8bcf-d7391be47840",
     "kickoff_at": "2026-06-21 00:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "bc3d4538-8a3e-4e54-ab3b-76721fb75d6c",
@@ -361,7 +416,8 @@
     "home_team_id": "ab6ce035-4e52-4aa8-b963-cfd21d5c0eea",
     "away_team_id": "a1aaae66-bf39-4690-920e-65c4d97a3705",
     "kickoff_at": "2026-06-21 04:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "9deee71f-2deb-46fe-9082-4a7737d622b4",
@@ -370,7 +426,8 @@
     "home_team_id": "1fc6d88a-7989-44f1-ab0c-ef0c7348f82e",
     "away_team_id": "617e5085-4cab-421f-9791-d4232ac1d32f",
     "kickoff_at": "2026-06-21 16:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "bd99e7fa-3af9-441a-b359-b5a7a03fbd4c",
@@ -379,7 +436,8 @@
     "home_team_id": "4c95f9bd-5803-4461-9e23-640e9f38ba37",
     "away_team_id": "efb67693-9e60-4dbe-8d85-04be3f182def",
     "kickoff_at": "2026-06-21 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "a62138e9-80b8-4bb8-9bc4-2f260c4fe0bf",
@@ -388,7 +446,8 @@
     "home_team_id": "e3c8a17a-0b03-4ea3-b0a2-e16e80232e82",
     "away_team_id": "66d42dae-b140-4631-bfe9-36e787bb09fb",
     "kickoff_at": "2026-06-21 22:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "f61f35b3-e2e3-4cc4-93e1-b285da1f0f13",
@@ -397,7 +456,8 @@
     "home_team_id": "f7b333b2-e857-4832-a322-28c8ff735297",
     "away_team_id": "796303a1-72a3-4740-8f47-0c8e1ead5137",
     "kickoff_at": "2026-06-22 01:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "ff9e3115-93b9-4492-89b6-23b7c4e0da79",
@@ -406,7 +466,8 @@
     "home_team_id": "e25ff3f8-d3a5-4940-8037-8c484804c093",
     "away_team_id": "edacb8e7-035b-48b3-acc0-08a0ca8e9ba9",
     "kickoff_at": "2026-06-22 17:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "6ed3d4df-a741-4acb-b63d-4899e46baa2b",
@@ -415,7 +476,8 @@
     "home_team_id": "27cf84db-ad5c-44a3-87f9-32a517733bbb",
     "away_team_id": "e4f747c0-cb92-4f2e-814d-4a870fe6e371",
     "kickoff_at": "2026-06-22 21:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 6"
   },
   {
     "id": "b43db002-905c-427b-80e9-555d27a5ae89",
@@ -424,7 +486,8 @@
     "home_team_id": "0ef77409-b8e4-4607-8b68-1f2c0e742b30",
     "away_team_id": "63c2e744-5552-420c-a18c-a59db7468da6",
     "kickoff_at": "2026-06-23 00:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "ad873227-3e25-423d-99a5-b2ca09ef7d46",
@@ -433,7 +496,8 @@
     "home_team_id": "0434cb80-1162-4614-831a-ebe60c4fea25",
     "away_team_id": "51d6436a-37a7-4f81-b735-ce3df6ab565c",
     "kickoff_at": "2026-06-23 03:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "d361111c-2953-441c-9c74-3a44b48ad818",
@@ -442,7 +506,8 @@
     "home_team_id": "97236949-fb15-476c-9680-9f8134b13b37",
     "away_team_id": "bf68d283-cc5c-49d3-9d34-1817b1271a05",
     "kickoff_at": "2026-06-23 17:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "be53f102-1b07-417f-b04a-9ae9573e2b9d",
@@ -451,7 +516,8 @@
     "home_team_id": "ba31703c-47d7-47d2-b0ec-32381db03ea2",
     "away_team_id": "54807110-1b9b-4e13-979d-262335c49d6b",
     "kickoff_at": "2026-06-23 20:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "3c3f31eb-2a3d-4888-afdc-91b9267386ab",
@@ -460,7 +526,8 @@
     "home_team_id": "4774adc9-0468-4a28-b911-4879a043ad62",
     "away_team_id": "4f816cd1-5c92-4fcc-abaa-6c96a1e3115d",
     "kickoff_at": "2026-06-23 23:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "9f6e573f-21da-41d8-84e5-c4d307de11a5",
@@ -469,7 +536,8 @@
     "home_team_id": "2360ff4b-a100-4b65-a01b-fa79b39af5e8",
     "away_team_id": "bccca2cb-419e-49c9-ac3f-ca93676bb1b7",
     "kickoff_at": "2026-06-24 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "8e78d6cf-4c02-4c03-b593-0a3c71e2276b",
@@ -478,7 +546,8 @@
     "home_team_id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
     "away_team_id": "2f721a51-9aaf-4cab-86e8-9fea0fb1b29f",
     "kickoff_at": "2026-06-24 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "af196d2a-cbf2-4195-b027-225470c07ab9",
@@ -487,7 +556,8 @@
     "home_team_id": "c5444452-de4d-47f7-a177-b4a4c19c2699",
     "away_team_id": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
     "kickoff_at": "2026-06-24 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "c74d8337-ee4b-480c-9139-058c472ee3f8",
@@ -496,7 +566,8 @@
     "home_team_id": "8214b191-5790-4095-8f62-5a6eb56dda35",
     "away_team_id": "2a27b663-66cd-4602-909a-7755d7d2df6b",
     "kickoff_at": "2026-06-24 22:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "a5a05c46-43a4-4011-92df-0e48c85827b1",
@@ -505,7 +576,8 @@
     "home_team_id": "b824fb76-e220-4a93-a231-d8109737a6e2",
     "away_team_id": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
     "kickoff_at": "2026-06-24 22:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 7"
   },
   {
     "id": "88f35f80-e7f3-449c-ba9f-03087363a733",
@@ -514,7 +586,8 @@
     "home_team_id": "9f44c6d9-99d0-4124-857b-2bf0a2d26d8d",
     "away_team_id": "11fe28ff-3b8e-4862-9a98-be8d1024a1c2",
     "kickoff_at": "2026-06-25 01:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "c157f157-0619-486d-9d54-11eec6e522e6",
@@ -523,7 +596,8 @@
     "home_team_id": "7a54a441-9a70-4287-a536-940144792006",
     "away_team_id": "e73417fb-53ae-4178-8fbe-fb451f400e44",
     "kickoff_at": "2026-06-25 01:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "4d5cf506-96fe-430d-839c-3d89669cac42",
@@ -532,7 +606,8 @@
     "home_team_id": "1ee063ad-1bd1-422b-b20c-23363e36572d",
     "away_team_id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51",
     "kickoff_at": "2026-06-25 20:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "d0646f72-b68b-406c-b88e-7fa7c6ba8c92",
@@ -541,7 +616,8 @@
     "home_team_id": "723e06e9-5219-4630-8bcf-d7391be47840",
     "away_team_id": "f6b4d0e9-9cc6-4983-9cbf-845ad49c47a6",
     "kickoff_at": "2026-06-25 20:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "20a9fbd0-b9a2-4898-a691-19333720bed6",
@@ -550,7 +626,8 @@
     "home_team_id": "a1aaae66-bf39-4690-920e-65c4d97a3705",
     "away_team_id": "23ae4801-3e88-44d1-bade-297e2e68faac",
     "kickoff_at": "2026-06-25 23:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "a0499bad-3457-4e1e-be9d-8aa4e787c3a7",
@@ -559,7 +636,8 @@
     "home_team_id": "ab6ce035-4e52-4aa8-b963-cfd21d5c0eea",
     "away_team_id": "6386368d-daec-433a-8115-06d24451c2e5",
     "kickoff_at": "2026-06-25 23:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "76443ae8-e960-4ed9-a39f-496d42429120",
@@ -568,7 +646,8 @@
     "home_team_id": "e083b342-e482-442a-a3fb-a556438c14bc",
     "away_team_id": "12d0bebf-3a01-48f6-8ee0-2df8c7e563b5",
     "kickoff_at": "2026-06-26 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "89463ffe-1e1a-4d63-be32-0a5274fe2958",
@@ -577,7 +656,8 @@
     "home_team_id": "81281845-7463-4595-b8f4-7d2c73593f31",
     "away_team_id": "6a2be3b0-f500-4bc1-8d0c-84adb759bd77",
     "kickoff_at": "2026-06-26 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "e78ed96f-89ba-4cc8-b021-a97a7b28a6d4",
@@ -586,7 +666,8 @@
     "home_team_id": "63c2e744-5552-420c-a18c-a59db7468da6",
     "away_team_id": "e4f747c0-cb92-4f2e-814d-4a870fe6e371",
     "kickoff_at": "2026-06-26 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "fefb2cf7-a514-489d-8749-f30ca8f8fa9f",
@@ -595,7 +676,8 @@
     "home_team_id": "0ef77409-b8e4-4607-8b68-1f2c0e742b30",
     "away_team_id": "27cf84db-ad5c-44a3-87f9-32a517733bbb",
     "kickoff_at": "2026-06-26 19:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 8"
   },
   {
     "id": "b4f033b9-6588-4e62-bc96-312413384188",
@@ -604,7 +686,8 @@
     "home_team_id": "e3c8a17a-0b03-4ea3-b0a2-e16e80232e82",
     "away_team_id": "1fc6d88a-7989-44f1-ab0c-ef0c7348f82e",
     "kickoff_at": "2026-06-27 00:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "24c66e28-a53b-46fd-8e28-a22641209830",
@@ -613,7 +696,8 @@
     "home_team_id": "66d42dae-b140-4631-bfe9-36e787bb09fb",
     "away_team_id": "617e5085-4cab-421f-9791-d4232ac1d32f",
     "kickoff_at": "2026-06-27 00:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "a69d4bcf-2edd-4cc8-ab77-48639630a3ee",
@@ -622,7 +706,8 @@
     "home_team_id": "796303a1-72a3-4740-8f47-0c8e1ead5137",
     "away_team_id": "efb67693-9e60-4dbe-8d85-04be3f182def",
     "kickoff_at": "2026-06-27 03:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "ba42a9fd-96bb-44ff-8da2-820feca49fd4",
@@ -631,7 +716,8 @@
     "home_team_id": "f7b333b2-e857-4832-a322-28c8ff735297",
     "away_team_id": "4c95f9bd-5803-4461-9e23-640e9f38ba37",
     "kickoff_at": "2026-06-27 03:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "2b72eaa3-02ba-4522-8e39-257f7ddcd10e",
@@ -640,7 +726,8 @@
     "home_team_id": "4f816cd1-5c92-4fcc-abaa-6c96a1e3115d",
     "away_team_id": "54807110-1b9b-4e13-979d-262335c49d6b",
     "kickoff_at": "2026-06-27 21:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "c0f7447f-0469-4d83-a411-8398cc588f2c",
@@ -649,7 +736,8 @@
     "home_team_id": "4774adc9-0468-4a28-b911-4879a043ad62",
     "away_team_id": "ba31703c-47d7-47d2-b0ec-32381db03ea2",
     "kickoff_at": "2026-06-27 21:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "bb6c5a59-94bf-44a6-90a0-d92d7fb4f85d",
@@ -658,7 +746,8 @@
     "home_team_id": "2360ff4b-a100-4b65-a01b-fa79b39af5e8",
     "away_team_id": "97236949-fb15-476c-9680-9f8134b13b37",
     "kickoff_at": "2026-06-27 23:30:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "27df4143-56d3-4cf6-bc91-d42e2b5bb3f4",
@@ -667,7 +756,8 @@
     "home_team_id": "bccca2cb-419e-49c9-ac3f-ca93676bb1b7",
     "away_team_id": "bf68d283-cc5c-49d3-9d34-1817b1271a05",
     "kickoff_at": "2026-06-27 23:30:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "52a23d5a-3daf-4f49-babb-e6f3b8e55689",
@@ -676,7 +766,8 @@
     "home_team_id": "51d6436a-37a7-4f81-b735-ce3df6ab565c",
     "away_team_id": "edacb8e7-035b-48b3-acc0-08a0ca8e9ba9",
     "kickoff_at": "2026-06-28 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   },
   {
     "id": "c750853a-77f6-4d1f-b09e-9c8ec4ac1a08",
@@ -685,6 +776,7 @@
     "home_team_id": "0434cb80-1162-4614-831a-ebe60c4fea25",
     "away_team_id": "e25ff3f8-d3a5-4940-8037-8c484804c093",
     "kickoff_at": "2026-06-28 02:00:00.000000 +00:00",
-    "status": "upcoming"
+    "status": "upcoming",
+    "round": "Group Stage - 9"
   }
 ]

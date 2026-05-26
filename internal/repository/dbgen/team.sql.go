@@ -57,3 +57,56 @@ func (q *Queries) ListGroupLettersByTournament(ctx context.Context, tournamentID
 	}
 	return items, nil
 }
+
+const listTeamsWithHandicapsByTournament = `-- name: ListTeamsWithHandicapsByTournament :many
+SELECT
+    t.id,
+    t.name,
+    t.logo,
+    t.tournament_id,
+    t.group_letter,
+    th.category AS handicap_category,
+    th.points   AS handicap_points
+FROM teams t
+LEFT JOIN team_handicap th ON th.team_id = t.id
+WHERE t.tournament_id = $1
+ORDER BY t.name ASC, th.category ASC
+`
+
+type ListTeamsWithHandicapsByTournamentRow struct {
+	ID               uuid.UUID
+	Name             string
+	Logo             string
+	TournamentID     uuid.UUID
+	GroupLetter      *string
+	HandicapCategory *TeamHandicapCategory
+	HandicapPoints   *int32
+}
+
+func (q *Queries) ListTeamsWithHandicapsByTournament(ctx context.Context, tournamentID uuid.UUID) ([]ListTeamsWithHandicapsByTournamentRow, error) {
+	rows, err := q.db.Query(ctx, listTeamsWithHandicapsByTournament, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListTeamsWithHandicapsByTournamentRow{}
+	for rows.Next() {
+		var i ListTeamsWithHandicapsByTournamentRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Logo,
+			&i.TournamentID,
+			&i.GroupLetter,
+			&i.HandicapCategory,
+			&i.HandicapPoints,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

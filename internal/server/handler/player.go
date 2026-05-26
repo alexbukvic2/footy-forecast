@@ -32,6 +32,7 @@ type playerResponse struct {
 	Name      string                                `json:"name"`
 	TeamName  string                                `json:"team_name"`
 	TeamLogo  string                                `json:"team_logo"`
+	Group     *string                               `json:"group"`
 	Handicaps map[domain.PlayerHandicapCategory]int `json:"handicaps"`
 }
 
@@ -41,13 +42,14 @@ func toPlayerResponse(p *domain.PlayerSearchResult) playerResponse {
 		Name:      p.Name,
 		TeamName:  p.TeamName,
 		TeamLogo:  p.TeamLogo,
+		Group:     p.GroupLetter,
 		Handicaps: p.Handicaps,
 	}
 }
 
 // ---------- Handlers ----------
 
-// Search handles GET /tournaments/{tournament_id}/players/search?q=<string>.
+// Search handles GET /tournaments/{tournament_id}/players/search?q=<string>&group=<letter>.
 func (h *Player) Search(w http.ResponseWriter, r *http.Request) {
 	tournamentID, err := parseUUIDPathValue(r, "tournament_id")
 	if err != nil {
@@ -57,9 +59,18 @@ func (h *Player) Search(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query().Get("q")
 
+	var groupLetter *string
+	if g := r.URL.Query().Get("group"); g != "" {
+		groupLetter = &g
+	}
+
+	hasHandicap := r.URL.Query().Get("hasHandicap") == "true"
+
 	players, err := h.svc.Search(r.Context(), domain.SearchPlayersInput{
 		TournamentID: tournamentID,
 		Query:        q,
+		GroupLetter:  groupLetter,
+		HasHandicap:  hasHandicap,
 	})
 	if err != nil {
 		writeError(w, r, h.logger, err)

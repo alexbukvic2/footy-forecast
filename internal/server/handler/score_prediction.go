@@ -39,15 +39,17 @@ type scorePredictionResponse struct {
 }
 
 type fixtureResponse struct {
-	ID           string    `json:"id"`
-	ExternalID   int64     `json:"external_id"`
-	TournamentID string    `json:"tournament_id"`
-	HomeTeamName string    `json:"home_team_name"`
-	AwayTeamName string    `json:"away_team_name"`
-	KickoffAt    time.Time `json:"kickoff_at"`
-	Status       string    `json:"status"`
-	GoalsHome    *int      `json:"goals_home"`
-	GoalsAway    *int      `json:"goals_away"`
+	ID               string    `json:"id"`
+	ExternalID       int64     `json:"external_id"`
+	TournamentID     string    `json:"tournament_id"`
+	HomeTeamName     string    `json:"home_team_name"`
+	AwayTeamName     string    `json:"away_team_name"`
+	Round            string    `json:"round"`
+	KickoffAt        time.Time `json:"kickoff_at"`
+	Status           string    `json:"status"`
+	PredictionLocked bool      `json:"prediction_locked"`
+	GoalsHome        *int      `json:"goals_home"`
+	GoalsAway        *int      `json:"goals_away"`
 }
 
 type userFixtureViewResponse struct {
@@ -203,15 +205,17 @@ func toScorePredictionResponse(p *domain.ScorePrediction) scorePredictionRespons
 
 func toFixtureResponse(f domain.Fixture) fixtureResponse {
 	return fixtureResponse{
-		ID:           f.ID.String(),
-		ExternalID:   f.ExternalID,
-		TournamentID: f.TournamentID.String(),
-		HomeTeamName: f.HomeTeamName,
-		AwayTeamName: f.AwayTeamName,
-		KickoffAt:    f.KickoffAt,
-		Status:       string(f.Status),
-		GoalsHome:    f.GoalsHome,
-		GoalsAway:    f.GoalsAway,
+		ID:               f.ID.String(),
+		ExternalID:       f.ExternalID,
+		TournamentID:     f.TournamentID.String(),
+		HomeTeamName:     f.HomeTeamName,
+		AwayTeamName:     f.AwayTeamName,
+		Round:            f.Round,
+		KickoffAt:        f.KickoffAt,
+		Status:           string(f.Status),
+		PredictionLocked: f.PredictionLocked,
+		GoalsHome:        f.GoalsHome,
+		GoalsAway:        f.GoalsAway,
 	}
 }
 

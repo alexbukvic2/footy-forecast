@@ -127,6 +127,23 @@ type TeamLeaguePick struct {
 	Points      *int
 }
 
+// BulkPlayerPredictionItem is one item in a bulk upsert request.
+// PlayerID nil means clear (delete) the slot.
+type BulkPlayerPredictionItem struct {
+	Category    PlayerHandicapCategory
+	GroupLetter *string
+	PlayerID    *uuid.UUID
+}
+
+// BulkTeamPredictionItem is one item in a bulk upsert request.
+// TeamID nil means clear (delete) the slot.
+type BulkTeamPredictionItem struct {
+	Category    TeamHandicapCategory
+	GroupLetter *string
+	SlotIndex   int
+	TeamID      *uuid.UUID
+}
+
 // LeagueMemberDisplay carries a league member's user ID and display name.
 type LeagueMemberDisplay struct {
 	UserID      uuid.UUID

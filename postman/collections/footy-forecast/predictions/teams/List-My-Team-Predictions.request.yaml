@@ -8,3 +8,9 @@ order: 2000
 headers:
   - key: Authorization
     value: "Bearer {{authToken}}"
+scripts:
+  post-response: |
+    // Response shape: { locked: boolean, predictions: TeamPredictionView[] }
+    const body = pm.response.json();
+    pm.test("has locked field", () => pm.expect(typeof body.locked).to.equal("boolean"));
+    pm.test("has predictions array", () => pm.expect(body.predictions).to.be.an("array"));

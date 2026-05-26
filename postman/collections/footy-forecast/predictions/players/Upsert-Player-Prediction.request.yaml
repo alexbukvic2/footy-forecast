@@ -1,7 +1,7 @@
 $kind: http-request
-name: Upsert Player Prediction
+name: Bulk Upsert Player Predictions
 method: PUT
-url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/players/group_top_scorer"
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/predictions/players"
 auth:
   type: noauth
 order: 1000
@@ -13,6 +13,7 @@ headers:
 body:
   type: json
   content: |-
-    {
-      "player_id": "{{playerId}}"
-    }
+    [
+      { "category": "group_top_scorer", "group_letter": "A", "player_id": "{{playerId}}" },
+      { "category": "total_top_scorer", "group_letter": null, "player_id": "{{playerId}}" }
+    ]

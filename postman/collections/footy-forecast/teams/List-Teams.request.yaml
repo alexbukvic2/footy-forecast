@@ -1,0 +1,8 @@
+$kind: http-request
+name: List Teams
+method: GET
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/teams"
+order: 1000
+headers:
+  Authorization: Bearer {{authToken}}
+

@@ -9,9 +9,17 @@ headers:
 queryParams:
   - key: q
     value: Messi
+  - key: group
+    value: ''
+    disabled: true
+    description: 'Optional: filter by group letter, e.g. "A". Leave disabled to search all groups.'
+  - key: hasHandicap
+    value: 'true'
+    disabled: true
+    description: 'Optional: when true, only return players that have at least one handicap row.'
 scripts:
   - type: afterResponse
-    code: |-
+    code: -
       var jsonData = pm.response.json();
       if (jsonData.players && jsonData.players.length > 0) {
         pm.environment.set("playerId", jsonData.players[0].id);

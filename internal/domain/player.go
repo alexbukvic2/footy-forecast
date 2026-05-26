@@ -19,6 +19,7 @@ type PlayerSearchResult struct {
 	TournamentID uuid.UUID
 	TeamName     string
 	TeamLogo     string
+	GroupLetter  *string
 	Handicaps    map[PlayerHandicapCategory]int
 }
 
@@ -26,4 +27,6 @@ type PlayerSearchResult struct {
 type SearchPlayersInput struct {
 	TournamentID uuid.UUID
 	Query        string
+	GroupLetter  *string // optional; nil means search all groups
+	HasHandicap  bool    // when true, only return players with at least one handicap row
 }

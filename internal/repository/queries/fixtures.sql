@@ -6,14 +6,14 @@ ORDER BY kickoff_at ASC
 LIMIT 1;
 
 -- name: GetFixtureByID :one
-SELECT id, external_id, tournament_id, home_team_id, away_team_id,
-       kickoff_at, status, goals_home, goals_away, created_at, updated_at
+SELECT id, external_id, tournament_id, home_team_id, away_team_id, round,
+       kickoff_at, status, prediction_locked, goals_home, goals_away, created_at, updated_at
 FROM fixtures WHERE id = @id;
 
 -- name: ListFixturesByTournament :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at
+       f.round, f.kickoff_at, f.status, f.prediction_locked, f.goals_home, f.goals_away, f.created_at, f.updated_at
 FROM fixtures f
 JOIN teams home_t ON home_t.id = f.home_team_id
 JOIN teams away_t ON away_t.id = f.away_team_id
@@ -22,7 +22,7 @@ WHERE f.tournament_id = @tournament_id ORDER BY f.kickoff_at;
 -- name: ListLockedFixturesByLeague :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       f.kickoff_at, f.status, f.goals_home, f.goals_away, f.created_at, f.updated_at,
+       f.round, f.kickoff_at, f.status, f.prediction_locked, f.goals_home, f.goals_away, f.created_at, f.updated_at,
        coalesce(json_agg(json_build_object(
            'user_id', lm.user_id,
            'display_name', u.display_name,
