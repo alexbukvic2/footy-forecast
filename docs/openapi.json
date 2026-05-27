@@ -79,6 +79,7 @@
           "external_id": 90001,
           "goals_away": 1,
           "goals_home": 2,
+          "group": "A",
           "home_team_name": "Argentina",
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "kickoff_at": "2026-06-01T15:00:00Z",
@@ -101,6 +102,11 @@
           "goals_home": {
             "nullable": true,
             "type": "integer"
+          },
+          "group": {
+            "description": "Group letter (e.g. \"A\"). Present only for group-stage fixtures, omitted for knockout.",
+            "nullable": true,
+            "type": "string"
           },
           "home_team_name": {
             "type": "string"
@@ -2097,6 +2103,26 @@
               "format": "uuid",
               "type": "string"
             }
+          },
+          {
+            "description": "Number of days-with-fixtures to fetch. Required when `skip` is provided.",
+            "in": "query",
+            "name": "n",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.",
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -2121,7 +2147,7 @@
                 }
               }
             },
-            "description": "Invalid league ID"
+            "description": "Invalid parameters"
           },
           "401": {
             "content": {

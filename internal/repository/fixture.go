@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/alexbukvic2/footy-forecast/internal/db"
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
@@ -138,6 +139,73 @@ func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, re
 	return out, nil
 }
 
+// GetLockedFixtureDates returns the distinct UTC calendar dates (newest first)
+// that have at least one locked fixture for the league's tournament, on or before today.
+func (r *FixtureRepository) GetLockedFixtureDates(ctx context.Context, leagueID uuid.UUID) ([]time.Time, error) {
+	rows, err := r.q.GetLockedFixtureDatesByLeague(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("get locked fixture dates: %w", err)
+	}
+	out := make([]time.Time, 0, len(rows))
+	for _, d := range rows {
+		if d.Valid {
+			out = append(out, time.Date(int(d.Time.Year()), d.Time.Month(), int(d.Time.Day()), 0, 0, 0, 0, time.UTC))
+		}
+	}
+	return out, nil
+}
+
+// ListLockedByLeagueAndDates returns locked fixtures for a league whose kickoff date
+// falls on one of the provided UTC calendar dates, with each member's predictions.
+func (r *FixtureRepository) ListLockedByLeagueAndDates(ctx context.Context, leagueID, requestingUserID uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+	pgDates := make([]pgtype.Date, 0, len(dates))
+	for _, d := range dates {
+		pgDates = append(pgDates, pgtype.Date{
+			Time:  d,
+			Valid: true,
+		})
+	}
+	rows, err := r.q.ListLockedFixturesByLeagueAndDates(ctx, dbgen.ListLockedFixturesByLeagueAndDatesParams{
+		LeagueID:         leagueID,
+		RequestingUserID: requestingUserID,
+		Dates:            pgDates,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("list locked fixtures by dates: %w", err)
+	}
+
+	out := make([]*domain.LeagueFixtureView, 0, len(rows))
+	for _, row := range rows {
+		fix := fixtureFromLockedByDatesRow(row)
+
+		var members []memberPredictionJSON
+		if err := json.Unmarshal([]byte(row.MemberPredictions), &members); err != nil {
+			return nil, fmt.Errorf("unmarshal member predictions for fixture %s: %w", row.ID, err)
+		}
+
+		preds := make([]domain.LeagueMemberPrediction, 0, len(members))
+		for _, m := range members {
+			uid, err := uuid.Parse(m.UserID)
+			if err != nil {
+				return nil, fmt.Errorf("parse user_id in member predictions: %w", err)
+			}
+			preds = append(preds, domain.LeagueMemberPrediction{
+				UserID:      uid,
+				DisplayName: m.DisplayName,
+				GoalsHome:   m.GoalsHome,
+				GoalsAway:   m.GoalsAway,
+				Points:      m.Points,
+			})
+		}
+
+		out = append(out, &domain.LeagueFixtureView{
+			Fixture:     *fix,
+			Predictions: preds,
+		})
+	}
+	return out, nil
+}
+
 func fixtureFromModel(f dbgen.GetFixtureByIDRow) *domain.Fixture {
 	fix := &domain.Fixture{
 		ID:               f.ID,
@@ -172,6 +240,7 @@ func fixtureFromListRow(f dbgen.ListFixturesByTournamentRow) *domain.Fixture {
 		AwayTeamID:       f.AwayTeamID,
 		HomeTeamName:     f.HomeTeamName,
 		AwayTeamName:     f.AwayTeamName,
+		Group:            f.GroupLetter,
 		Round:            f.Round,
 		KickoffAt:        f.KickoffAt,
 		Status:           domain.FixtureStatus(f.Status),
@@ -199,6 +268,35 @@ func fixtureFromLockedRow(f dbgen.ListLockedFixturesByLeagueRow) *domain.Fixture
 		AwayTeamID:       f.AwayTeamID,
 		HomeTeamName:     f.HomeTeamName,
 		AwayTeamName:     f.AwayTeamName,
+		Group:            f.GroupLetter,
+		Round:            f.Round,
+		KickoffAt:        f.KickoffAt,
+		Status:           domain.FixtureStatus(f.Status),
+		PredictionLocked: f.PredictionLocked,
+		CreatedAt:        f.CreatedAt,
+		UpdatedAt:        f.UpdatedAt,
+	}
+	if f.GoalsHome != nil {
+		v := int(*f.GoalsHome)
+		fix.GoalsHome = &v
+	}
+	if f.GoalsAway != nil {
+		v := int(*f.GoalsAway)
+		fix.GoalsAway = &v
+	}
+	return fix
+}
+
+func fixtureFromLockedByDatesRow(f dbgen.ListLockedFixturesByLeagueAndDatesRow) *domain.Fixture {
+	fix := &domain.Fixture{
+		ID:               f.ID,
+		ExternalID:       f.ExternalID,
+		TournamentID:     f.TournamentID,
+		HomeTeamID:       f.HomeTeamID,
+		AwayTeamID:       f.AwayTeamID,
+		HomeTeamName:     f.HomeTeamName,
+		AwayTeamName:     f.AwayTeamName,
+		Group:            f.GroupLetter,
 		Round:            f.Round,
 		KickoffAt:        f.KickoffAt,
 		Status:           domain.FixtureStatus(f.Status),

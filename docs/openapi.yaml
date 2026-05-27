@@ -722,6 +722,10 @@ components:
           type: string
         round:
           type: string
+        group:
+          type: string
+          nullable: true
+          description: Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
         kickoff_at:
           type: string
           format: date-time
@@ -743,6 +747,7 @@ components:
         home_team_name: "Argentina"
         away_team_name: "France"
         round: "Group Stage - 1"
+        group: "A"
         kickoff_at: "2026-06-01T15:00:00Z"
         status: "finished"
         prediction_locked: true
@@ -2024,6 +2029,20 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: n
+          in: query
+          required: false
+          description: Number of days-with-fixtures to fetch. Required when `skip` is provided.
+          schema:
+            type: integer
+            minimum: 1
+        - name: skip
+          in: query
+          required: false
+          description: Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.
+          schema:
+            type: integer
+            minimum: 0
       responses:
         '200':
           description: Locked fixtures with each member's score prediction
@@ -2034,7 +2053,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LeagueFixtureViewResponse'
         '400':
-          description: Invalid league ID
+          description: Invalid parameters
           content:
             application/json:
               schema:
