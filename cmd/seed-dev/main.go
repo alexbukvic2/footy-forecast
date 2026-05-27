@@ -106,6 +106,7 @@ type seedFixture struct {
 	Status     string `json:"status"`
 	GoalsHome  *int32 `json:"goals_home"`
 	GoalsAway  *int32 `json:"goals_away"`
+	Locked     bool   `json:"locked"`
 }
 
 type seedUser struct {
@@ -318,11 +319,11 @@ func insertFixtures(
 			ctx,
 			`INSERT INTO fixtures
 			   (id, external_id, tournament_id, home_team_id, away_team_id,
-			    round, kickoff_at, status, goals_home, goals_away)
-			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8::fixture_status, $9, $10)`,
+			    round, kickoff_at, status, goals_home, goals_away, prediction_locked)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8::fixture_status, $9, $10, $11)`,
 			f.ID, f.ExternalID, tournamentID,
 			f.HomeTeamID, f.AwayTeamID,
-			f.Round, f.KickoffAt, f.Status, f.GoalsHome, f.GoalsAway,
+			f.Round, f.KickoffAt, f.Status, f.GoalsHome, f.GoalsAway, f.Locked,
 		); err != nil {
 			return fmt.Errorf("fixture external_id=%d: %w", f.ExternalID, err)
 		}

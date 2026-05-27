@@ -31,8 +31,10 @@ func (f *fakeFixtureGetter) GetByID(ctx context.Context, id uuid.UUID) (*domain.
 }
 
 type fakeFixtureForUserLister struct {
-	listByTournamentFn func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.UserFixtureView, error)
-	listLockedFn       func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.LeagueFixtureView, error)
+	listByTournamentFn  func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.UserFixtureView, error)
+	listLockedFn        func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.LeagueFixtureView, error)
+	getLockedDatesFn    func(context.Context, uuid.UUID) ([]time.Time, error)
+	listLockedByDatesFn func(context.Context, uuid.UUID, uuid.UUID, []time.Time) ([]*domain.LeagueFixtureView, error)
 }
 
 func (f *fakeFixtureForUserLister) ListByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error) {
@@ -41,6 +43,14 @@ func (f *fakeFixtureForUserLister) ListByTournamentForUser(ctx context.Context, 
 
 func (f *fakeFixtureForUserLister) ListLockedByLeague(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeagueFixtureView, error) {
 	return f.listLockedFn(ctx, leagueID, requestingUserID)
+}
+
+func (f *fakeFixtureForUserLister) GetLockedFixtureDates(ctx context.Context, leagueID uuid.UUID) ([]time.Time, error) {
+	return f.getLockedDatesFn(ctx, leagueID)
+}
+
+func (f *fakeFixtureForUserLister) ListLockedByLeagueAndDates(ctx context.Context, leagueID, requestingUserID uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+	return f.listLockedByDatesFn(ctx, leagueID, requestingUserID, dates)
 }
 
 type fakeLeagueMemberChecker struct {
@@ -199,4 +209,121 @@ func TestFixtureService_ListForUser_HappyPath(t *testing.T) {
 	got, err := svc.ListForUser(context.Background(), tournamentID, userID)
 	require.NoError(t, err)
 	require.Equal(t, want, got)
+}
+
+// ---------- FixtureService paged tests ----------
+
+func makeMemberChecker(member *domain.LeagueMember, err error) *fakeLeagueMemberChecker {
+	return &fakeLeagueMemberChecker{
+		getMemberFn: func(context.Context, uuid.UUID, uuid.UUID) (*domain.LeagueMember, error) {
+			return member, err
+		},
+	}
+}
+
+func TestFixtureService_ListForLeaguePaged_Skip0(t *testing.T) {
+	t.Parallel()
+	leagueID, userID := uuid.New(), uuid.New()
+
+	d1 := time.Date(2026, 6, 3, 0, 0, 0, 0, time.UTC)
+	d2 := time.Date(2026, 6, 2, 0, 0, 0, 0, time.UTC)
+	d3 := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
+	allDates := []time.Time{d1, d2, d3}
+
+	wantViews := []*domain.LeagueFixtureView{{Fixture: domain.Fixture{ID: uuid.New()}}}
+
+	repo := &fakeFixtureForUserLister{
+		getLockedDatesFn: func(_ context.Context, lid uuid.UUID) ([]time.Time, error) {
+			require.Equal(t, leagueID, lid)
+			return allDates, nil
+		},
+		listLockedByDatesFn: func(_ context.Context, lid, uid uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+			require.Equal(t, leagueID, lid)
+			require.Equal(t, userID, uid)
+			require.Equal(t, []time.Time{d1, d2}, dates)
+			return wantViews, nil
+		},
+	}
+
+	svc := service.NewFixtureService(repo, makeMemberChecker(&domain.LeagueMember{}, nil))
+	got, err := svc.ListForLeaguePaged(context.Background(), leagueID, userID, 2, 0)
+	require.NoError(t, err)
+	require.Equal(t, wantViews, got)
+}
+
+func TestFixtureService_ListForLeaguePaged_Skip2(t *testing.T) {
+	t.Parallel()
+	leagueID, userID := uuid.New(), uuid.New()
+
+	d1 := time.Date(2026, 6, 4, 0, 0, 0, 0, time.UTC)
+	d2 := time.Date(2026, 6, 3, 0, 0, 0, 0, time.UTC)
+	d3 := time.Date(2026, 6, 2, 0, 0, 0, 0, time.UTC)
+	d4 := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
+	allDates := []time.Time{d1, d2, d3, d4}
+
+	repo := &fakeFixtureForUserLister{
+		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+			return allDates, nil
+		},
+		listLockedByDatesFn: func(_ context.Context, _, _ uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+			require.Equal(t, []time.Time{d3, d4}, dates)
+			return []*domain.LeagueFixtureView{}, nil
+		},
+	}
+
+	svc := service.NewFixtureService(repo, makeMemberChecker(&domain.LeagueMember{}, nil))
+	_, err := svc.ListForLeaguePaged(context.Background(), leagueID, userID, 2, 2)
+	require.NoError(t, err)
+}
+
+func TestFixtureService_ListForLeaguePaged_FewerDatesThanN(t *testing.T) {
+	t.Parallel()
+	leagueID, userID := uuid.New(), uuid.New()
+
+	d1 := time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)
+	allDates := []time.Time{d1}
+
+	repo := &fakeFixtureForUserLister{
+		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+			return allDates, nil
+		},
+		listLockedByDatesFn: func(_ context.Context, _, _ uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+			require.Equal(t, []time.Time{d1}, dates)
+			return []*domain.LeagueFixtureView{}, nil
+		},
+	}
+
+	svc := service.NewFixtureService(repo, makeMemberChecker(&domain.LeagueMember{}, nil))
+	_, err := svc.ListForLeaguePaged(context.Background(), leagueID, userID, 3, 0)
+	require.NoError(t, err)
+}
+
+func TestFixtureService_ListForLeaguePaged_SkipBeyondAvailable(t *testing.T) {
+	t.Parallel()
+	leagueID, userID := uuid.New(), uuid.New()
+
+	allDates := []time.Time{time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
+
+	repo := &fakeFixtureForUserLister{
+		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+			return allDates, nil
+		},
+	}
+
+	svc := service.NewFixtureService(repo, makeMemberChecker(&domain.LeagueMember{}, nil))
+	got, err := svc.ListForLeaguePaged(context.Background(), leagueID, userID, 2, 5)
+	require.NoError(t, err)
+	require.Empty(t, got)
+}
+
+func TestFixtureService_ListForLeaguePaged_NotMember(t *testing.T) {
+	t.Parallel()
+	leagueID, userID := uuid.New(), uuid.New()
+
+	svc := service.NewFixtureService(
+		&fakeFixtureForUserLister{},
+		makeMemberChecker(nil, domain.ErrNotFound),
+	)
+	_, err := svc.ListForLeaguePaged(context.Background(), leagueID, userID, 2, 0)
+	require.ErrorIs(t, err, domain.ErrForbidden)
 }

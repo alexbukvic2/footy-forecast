@@ -2024,6 +2024,20 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: n
+          in: query
+          required: false
+          description: Number of days-with-fixtures to fetch. Required when `skip` is provided.
+          schema:
+            type: integer
+            minimum: 1
+        - name: skip
+          in: query
+          required: false
+          description: Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.
+          schema:
+            type: integer
+            minimum: 0
       responses:
         '200':
           description: Locked fixtures with each member's score prediction
@@ -2034,7 +2048,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LeagueFixtureViewResponse'
         '400':
-          description: Invalid league ID
+          description: Invalid parameters
           content:
             application/json:
               schema:

@@ -2097,6 +2097,26 @@
               "format": "uuid",
               "type": "string"
             }
+          },
+          {
+            "description": "Number of days-with-fixtures to fetch. Required when `skip` is provided.",
+            "in": "query",
+            "name": "n",
+            "required": false,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.",
+            "in": "query",
+            "name": "skip",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
           }
         ],
         "responses": {
@@ -2121,7 +2141,7 @@
                 }
               }
             },
-            "description": "Invalid league ID"
+            "description": "Invalid parameters"
           },
           "401": {
             "content": {

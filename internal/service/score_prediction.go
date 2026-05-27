@@ -17,6 +17,8 @@ const lockWindow = 30 * time.Minute
 type FixtureForUserLister interface {
 	ListByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error)
 	ListLockedByLeague(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeagueFixtureView, error)
+	GetLockedFixtureDates(ctx context.Context, leagueID uuid.UUID) ([]time.Time, error)
+	ListLockedByLeagueAndDates(ctx context.Context, leagueID, requestingUserID uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error)
 }
 
 // LeagueMemberChecker verifies league membership.
@@ -56,6 +58,39 @@ func (s *FixtureService) ListForLeague(ctx context.Context, leagueID, userID uui
 	views, err := s.fixtures.ListLockedByLeague(ctx, leagueID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("list locked fixtures for league: %w", err)
+	}
+	return views, nil
+}
+
+// ListForLeaguePaged returns locked fixtures for a league paginated by day.
+// n is the number of days-with-fixtures to fetch; skip is the number of most-recent
+// days to skip before fetching.
+// Returns domain.ErrForbidden if the requesting user is not a member of the league.
+func (s *FixtureService) ListForLeaguePaged(ctx context.Context, leagueID, userID uuid.UUID, n, skip int) ([]*domain.LeagueFixtureView, error) {
+	if _, err := s.leagues.GetMember(ctx, leagueID, userID); err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
+			return nil, fmt.Errorf("not a member of league %s: %w", leagueID, domain.ErrForbidden)
+		}
+		return nil, fmt.Errorf("get league member: %w", err)
+	}
+
+	allDates, err := s.fixtures.GetLockedFixtureDates(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("get locked fixture dates: %w", err)
+	}
+
+	if skip >= len(allDates) {
+		return []*domain.LeagueFixtureView{}, nil
+	}
+	end := skip + n
+	if end > len(allDates) {
+		end = len(allDates)
+	}
+	pageDates := allDates[skip:end]
+
+	views, err := s.fixtures.ListLockedByLeagueAndDates(ctx, leagueID, userID, pageDates)
+	if err != nil {
+		return nil, fmt.Errorf("list locked fixtures by dates: %w", err)
 	}
 	return views, nil
 }

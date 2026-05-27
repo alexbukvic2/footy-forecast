@@ -558,6 +558,15 @@ type UpdateLeagueNameJSONBody struct {
 	Name string `json:"name"`
 }
 
+// ListLeagueScorePredictionsParams defines parameters for ListLeagueScorePredictions.
+type ListLeagueScorePredictionsParams struct {
+	// N Number of days-with-fixtures to fetch. Required when `skip` is provided.
+	N *int `form:"n,omitempty" json:"n,omitempty"`
+
+	// Skip Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.
+	Skip *int `form:"skip,omitempty" json:"skip,omitempty"`
+}
+
 // CreateTournamentJSONBody defines parameters for CreateTournament.
 type CreateTournamentJSONBody struct {
 	EndsAt   time.Time `json:"ends_at"`

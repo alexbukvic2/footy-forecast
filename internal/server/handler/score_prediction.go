@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -26,6 +27,7 @@ type ScorePredictionSvc interface {
 type FixtureSvc interface {
 	ListForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error)
 	ListForLeague(ctx context.Context, leagueID, userID uuid.UUID) ([]*domain.LeagueFixtureView, error)
+	ListForLeaguePaged(ctx context.Context, leagueID, userID uuid.UUID, n, skip int) ([]*domain.LeagueFixtureView, error)
 }
 
 // ---------- DTOs ----------
@@ -173,7 +175,34 @@ func (h *Fixture) ListForLeague(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	views, err := h.svc.ListForLeague(r.Context(), leagueID, caller.ID)
+	nStr := r.URL.Query().Get("n")
+	skipStr := r.URL.Query().Get("skip")
+
+	// skip without n is invalid
+	if skipStr != "" && nStr == "" {
+		writeError(w, r, h.logger, fmt.Errorf("n is required when skip is provided: %w", domain.ErrInvalid))
+		return
+	}
+
+	var views []*domain.LeagueFixtureView
+	if nStr != "" {
+		n, parseErr := strconv.Atoi(nStr)
+		if parseErr != nil || n <= 0 {
+			writeError(w, r, h.logger, fmt.Errorf("n must be a positive integer: %w", domain.ErrInvalid))
+			return
+		}
+		skip := 0
+		if skipStr != "" {
+			skip, parseErr = strconv.Atoi(skipStr)
+			if parseErr != nil || skip < 0 {
+				writeError(w, r, h.logger, fmt.Errorf("skip must be a non-negative integer: %w", domain.ErrInvalid))
+				return
+			}
+		}
+		views, err = h.svc.ListForLeaguePaged(r.Context(), leagueID, caller.ID, n, skip)
+	} else {
+		views, err = h.svc.ListForLeague(r.Context(), leagueID, caller.ID)
+	}
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return

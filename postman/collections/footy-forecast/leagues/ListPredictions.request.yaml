@@ -8,3 +8,12 @@ order: 6000
 headers:
   - key: Authorization
     value: 'Bearer {{authToken}}'
+params:
+  - key: n
+    value: '3'
+    description: Number of days-with-fixtures per page
+    disabled: true
+  - key: skip
+    value: '0'
+    description: Number of most-recent days-with-fixtures to skip (requires n)
+    disabled: true
