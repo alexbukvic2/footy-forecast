@@ -1,2 +1,8 @@
 $kind: collection
 name: Tournaments
+auth:
+  - id: 2916f868-2b69-4330-9171-de04a408d033
+    type: bearer
+    name: Bearer Token
+    credentials:
+      token: "{{authToken}}"
