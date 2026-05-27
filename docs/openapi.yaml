@@ -178,9 +178,47 @@ components:
         member_count: 3
         my_position: 1
 
+    LeaderboardPointsBreakdown:
+      type: object
+      required:
+        - score_pts
+        - group_top_scorer_pts
+        - total_top_scorer_pts
+        - group_winner_pts
+        - playoff_pts
+        - semifinalist_pts
+        - winner_pts
+      properties:
+        score_pts:
+          type: integer
+          description: Points from score predictions.
+        group_top_scorer_pts:
+          type: integer
+          description: Points from group top scorer player predictions.
+        total_top_scorer_pts:
+          type: integer
+          description: Points from total top scorer player predictions.
+        group_winner_pts:
+          type: integer
+          description: Points from group winner team predictions.
+        playoff_pts:
+          type: integer
+          description: Points from playoff team predictions.
+        semifinalist_pts:
+          type: integer
+          description: Points from semifinalist team predictions.
+        winner_pts:
+          type: integer
+          description: Points from tournament winner team predictions.
+
     LeaderboardEntry:
       type: object
-      required: [position, user_id, display_name, score_points, player_points, team_points, total_points]
+      required:
+        - position
+        - user_id
+        - display_name
+        - total_points
+        - points_breakdown
       properties:
         position:
           type: integer
@@ -190,26 +228,24 @@ components:
           format: uuid
         display_name:
           type: string
-        score_points:
-          type: integer
-          description: Points from score predictions.
-        player_points:
-          type: integer
-          description: Points from player predictions.
-        team_points:
-          type: integer
-          description: Points from team predictions.
         total_points:
           type: integer
-          description: Sum of the three category totals.
+          description: Sum of all category point totals.
+        points_breakdown:
+          $ref: '#/components/schemas/LeaderboardPointsBreakdown'
       example:
         position: 1
         user_id: "550e8400-e29b-41d4-a716-446655440002"
         display_name: "John Doe"
-        score_points: 10
-        player_points: 5
-        team_points: 3
-        total_points: 18
+        total_points: 32
+        points_breakdown:
+          score_pts: 10
+          group_top_scorer_pts: 3
+          total_top_scorer_pts: 5
+          group_winner_pts: 2
+          playoff_pts: 4
+          semifinalist_pts: 2
+          winner_pts: 6
 
     LeagueLeaderboardResponse:
       type: object

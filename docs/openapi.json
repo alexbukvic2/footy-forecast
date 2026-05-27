@@ -148,35 +148,32 @@
       "LeaderboardEntry": {
         "example": {
           "display_name": "John Doe",
-          "player_points": 5,
+          "points_breakdown": {
+            "group_top_scorer_pts": 3,
+            "group_winner_pts": 2,
+            "playoff_pts": 4,
+            "score_pts": 10,
+            "semifinalist_pts": 2,
+            "total_top_scorer_pts": 5,
+            "winner_pts": 6
+          },
           "position": 1,
-          "score_points": 10,
-          "team_points": 3,
-          "total_points": 18,
+          "total_points": 32,
           "user_id": "550e8400-e29b-41d4-a716-446655440002"
         },
         "properties": {
           "display_name": {
             "type": "string"
           },
-          "player_points": {
-            "description": "Points from player predictions.",
-            "type": "integer"
+          "points_breakdown": {
+            "$ref": "#/components/schemas/LeaderboardPointsBreakdown"
           },
           "position": {
             "description": "DENSE_RANK position (1-based; ties share position).",
             "type": "integer"
           },
-          "score_points": {
-            "description": "Points from score predictions.",
-            "type": "integer"
-          },
-          "team_points": {
-            "description": "Points from team predictions.",
-            "type": "integer"
-          },
           "total_points": {
-            "description": "Sum of the three category totals.",
+            "description": "Sum of all category point totals.",
             "type": "integer"
           },
           "user_id": {
@@ -188,10 +185,50 @@
           "position",
           "user_id",
           "display_name",
-          "score_points",
-          "player_points",
-          "team_points",
-          "total_points"
+          "total_points",
+          "points_breakdown"
+        ],
+        "type": "object"
+      },
+      "LeaderboardPointsBreakdown": {
+        "properties": {
+          "group_top_scorer_pts": {
+            "description": "Points from group top scorer player predictions.",
+            "type": "integer"
+          },
+          "group_winner_pts": {
+            "description": "Points from group winner team predictions.",
+            "type": "integer"
+          },
+          "playoff_pts": {
+            "description": "Points from playoff team predictions.",
+            "type": "integer"
+          },
+          "score_pts": {
+            "description": "Points from score predictions.",
+            "type": "integer"
+          },
+          "semifinalist_pts": {
+            "description": "Points from semifinalist team predictions.",
+            "type": "integer"
+          },
+          "total_top_scorer_pts": {
+            "description": "Points from total top scorer player predictions.",
+            "type": "integer"
+          },
+          "winner_pts": {
+            "description": "Points from tournament winner team predictions.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "score_pts",
+          "group_top_scorer_pts",
+          "total_top_scorer_pts",
+          "group_winner_pts",
+          "playoff_pts",
+          "semifinalist_pts",
+          "winner_pts"
         ],
         "type": "object"
       },

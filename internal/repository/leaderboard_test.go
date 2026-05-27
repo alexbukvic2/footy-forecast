@@ -87,8 +87,8 @@ func TestLeaderboardRepository_GetForLeague(t *testing.T) {
 		_, err := pool.Exec(ctx,
 			"INSERT INTO team_predictions (id, user_id, tournament_id, category, pick, points) VALUES ($1,$2,$3,'winner',$4,10),($5,$6,$3,'winner',$4,10),($7,$8,$3,'winner',$4,5)",
 			uuid.Must(uuid.NewV7()), uA, tournID, teamID,
-			uuid.Must(uuid.NewV7()), uB, tournID, teamID,
-			uuid.Must(uuid.NewV7()), uC, tournID, teamID)
+			uuid.Must(uuid.NewV7()), uB,
+			uuid.Must(uuid.NewV7()), uC)
 		require.NoError(t, err)
 
 		repo := repository.NewLeaderboardRepository(pool)
@@ -161,9 +161,10 @@ func TestLeaderboardRepository_GetForTournament(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, entries, 1)
 		require.Equal(t, 1, entries[0].Position)
-		require.Equal(t, 8, entries[0].TeamPoints)
-		require.Equal(t, 0, entries[0].ScorePoints)
-		require.Equal(t, 0, entries[0].PlayerPoints)
+		require.Equal(t, 8, entries[0].WinnerPts)
+		require.Equal(t, 0, entries[0].ScorePts)
+		require.Equal(t, 0, entries[0].GroupTopScorerPts)
+		require.Equal(t, 0, entries[0].TotalTopScorerPts)
 		require.Equal(t, 8, entries[0].TotalPoints)
 	})
 }

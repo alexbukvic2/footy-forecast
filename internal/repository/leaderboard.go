@@ -33,13 +33,19 @@ WITH
     GROUP BY sp.user_id
   ),
   player_pts AS (
-    SELECT user_id, COALESCE(SUM(points), 0) AS pts
+    SELECT user_id,
+      COALESCE(SUM(points) FILTER (WHERE category = 'group_top_scorer'), 0) AS group_top_scorer_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'total_top_scorer'), 0) AS total_top_scorer_pts
     FROM player_predictions
     WHERE tournament_id = (SELECT tournament_id FROM leagues WHERE id = $1)
     GROUP BY user_id
   ),
   team_pts AS (
-    SELECT user_id, COALESCE(SUM(points), 0) AS pts
+    SELECT user_id,
+      COALESCE(SUM(points) FILTER (WHERE category = 'group_winner'),   0) AS group_winner_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'playoff'),        0) AS playoff_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'semifinalist'),   0) AS semifinalist_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'winner'),         0) AS winner_pts
     FROM team_predictions
     WHERE tournament_id = (SELECT tournament_id FROM leagues WHERE id = $1)
     GROUP BY user_id
@@ -48,10 +54,17 @@ WITH
     SELECT
       lm.user_id,
       u.display_name,
-      COALESCE(s.pts, 0)                                                       AS score_points,
-      COALESCE(p.pts, 0)                                                       AS player_points,
-      COALESCE(t.pts, 0)                                                       AS team_points,
-      COALESCE(s.pts, 0) + COALESCE(p.pts, 0) + COALESCE(t.pts, 0)           AS total_points
+      COALESCE(s.pts, 0)                       AS score_points,
+      COALESCE(p.group_top_scorer_pts, 0)      AS group_top_scorer_pts,
+      COALESCE(p.total_top_scorer_pts, 0)      AS total_top_scorer_pts,
+      COALESCE(t.group_winner_pts, 0)          AS group_winner_pts,
+      COALESCE(t.playoff_pts, 0)               AS playoff_pts,
+      COALESCE(t.semifinalist_pts, 0)          AS semifinalist_pts,
+      COALESCE(t.winner_pts, 0)                AS winner_pts,
+      COALESCE(s.pts, 0)
+        + COALESCE(p.group_top_scorer_pts, 0) + COALESCE(p.total_top_scorer_pts, 0)
+        + COALESCE(t.group_winner_pts, 0)     + COALESCE(t.playoff_pts, 0)
+        + COALESCE(t.semifinalist_pts, 0)     + COALESCE(t.winner_pts, 0) AS total_points
     FROM league_members lm
     JOIN users u ON u.id = lm.user_id
     LEFT JOIN score_pts  s ON s.user_id = lm.user_id
@@ -61,7 +74,10 @@ WITH
   )
 SELECT
   DENSE_RANK() OVER (ORDER BY total_points DESC) AS position,
-  user_id, display_name, score_points, player_points, team_points, total_points
+  user_id, display_name, score_points,
+  group_top_scorer_pts, total_top_scorer_pts,
+  group_winner_pts, playoff_pts, semifinalist_pts, winner_pts,
+  total_points
 FROM totals
 ORDER BY total_points DESC`
 
@@ -75,21 +91,7 @@ func (r *LeaderboardRepository) GetForLeague(
 	if err != nil {
 		return nil, fmt.Errorf("query league leaderboard: %w", err)
 	}
-	entries, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*domain.LeaderboardEntry, error) {
-		var e domain.LeaderboardEntry
-		if err := row.Scan(
-			&e.Position,
-			&e.UserID,
-			&e.DisplayName,
-			&e.ScorePoints,
-			&e.PlayerPoints,
-			&e.TeamPoints,
-			&e.TotalPoints,
-		); err != nil {
-			return nil, err
-		}
-		return &e, nil
-	})
+	entries, err := pgx.CollectRows(rows, scanLeaderboardEntry)
 	if err != nil {
 		return nil, fmt.Errorf("collect league leaderboard rows: %w", err)
 	}
@@ -106,13 +108,19 @@ WITH
     GROUP BY sp.user_id
   ),
   player_pts AS (
-    SELECT user_id, COALESCE(SUM(points), 0) AS pts
+    SELECT user_id,
+      COALESCE(SUM(points) FILTER (WHERE category = 'group_top_scorer'), 0) AS group_top_scorer_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'total_top_scorer'), 0) AS total_top_scorer_pts
     FROM player_predictions
     WHERE tournament_id = $1
     GROUP BY user_id
   ),
   team_pts AS (
-    SELECT user_id, COALESCE(SUM(points), 0) AS pts
+    SELECT user_id,
+      COALESCE(SUM(points) FILTER (WHERE category = 'group_winner'),   0) AS group_winner_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'playoff'),        0) AS playoff_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'semifinalist'),   0) AS semifinalist_pts,
+      COALESCE(SUM(points) FILTER (WHERE category = 'winner'),         0) AS winner_pts
     FROM team_predictions
     WHERE tournament_id = $1
     GROUP BY user_id
@@ -128,10 +136,17 @@ WITH
     SELECT
       au.user_id,
       u.display_name,
-      COALESCE(s.pts, 0)                                                       AS score_points,
-      COALESCE(p.pts, 0)                                                       AS player_points,
-      COALESCE(t.pts, 0)                                                       AS team_points,
-      COALESCE(s.pts, 0) + COALESCE(p.pts, 0) + COALESCE(t.pts, 0)           AS total_points
+      COALESCE(s.pts, 0)                       AS score_points,
+      COALESCE(p.group_top_scorer_pts, 0)      AS group_top_scorer_pts,
+      COALESCE(p.total_top_scorer_pts, 0)      AS total_top_scorer_pts,
+      COALESCE(t.group_winner_pts, 0)          AS group_winner_pts,
+      COALESCE(t.playoff_pts, 0)               AS playoff_pts,
+      COALESCE(t.semifinalist_pts, 0)          AS semifinalist_pts,
+      COALESCE(t.winner_pts, 0)                AS winner_pts,
+      COALESCE(s.pts, 0)
+        + COALESCE(p.group_top_scorer_pts, 0) + COALESCE(p.total_top_scorer_pts, 0)
+        + COALESCE(t.group_winner_pts, 0)     + COALESCE(t.playoff_pts, 0)
+        + COALESCE(t.semifinalist_pts, 0)     + COALESCE(t.winner_pts, 0) AS total_points
     FROM all_users au
     JOIN users u ON u.id = au.user_id
     LEFT JOIN score_pts  s ON s.user_id = au.user_id
@@ -140,7 +155,10 @@ WITH
   )
 SELECT
   DENSE_RANK() OVER (ORDER BY total_points DESC) AS position,
-  user_id, display_name, score_points, player_points, team_points, total_points
+  user_id, display_name, score_points,
+  group_top_scorer_pts, total_top_scorer_pts,
+  group_winner_pts, playoff_pts, semifinalist_pts, winner_pts,
+  total_points
 FROM totals
 ORDER BY total_points DESC`
 
@@ -154,25 +172,32 @@ func (r *LeaderboardRepository) GetForTournament(
 	if err != nil {
 		return nil, fmt.Errorf("query tournament leaderboard: %w", err)
 	}
-	entries, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*domain.LeaderboardEntry, error) {
-		var e domain.LeaderboardEntry
-		if err := row.Scan(
-			&e.Position,
-			&e.UserID,
-			&e.DisplayName,
-			&e.ScorePoints,
-			&e.PlayerPoints,
-			&e.TeamPoints,
-			&e.TotalPoints,
-		); err != nil {
-			return nil, err
-		}
-		return &e, nil
-	})
+	entries, err := pgx.CollectRows(rows, scanLeaderboardEntry)
 	if err != nil {
 		return nil, fmt.Errorf("collect tournament leaderboard rows: %w", err)
 	}
 	return entries, nil
+}
+
+// scanLeaderboardEntry scans a single leaderboard row into a LeaderboardEntry.
+func scanLeaderboardEntry(row pgx.CollectableRow) (*domain.LeaderboardEntry, error) {
+	var e domain.LeaderboardEntry
+	if err := row.Scan(
+		&e.Position,
+		&e.UserID,
+		&e.DisplayName,
+		&e.ScorePts,
+		&e.GroupTopScorerPts,
+		&e.TotalTopScorerPts,
+		&e.GroupWinnerPts,
+		&e.PlayoffPts,
+		&e.SemifinalistPts,
+		&e.WinnerPts,
+		&e.TotalPoints,
+	); err != nil {
+		return nil, err
+	}
+	return &e, nil
 }
 
 const queryUserPositionsInLeagues = `

@@ -87,7 +87,7 @@ func TestLeaderboardService_GetLeagueLeaderboard(t *testing.T) {
 	})
 
 	t.Run("member gets leaderboard result", func(t *testing.T) {
-		want := []*domain.LeaderboardEntry{{Position: 1, UserID: requesterID, TotalPoints: 10}}
+		want := []*domain.LeaderboardEntry{{Position: 1, UserID: requesterID, TotalPoints: 10, WinnerPts: 10}}
 		svc := service.NewLeaderboardService(
 			&fakeLBRepo{forLeague: want},
 			&fakeLBLeagueGetter{league: league, member: member},
@@ -120,7 +120,7 @@ func TestLeaderboardService_GetTournamentLeaderboard(t *testing.T) {
 	})
 
 	t.Run("valid tournament returns leaderboard", func(t *testing.T) {
-		want := []*domain.LeaderboardEntry{{Position: 1, TotalPoints: 5}}
+		want := []*domain.LeaderboardEntry{{Position: 1, TotalPoints: 5, WinnerPts: 5}}
 		svc := service.NewLeaderboardService(
 			&fakeLBRepo{forTournament: want},
 			&fakeLBLeagueGetter{},

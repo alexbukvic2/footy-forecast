@@ -64,7 +64,12 @@ func TestLeaderboard_GetForLeague(t *testing.T) {
 		t.Parallel()
 		uid := uuid.New()
 		entries := []*domain.LeaderboardEntry{
-			{Position: 1, UserID: uid, DisplayName: "Alice", ScorePoints: 5, PlayerPoints: 3, TeamPoints: 2, TotalPoints: 10},
+			{
+				Position: 1, UserID: uid, DisplayName: "Alice",
+				ScorePts: 5, GroupTopScorerPts: 3, TotalTopScorerPts: 2,
+				GroupWinnerPts: 1, PlayoffPts: 2, SemifinalistPts: 1, WinnerPts: 4,
+				TotalPoints: 18,
+			},
 		}
 		svc := &fakeLeaderboardService{leagueEntries: entries}
 		h := handler.NewLeaderboard(silentLogger(), svc)
@@ -74,17 +79,28 @@ func TestLeaderboard_GetForLeague(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, rec.Code)
 		var resp struct {
-			Leaderboard []map[string]any `json:"leaderboard"`
+			Leaderboard []struct {
+				Position    float64        `json:"position"`
+				UserID      string         `json:"user_id"`
+				DisplayName string         `json:"display_name"`
+				TotalPoints float64        `json:"total_points"`
+				Breakdown   map[string]any `json:"points_breakdown"`
+			} `json:"leaderboard"`
 		}
 		require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
 		require.Len(t, resp.Leaderboard, 1)
-		require.Equal(t, float64(1), resp.Leaderboard[0]["position"])
-		require.Equal(t, uid.String(), resp.Leaderboard[0]["user_id"])
-		require.Equal(t, "Alice", resp.Leaderboard[0]["display_name"])
-		require.Equal(t, float64(5), resp.Leaderboard[0]["score_points"])
-		require.Equal(t, float64(3), resp.Leaderboard[0]["player_points"])
-		require.Equal(t, float64(2), resp.Leaderboard[0]["team_points"])
-		require.Equal(t, float64(10), resp.Leaderboard[0]["total_points"])
+		e := resp.Leaderboard[0]
+		require.Equal(t, float64(1), e.Position)
+		require.Equal(t, uid.String(), e.UserID)
+		require.Equal(t, "Alice", e.DisplayName)
+		require.Equal(t, float64(18), e.TotalPoints)
+		require.Equal(t, float64(5), e.Breakdown["score_pts"])
+		require.Equal(t, float64(3), e.Breakdown["group_top_scorer_pts"])
+		require.Equal(t, float64(2), e.Breakdown["total_top_scorer_pts"])
+		require.Equal(t, float64(1), e.Breakdown["group_winner_pts"])
+		require.Equal(t, float64(2), e.Breakdown["playoff_pts"])
+		require.Equal(t, float64(1), e.Breakdown["semifinalist_pts"])
+		require.Equal(t, float64(4), e.Breakdown["winner_pts"])
 	})
 
 	t.Run("non-member returns 403", func(t *testing.T) {
@@ -146,7 +162,7 @@ func TestLeaderboard_GetForTournament(t *testing.T) {
 		t.Parallel()
 		uid := uuid.New()
 		entries := []*domain.LeaderboardEntry{
-			{Position: 1, UserID: uid, DisplayName: "Bob", ScorePoints: 0, PlayerPoints: 4, TeamPoints: 6, TotalPoints: 10},
+			{Position: 1, UserID: uid, DisplayName: "Bob", TotalTopScorerPts: 4, WinnerPts: 6, TotalPoints: 10},
 		}
 		svc := &fakeLeaderboardService{tournamentEntries: entries}
 		h := handler.NewLeaderboard(silentLogger(), svc)

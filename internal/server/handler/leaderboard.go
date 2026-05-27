@@ -41,25 +41,39 @@ func NewLeaderboard(
 
 // ---------- DTOs ----------
 
+type leaderboardPointsBreakdown struct {
+	ScorePts          int `json:"score_pts"`
+	GroupTopScorerPts int `json:"group_top_scorer_pts"`
+	TotalTopScorerPts int `json:"total_top_scorer_pts"`
+	GroupWinnerPts    int `json:"group_winner_pts"`
+	PlayoffPts        int `json:"playoff_pts"`
+	SemifinalistPts   int `json:"semifinalist_pts"`
+	WinnerPts         int `json:"winner_pts"`
+}
+
 type leaderboardEntryResponse struct {
-	Position     int    `json:"position"`
-	UserID       string `json:"user_id"`
-	DisplayName  string `json:"display_name"`
-	ScorePoints  int    `json:"score_points"`
-	PlayerPoints int    `json:"player_points"`
-	TeamPoints   int    `json:"team_points"`
-	TotalPoints  int    `json:"total_points"`
+	Position        int                        `json:"position"`
+	UserID          string                     `json:"user_id"`
+	DisplayName     string                     `json:"display_name"`
+	TotalPoints     int                        `json:"total_points"`
+	PointsBreakdown leaderboardPointsBreakdown `json:"points_breakdown"`
 }
 
 func toLeaderboardEntryResponse(e *domain.LeaderboardEntry) leaderboardEntryResponse {
 	return leaderboardEntryResponse{
-		Position:     e.Position,
-		UserID:       e.UserID.String(),
-		DisplayName:  e.DisplayName,
-		ScorePoints:  e.ScorePoints,
-		PlayerPoints: e.PlayerPoints,
-		TeamPoints:   e.TeamPoints,
-		TotalPoints:  e.TotalPoints,
+		Position:    e.Position,
+		UserID:      e.UserID.String(),
+		DisplayName: e.DisplayName,
+		TotalPoints: e.TotalPoints,
+		PointsBreakdown: leaderboardPointsBreakdown{
+			ScorePts:          e.ScorePts,
+			GroupTopScorerPts: e.GroupTopScorerPts,
+			TotalTopScorerPts: e.TotalTopScorerPts,
+			GroupWinnerPts:    e.GroupWinnerPts,
+			PlayoffPts:        e.PlayoffPts,
+			SemifinalistPts:   e.SemifinalistPts,
+			WinnerPts:         e.WinnerPts,
+		},
 	}
 }
 
