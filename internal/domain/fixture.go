@@ -25,6 +25,7 @@ type Fixture struct {
 	AwayTeamID       uuid.UUID
 	HomeTeamName     string
 	AwayTeamName     string
+	Group            *string // nil for knockout fixtures
 	Round            string
 	KickoffAt        time.Time
 	Status           FixtureStatus

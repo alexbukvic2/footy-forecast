@@ -722,6 +722,10 @@ components:
           type: string
         round:
           type: string
+        group:
+          type: string
+          nullable: true
+          description: Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
         kickoff_at:
           type: string
           format: date-time
@@ -743,6 +747,7 @@ components:
         home_team_name: "Argentina"
         away_team_name: "France"
         round: "Group Stage - 1"
+        group: "A"
         kickoff_at: "2026-06-01T15:00:00Z"
         status: "finished"
         prediction_locked: true

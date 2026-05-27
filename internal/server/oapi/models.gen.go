@@ -207,10 +207,13 @@ type ErrorResponse struct {
 
 // FixtureResponse defines model for FixtureResponse.
 type FixtureResponse struct {
-	AwayTeamName     string                `json:"away_team_name"`
-	ExternalId       int                   `json:"external_id"`
-	GoalsAway        *int                  `json:"goals_away,omitempty"`
-	GoalsHome        *int                  `json:"goals_home,omitempty"`
+	AwayTeamName string `json:"away_team_name"`
+	ExternalId   int    `json:"external_id"`
+	GoalsAway    *int   `json:"goals_away,omitempty"`
+	GoalsHome    *int   `json:"goals_home,omitempty"`
+
+	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
+	Group            *string               `json:"group,omitempty"`
 	HomeTeamName     string                `json:"home_team_name"`
 	Id               openapi_types.UUID    `json:"id"`
 	KickoffAt        time.Time             `json:"kickoff_at"`
@@ -285,10 +288,13 @@ type LeagueDetail struct {
 
 // LeagueFixtureViewResponse defines model for LeagueFixtureViewResponse.
 type LeagueFixtureViewResponse struct {
-	AwayTeamName     string                          `json:"away_team_name"`
-	ExternalId       int                             `json:"external_id"`
-	GoalsAway        *int                            `json:"goals_away,omitempty"`
-	GoalsHome        *int                            `json:"goals_home,omitempty"`
+	AwayTeamName string `json:"away_team_name"`
+	ExternalId   int    `json:"external_id"`
+	GoalsAway    *int   `json:"goals_away,omitempty"`
+	GoalsHome    *int   `json:"goals_home,omitempty"`
+
+	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
+	Group            *string                         `json:"group,omitempty"`
 	HomeTeamName     string                          `json:"home_team_name"`
 	Id               openapi_types.UUID              `json:"id"`
 	KickoffAt        time.Time                       `json:"kickoff_at"`
@@ -522,10 +528,13 @@ type UserStatus string
 
 // UserFixtureViewResponse defines model for UserFixtureViewResponse.
 type UserFixtureViewResponse struct {
-	AwayTeamName     string                        `json:"away_team_name"`
-	ExternalId       int                           `json:"external_id"`
-	GoalsAway        *int                          `json:"goals_away,omitempty"`
-	GoalsHome        *int                          `json:"goals_home,omitempty"`
+	AwayTeamName string `json:"away_team_name"`
+	ExternalId   int    `json:"external_id"`
+	GoalsAway    *int   `json:"goals_away,omitempty"`
+	GoalsHome    *int   `json:"goals_home,omitempty"`
+
+	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
+	Group            *string                       `json:"group,omitempty"`
 	HomeTeamName     string                        `json:"home_team_name"`
 	Id               openapi_types.UUID            `json:"id"`
 	KickoffAt        time.Time                     `json:"kickoff_at"`
