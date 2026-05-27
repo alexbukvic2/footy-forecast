@@ -10,6 +10,7 @@
 - [ ] Tie-breaking by secondary criteria (e.g. earliest prediction submission). Ties share a rank.]
 - [ ] Fixtures in group have group, but what about quarter finals, etc?
 - [ ] Locked fixtures - lock by cron, use locked field instead of comparing current time to fixture time
+- [ ] Same points breaking criteria
 
 ### Profile page
 - [ ] Change display name

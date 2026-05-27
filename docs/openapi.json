@@ -145,6 +145,93 @@
         ],
         "type": "object"
       },
+      "LeaderboardEntry": {
+        "example": {
+          "display_name": "John Doe",
+          "points_breakdown": {
+            "group_top_scorer_pts": 3,
+            "group_winner_pts": 2,
+            "playoff_pts": 4,
+            "score_pts": 10,
+            "semifinalist_pts": 2,
+            "total_top_scorer_pts": 5,
+            "winner_pts": 6
+          },
+          "position": 1,
+          "total_points": 32,
+          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+        },
+        "properties": {
+          "display_name": {
+            "type": "string"
+          },
+          "points_breakdown": {
+            "$ref": "#/components/schemas/LeaderboardPointsBreakdown"
+          },
+          "position": {
+            "description": "DENSE_RANK position (1-based; ties share position).",
+            "type": "integer"
+          },
+          "total_points": {
+            "description": "Sum of all category point totals.",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "user_id",
+          "display_name",
+          "total_points",
+          "points_breakdown"
+        ],
+        "type": "object"
+      },
+      "LeaderboardPointsBreakdown": {
+        "properties": {
+          "group_top_scorer_pts": {
+            "description": "Points from group top scorer player predictions.",
+            "type": "integer"
+          },
+          "group_winner_pts": {
+            "description": "Points from group winner team predictions.",
+            "type": "integer"
+          },
+          "playoff_pts": {
+            "description": "Points from playoff team predictions.",
+            "type": "integer"
+          },
+          "score_pts": {
+            "description": "Points from score predictions.",
+            "type": "integer"
+          },
+          "semifinalist_pts": {
+            "description": "Points from semifinalist team predictions.",
+            "type": "integer"
+          },
+          "total_top_scorer_pts": {
+            "description": "Points from total top scorer player predictions.",
+            "type": "integer"
+          },
+          "winner_pts": {
+            "description": "Points from tournament winner team predictions.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "score_pts",
+          "group_top_scorer_pts",
+          "total_top_scorer_pts",
+          "group_winner_pts",
+          "playoff_pts",
+          "semifinalist_pts",
+          "winner_pts"
+        ],
+        "type": "object"
+      },
       "League": {
         "example": {
           "code": "ABCD1234",
@@ -272,6 +359,20 @@
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         }
       },
+      "LeagueLeaderboardResponse": {
+        "properties": {
+          "leaderboard": {
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "leaderboard"
+        ],
+        "type": "object"
+      },
       "LeagueListItem": {
         "allOf": [
           {
@@ -282,10 +383,15 @@
               "member_count": {
                 "description": "Total number of members in this league.",
                 "type": "integer"
+              },
+              "my_position": {
+                "description": "Requesting user's DENSE_RANK position in this league. Equals 1 when all members are tied at 0.",
+                "type": "integer"
               }
             },
             "required": [
-              "member_count"
+              "member_count",
+              "my_position"
             ],
             "type": "object"
           }
@@ -295,6 +401,7 @@
           "created_at": "2025-01-01T00:00:00Z",
           "id": "550e8400-e29b-41d4-a716-446655440001",
           "member_count": 3,
+          "my_position": 1,
           "name": "My Prediction League",
           "owner_id": "550e8400-e29b-41d4-a716-446655440002",
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -923,6 +1030,20 @@
           "ends_at",
           "created_at",
           "updated_at"
+        ],
+        "type": "object"
+      },
+      "TournamentLeaderboardResponse": {
+        "properties": {
+          "leaderboard": {
+            "items": {
+              "$ref": "#/components/schemas/LeaderboardEntry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "leaderboard"
         ],
         "type": "object"
       },
@@ -1877,6 +1998,93 @@
         ]
       }
     },
+    "/leagues/{leagueId}/leaderboard": {
+      "get": {
+        "operationId": "getLeagueLeaderboard",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "leagueId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeagueLeaderboardResponse"
+                }
+              }
+            },
+            "description": "League leaderboard"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid leagueId"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden (not a member)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get league leaderboard",
+        "tags": [
+          "leaderboard"
+        ]
+      }
+    },
     "/leagues/{leagueId}/predictions": {
       "get": {
         "operationId": "listLeagueScorePredictions",
@@ -2622,6 +2830,83 @@
         ]
       }
     },
+    "/tournaments/{tournamentId}/leaderboard": {
+      "get": {
+        "operationId": "getTournamentLeaderboard",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TournamentLeaderboardResponse"
+                }
+              }
+            },
+            "description": "Tournament leaderboard"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournamentId"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get global tournament leaderboard",
+        "tags": [
+          "leaderboard"
+        ]
+      }
+    },
     "/tournaments/{tournamentId}/predictions/players": {
       "get": {
         "operationId": "listMyPlayerPredictions",
@@ -3203,6 +3488,10 @@
     {
       "description": "Tournament-level player and team predictions",
       "name": "predictions"
+    },
+    {
+      "description": "Per-league and global tournament leaderboards",
+      "name": "leaderboard"
     },
     {
       "description": "API spec and documentation endpoints",

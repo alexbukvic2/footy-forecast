@@ -29,7 +29,8 @@ func NewRouter(
 	userSvc := service.NewUserService(userRepo)
 
 	leagueRepo := repository.NewLeagueRepository(pool)
-	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo)
+	leaderboardRepo := repository.NewLeaderboardRepository(pool)
+	leagueSvc := service.NewLeagueService(leagueRepo, tournamentRepo, leaderboardRepo)
 
 	playerHandicapRepo := repository.NewPlayerHandicapRepository(pool)
 	playerHandicapSvc := service.NewPlayerHandicapService(playerHandicapRepo)
@@ -75,6 +76,8 @@ func NewRouter(
 	tournamentPredictionH := handler.NewTournamentPrediction(logger, tournamentPredictionSvc)
 	scorePredictionH := handler.NewScorePrediction(logger, predictionSvc)
 	fixtureH := handler.NewFixture(logger, fixtureSvc)
+	leaderboardSvc := service.NewLeaderboardService(leaderboardRepo, leagueRepo, tournamentRepo)
+	leaderboardH := handler.NewLeaderboard(logger, leaderboardSvc)
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -147,6 +150,10 @@ func NewRouter(
 	mux.Handle("DELETE /leagues/{id}", protected(leagueH.Delete))
 	mux.Handle("POST /leagues/{id}/code", protected(leagueH.RegenerateCode))
 	mux.Handle("DELETE /leagues/{id}/members/{userId}", protected(leagueH.RemoveMember))
+
+	// Leaderboards (protected for league, public for tournament).
+	mux.Handle("GET /leagues/{id}/leaderboard", protected(leaderboardH.GetForLeague))
+	mux.HandleFunc("GET /tournaments/{id}/leaderboard", leaderboardH.GetForTournament)
 
 	// Apply middleware in outer-to-inner order.
 	return middleware.RequestID(

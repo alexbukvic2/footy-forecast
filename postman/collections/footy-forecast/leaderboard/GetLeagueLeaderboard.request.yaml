@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get League Leaderboard
+method: GET
+url: '{{baseUrl}}/leagues/{{leagueId}}/leaderboard'
+order: 1000
+headers:
+  - key: Authorization
+    value: 'Bearer {{authToken}}'
+

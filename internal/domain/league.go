@@ -35,6 +35,12 @@ type LeagueMember struct {
 	JoinedAt time.Time
 }
 
+// LeagueSummary enriches a League with the requesting user's leaderboard position.
+type LeagueSummary struct {
+	*League
+	MyPosition int
+}
+
 // CreateLeagueInput carries the caller-supplied fields for league creation.
 type CreateLeagueInput struct {
 	TournamentID uuid.UUID

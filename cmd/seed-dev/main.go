@@ -134,6 +134,7 @@ type seedPredictions struct {
 		Category    string  `json:"category"`
 		Pick        string  `json:"pick"`
 		GroupLetter *string `json:"group_letter"`
+		Points      *int    `json:"points"`
 	} `json:"player_predictions"`
 	TeamPredictions []struct {
 		UserID      string  `json:"user_id"`
@@ -141,12 +142,14 @@ type seedPredictions struct {
 		Pick        string  `json:"pick"`
 		GroupLetter *string `json:"group_letter"`
 		SlotIndex   int16   `json:"slot_index"`
+		Points      *int    `json:"points"`
 	} `json:"team_predictions"`
 	ScorePredictions []struct {
 		UserID    string `json:"user_id"`
 		FixtureID string `json:"fixture_id"`
 		GoalsHome int    `json:"goals_home"`
 		GoalsAway int    `json:"goals_away"`
+		Points    *int   `json:"points"`
 	} `json:"score_predictions"`
 }
 
@@ -409,9 +412,9 @@ func insertPlayerPredictions(
 		if _, err := tx.Exec(
 			ctx,
 			`INSERT INTO player_predictions
-			   (user_id, tournament_id, category, pick, group_letter)
-			 VALUES ($1, $2, $3::player_handicap_category, $4, $5)`,
-			pp.UserID, tournamentID, pp.Category, pp.Pick, pp.GroupLetter,
+			   (user_id, tournament_id, category, pick, group_letter, points)
+			 VALUES ($1, $2, $3::player_handicap_category, $4, $5, $6)`,
+			pp.UserID, tournamentID, pp.Category, pp.Pick, pp.GroupLetter, pp.Points,
 		); err != nil {
 			return fmt.Errorf("player_prediction user=%s category=%s: %w", pp.UserID, pp.Category, err)
 		}
@@ -429,9 +432,9 @@ func insertTeamPredictions(
 		if _, err := tx.Exec(
 			ctx,
 			`INSERT INTO team_predictions
-			   (user_id, tournament_id, category, pick, group_letter, slot_index)
-			 VALUES ($1, $2, $3::team_handicap_category, $4, $5, $6)`,
-			tp.UserID, tournamentID, tp.Category, tp.Pick, tp.GroupLetter, tp.SlotIndex,
+			   (user_id, tournament_id, category, pick, group_letter, slot_index, points)
+			 VALUES ($1, $2, $3::team_handicap_category, $4, $5, $6, $7)`,
+			tp.UserID, tournamentID, tp.Category, tp.Pick, tp.GroupLetter, tp.SlotIndex, tp.Points,
 		); err != nil {
 			return fmt.Errorf(
 				"team_prediction user=%s category=%s slot=%d: %w",
@@ -450,9 +453,9 @@ func insertScorePredictions(
 	for _, sp := range p.ScorePredictions {
 		if _, err := tx.Exec(
 			ctx,
-			`INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away)
-			 VALUES ($1, $2, $3, $4)`,
-			sp.UserID, sp.FixtureID, sp.GoalsHome, sp.GoalsAway,
+			`INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away, points)
+			 VALUES ($1, $2, $3, $4, $5)`,
+			sp.UserID, sp.FixtureID, sp.GoalsHome, sp.GoalsAway, sp.Points,
 		); err != nil {
 			return fmt.Errorf("score_prediction user=%s fixture=%s: %w", sp.UserID, sp.FixtureID, err)
 		}

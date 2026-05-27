@@ -1,408 +1,1295 @@
 {
   "player_predictions": [
     {
-      "comment": "Alice: group_top_scorer Group B → Luca Ricci (Switzerland)",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: group_top_scorer Group B \u2192 Luca Ricci (Switzerland)",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "group_top_scorer",
       "pick": "00000002-0000-0000-0000-000000000001",
-      "group_letter": "B"
+      "group_letter": "B",
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: group_top_scorer Group C → Diego Santos (Brazil)",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: group_top_scorer Group C \u2192 Diego Santos (Brazil)",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "group_top_scorer",
       "pick": "00000002-0000-0000-0000-000000000007",
-      "group_letter": "C"
+      "group_letter": "C",
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: total_top_scorer → Luca Ricci",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: total_top_scorer \u2192 Luca Ricci",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "total_top_scorer",
       "pick": "00000002-0000-0000-0000-000000000001",
-      "group_letter": null
+      "group_letter": null,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: total_top_scorer → James White",
+      "comment": "Bob: total_top_scorer \u2192 James White",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "total_top_scorer",
       "pick": "00000002-0000-0000-0000-000000000003",
-      "group_letter": null
+      "group_letter": null,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: group_top_scorer Group B \u2192 Marco Conti (Switzerland)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000002",
+      "group_letter": "B",
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: total_top_scorer \u2192 Diego Santos",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "category": "total_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000007",
+      "group_letter": null,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: group_top_scorer Group B \u2192 Edin Dzeko (Bosnia)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000021",
+      "group_letter": "B",
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: total_top_scorer \u2192 Kylian Mbappe",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "category": "total_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000049",
+      "group_letter": null,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: group_top_scorer Group B \u2192 Luca Ricci (Switzerland)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000001",
+      "group_letter": "B",
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: group_top_scorer Group C \u2192 Carlos Lima (Brazil)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "group_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000008",
+      "group_letter": "C",
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: total_top_scorer \u2192 Diego Santos",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "total_top_scorer",
+      "pick": "00000002-0000-0000-0000-000000000007",
+      "group_letter": null,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     }
   ],
   "team_predictions": [
     {
-      "comment": "Alice: group_winner Group B → Switzerland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: group_winner Group B \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "group_winner",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: group_winner Group C → Brazil",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: group_winner Group C \u2192 Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "group_winner",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: playoff Group B slot 0 → Switzerland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: playoff Group B slot 0 \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "playoff",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: playoff Group B slot 1 → Bosnia",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: playoff Group B slot 1 \u2192 Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "playoff",
       "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
       "group_letter": "B",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: playoff Group C slot 0 → Brazil",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: playoff Group C slot 0 \u2192 Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "playoff",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: playoff Group C slot 1 → Morocco",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: playoff Group C slot 1 \u2192 Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "playoff",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": "C",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: semifinalist slot 0 → Switzerland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: semifinalist slot 0 \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "semifinalist",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: semifinalist slot 1 → Brazil",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: semifinalist slot 1 \u2192 Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "semifinalist",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": null,
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: winner → Switzerland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Alice: winner \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "category": "winner",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: group_winner Group B → Bosnia",
+      "comment": "Bob: group_winner Group B \u2192 Bosnia",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "group_winner",
       "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: group_winner Group C → Morocco",
+      "comment": "Bob: group_winner Group C \u2192 Morocco",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "group_winner",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: playoff Group B slot 0 → Bosnia",
+      "comment": "Bob: playoff Group B slot 0 \u2192 Bosnia",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "playoff",
       "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: playoff Group B slot 1 → Switzerland",
+      "comment": "Bob: playoff Group B slot 1 \u2192 Switzerland",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "playoff",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": "B",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: playoff Group C slot 0 → Morocco",
+      "comment": "Bob: playoff Group C slot 0 \u2192 Morocco",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "playoff",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: playoff Group C slot 1 → Brazil",
+      "comment": "Bob: playoff Group C slot 1 \u2192 Brazil",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "playoff",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": "C",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: semifinalist slot 0 → Bosnia",
+      "comment": "Bob: semifinalist slot 0 \u2192 Bosnia",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "semifinalist",
       "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: semifinalist slot 1 → Morocco",
+      "comment": "Bob: semifinalist slot 1 \u2192 Morocco",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "semifinalist",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": null,
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: winner → Morocco",
+      "comment": "Bob: winner \u2192 Morocco",
       "user_id": "00000004-0000-0000-0000-000000000002",
       "category": "winner",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: group_winner Group B → Switzerland",
+      "comment": "Charlie: group_winner Group B \u2192 Switzerland",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "group_winner",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: group_winner Group C → Brazil",
+      "comment": "Charlie: group_winner Group C \u2192 Brazil",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "group_winner",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: playoff Group B slot 0 → Switzerland",
+      "comment": "Charlie: playoff Group B slot 0 \u2192 Switzerland",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "playoff",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: playoff Group B slot 1 → Qatar (upset)",
+      "comment": "Charlie: playoff Group B slot 1 \u2192 Qatar (upset)",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "playoff",
       "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
       "group_letter": "B",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: playoff Group C slot 0 → Brazil",
+      "comment": "Charlie: playoff Group C slot 0 \u2192 Brazil",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "playoff",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: playoff Group C slot 1 → Haiti (upset)",
+      "comment": "Charlie: playoff Group C slot 1 \u2192 Haiti (upset)",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "playoff",
       "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
       "group_letter": "C",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: semifinalist slot 0 → Switzerland",
+      "comment": "Charlie: semifinalist slot 0 \u2192 Switzerland",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "semifinalist",
       "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: semifinalist slot 1 → Haiti",
+      "comment": "Charlie: semifinalist slot 1 \u2192 Haiti",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "semifinalist",
       "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
       "group_letter": null,
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: winner → Brazil",
+      "comment": "Charlie: winner \u2192 Brazil",
       "user_id": "00000004-0000-0000-0000-000000000003",
       "category": "winner",
       "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: group_winner Group B → Qatar (big upset)",
+      "comment": "Diana: group_winner Group B \u2192 Qatar (big upset)",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "group_winner",
       "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: group_winner Group C → Haiti (big upset)",
+      "comment": "Diana: group_winner Group C \u2192 Haiti (big upset)",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "group_winner",
       "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: playoff Group B slot 0 → Qatar",
+      "comment": "Diana: playoff Group B slot 0 \u2192 Qatar",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "playoff",
       "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
       "group_letter": "B",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: playoff Group B slot 1 → Bosnia",
+      "comment": "Diana: playoff Group B slot 1 \u2192 Bosnia",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "playoff",
       "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
       "group_letter": "B",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: playoff Group C slot 0 → Haiti",
+      "comment": "Diana: playoff Group C slot 0 \u2192 Haiti",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "playoff",
       "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
       "group_letter": "C",
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: playoff Group C slot 1 → Morocco",
+      "comment": "Diana: playoff Group C slot 1 \u2192 Morocco",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "playoff",
       "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
       "group_letter": "C",
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: semifinalist slot 0 → Qatar",
+      "comment": "Diana: semifinalist slot 0 \u2192 Qatar",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "semifinalist",
       "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: semifinalist slot 1 → Haiti",
+      "comment": "Diana: semifinalist slot 1 \u2192 Haiti",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "semifinalist",
       "pick": "2a27b663-66cd-4602-909a-7755d7d2df6b",
       "group_letter": null,
-      "slot_index": 1
+      "slot_index": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Diana: winner → Qatar",
+      "comment": "Diana: winner \u2192 Qatar",
       "user_id": "00000004-0000-0000-0000-000000000004",
       "category": "winner",
       "pick": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f",
       "group_letter": null,
-      "slot_index": 0
+      "slot_index": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: group_winner Group B \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "group_winner",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: group_winner Group C \u2192 Morocco (upset)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "group_winner",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: playoff Group B slot 0 \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "playoff",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": "B",
+      "slot_index": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: playoff Group B slot 1 \u2192 Bosnia",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "playoff",
+      "pick": "c5444452-de4d-47f7-a177-b4a4c19c2699",
+      "group_letter": "B",
+      "slot_index": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: playoff Group C slot 0 \u2192 Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "playoff",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": "C",
+      "slot_index": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: playoff Group C slot 1 \u2192 Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "playoff",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": "C",
+      "slot_index": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: semifinalist slot 0 \u2192 Switzerland",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "semifinalist",
+      "pick": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a",
+      "group_letter": null,
+      "slot_index": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: semifinalist slot 1 \u2192 Morocco",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "semifinalist",
+      "pick": "8214b191-5790-4095-8f62-5a6eb56dda35",
+      "group_letter": null,
+      "slot_index": 1,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: winner \u2192 Brazil",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "category": "winner",
+      "pick": "69be9966-3cfb-474f-a9fa-2e1436a53c39",
+      "group_letter": null,
+      "slot_index": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     }
   ],
   "score_predictions": [
     {
-      "comment": "Alice: Canada 2-0 Bosnia",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "=== FIXTURE 1: actual 1-0 home win ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "25ea5153-f67b-4edc-8533-a036a4c95117",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "25ea5153-f67b-4edc-8533-a036a4c95117",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "25ea5153-f67b-4edc-8533-a036a4c95117",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "25ea5153-f67b-4edc-8533-a036a4c95117",
+      "goals_home": 3,
+      "goals_away": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: wrong outcome (draw predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "25ea5153-f67b-4edc-8533-a036a4c95117",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 2: actual 2-1 home win ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "6d9fedd2-5187-4f2b-ad7e-f56845de3706",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: EXACT 2-1",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "6d9fedd2-5187-4f2b-ad7e-f56845de3706",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "6d9fedd2-5187-4f2b-ad7e-f56845de3706",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: wrong outcome (draw predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "6d9fedd2-5187-4f2b-ad7e-f56845de3706",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 3: Canada 0-0 Bosnia (draw) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (draw, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
       "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
       "goals_home": 2,
-      "goals_away": 0
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: Brazil 1-0 Morocco",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
-      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "comment": "Diana: EXACT 0-0",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: correct outcome (draw, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
       "goals_home": 1,
-      "goals_away": 0
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: Qatar 2-1 Switzerland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
-      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
-      "goals_home": 2,
-      "goals_away": 1
+      "comment": "=== FIXTURE 4: USA 3-1 Paraguay (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "goals_home": 3,
+      "goals_away": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: USA 2-1 Paraguay",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
       "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
       "goals_home": 2,
-      "goals_away": 1
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: Haiti 1-0 Scotland",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
-      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "comment": "Charlie: EXACT 3-1",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "goals_home": 3,
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
       "goals_home": 1,
-      "goals_away": 0
+      "goals_away": 0,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Alice: Australia 1-1 Türkiye",
-      "user_id": "019e5f28-d2ac-7ee0-a624-995a0f7a8d11",
-      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
-      "goals_home": 1,
-      "goals_away": 1
-    },
-    {
-      "comment": "Bob: Canada 1-1 Bosnia",
-      "user_id": "00000004-0000-0000-0000-000000000002",
-      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
-      "goals_home": 1,
-      "goals_away": 1
-    },
-    {
-      "comment": "Bob: Brazil 2-0 Morocco",
-      "user_id": "00000004-0000-0000-0000-000000000002",
-      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
-      "goals_home": 2,
-      "goals_away": 0
-    },
-    {
-      "comment": "Bob: Qatar 0-1 Switzerland",
-      "user_id": "00000004-0000-0000-0000-000000000002",
+      "comment": "=== FIXTURE 5: Qatar 1-1 Switzerland (draw) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
       "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
       "goals_home": 0,
-      "goals_away": 1
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Bob: USA 2-2 Paraguay",
+      "comment": "Bob: EXACT 1-1",
       "user_id": "00000004-0000-0000-0000-000000000002",
-      "fixture_id": "0f104789-7427-47fc-973c-0b6f115aa29a",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
       "goals_home": 2,
-      "goals_away": 2
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: Canada 3-1 Bosnia",
-      "user_id": "00000004-0000-0000-0000-000000000003",
-      "fixture_id": "681553ba-c3e9-4799-b2df-7473897b3baa",
-      "goals_home": 3,
-      "goals_away": 1
+      "comment": "Diana: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     },
     {
-      "comment": "Charlie: Brazil 1-1 Morocco",
-      "user_id": "00000004-0000-0000-0000-000000000003",
+      "comment": "Eve: EXACT 1-1",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "fc58c2e9-1519-48ca-8680-6e431f78659c",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 6: Brazil 2-0 Morocco (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
       "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
       "goals_home": 1,
-      "goals_away": 1
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 3,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "c0c64ed7-3094-4370-9812-e1d0b8a4f7f4",
+      "goals_home": 1,
+      "goals_away": 2,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 7: Haiti 0-1 Scotland (away win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (away win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "goals_home": 1,
+      "goals_away": 2,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: correct outcome (away win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "73ddbbb9-ff4a-4c39-bcf8-a63e6070498c",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 8: Australia 1-2 T\u00fcrkiye (away win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: EXACT 1-2",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 1,
+      "goals_away": 2,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: wrong outcome (draw predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "3184e966-2d1a-40ee-b60a-4eb9cc887195",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 9: actual 2-2 (draw) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "c49ae229-73d1-47fa-95d4-7b2c49eefd9b",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (draw, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "c49ae229-73d1-47fa-95d4-7b2c49eefd9b",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: correct outcome (draw, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "c49ae229-73d1-47fa-95d4-7b2c49eefd9b",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "c49ae229-73d1-47fa-95d4-7b2c49eefd9b",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 10: actual 3-0 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "09167786-da07-4be2-8975-f9fe706c4146",
+      "goals_home": 3,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "09167786-da07-4be2-8975-f9fe706c4146",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "09167786-da07-4be2-8975-f9fe706c4146",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Eve: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000005",
+      "fixture_id": "09167786-da07-4be2-8975-f9fe706c4146",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 11: actual 0-2 (away win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "1b59ac94-7c0f-496b-8b1a-204a1f2661ee",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: EXACT 0-2",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "1b59ac94-7c0f-496b-8b1a-204a1f2661ee",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (away win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "1b59ac94-7c0f-496b-8b1a-204a1f2661ee",
+      "goals_home": 1,
+      "goals_away": 3,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "1b59ac94-7c0f-496b-8b1a-204a1f2661ee",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 12: actual 1-3 (away win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "2240a249-4a26-483c-8393-5e99f0fe08f4",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "2240a249-4a26-483c-8393-5e99f0fe08f4",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: EXACT 1-3",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "2240a249-4a26-483c-8393-5e99f0fe08f4",
+      "goals_home": 1,
+      "goals_away": 3,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (draw predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "2240a249-4a26-483c-8393-5e99f0fe08f4",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 13: actual 4-1 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "801b106a-f4b9-4975-b16f-6ca1d6a4c3d7",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "801b106a-f4b9-4975-b16f-6ca1d6a4c3d7",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "801b106a-f4b9-4975-b16f-6ca1d6a4c3d7",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 0,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 14: actual 2-1 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "d3046169-56e6-4304-b6b4-5f067067afb2",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: EXACT 2-1",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "d3046169-56e6-4304-b6b4-5f067067afb2",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "d3046169-56e6-4304-b6b4-5f067067afb2",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "d3046169-56e6-4304-b6b4-5f067067afb2",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 15: actual 0-1 (away win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "40c3fb8f-f6c2-4354-8ac1-f57712f35925",
+      "goals_home": 1,
+      "goals_away": 2,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "40c3fb8f-f6c2-4354-8ac1-f57712f35925",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "40c3fb8f-f6c2-4354-8ac1-f57712f35925",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: EXACT 0-1",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "40c3fb8f-f6c2-4354-8ac1-f57712f35925",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 16: actual 1-0 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "970583f7-f766-42de-af14-7933be205457",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "970583f7-f766-42de-af14-7933be205457",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "970583f7-f766-42de-af14-7933be205457",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "970583f7-f766-42de-af14-7933be205457",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 17: actual 3-2 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "eecdfdff-60fa-4e63-986a-26cd141233b1",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "eecdfdff-60fa-4e63-986a-26cd141233b1",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (draw predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "eecdfdff-60fa-4e63-986a-26cd141233b1",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 18: actual 2-0 (home win) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "93a79b18-27ef-495a-9e7a-75cd47fea134",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: correct outcome (home win, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "93a79b18-27ef-495a-9e7a-75cd47fea134",
+      "goals_home": 3,
+      "goals_away": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "93a79b18-27ef-495a-9e7a-75cd47fea134",
+      "goals_home": 0,
+      "goals_away": 2,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 19: actual 1-1 (draw) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "33fd3039-1d13-46e3-8da4-dcc1245ea713",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 5,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "33fd3039-1d13-46e3-8da4-dcc1245ea713",
+      "goals_home": 2,
+      "goals_away": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Charlie: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000003",
+      "fixture_id": "33fd3039-1d13-46e3-8da4-dcc1245ea713",
+      "goals_home": 2,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: wrong outcome (away win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "33fd3039-1d13-46e3-8da4-dcc1245ea713",
+      "goals_home": 0,
+      "goals_away": 1,
+      "points": 4,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "=== FIXTURE 20: actual 0-0 (draw) ===",
+      "user_id": "00000004-0000-0000-0000-000000000001",
+      "fixture_id": "595f6d91-865c-4171-b14f-b4c55903f048",
+      "goals_home": 0,
+      "goals_away": 0,
+      "points": 3,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Bob: wrong outcome (home win predicted)",
+      "user_id": "00000004-0000-0000-0000-000000000002",
+      "fixture_id": "595f6d91-865c-4171-b14f-b4c55903f048",
+      "goals_home": 1,
+      "goals_away": 0,
+      "points": 2,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
+    },
+    {
+      "comment": "Diana: correct outcome (draw, wrong exact)",
+      "user_id": "00000004-0000-0000-0000-000000000004",
+      "fixture_id": "595f6d91-865c-4171-b14f-b4c55903f048",
+      "goals_home": 1,
+      "goals_away": 1,
+      "points": 1,
+      "tournament_id": "019e5e3b-0f05-7789-b5d3-6c376fa77761"
     }
   ]
 }

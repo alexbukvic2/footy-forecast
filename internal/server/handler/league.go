@@ -19,7 +19,7 @@ import (
 type LeagueService interface {
 	CreateLeague(ctx context.Context, userID uuid.UUID, in domain.CreateLeagueInput) (*domain.League, error)
 	GetLeague(ctx context.Context, leagueID, requesterID uuid.UUID) (*domain.League, []*domain.LeagueMember, error)
-	ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]*domain.League, error)
+	ListLeaguesForUser(ctx context.Context, userID uuid.UUID) ([]*domain.LeagueSummary, error)
 	UpdateLeagueName(ctx context.Context, leagueID, requesterID uuid.UUID, name string) (*domain.League, error)
 	DeleteLeague(ctx context.Context, leagueID, requesterID uuid.UUID) error
 	RegenerateCode(ctx context.Context, leagueID, requesterID uuid.UUID) (*domain.League, error)
@@ -59,6 +59,7 @@ type leagueMemberResponse struct {
 type leagueListItemResponse struct {
 	leagueResponse
 	MemberCount int `json:"member_count"`
+	MyPosition  int `json:"my_position"`
 }
 
 type leagueDetailResponse struct {
@@ -139,8 +140,9 @@ func (h *League) List(w http.ResponseWriter, r *http.Request) {
 	out := make([]leagueListItemResponse, 0, len(leagues))
 	for _, l := range leagues {
 		out = append(out, leagueListItemResponse{
-			leagueResponse: toLeagueResponse(l),
+			leagueResponse: toLeagueResponse(l.League),
 			MemberCount:    l.MemberCount,
+			MyPosition:     l.MyPosition,
 		})
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"leagues": out})
