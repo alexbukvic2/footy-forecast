@@ -2,9 +2,10 @@
 
 ## Goal
 
-Extend the existing `GET /leagues/{leagueId}/predictions` endpoint with an
-optional `dates[]` query parameter so callers can filter fixtures to one or more
-calendar dates, rather than always receiving the full list of locked fixtures.
+Extend the existing `GET /leagues/{leagueId}/predictions` endpoint with optional
+`n` (number of days) and `page` query parameters so callers can retrieve locked
+fixtures page-by-page, where each page contains exactly `n` days that have
+fixtures (skipping days with no fixtures), counting backwards from today.
 
 ---
 
@@ -12,34 +13,44 @@ calendar dates, rather than always receiving the full list of locked fixtures.
 
 - Adding a brand-new endpoint (we extend the existing one).
 - Cross-league or global (non-league) fixture-by-date queries.
-- Pagination or cursor-based results.
-- Returning the caller's own upcoming (pre-lock) prediction alongside locked
-  member predictions (may be addressed in a follow-up).
+- Returning upcoming (pre-lock) fixtures.
 
 ---
 
 ## Data Model Changes
 
-No schema migrations required. The existing `fixtures`, `teams`,
-`league_members`, `users`, and `score_predictions` tables already contain all
-needed data.
+No schema migrations required.
 
-The existing `ListLockedFixturesByLeague` query in
-`internal/repository/queries/fixtures.sql` currently hard-filters to
-`f.status IN ('in_progress', 'finished')` (line 41). A companion query
-`ListFixturesByLeagueAndDates` is added that:
+Two new sqlc queries are added to `internal/repository/queries/fixtures.sql`:
 
-- Drops the `status IN (...)` filter entirely — all fixtures on the requested
-  dates are returned regardless of status.
-- Adds `AND f.kickoff_at::date = ANY(@dates::date[])`.
-- Keeps the same `json_agg` member-predictions aggregation (members with no
-  prediction produce `null` goals/points in the JSON).
+**`GetLockedFixtureDatesByLeague`** — returns the distinct UTC dates that have at
+least one locked (`prediction_locked = true`) fixture for the league's tournament,
+on or before today, ordered newest-first. Used to resolve which dates fall on a
+given page.
 
-The original `ListLockedFixturesByLeague` query and its repository method remain
-**unchanged** — the no-filter path continues to use it.
+```sql
+SELECT DISTINCT f.kickoff_at::date AS fixture_date
+FROM fixtures f
+JOIN leagues l ON l.tournament_id = f.tournament_id
+WHERE l.id = @league_id
+  AND f.prediction_locked = true
+  AND f.kickoff_at::date <= now()::date
+ORDER BY fixture_date DESC;
+```
 
-A new repository method `ListByLeagueAndDates(ctx, leagueID, requestingUserID,
-dates []time.Time)` is added alongside the existing `ListLockedByLeague`.
+Pagination (`LIMIT n OFFSET (page-1)*n`) is applied in Go after fetching the
+dates, because sqlc does not support dynamic LIMIT/OFFSET from named params in a
+portable way. The full date list is small (≤ tournament length in days, e.g. 64
+for a World Cup), so this is acceptable.
+
+**`ListLockedFixturesByLeagueAndDates`** — identical to
+`ListLockedFixturesByLeague` but replaces `f.status IN ('in_progress',
+'finished')` with `f.kickoff_at::date = ANY(@dates::date[])` (and keeps
+`f.prediction_locked = true` to be safe). Used when `n`/`page` params are
+present.
+
+The original `ListLockedFixturesByLeague` query and `ListLockedByLeague`
+repository method remain **unchanged** for the no-params path.
 
 ---
 
@@ -53,39 +64,47 @@ dates []time.Time)` is added alongside the existing `ListLockedByLeague`.
 |---|---|
 | Auth | `bearerAuth` (protected) — unchanged |
 | Path param | `leagueId` — UUID of the league — unchanged |
-| Query param (new) | `dates[]` — zero or more dates in `YYYY-MM-DD` format (repeatable: `?dates[]=2026-06-14&dates[]=2026-06-15`). Omitting `dates[]` returns all locked fixtures, exactly as before. |
+| Query param (new) | `n` — positive integer, number of days-with-fixtures per page. Required when `page` is sent. |
+| Query param (new) | `page` — positive integer ≥ 1. Page 1 = the most recent `n` days with locked fixtures (≤ today), page 2 = the `n` days before that, etc. **Requires `n`; sending `page` without `n` is a `400`.** |
+
+**Param combinations:**
+
+| `n` | `page` | Behaviour |
+|-----|--------|-----------|
+| absent | absent | Return all locked fixtures — existing behaviour, unchanged |
+| present | absent | Treated as `page=1` |
+| absent | present | `400` |
+| present | present | Paginated result |
 
 **Response `200 OK`** — array of `LeagueFixtureViewResponse` — **unchanged schema**.
 
-The existing `LeagueFixtureViewResponse` shape already matches the requested
-fields (`home_team_name`, `away_team_name`, `kickoff_at`, `goals_home`,
-`goals_away`, `status`) and `predictions` array items
-(`LeagueMemberScorePrediction`) already carry `display_name`, `goals_home`,
-`goals_away`, `points`. No schema additions needed.
-
-Note: when `dates[]` is provided, `upcoming` fixtures are included in the
-response with `predictions` containing each member's entry (with null
-`goals_home`/`goals_away`/`points` if they haven't predicted yet). When
-`dates[]` is omitted, only `in_progress`/`finished` fixtures are returned, as
-today.
+All existing fields (`home_team_name`, `away_team_name`, `kickoff_at`,
+`goals_home`, `goals_away`, `status`, `predictions[{display_name, goals_home,
+goals_away, points}]`) are already present. No schema additions needed.
 
 **New error responses** (all `$ref: '#/components/schemas/ErrorResponse'`):
 
 | Condition | Status | Body |
 |-----------|--------|------|
-| Non-`YYYY-MM-DD` value in `dates[]` | 400 | `{"error": "invalid date format, expected YYYY-MM-DD"}` |
-| More than 7 dates | 400 | `{"error": "too many dates, maximum is 7"}` |
+| `page` sent without `n` | 400 | `{"error": "n is required when page is provided"}` |
+| `n` ≤ 0 or not an integer | 400 | `{"error": "n must be a positive integer"}` |
+| `page` ≤ 0 or not an integer | 400 | `{"error": "page must be a positive integer"}` |
 
 Existing error codes (`401`, `403`, `500`) are unchanged.
 
-**Notes:**
-- Omitting `dates[]` entirely preserves existing behaviour (all locked fixtures
-  returned) — this is a **backward-compatible** change.
-- The 7-date cap is enforced at the handler layer before hitting the service.
-- Dates are interpreted in UTC (`kickoff_at::date` in Postgres default timezone).
+**Pagination edge cases:**
+- If the league has fewer than `n` days with fixtures total, return only as many
+  days as exist (no error).
+- If `page` is beyond the last page, return `200 []`.
 
-> **Implementer:** add the `dates[]` query parameter and the two new 400 cases
-> to `docs/openapi.yaml` under `/leagues/{leagueId}/predictions`, then run
+**Notes:**
+- "Days with fixtures" means UTC calendar dates (`kickoff_at::date`) on or before
+  today that have at least one locked fixture for the league's tournament.
+- Future dates and unlocked fixtures are never returned.
+- Page 1 = newest days; higher pages go further into the past.
+
+> **Implementer:** add `n` and `page` query parameters and the new 400 cases to
+> `docs/openapi.yaml` under `/leagues/{leagueId}/predictions`, then run
 > `make generate` before touching any handler code.
 
 ---
@@ -94,28 +113,29 @@ Existing error codes (`401`, `403`, `500`) are unchanged.
 
 | File | Change |
 |---|---|
-| `docs/openapi.yaml` | Add `dates[]` query param + two new 400 error descriptions to `GET /leagues/{leagueId}/predictions` |
+| `docs/openapi.yaml` | Add `n` + `page` query params and new 400 errors to `GET /leagues/{leagueId}/predictions` |
 | `docs/openapi.json` | Regenerated by `make generate` |
 | `internal/server/oapi/models.gen.go` | Regenerated by `make generate` |
-| `internal/repository/queries/fixtures.sql` | Add new `ListFixturesByLeagueAndDates` query (no status filter, adds date array filter); keep existing query untouched |
+| `internal/repository/queries/fixtures.sql` | Add `GetLockedFixtureDatesByLeague` and `ListLockedFixturesByLeagueAndDates` queries |
 | `internal/repository/dbgen/` | Regenerated by `make generate` (sqlc) |
-| `internal/repository/fixture.go` | Add `ListByLeagueAndDates` method + a new `fixtureFromLeagueAndDatesRow` mapper; existing `ListLockedByLeague` untouched |
-| `internal/service/score_prediction.go` | Add `ListForLeagueByDates` service method; handler calls either the existing or new service method based on presence of `dates[]` |
-| `internal/server/handler/score_prediction.go` | Parse `dates[]` query params, validate, branch to new service method when present |
-| `postman/collections/footy-forecast/leagues/` | Update `ListLeagueScorePredictions.request.yaml` to show example with `dates[]` |
+| `internal/repository/fixture.go` | Add `GetLockedFixtureDates(ctx, leagueID) ([]time.Time, error)` and `ListLockedByLeagueAndDates(ctx, leagueID, requestingUserID, dates []time.Time)` methods; existing `ListLockedByLeague` untouched |
+| `internal/service/score_prediction.go` | Add `ListForLeaguePaged(ctx, leagueID, userID, n, page int)` service method; handler calls either the existing or new method based on presence of params |
+| `internal/server/handler/score_prediction.go` | Parse `n` + `page`, validate, branch to new service method when present |
+| `postman/collections/footy-forecast/leagues/` | Update `ListLeagueScorePredictions.request.yaml` to show example with `n` + `page` |
 
 ---
 
 ## Edge Cases
 
-1. **`dates[]` omitted** — existing `ListLockedByLeague` path runs unchanged; only `in_progress`/`finished` fixtures returned.
-2. **`dates[]` present** — new `ListByLeagueAndDates` path runs; all statuses returned for those dates, including `upcoming`.
-3. **Empty string date** (`dates[]=`) — caught by `time.Parse`, return `400`.
-4. **Malformed date** (e.g. `2026-6-1`, `yesterday`) — `time.Parse("2006-01-02", …)` fails, return `400`.
-5. **More than 7 dates** — return `400` before touching the DB.
-6. **Valid dates but no fixtures on those dates** — return `200 []`.
-7. **League not found / caller not a member** — existing `403`/`404` behaviour unchanged; date parsing happens before any DB call.
-8. **Upcoming fixture, no prediction submitted yet** — member appears in `predictions` with `goals_home: null`, `goals_away: null`, `points: null`.
+1. **Neither `n` nor `page`** — existing `ListLockedByLeague` path, all locked fixtures returned.
+2. **`n` present, `page` absent** — treated as `page=1`; most recent `n` days with locked fixtures.
+3. **`page` present, `n` absent** — `400`.
+4. **`n` or `page` ≤ 0 / non-integer** — `400`.
+5. **Fewer than `n` days with fixtures exist** — return however many days do exist; no error.
+6. **`page` beyond last page** — `200 []`.
+7. **No locked fixtures at all for this league** — `200 []`.
+8. **League not found / caller not a member** — existing `403`/`404` behaviour unchanged; param parsing happens before any DB call.
+9. **Today has no fixtures** — today is the upper bound on the date range but is simply skipped if it has no fixtures; the next most recent day is used.
 
 ---
 
@@ -124,23 +144,26 @@ Existing error codes (`401`, `403`, `500`) are unchanged.
 ### Repository (`internal/repository/`)
 
 - `TestFixtureRepository_ListLockedByLeague_*` — existing tests unchanged.
-- `TestFixtureRepository_ListByLeagueAndDates_HappyPath` — seed fixtures on two different dates (one upcoming, one finished), request one date, assert only that fixture is returned with correct member predictions.
-- `TestFixtureRepository_ListByLeagueAndDates_MultipleDates` — request both dates, assert both fixtures returned.
-- `TestFixtureRepository_ListByLeagueAndDates_IncludesUpcoming` — assert an `upcoming` fixture is returned and predictions array contains members with null goals/points.
-- `TestFixtureRepository_ListByLeagueAndDates_NoMatch` — date with no fixtures returns empty slice, no error.
+- `TestFixtureRepository_GetLockedFixtureDates_HappyPath` — seed fixtures on three dates, assert dates returned newest-first, future/unlocked dates excluded.
+- `TestFixtureRepository_ListLockedByLeagueAndDates_HappyPath` — provide two dates, assert correct fixtures and member predictions returned.
+- `TestFixtureRepository_ListLockedByLeagueAndDates_NoMatch` — date with no fixtures returns empty slice, no error.
 
 ### Service (`internal/service/`)
 
-- Existing `ListForLeague` service tests unchanged.
-- `TestFixtureService_ListForLeagueByDates_HappyPath` — fake repo returns expected views; service passes them through.
-- `TestFixtureService_ListForLeagueByDates_NotMember` — fake repo returns `ErrForbidden`; service surfaces it.
+- Existing `ListForLeague` tests unchanged.
+- `TestFixtureService_ListForLeaguePaged_Page1` — `n=2, page=1`: fake repo returns 3 dates; service slices to first 2, fetches fixtures.
+- `TestFixtureService_ListForLeaguePaged_Page2` — `n=2, page=2`: service slices to dates [2:4].
+- `TestFixtureService_ListForLeaguePaged_FewerDatesThanN` — only 1 date exists for `n=3`; returns that 1 day's fixtures.
+- `TestFixtureService_ListForLeaguePaged_BeyondLastPage` — `page` beyond available dates; returns empty slice.
+- `TestFixtureService_ListForLeaguePaged_NotMember` — repo returns `ErrForbidden`; service surfaces it.
 
 ### Handler (`internal/server/handler/`)
 
-- Existing `listLeagueScorePredictions` handler tests unchanged (no `dates[]`).
-- `TestFixtureHandler_ListByDates_ValidDates` — `?dates[]=2026-06-14`, 200 + correct JSON.
-- `TestFixtureHandler_ListByDates_InvalidDate` — non-date string, 400.
-- `TestFixtureHandler_ListByDates_TooManyDates` — 8 dates, 400.
+- Existing handler tests unchanged.
+- `TestFixtureHandler_Paged_HappyPath` — `?n=3&page=1`, 200 + correct JSON.
+- `TestFixtureHandler_Paged_PageWithoutN` — `?page=2`, 400.
+- `TestFixtureHandler_Paged_InvalidN` — `?n=0`, 400.
+- `TestFixtureHandler_Paged_NonIntegerPage` — `?n=3&page=abc`, 400.
 
 ---
 
