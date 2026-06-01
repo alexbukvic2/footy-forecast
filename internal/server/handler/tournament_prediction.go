@@ -34,14 +34,15 @@ type TournamentPredictionSvc interface {
 		ctx context.Context,
 		tournamentID, userID uuid.UUID,
 	) (locked bool, views []*domain.TeamPredictionView, err error)
-	ListLeaguePlayerPredictions(
+	ListLeagueGroupPredictions(
 		ctx context.Context,
 		leagueID, requestingUserID uuid.UUID,
-	) ([]*domain.LeaguePlayerCategoryView, error)
-	ListLeagueTeamPredictions(
+		groupLetter string,
+	) (*domain.LeagueGroupPredictions, error)
+	ListLeaguePlayoffPredictions(
 		ctx context.Context,
 		leagueID, requestingUserID uuid.UUID,
-	) ([]*domain.LeagueTeamCategoryView, error)
+	) (*domain.LeaguePlayoffPredictions, error)
 }
 
 // TournamentPrediction is the HTTP handler for tournament-level prediction routes.
@@ -100,18 +101,6 @@ type playerPredictionsListResponse struct {
 type teamPredictionsListResponse struct {
 	Locked      bool                         `json:"locked"`
 	Predictions []teamPredictionViewResponse `json:"predictions"`
-}
-
-type leaguePlayerCategoryViewResponse struct {
-	Category    string                           `json:"category"`
-	Group       *string                          `json:"group,omitempty"`
-	Predictions []leagueMemberPlayerPickResponse `json:"predictions"`
-}
-
-type leagueTeamCategoryViewResponse struct {
-	Category    string                         `json:"category"`
-	Group       *string                        `json:"group,omitempty"`
-	Predictions []leagueMemberTeamPickResponse `json:"predictions"`
 }
 
 // ---------- request DTOs ----------
@@ -372,48 +361,63 @@ func (h *TournamentPrediction) ListMyTeamPredictions(
 	writeJSON(w, http.StatusOK, teamPredictionsListResponse{Locked: locked, Predictions: preds})
 }
 
-// ListLeaguePlayerPredictions handles GET /leagues/{leagueId}/predictions/players.
-func (h *TournamentPrediction) ListLeaguePlayerPredictions(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	caller, ok := ctxutil.UserFromCtx(r.Context())
-	if !ok {
-		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
-		return
-	}
+// ---------- new league prediction response types ----------
 
-	leagueID, err := parseUUIDPathValue(r, "leagueId")
-	if err != nil {
-		writeError(w, r, h.logger, err)
-		return
-	}
-
-	views, err := h.svc.ListLeaguePlayerPredictions(r.Context(), leagueID, caller.ID)
-	if err != nil {
-		writeError(w, r, h.logger, err)
-		return
-	}
-
-	out := make([]leaguePlayerCategoryViewResponse, 0, len(views))
-	for _, v := range views {
-		preds := make([]leagueMemberPlayerPickResponse, 0, len(v.Predictions))
-		for _, p := range v.Predictions {
-			preds = append(preds, toLeagueMemberPlayerPickResponse(p))
-		}
-		out = append(
-			out, leaguePlayerCategoryViewResponse{
-				Category:    string(v.Category),
-				Group:       v.GroupLetter,
-				Predictions: preds,
-			},
-		)
-	}
-	writeJSON(w, http.StatusOK, out)
+type leagueTeamCategoryPredictionsResponse struct {
+	Category    string                         `json:"category"`
+	Group       *string                        `json:"group,omitempty"`
+	SlotIndex   *int                           `json:"slot_index,omitempty"`
+	Predictions []leagueMemberTeamPickResponse `json:"predictions"`
 }
 
-// ListLeagueTeamPredictions handles GET /leagues/{leagueId}/predictions/teams.
-func (h *TournamentPrediction) ListLeagueTeamPredictions(
+type leaguePlayerCategoryPredictionsResponse struct {
+	Category    string                           `json:"category"`
+	Group       *string                          `json:"group,omitempty"`
+	Predictions []leagueMemberPlayerPickResponse `json:"predictions"`
+}
+
+type leagueGroupPredictionsResponse struct {
+	Group             string                                    `json:"group"`
+	TeamPredictions   []leagueTeamCategoryPredictionsResponse   `json:"team_predictions"`
+	PlayerPredictions []leaguePlayerCategoryPredictionsResponse `json:"player_predictions"`
+}
+
+type leaguePlayoffPredictionsResponse struct {
+	TeamPredictions   []leagueTeamCategoryPredictionsResponse   `json:"team_predictions"`
+	PlayerPredictions []leaguePlayerCategoryPredictionsResponse `json:"player_predictions"`
+}
+
+func toLeagueTeamCategoryPredictionsResponse(v *domain.LeagueTeamCategoryView) leagueTeamCategoryPredictionsResponse {
+	preds := make([]leagueMemberTeamPickResponse, 0, len(v.Predictions))
+	for _, p := range v.Predictions {
+		preds = append(preds, toLeagueMemberTeamPickResponse(p))
+	}
+	resp := leagueTeamCategoryPredictionsResponse{
+		Category:    string(v.Category),
+		Group:       v.GroupLetter,
+		Predictions: preds,
+	}
+	if v.GroupLetter != nil || v.SlotIndex > 0 {
+		si := v.SlotIndex
+		resp.SlotIndex = &si
+	}
+	return resp
+}
+
+func toLeaguePlayerCategoryPredictionsResponse(v *domain.LeaguePlayerCategoryView) leaguePlayerCategoryPredictionsResponse {
+	preds := make([]leagueMemberPlayerPickResponse, 0, len(v.Predictions))
+	for _, p := range v.Predictions {
+		preds = append(preds, toLeagueMemberPlayerPickResponse(p))
+	}
+	return leaguePlayerCategoryPredictionsResponse{
+		Category:    string(v.Category),
+		Group:       v.GroupLetter,
+		Predictions: preds,
+	}
+}
+
+// ListLeagueGroupPredictions handles GET /leagues/{leagueId}/predictions/groups.
+func (h *TournamentPrediction) ListLeagueGroupPredictions(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
@@ -429,27 +433,74 @@ func (h *TournamentPrediction) ListLeagueTeamPredictions(
 		return
 	}
 
-	views, err := h.svc.ListLeagueTeamPredictions(r.Context(), leagueID, caller.ID)
+	group := r.URL.Query().Get("group")
+	if group == "" {
+		writeError(w, r, h.logger, fmt.Errorf("query param 'group' is required: %w", domain.ErrInvalid))
+		return
+	}
+	if len(group) != 1 {
+		writeError(w, r, h.logger, fmt.Errorf("query param 'group' must be a single character: %w", domain.ErrInvalid))
+		return
+	}
+
+	result, err := h.svc.ListLeagueGroupPredictions(r.Context(), leagueID, caller.ID, group)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
 	}
 
-	out := make([]leagueTeamCategoryViewResponse, 0, len(views))
-	for _, v := range views {
-		preds := make([]leagueMemberTeamPickResponse, 0, len(v.Predictions))
-		for _, p := range v.Predictions {
-			preds = append(preds, toLeagueMemberTeamPickResponse(p))
-		}
-		out = append(
-			out, leagueTeamCategoryViewResponse{
-				Category:    string(v.Category),
-				Group:       v.GroupLetter,
-				Predictions: preds,
-			},
-		)
+	teamPreds := make([]leagueTeamCategoryPredictionsResponse, 0, len(result.TeamPredictions))
+	for _, v := range result.TeamPredictions {
+		teamPreds = append(teamPreds, toLeagueTeamCategoryPredictionsResponse(v))
 	}
-	writeJSON(w, http.StatusOK, out)
+	playerPreds := make([]leaguePlayerCategoryPredictionsResponse, 0, len(result.PlayerPredictions))
+	for _, v := range result.PlayerPredictions {
+		playerPreds = append(playerPreds, toLeaguePlayerCategoryPredictionsResponse(v))
+	}
+
+	writeJSON(w, http.StatusOK, leagueGroupPredictionsResponse{
+		Group:             result.Group,
+		TeamPredictions:   teamPreds,
+		PlayerPredictions: playerPreds,
+	})
+}
+
+// ListLeaguePlayoffPredictions handles GET /leagues/{leagueId}/predictions/playoff.
+func (h *TournamentPrediction) ListLeaguePlayoffPredictions(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	caller, ok := ctxutil.UserFromCtx(r.Context())
+	if !ok {
+		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
+		return
+	}
+
+	leagueID, err := parseUUIDPathValue(r, "leagueId")
+	if err != nil {
+		writeError(w, r, h.logger, err)
+		return
+	}
+
+	result, err := h.svc.ListLeaguePlayoffPredictions(r.Context(), leagueID, caller.ID)
+	if err != nil {
+		writeError(w, r, h.logger, err)
+		return
+	}
+
+	teamPreds := make([]leagueTeamCategoryPredictionsResponse, 0, len(result.TeamPredictions))
+	for _, v := range result.TeamPredictions {
+		teamPreds = append(teamPreds, toLeagueTeamCategoryPredictionsResponse(v))
+	}
+	playerPreds := make([]leaguePlayerCategoryPredictionsResponse, 0, len(result.PlayerPredictions))
+	for _, v := range result.PlayerPredictions {
+		playerPreds = append(playerPreds, toLeaguePlayerCategoryPredictionsResponse(v))
+	}
+
+	writeJSON(w, http.StatusOK, leaguePlayoffPredictionsResponse{
+		TeamPredictions:   teamPreds,
+		PlayerPredictions: playerPreds,
+	})
 }
 
 // compile-time interface checks

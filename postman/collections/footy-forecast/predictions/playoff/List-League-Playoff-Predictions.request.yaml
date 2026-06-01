@@ -1,0 +1,10 @@
+$kind: http-request
+name: List League Playoff Predictions
+method: GET
+url: "{{baseUrl}}/leagues/{{leagueId}}/predictions/playoff"
+auth:
+  type: noauth
+order: 3500
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"

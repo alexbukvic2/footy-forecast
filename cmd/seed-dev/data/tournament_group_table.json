@@ -1,0 +1,61 @@
+[
+  { "id": "a0000001-0000-0000-0000-000000000001", "team_id": "e73417fb-53ae-4178-8fbe-fb451f400e44", "group_letter": "A", "position": 1, "points": 3, "played": 1 },
+  { "id": "a0000001-0000-0000-0000-000000000002", "team_id": "11fe28ff-3b8e-4862-9a98-be8d1024a1c2", "group_letter": "A", "position": 2, "points": 3, "played": 1 },
+  { "id": "a0000001-0000-0000-0000-000000000003", "team_id": "9f44c6d9-99d0-4124-857b-2bf0a2d26d8d", "group_letter": "A", "position": 3, "points": 0, "played": 1 },
+  { "id": "a0000001-0000-0000-0000-000000000004", "team_id": "7a54a441-9a70-4287-a536-940144792006", "group_letter": "A", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "b0000001-0000-0000-0000-000000000001", "team_id": "ea0eb915-a7f0-4ce1-af76-253e6ccb7a4f", "group_letter": "B", "position": 1, "points": 1, "played": 1 },
+  { "id": "b0000001-0000-0000-0000-000000000002", "team_id": "705ae0e4-7224-43ec-9dbd-9e3ff5ffe49a", "group_letter": "B", "position": 2, "points": 1, "played": 1 },
+  { "id": "b0000001-0000-0000-0000-000000000003", "team_id": "2f721a51-9aaf-4cab-86e8-9fea0fb1b29f", "group_letter": "B", "position": 3, "points": 1, "played": 1 },
+  { "id": "b0000001-0000-0000-0000-000000000004", "team_id": "c5444452-de4d-47f7-a177-b4a4c19c2699", "group_letter": "B", "position": 4, "points": 1, "played": 1 },
+
+  { "id": "c0000001-0000-0000-0000-000000000001", "team_id": "69be9966-3cfb-474f-a9fa-2e1436a53c39", "group_letter": "C", "position": 1, "points": 3, "played": 1 },
+  { "id": "c0000001-0000-0000-0000-000000000002", "team_id": "b824fb76-e220-4a93-a231-d8109737a6e2", "group_letter": "C", "position": 2, "points": 3, "played": 1 },
+  { "id": "c0000001-0000-0000-0000-000000000003", "team_id": "8214b191-5790-4095-8f62-5a6eb56dda35", "group_letter": "C", "position": 3, "points": 0, "played": 1 },
+  { "id": "c0000001-0000-0000-0000-000000000004", "team_id": "2a27b663-66cd-4602-909a-7755d7d2df6b", "group_letter": "C", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "d0000001-0000-0000-0000-000000000001", "team_id": "12d0bebf-3a01-48f6-8ee0-2df8c7e563b5", "group_letter": "D", "position": 1, "points": 3, "played": 1 },
+  { "id": "d0000001-0000-0000-0000-000000000002", "team_id": "e083b342-e482-442a-a3fb-a556438c14bc", "group_letter": "D", "position": 2, "points": 3, "played": 1 },
+  { "id": "d0000001-0000-0000-0000-000000000003", "team_id": "81281845-7463-4595-b8f4-7d2c73593f31", "group_letter": "D", "position": 3, "points": 0, "played": 1 },
+  { "id": "d0000001-0000-0000-0000-000000000004", "team_id": "6a2be3b0-f500-4bc1-8d0c-84adb759bd77", "group_letter": "D", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "e0000001-0000-0000-0000-000000000001", "team_id": "1ee063ad-1bd1-422b-b20c-23363e36572d", "group_letter": "E", "position": 1, "points": 3, "played": 1 },
+  { "id": "e0000001-0000-0000-0000-000000000002", "team_id": "8de16e6f-1acb-4e4e-8687-1446b1a74e51", "group_letter": "E", "position": 2, "points": 1, "played": 1 },
+  { "id": "e0000001-0000-0000-0000-000000000003", "team_id": "723e06e9-5219-4630-8bcf-d7391be47840", "group_letter": "E", "position": 3, "points": 1, "played": 1 },
+  { "id": "e0000001-0000-0000-0000-000000000004", "team_id": "f6b4d0e9-9cc6-4983-9cbf-845ad49c47a6", "group_letter": "E", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "f0000001-0000-0000-0000-000000000001", "team_id": "6386368d-daec-433a-8115-06d24451c2e5", "group_letter": "F", "position": 1, "points": 3, "played": 1 },
+  { "id": "f0000001-0000-0000-0000-000000000002", "team_id": "ab6ce035-4e52-4aa8-b963-cfd21d5c0eea", "group_letter": "F", "position": 2, "points": 3, "played": 1 },
+  { "id": "f0000001-0000-0000-0000-000000000003", "team_id": "23ae4801-3e88-44d1-bade-297e2e68faac", "group_letter": "F", "position": 3, "points": 0, "played": 1 },
+  { "id": "f0000001-0000-0000-0000-000000000004", "team_id": "a1aaae66-bf39-4690-920e-65c4d97a3705", "group_letter": "F", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "a0000002-0000-0000-0000-000000000001", "team_id": "4c95f9bd-5803-4461-9e23-640e9f38ba37", "group_letter": "G", "position": 1, "points": 3, "played": 1 },
+  { "id": "a0000002-0000-0000-0000-000000000002", "team_id": "efb67693-9e60-4dbe-8d85-04be3f182def", "group_letter": "G", "position": 2, "points": 3, "played": 1 },
+  { "id": "a0000002-0000-0000-0000-000000000003", "team_id": "796303a1-72a3-4740-8f47-0c8e1ead5137", "group_letter": "G", "position": 3, "points": 0, "played": 1 },
+  { "id": "a0000002-0000-0000-0000-000000000004", "team_id": "f7b333b2-e857-4832-a322-28c8ff735297", "group_letter": "G", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "b0000002-0000-0000-0000-000000000001", "team_id": "1fc6d88a-7989-44f1-ab0c-ef0c7348f82e", "group_letter": "H", "position": 1, "points": 3, "played": 1 },
+  { "id": "b0000002-0000-0000-0000-000000000002", "team_id": "e3c8a17a-0b03-4ea3-b0a2-e16e80232e82", "group_letter": "H", "position": 2, "points": 3, "played": 1 },
+  { "id": "b0000002-0000-0000-0000-000000000003", "team_id": "617e5085-4cab-421f-9791-d4232ac1d32f", "group_letter": "H", "position": 3, "points": 0, "played": 1 },
+  { "id": "b0000002-0000-0000-0000-000000000004", "team_id": "66d42dae-b140-4631-bfe9-36e787bb09fb", "group_letter": "H", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "c0000002-0000-0000-0000-000000000001", "team_id": "e4f747c0-cb92-4f2e-814d-4a870fe6e371", "group_letter": "I", "position": 1, "points": 3, "played": 1 },
+  { "id": "c0000002-0000-0000-0000-000000000002", "team_id": "27cf84db-ad5c-44a3-87f9-32a517733bbb", "group_letter": "I", "position": 2, "points": 3, "played": 1 },
+  { "id": "c0000002-0000-0000-0000-000000000003", "team_id": "0ef77409-b8e4-4607-8b68-1f2c0e742b30", "group_letter": "I", "position": 3, "points": 0, "played": 1 },
+  { "id": "c0000002-0000-0000-0000-000000000004", "team_id": "63c2e744-5552-420c-a18c-a59db7468da6", "group_letter": "I", "position": 4, "points": 0, "played": 1 },
+
+  { "id": "d0000002-0000-0000-0000-000000000001", "team_id": "e25ff3f8-d3a5-4940-8037-8c484804c093", "group_letter": "J", "position": 1, "points": 1, "played": 1 },
+  { "id": "d0000002-0000-0000-0000-000000000002", "team_id": "edacb8e7-035b-48b3-acc0-08a0ca8e9ba9", "group_letter": "J", "position": 2, "points": 1, "played": 1 },
+  { "id": "d0000002-0000-0000-0000-000000000003", "team_id": "51d6436a-37a7-4f81-b735-ce3df6ab565c", "group_letter": "J", "position": 3, "points": 1, "played": 1 },
+  { "id": "d0000002-0000-0000-0000-000000000004", "team_id": "0434cb80-1162-4614-831a-ebe60c4fea25", "group_letter": "J", "position": 4, "points": 1, "played": 1 },
+
+  { "id": "e0000002-0000-0000-0000-000000000001", "team_id": "97236949-fb15-476c-9680-9f8134b13b37", "group_letter": "K", "position": 1, "points": 0, "played": 0 },
+  { "id": "e0000002-0000-0000-0000-000000000002", "team_id": "2360ff4b-a100-4b65-a01b-fa79b39af5e8", "group_letter": "K", "position": 2, "points": 0, "played": 0 },
+  { "id": "e0000002-0000-0000-0000-000000000003", "team_id": "bccca2cb-419e-49c9-ac3f-ca93676bb1b7", "group_letter": "K", "position": 3, "points": 0, "played": 0 },
+  { "id": "e0000002-0000-0000-0000-000000000004", "team_id": "bf68d283-cc5c-49d3-9d34-1817b1271a05", "group_letter": "K", "position": 4, "points": 0, "played": 0 },
+
+  { "id": "f0000002-0000-0000-0000-000000000001", "team_id": "ba31703c-47d7-47d2-b0ec-32381db03ea2", "group_letter": "L", "position": 1, "points": 0, "played": 0 },
+  { "id": "f0000002-0000-0000-0000-000000000002", "team_id": "4f816cd1-5c92-4fcc-abaa-6c96a1e3115d", "group_letter": "L", "position": 2, "points": 0, "played": 0 },
+  { "id": "f0000002-0000-0000-0000-000000000003", "team_id": "54807110-1b9b-4e13-979d-262335c49d6b", "group_letter": "L", "position": 3, "points": 0, "played": 0 },
+  { "id": "f0000002-0000-0000-0000-000000000004", "team_id": "4774adc9-0468-4a28-b911-4879a043ad62", "group_letter": "L", "position": 4, "points": 0, "played": 0 }
+]

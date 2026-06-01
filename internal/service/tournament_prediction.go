@@ -171,7 +171,7 @@ func (s *TournamentPredictionService) lockAt(
 		return time.Time{}, false, fmt.Errorf("get first kickoff: %w", err)
 	}
 	lockAt := firstKickoff.Add(-30 * time.Minute)
-	return lockAt, !s.clock.Now().Before(lockAt), nil
+	return lockAt, s.clock.Now().After(lockAt), nil
 }
 
 // UpsertPlayerPrediction validates and saves a player tournament prediction.
@@ -785,14 +785,12 @@ func (s *TournamentPredictionService) ListTeamPredictionsForUser(
 	return locked, teamViews, nil
 }
 
-// ListLeaguePlayerPredictions returns all member picks grouped by player category.
-// Requires the requesting user to be a league member and the lock time to have passed.
-// The requesting user's pick appears first within each category; remaining members are
-// sorted alphabetically by display name.
-func (s *TournamentPredictionService) ListLeaguePlayerPredictions(
+// checkLeagueMembership verifies the caller is a member of the league and that
+// predictions are locked. Returns (league, nil) on success.
+func (s *TournamentPredictionService) checkLeagueMembership(
 	ctx context.Context,
 	leagueID, requestingUserID uuid.UUID,
-) ([]*domain.LeaguePlayerCategoryView, error) {
+) (*domain.League, error) {
 	league, err := s.leagues.GetByID(ctx, leagueID)
 	if err != nil {
 		return nil, fmt.Errorf("get league: %w", err)
@@ -812,54 +810,19 @@ func (s *TournamentPredictionService) ListLeaguePlayerPredictions(
 	if !locked {
 		return nil, fmt.Errorf("league predictions not available until lock time has passed: %w", domain.ErrForbidden)
 	}
-
-	groups, err := s.teamGroups.ListGroupLettersByTournament(ctx, league.TournamentID)
-	if err != nil {
-		return nil, fmt.Errorf("list groups: %w", err)
-	}
-
-	members, err := s.leagues.ListMembersForPredictions(ctx, leagueID)
-	if err != nil {
-		return nil, fmt.Errorf("list members: %w", err)
-	}
-
-	picks, err := s.playerPredictions.ListPlayersByLeague(ctx, leagueID)
-	if err != nil {
-		return nil, fmt.Errorf("list player predictions: %w", err)
-	}
-
-	return buildLeaguePlayerViews(members, picks, requestingUserID, groups), nil
+	return league, nil
 }
 
-// ListLeagueTeamPredictions returns all member picks grouped by team category.
-// Same membership and lock-time constraints as ListLeaguePlayerPredictions.
-func (s *TournamentPredictionService) ListLeagueTeamPredictions(
+// ListLeagueGroupPredictions returns group-stage predictions for all league members
+// in the given group: group_winner team picks and group_top_scorer player picks.
+// Requires the caller to be a league member and predictions to be locked.
+func (s *TournamentPredictionService) ListLeagueGroupPredictions(
 	ctx context.Context,
 	leagueID, requestingUserID uuid.UUID,
-) ([]*domain.LeagueTeamCategoryView, error) {
-	league, err := s.leagues.GetByID(ctx, leagueID)
-	if err != nil {
-		return nil, fmt.Errorf("get league: %w", err)
-	}
-
-	if _, err := s.leagues.GetMember(ctx, leagueID, requestingUserID); err != nil {
-		if errors.Is(err, domain.ErrNotFound) {
-			return nil, fmt.Errorf("not a member of league %s: %w", leagueID, domain.ErrForbidden)
-		}
-		return nil, fmt.Errorf("check membership: %w", err)
-	}
-
-	_, locked, err := s.lockAt(ctx, league.TournamentID)
-	if err != nil {
+	groupLetter string,
+) (*domain.LeagueGroupPredictions, error) {
+	if _, err := s.checkLeagueMembership(ctx, leagueID, requestingUserID); err != nil {
 		return nil, err
-	}
-	if !locked {
-		return nil, fmt.Errorf("league predictions not available until lock time has passed: %w", domain.ErrForbidden)
-	}
-
-	groups, err := s.teamGroups.ListGroupLettersByTournament(ctx, league.TournamentID)
-	if err != nil {
-		return nil, fmt.Errorf("list groups: %w", err)
 	}
 
 	members, err := s.leagues.ListMembersForPredictions(ctx, leagueID)
@@ -867,111 +830,95 @@ func (s *TournamentPredictionService) ListLeagueTeamPredictions(
 		return nil, fmt.Errorf("list members: %w", err)
 	}
 
-	picks, err := s.teamPredictions.ListTeamsByLeague(ctx, leagueID)
+	teamPicks, err := s.teamPredictions.ListTeamsByLeague(ctx, leagueID)
 	if err != nil {
 		return nil, fmt.Errorf("list team predictions: %w", err)
 	}
 
-	return buildLeagueTeamViews(members, picks, requestingUserID, groups), nil
-}
-
-func buildLeaguePlayerViews(
-	members []*domain.LeagueMemberDisplay,
-	picks []*domain.PlayerLeaguePick,
-	requestingUserID uuid.UUID,
-	groups []string,
-) []*domain.LeaguePlayerCategoryView {
-	type key struct {
-		userID      uuid.UUID
-		category    domain.PlayerHandicapCategory
-		groupLetter string
-	}
-	pickMap := make(map[key]*domain.PlayerLeaguePick, len(picks))
-	for _, p := range picks {
-		gl := ""
-		if p.GroupLetter != nil {
-			gl = *p.GroupLetter
-		}
-		pickMap[key{p.UserID, p.Category, gl}] = p
+	playerPicks, err := s.playerPredictions.ListPlayersByLeague(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("list player predictions: %w", err)
 	}
 
 	sorted := sortedMembers(members, requestingUserID)
 
-	views := make([]*domain.LeaguePlayerCategoryView, 0, len(groups)+1)
-	// group_top_scorer: one view per group
-	for _, g := range groups {
-		gCopy := g
-		memberPicks := make([]domain.LeagueMemberPlayerPick, 0, len(sorted))
-		for _, m := range sorted {
-			pick := pickMap[key{m.UserID, domain.PlayerHandicapCategoryGroupTopScorer, g}]
-			mp := domain.LeagueMemberPlayerPick{UserID: m.UserID, DisplayName: m.DisplayName}
-			if pick != nil {
-				mp.PlayerID = &pick.PlayerID
-				mp.PlayerName = &pick.PlayerName
-				mp.Points = pick.Points
-			}
-			memberPicks = append(memberPicks, mp)
-		}
-		views = append(
-			views, &domain.LeaguePlayerCategoryView{
-				Category:    domain.PlayerHandicapCategoryGroupTopScorer,
-				GroupLetter: &gCopy,
-				Predictions: memberPicks,
-			},
-		)
-	}
-	// total_top_scorer: one view
-	memberPicks := make([]domain.LeagueMemberPlayerPick, 0, len(sorted))
-	for _, m := range sorted {
-		pick := pickMap[key{m.UserID, domain.PlayerHandicapCategoryTotalTopScorer, ""}]
-		mp := domain.LeagueMemberPlayerPick{UserID: m.UserID, DisplayName: m.DisplayName}
-		if pick != nil {
-			mp.PlayerID = &pick.PlayerID
-			mp.PlayerName = &pick.PlayerName
-			mp.Points = pick.Points
-		}
-		memberPicks = append(memberPicks, mp)
-	}
-	views = append(
-		views, &domain.LeaguePlayerCategoryView{
-			Category:    domain.PlayerHandicapCategoryTotalTopScorer,
-			GroupLetter: nil,
-			Predictions: memberPicks,
-		},
-	)
-	return views
+	teamViews := buildGroupTeamViews(sorted, teamPicks, groupLetter)
+	playerViews := buildGroupPlayerViews(sorted, playerPicks, groupLetter)
+
+	return &domain.LeagueGroupPredictions{
+		Group:             groupLetter,
+		TeamPredictions:   teamViews,
+		PlayerPredictions: playerViews,
+	}, nil
 }
 
-func buildLeagueTeamViews(
-	members []*domain.LeagueMemberDisplay,
+// ListLeaguePlayoffPredictions returns knockout/outright predictions for all
+// league members: semifinalist and winner team picks, and total_top_scorer player picks.
+// Requires the caller to be a league member and predictions to be locked.
+func (s *TournamentPredictionService) ListLeaguePlayoffPredictions(
+	ctx context.Context,
+	leagueID, requestingUserID uuid.UUID,
+) (*domain.LeaguePlayoffPredictions, error) {
+	if _, err := s.checkLeagueMembership(ctx, leagueID, requestingUserID); err != nil {
+		return nil, err
+	}
+
+	members, err := s.leagues.ListMembersForPredictions(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("list members: %w", err)
+	}
+
+	teamPicks, err := s.teamPredictions.ListTeamsByLeague(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("list team predictions: %w", err)
+	}
+
+	playerPicks, err := s.playerPredictions.ListPlayersByLeague(ctx, leagueID)
+	if err != nil {
+		return nil, fmt.Errorf("list player predictions: %w", err)
+	}
+
+	sorted := sortedMembers(members, requestingUserID)
+
+	teamViews := buildPlayoffTeamViews(sorted, teamPicks)
+	playerViews := buildPlayoffPlayerViews(sorted, playerPicks)
+
+	return &domain.LeaguePlayoffPredictions{
+		TeamPredictions:   teamViews,
+		PlayerPredictions: playerViews,
+	}, nil
+}
+
+// buildGroupTeamViews builds group_winner and playoff (slots 0-2) category views for a specific group.
+func buildGroupTeamViews(
+	sorted []*domain.LeagueMemberDisplay,
 	picks []*domain.TeamLeaguePick,
-	requestingUserID uuid.UUID,
-	groups []string,
+	groupLetter string,
 ) []*domain.LeagueTeamCategoryView {
 	type key struct {
-		userID      uuid.UUID
-		category    domain.TeamHandicapCategory
-		groupLetter string
-		slotIndex   int
+		userID    uuid.UUID
+		category  domain.TeamHandicapCategory
+		slotIndex int
 	}
 	pickMap := make(map[key]*domain.TeamLeaguePick, len(picks))
 	for _, p := range picks {
-		gl := ""
-		if p.GroupLetter != nil {
-			gl = *p.GroupLetter
+		if p.GroupLetter == nil || *p.GroupLetter != groupLetter {
+			continue
 		}
-		pickMap[key{p.UserID, p.Category, gl, p.SlotIndex}] = p
+		if p.Category != domain.TeamHandicapCategoryGroupWinner && p.Category != domain.TeamHandicapCategoryPlayoff {
+			continue
+		}
+		pickMap[key{p.UserID, p.Category, p.SlotIndex}] = p
 	}
 
-	sorted := sortedMembers(members, requestingUserID)
+	views := make([]*domain.LeagueTeamCategoryView, 0, 4)
 
-	views := make([]*domain.LeagueTeamCategoryView, 0, 4*len(groups)+5)
-	for _, g := range groups {
-		gCopy := g
-		// group_winner slot 0
+	// group_winner: slot 0
+	{
+		gCopy := groupLetter
 		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
 		for _, m := range sorted {
-			pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryGroupWinner, g, 0}]
+			pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryGroupWinner, 0}]
 			mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
 			if pick != nil {
 				mp.TeamID = &pick.TeamID
@@ -988,31 +935,94 @@ func buildLeagueTeamViews(
 				Predictions: memberPicks,
 			},
 		)
-		// playoff slots 0,1,2
-		for slot := 0; slot <= 2; slot++ {
-			gCopy2 := g
-			memberPicks2 := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
-			for _, m := range sorted {
-				pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryPlayoff, g, slot}]
-				mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
-				if pick != nil {
-					mp.TeamID = &pick.TeamID
-					mp.TeamName = &pick.TeamName
-					mp.Points = pick.Points
-				}
-				memberPicks2 = append(memberPicks2, mp)
+	}
+
+	// playoff: slots 0, 1, 2
+	for slot := 0; slot <= 2; slot++ {
+		gCopy := groupLetter
+		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
+		for _, m := range sorted {
+			pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryPlayoff, slot}]
+			mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
+			if pick != nil {
+				mp.TeamID = &pick.TeamID
+				mp.TeamName = &pick.TeamName
+				mp.Points = pick.Points
 			}
-			views = append(
-				views, &domain.LeagueTeamCategoryView{
-					Category:    domain.TeamHandicapCategoryPlayoff,
-					GroupLetter: &gCopy2,
-					SlotIndex:   slot,
-					Predictions: memberPicks2,
-				},
-			)
+			memberPicks = append(memberPicks, mp)
+		}
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategoryPlayoff,
+				GroupLetter: &gCopy,
+				SlotIndex:   slot,
+				Predictions: memberPicks,
+			},
+		)
+	}
+
+	return views
+}
+
+// buildGroupPlayerViews builds the group_top_scorer category view for a specific group.
+func buildGroupPlayerViews(
+	sorted []*domain.LeagueMemberDisplay,
+	picks []*domain.PlayerLeaguePick,
+	groupLetter string,
+) []*domain.LeaguePlayerCategoryView {
+	type key struct{ userID uuid.UUID }
+	pickMap := make(map[key]*domain.PlayerLeaguePick, len(picks))
+	for _, p := range picks {
+		if p.Category == domain.PlayerHandicapCategoryGroupTopScorer &&
+			p.GroupLetter != nil && *p.GroupLetter == groupLetter {
+			pickMap[key{p.UserID}] = p
 		}
 	}
-	// semifinalist slots 0-3
+
+	gCopy := groupLetter
+	memberPicks := make([]domain.LeagueMemberPlayerPick, 0, len(sorted))
+	for _, m := range sorted {
+		pick := pickMap[key{m.UserID}]
+		mp := domain.LeagueMemberPlayerPick{UserID: m.UserID, DisplayName: m.DisplayName}
+		if pick != nil {
+			mp.PlayerID = &pick.PlayerID
+			mp.PlayerName = &pick.PlayerName
+			mp.Points = pick.Points
+		}
+		memberPicks = append(memberPicks, mp)
+	}
+	return []*domain.LeaguePlayerCategoryView{
+		{
+			Category:    domain.PlayerHandicapCategoryGroupTopScorer,
+			GroupLetter: &gCopy,
+			Predictions: memberPicks,
+		},
+	}
+}
+
+// buildPlayoffTeamViews builds category views for semifinalist and winner.
+func buildPlayoffTeamViews(
+	sorted []*domain.LeagueMemberDisplay,
+	picks []*domain.TeamLeaguePick,
+) []*domain.LeagueTeamCategoryView {
+	type key struct {
+		userID      uuid.UUID
+		category    domain.TeamHandicapCategory
+		groupLetter string
+		slotIndex   int
+	}
+	pickMap := make(map[key]*domain.TeamLeaguePick, len(picks))
+	for _, p := range picks {
+		gl := ""
+		if p.GroupLetter != nil {
+			gl = *p.GroupLetter
+		}
+		pickMap[key{p.UserID, p.Category, gl, p.SlotIndex}] = p
+	}
+
+	views := make([]*domain.LeagueTeamCategoryView, 0, 5)
+
+	// semifinalist: slots 0-3
 	for slot := 0; slot <= 3; slot++ {
 		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
 		for _, m := range sorted {
@@ -1034,7 +1044,8 @@ func buildLeagueTeamViews(
 			},
 		)
 	}
-	// winner slot 0
+
+	// winner: slot 0
 	{
 		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
 		for _, m := range sorted {
@@ -1056,7 +1067,41 @@ func buildLeagueTeamViews(
 			},
 		)
 	}
+
 	return views
+}
+
+// buildPlayoffPlayerViews builds the total_top_scorer category view.
+func buildPlayoffPlayerViews(
+	sorted []*domain.LeagueMemberDisplay,
+	picks []*domain.PlayerLeaguePick,
+) []*domain.LeaguePlayerCategoryView {
+	type key struct{ userID uuid.UUID }
+	pickMap := make(map[key]*domain.PlayerLeaguePick, len(picks))
+	for _, p := range picks {
+		if p.Category == domain.PlayerHandicapCategoryTotalTopScorer {
+			pickMap[key{p.UserID}] = p
+		}
+	}
+
+	memberPicks := make([]domain.LeagueMemberPlayerPick, 0, len(sorted))
+	for _, m := range sorted {
+		pick := pickMap[key{m.UserID}]
+		mp := domain.LeagueMemberPlayerPick{UserID: m.UserID, DisplayName: m.DisplayName}
+		if pick != nil {
+			mp.PlayerID = &pick.PlayerID
+			mp.PlayerName = &pick.PlayerName
+			mp.Points = pick.Points
+		}
+		memberPicks = append(memberPicks, mp)
+	}
+	return []*domain.LeaguePlayerCategoryView{
+		{
+			Category:    domain.PlayerHandicapCategoryTotalTopScorer,
+			GroupLetter: nil,
+			Predictions: memberPicks,
+		},
+	}
 }
 
 // compile-time interface checks

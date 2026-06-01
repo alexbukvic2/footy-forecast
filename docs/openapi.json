@@ -365,6 +365,34 @@
           "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
         }
       },
+      "LeagueGroupPredictions": {
+        "description": "Group-stage predictions for all league members in a given group. team_predictions contains group_winner (slot 0) and playoff (slots 0-2) categories for the group. player_predictions contains group_top_scorer for the group.\n",
+        "properties": {
+          "group": {
+            "maxLength": 1,
+            "minLength": 1,
+            "type": "string"
+          },
+          "player_predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeaguePlayerCategoryPredictions"
+            },
+            "type": "array"
+          },
+          "team_predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueTeamCategoryPredictions"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "group",
+          "team_predictions",
+          "player_predictions"
+        ],
+        "type": "object"
+      },
       "LeagueLeaderboardResponse": {
         "properties": {
           "leaderboard": {
@@ -579,6 +607,28 @@
         ],
         "type": "object"
       },
+      "LeaguePlayerCategoryPredictions": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/PlayerHandicapCategory"
+          },
+          "group": {
+            "description": "Group letter (e.g. \"A\"). Present for group-scoped categories.",
+            "type": "string"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueMemberPlayerPick"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "predictions"
+        ],
+        "type": "object"
+      },
       "LeaguePlayerCategoryView": {
         "example": {
           "category": "group_top_scorer",
@@ -606,6 +656,54 @@
               "$ref": "#/components/schemas/LeagueMemberPlayerPick"
             },
             "type": "array"
+          }
+        },
+        "required": [
+          "category",
+          "predictions"
+        ],
+        "type": "object"
+      },
+      "LeaguePlayoffPredictions": {
+        "description": "Knockout/outright predictions for all league members. team_predictions contains semifinalist (slots 0-3) and winner (slot 0) categories only. player_predictions contains total_top_scorer.\n",
+        "properties": {
+          "player_predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeaguePlayerCategoryPredictions"
+            },
+            "type": "array"
+          },
+          "team_predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueTeamCategoryPredictions"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "team_predictions",
+          "player_predictions"
+        ],
+        "type": "object"
+      },
+      "LeagueTeamCategoryPredictions": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/TeamHandicapCategory"
+          },
+          "group": {
+            "description": "Group letter (e.g. \"A\"). Present for group-scoped categories.",
+            "type": "string"
+          },
+          "predictions": {
+            "items": {
+              "$ref": "#/components/schemas/LeagueMemberTeamPick"
+            },
+            "type": "array"
+          },
+          "slot_index": {
+            "description": "Slot index within the category (0-based). Present for multi-slot categories.",
+            "type": "integer"
           }
         },
         "required": [
@@ -746,6 +844,45 @@
         ],
         "type": "object"
       },
+      "PlayerOutcome": {
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "player_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "player_name": {
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "team_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "player_id",
+          "player_name",
+          "team_id",
+          "team_name",
+          "recorded_at"
+        ],
+        "type": "object"
+      },
       "PlayerPredictionView": {
         "example": {
           "category": "group_top_scorer",
@@ -876,6 +1013,36 @@
         },
         "required": [
           "teams"
+        ],
+        "type": "object"
+      },
+      "TeamOutcome": {
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "recorded_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "team_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "team_id",
+          "team_name",
+          "recorded_at"
         ],
         "type": "object"
       },
@@ -1039,6 +1206,50 @@
         ],
         "type": "object"
       },
+      "TournamentGroupTableEntry": {
+        "properties": {
+          "group_letter": {
+            "maxLength": 1,
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "played": {
+            "type": "integer"
+          },
+          "points": {
+            "type": "integer"
+          },
+          "position": {
+            "type": "integer"
+          },
+          "team_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "team_name": {
+            "type": "string"
+          },
+          "tournament_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "tournament_id",
+          "team_id",
+          "team_name",
+          "group_letter",
+          "position",
+          "points",
+          "played"
+        ],
+        "type": "object"
+      },
       "TournamentLeaderboardResponse": {
         "properties": {
           "leaderboard": {
@@ -1078,6 +1289,27 @@
         },
         "required": [
           "tournaments"
+        ],
+        "type": "object"
+      },
+      "TournamentOutcomes": {
+        "properties": {
+          "player_outcomes": {
+            "items": {
+              "$ref": "#/components/schemas/PlayerOutcome"
+            },
+            "type": "array"
+          },
+          "team_outcomes": {
+            "items": {
+              "$ref": "#/components/schemas/TeamOutcome"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "player_outcomes",
+          "team_outcomes"
         ],
         "type": "object"
       },
@@ -2191,9 +2423,9 @@
         ]
       }
     },
-    "/leagues/{leagueId}/predictions/players": {
+    "/leagues/{leagueId}/predictions/groups": {
       "get": {
-        "operationId": "listLeaguePlayerPredictions",
+        "operationId": "listLeagueGroupPredictions",
         "parameters": [
           {
             "in": "path",
@@ -2203,6 +2435,17 @@
               "format": "uuid",
               "type": "string"
             }
+          },
+          {
+            "description": "Group letter to filter by (e.g. \"A\")",
+            "in": "query",
+            "name": "group",
+            "required": true,
+            "schema": {
+              "maxLength": 1,
+              "minLength": 1,
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2210,14 +2453,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/LeaguePlayerCategoryView"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/LeagueGroupPredictions"
                 }
               }
             },
-            "description": "Player predictions for all categories grouped by league member"
+            "description": "Group-stage predictions for the requested group"
           },
           "400": {
             "content": {
@@ -2227,7 +2467,7 @@
                 }
               }
             },
-            "description": "Invalid league ID"
+            "description": "Invalid leagueId or missing/invalid group param"
           },
           "401": {
             "content": {
@@ -2249,6 +2489,16 @@
             },
             "description": "Not a member of the league, or lock time has not passed"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2265,15 +2515,15 @@
             "bearerAuth": []
           }
         ],
-        "summary": "List league player predictions (after lock)",
+        "summary": "List group-stage predictions for a specific group (after lock)",
         "tags": [
           "predictions"
         ]
       }
     },
-    "/leagues/{leagueId}/predictions/teams": {
+    "/leagues/{leagueId}/predictions/playoff": {
       "get": {
-        "operationId": "listLeagueTeamPredictions",
+        "operationId": "listLeaguePlayoffPredictions",
         "parameters": [
           {
             "in": "path",
@@ -2290,14 +2540,11 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/LeagueTeamCategoryView"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/LeaguePlayoffPredictions"
                 }
               }
             },
-            "description": "Team predictions for all categories grouped by league member"
+            "description": "Knockout and outright predictions for all league members"
           },
           "400": {
             "content": {
@@ -2307,7 +2554,7 @@
                 }
               }
             },
-            "description": "Invalid league ID"
+            "description": "Invalid leagueId"
           },
           "401": {
             "content": {
@@ -2329,6 +2576,16 @@
             },
             "description": "Not a member of the league, or lock time has not passed"
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "League not found"
+          },
           "500": {
             "content": {
               "application/json": {
@@ -2345,7 +2602,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "List league team predictions (after lock)",
+        "summary": "List semifinalist and winner predictions for all league members (after lock)",
         "tags": [
           "predictions"
         ]
@@ -2856,6 +3113,86 @@
         ]
       }
     },
+    "/tournaments/{tournamentId}/group-table": {
+      "get": {
+        "operationId": "listTournamentGroupTable",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TournamentGroupTableEntry"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Group table entries sorted by group_letter ASC, position ASC"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List tournament group-stage standings",
+        "tags": [
+          "tournaments"
+        ]
+      }
+    },
     "/tournaments/{tournamentId}/leaderboard": {
       "get": {
         "operationId": "getTournamentLeaderboard",
@@ -2930,6 +3267,83 @@
         "summary": "Get global tournament leaderboard",
         "tags": [
           "leaderboard"
+        ]
+      }
+    },
+    "/tournaments/{tournamentId}/outcomes": {
+      "get": {
+        "operationId": "listTournamentOutcomes",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tournamentId",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TournamentOutcomes"
+                }
+              }
+            },
+            "description": "All recorded player and team outcomes for the tournament"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid tournament ID"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Tournament not found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "List recorded tournament outcomes",
+        "tags": [
+          "tournaments"
         ]
       }
     },

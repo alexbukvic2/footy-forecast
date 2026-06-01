@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get Tournament Outcomes
+method: GET
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/outcomes"
+auth:
+  type: noauth
+order: 5500
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"

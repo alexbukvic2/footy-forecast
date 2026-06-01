@@ -832,6 +832,155 @@ components:
             goals_away: 1
             points: 3
 
+    TournamentGroupTableEntry:
+      type: object
+      required: [id, tournament_id, team_id, team_name, group_letter, position, points, played]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tournament_id:
+          type: string
+          format: uuid
+        team_id:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+        group_letter:
+          type: string
+          minLength: 1
+          maxLength: 1
+        position:
+          type: integer
+        points:
+          type: integer
+        played:
+          type: integer
+
+    PlayerOutcome:
+      type: object
+      required: [id, category, player_id, player_name, team_id, team_name, recorded_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          type: string
+        player_id:
+          type: string
+          format: uuid
+        player_name:
+          type: string
+        team_id:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+        recorded_at:
+          type: string
+          format: date-time
+
+    TeamOutcome:
+      type: object
+      required: [id, category, team_id, team_name, recorded_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          type: string
+        team_id:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+        recorded_at:
+          type: string
+          format: date-time
+
+    TournamentOutcomes:
+      type: object
+      required: [player_outcomes, team_outcomes]
+      properties:
+        player_outcomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerOutcome'
+        team_outcomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamOutcome'
+
+    LeagueTeamCategoryPredictions:
+      type: object
+      required: [category, predictions]
+      properties:
+        category:
+          $ref: '#/components/schemas/TeamHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present for group-scoped categories.
+        slot_index:
+          type: integer
+          description: Slot index within the category (0-based). Present for multi-slot categories.
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueMemberTeamPick'
+
+    LeaguePlayerCategoryPredictions:
+      type: object
+      required: [category, predictions]
+      properties:
+        category:
+          $ref: '#/components/schemas/PlayerHandicapCategory'
+        group:
+          type: string
+          description: Group letter (e.g. "A"). Present for group-scoped categories.
+        predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueMemberPlayerPick'
+
+    LeagueGroupPredictions:
+      type: object
+      description: >
+        Group-stage predictions for all league members in a given group.
+        team_predictions contains group_winner (slot 0) and playoff (slots 0-2) categories for the group.
+        player_predictions contains group_top_scorer for the group.
+      required: [group, team_predictions, player_predictions]
+      properties:
+        group:
+          type: string
+          minLength: 1
+          maxLength: 1
+        team_predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueTeamCategoryPredictions'
+        player_predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaguePlayerCategoryPredictions'
+
+    LeaguePlayoffPredictions:
+      type: object
+      description: >
+        Knockout/outright predictions for all league members.
+        team_predictions contains semifinalist (slots 0-3) and winner (slot 0) categories only.
+        player_predictions contains total_top_scorer.
+      required: [team_predictions, player_predictions]
+      properties:
+        team_predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeagueTeamCategoryPredictions'
+        player_predictions:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeaguePlayerCategoryPredictions'
+
 paths:
   /health:
     get:
@@ -1595,6 +1744,100 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /tournaments/{tournamentId}/group-table:
+    get:
+      summary: List tournament group-stage standings
+      operationId: listTournamentGroupTable
+      tags: [tournaments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Group table entries sorted by group_letter ASC, position ASC
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TournamentGroupTableEntry'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tournaments/{tournamentId}/outcomes:
+    get:
+      summary: List recorded tournament outcomes
+      operationId: listTournamentOutcomes
+      tags: [tournaments]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tournamentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: All recorded player and team outcomes for the tournament
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TournamentOutcomes'
+        '400':
+          description: Invalid tournament ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tournament not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /tournaments/{tournamentId}/predictions/players:
     put:
       summary: Bulk upsert player tournament predictions
@@ -1791,10 +2034,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /leagues/{leagueId}/predictions/players:
+  /leagues/{leagueId}/predictions/groups:
     get:
-      summary: List league player predictions (after lock)
-      operationId: listLeaguePlayerPredictions
+      summary: List group-stage predictions for a specific group (after lock)
+      operationId: listLeagueGroupPredictions
       tags: [predictions]
       security:
         - bearerAuth: []
@@ -1805,17 +2048,23 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: group
+          in: query
+          required: true
+          description: Group letter to filter by (e.g. "A")
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 1
       responses:
         '200':
-          description: Player predictions for all categories grouped by league member
+          description: Group-stage predictions for the requested group
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LeaguePlayerCategoryView'
+                $ref: '#/components/schemas/LeagueGroupPredictions'
         '400':
-          description: Invalid league ID
+          description: Invalid leagueId or missing/invalid group param
           content:
             application/json:
               schema:
@@ -1828,6 +2077,12 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Not a member of the league, or lock time has not passed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
           content:
             application/json:
               schema:
@@ -1839,10 +2094,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /leagues/{leagueId}/predictions/teams:
+  /leagues/{leagueId}/predictions/playoff:
     get:
-      summary: List league team predictions (after lock)
-      operationId: listLeagueTeamPredictions
+      summary: List semifinalist and winner predictions for all league members (after lock)
+      operationId: listLeaguePlayoffPredictions
       tags: [predictions]
       security:
         - bearerAuth: []
@@ -1855,15 +2110,13 @@ paths:
             format: uuid
       responses:
         '200':
-          description: Team predictions for all categories grouped by league member
+          description: Knockout and outright predictions for all league members
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LeagueTeamCategoryView'
+                $ref: '#/components/schemas/LeaguePlayoffPredictions'
         '400':
-          description: Invalid league ID
+          description: Invalid leagueId
           content:
             application/json:
               schema:
@@ -1876,6 +2129,12 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Not a member of the league, or lock time has not passed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: League not found
           content:
             application/json:
               schema:

@@ -1,13 +1,17 @@
 $kind: http-request
 name: List Score Predictions
 method: GET
-url: '{{baseUrl}}/leagues/{{leagueId}}/predictions'
+url: "{{baseUrl}}/leagues/{{leagueId}}/predictions?n=1&skip=2"
+queryParams:
+  - key: n
+    value: "1"
+  - key: skip
+    value: "2"
 auth:
   type: noauth
 order: 6000
 headers:
-  - key: Authorization
-    value: 'Bearer {{authToken}}'
+  Authorization: Bearer {{authToken}}
 params:
   - key: n
     value: '3'

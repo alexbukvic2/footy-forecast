@@ -1,0 +1,13 @@
+$kind: http-request
+name: List League Group Predictions
+method: GET
+url: "{{baseUrl}}/leagues/{{leagueId}}/predictions/groups?group=A"
+auth:
+  type: noauth
+order: 3000
+headers:
+  Authorization: Bearer {{authToken}}
+params:
+  - key: group
+    value: A
+    description: Group letter (e.g. "A")
