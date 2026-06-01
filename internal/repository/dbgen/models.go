@@ -500,6 +500,18 @@ type Tournament struct {
 	UpdatedAt time.Time
 }
 
+type TournamentGroupTable struct {
+	ID           uuid.UUID
+	TournamentID uuid.UUID
+	TeamID       uuid.UUID
+	GroupLetter  string
+	Position     int16
+	Points       int16
+	Played       int16
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
 type User struct {
 	ID          uuid.UUID
 	CognitoSub  string

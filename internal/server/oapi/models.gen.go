@@ -308,6 +308,13 @@ type LeagueFixtureViewResponse struct {
 // LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
 type LeagueFixtureViewResponseStatus string
 
+// LeagueGroupPredictions defines model for LeagueGroupPredictions.
+type LeagueGroupPredictions struct {
+	Group             string                            `json:"group"`
+	PlayerPredictions []LeaguePlayerCategoryPredictions `json:"player_predictions"`
+	TeamPredictions   []LeagueTeamCategoryPredictions   `json:"team_predictions"`
+}
+
 // LeagueLeaderboardResponse defines model for LeagueLeaderboardResponse.
 type LeagueLeaderboardResponse struct {
 	Leaderboard []LeaderboardEntry `json:"leaderboard"`
@@ -372,22 +379,31 @@ type LeagueMemberTeamPick struct {
 	UserId      openapi_types.UUID  `json:"user_id"`
 }
 
-// LeaguePlayerCategoryView defines model for LeaguePlayerCategoryView.
-type LeaguePlayerCategoryView struct {
+// LeaguePlayerCategoryPredictions defines model for LeaguePlayerCategoryPredictions.
+type LeaguePlayerCategoryPredictions struct {
 	Category PlayerHandicapCategory `json:"category"`
 
-	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	// Group Group letter (e.g. "A"). Present for group-scoped categories.
 	Group       *string                  `json:"group,omitempty"`
 	Predictions []LeagueMemberPlayerPick `json:"predictions"`
 }
 
-// LeagueTeamCategoryView defines model for LeagueTeamCategoryView.
-type LeagueTeamCategoryView struct {
+// LeaguePlayoffPredictions Knockout/outright predictions for all league members. team_predictions contains semifinalist (slots 0-3) and winner (slot 0) categories only. player_predictions contains total_top_scorer.
+type LeaguePlayoffPredictions struct {
+	PlayerPredictions []LeaguePlayerCategoryPredictions `json:"player_predictions"`
+	TeamPredictions   []LeagueTeamCategoryPredictions   `json:"team_predictions"`
+}
+
+// LeagueTeamCategoryPredictions defines model for LeagueTeamCategoryPredictions.
+type LeagueTeamCategoryPredictions struct {
 	Category TeamHandicapCategory `json:"category"`
 
-	// Group Group letter (e.g. "A"). Present only for group-scoped categories.
+	// Group Group letter (e.g. "A"). Present for group-scoped categories.
 	Group       *string                `json:"group,omitempty"`
 	Predictions []LeagueMemberTeamPick `json:"predictions"`
+
+	// SlotIndex Slot index within the category (0-based). Present for multi-slot categories.
+	SlotIndex *int `json:"slot_index,omitempty"`
 }
 
 // Player defines model for Player.
@@ -412,6 +428,17 @@ type PlayerHandicapCategory string
 // PlayerListResponse defines model for PlayerListResponse.
 type PlayerListResponse struct {
 	Players []Player `json:"players"`
+}
+
+// PlayerOutcome defines model for PlayerOutcome.
+type PlayerOutcome struct {
+	Category   string             `json:"category"`
+	Id         openapi_types.UUID `json:"id"`
+	PlayerId   openapi_types.UUID `json:"player_id"`
+	PlayerName string             `json:"player_name"`
+	RecordedAt time.Time          `json:"recorded_at"`
+	TeamId     openapi_types.UUID `json:"team_id"`
+	TeamName   string             `json:"team_name"`
 }
 
 // PlayerPredictionView defines model for PlayerPredictionView.
@@ -453,6 +480,15 @@ type TeamHandicapItem struct {
 // TeamListResponse defines model for TeamListResponse.
 type TeamListResponse struct {
 	Teams []TeamWithHandicaps `json:"teams"`
+}
+
+// TeamOutcome defines model for TeamOutcome.
+type TeamOutcome struct {
+	Category   string             `json:"category"`
+	Id         openapi_types.UUID `json:"id"`
+	RecordedAt time.Time          `json:"recorded_at"`
+	TeamId     openapi_types.UUID `json:"team_id"`
+	TeamName   string             `json:"team_name"`
 }
 
 // TeamPredictionView defines model for TeamPredictionView.
@@ -497,6 +533,18 @@ type Tournament struct {
 // TournamentStatus defines model for Tournament.Status.
 type TournamentStatus string
 
+// TournamentGroupTableEntry defines model for TournamentGroupTableEntry.
+type TournamentGroupTableEntry struct {
+	GroupLetter  string             `json:"group_letter"`
+	Id           openapi_types.UUID `json:"id"`
+	Played       int                `json:"played"`
+	Points       int                `json:"points"`
+	Position     int                `json:"position"`
+	TeamId       openapi_types.UUID `json:"team_id"`
+	TeamName     string             `json:"team_name"`
+	TournamentId openapi_types.UUID `json:"tournament_id"`
+}
+
 // TournamentLeaderboardResponse defines model for TournamentLeaderboardResponse.
 type TournamentLeaderboardResponse struct {
 	Leaderboard []LeaderboardEntry `json:"leaderboard"`
@@ -505,6 +553,12 @@ type TournamentLeaderboardResponse struct {
 // TournamentListResponse defines model for TournamentListResponse.
 type TournamentListResponse struct {
 	Tournaments []Tournament `json:"tournaments"`
+}
+
+// TournamentOutcomes defines model for TournamentOutcomes.
+type TournamentOutcomes struct {
+	PlayerOutcomes []PlayerOutcome `json:"player_outcomes"`
+	TeamOutcomes   []TeamOutcome   `json:"team_outcomes"`
 }
 
 // UpsertScorePredictionRequest defines model for UpsertScorePredictionRequest.
@@ -574,6 +628,12 @@ type ListLeagueScorePredictionsParams struct {
 
 	// Skip Number of most-recent days-with-fixtures to skip before fetching `n` days. Requires `n`.
 	Skip *int `form:"skip,omitempty" json:"skip,omitempty"`
+}
+
+// ListLeagueGroupPredictionsParams defines parameters for ListLeagueGroupPredictions.
+type ListLeagueGroupPredictionsParams struct {
+	// Group Group letter to filter by (e.g. "A")
+	Group string `form:"group" json:"group"`
 }
 
 // CreateTournamentJSONBody defines parameters for CreateTournament.

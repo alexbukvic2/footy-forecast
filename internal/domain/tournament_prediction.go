@@ -149,3 +149,16 @@ type LeagueMemberDisplay struct {
 	UserID      uuid.UUID
 	DisplayName string
 }
+
+// LeagueGroupPredictions is the response shape for a specific group's predictions.
+type LeagueGroupPredictions struct {
+	Group             string
+	TeamPredictions   []*LeagueTeamCategoryView
+	PlayerPredictions []*LeaguePlayerCategoryView
+}
+
+// LeaguePlayoffPredictions is the response shape for knockout/outright predictions.
+type LeaguePlayoffPredictions struct {
+	TeamPredictions   []*LeagueTeamCategoryView
+	PlayerPredictions []*LeaguePlayerCategoryView
+}

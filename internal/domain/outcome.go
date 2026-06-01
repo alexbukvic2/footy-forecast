@@ -12,6 +12,9 @@ type PlayerOutcome struct {
 	TournamentID uuid.UUID
 	Category     PlayerHandicapCategory
 	PlayerID     uuid.UUID
+	PlayerName   string
+	TeamID       uuid.UUID
+	TeamName     string
 	RecordedAt   time.Time
 }
 
@@ -21,5 +24,12 @@ type TeamOutcome struct {
 	TournamentID uuid.UUID
 	Category     TeamHandicapCategory
 	TeamID       uuid.UUID
+	TeamName     string
 	RecordedAt   time.Time
+}
+
+// TournamentOutcomes bundles all recorded outcomes for a tournament.
+type TournamentOutcomes struct {
+	PlayerOutcomes []*PlayerOutcome
+	TeamOutcomes   []*TeamOutcome
 }

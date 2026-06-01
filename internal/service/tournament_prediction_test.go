@@ -537,9 +537,9 @@ func TestTournamentPredictionService_ListTeamPredictionsForUser_AllCategories(t 
 	}
 }
 
-// ---------- ListLeaguePlayerPredictions tests ----------
+// ---------- ListLeagueGroupPredictions tests ----------
 
-func TestTournamentPredictionService_ListLeaguePlayerPredictions_NotMember(t *testing.T) {
+func TestTournamentPredictionService_ListLeagueGroupPredictions_NotMember(t *testing.T) {
 	leagueID := uuid.New()
 	tournamentID := uuid.New()
 	userID := uuid.New()
@@ -555,11 +555,11 @@ func TestTournamentPredictionService_ListLeaguePlayerPredictions_NotMember(t *te
 
 	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), leagues, fakeClock{time.Now()})
 
-	_, err := svc.ListLeaguePlayerPredictions(context.Background(), leagueID, userID)
-	require.True(t, errors.Is(err, domain.ErrForbidden))
+	_, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, userID, "A")
+	require.ErrorIs(t, err, domain.ErrForbidden)
 }
 
-func TestTournamentPredictionService_ListLeaguePlayerPredictions_BeforeLock(t *testing.T) {
+func TestTournamentPredictionService_ListLeagueGroupPredictions_BeforeLock(t *testing.T) {
 	leagueID := uuid.New()
 	tournamentID := uuid.New()
 	userID := uuid.New()
@@ -571,6 +571,9 @@ func TestTournamentPredictionService_ListLeaguePlayerPredictions_BeforeLock(t *t
 		getMemberFn: func(_ context.Context, _, _ uuid.UUID) (*domain.LeagueMember, error) {
 			return &domain.LeagueMember{}, nil
 		},
+		listMembersForPredictionsFn: func(_ context.Context, _ uuid.UUID) ([]*domain.LeagueMemberDisplay, error) {
+			return nil, nil
+		},
 	}
 
 	// Kickoff is 2 hours in the future, lock is 1.5h in the future — not yet locked.
@@ -578,11 +581,11 @@ func TestTournamentPredictionService_ListLeaguePlayerPredictions_BeforeLock(t *t
 
 	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), fixtures, leagues, fakeClock{time.Now()})
 
-	_, err := svc.ListLeaguePlayerPredictions(context.Background(), leagueID, userID)
-	require.True(t, errors.Is(err, domain.ErrForbidden))
+	_, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, userID, "A")
+	require.ErrorIs(t, err, domain.ErrForbidden)
 }
 
-func TestTournamentPredictionService_ListLeaguePlayerPredictions_AfterLock(t *testing.T) {
+func TestTournamentPredictionService_ListLeagueGroupPredictions_AfterLock(t *testing.T) {
 	leagueID := uuid.New()
 	tournamentID := uuid.New()
 	me := uuid.New()
@@ -612,31 +615,125 @@ func TestTournamentPredictionService_ListLeaguePlayerPredictions_AfterLock(t *te
 		},
 	}
 
-	// Kickoff was 1h ago → lock was 90 min ago → locked.
+	teamID := uuid.New()
+	tpRepo := &fakeTeamPredictionRepo{
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return []*domain.TeamLeaguePick{
+				{UserID: me, Category: domain.TeamHandicapCategoryGroupWinner, GroupLetter: strPtr("A"), SlotIndex: 0, TeamID: teamID, TeamName: "Argentina"},
+			}, nil
+		},
+	}
+
+	// Kickoff was 1h ago → locked.
 	fixtures := kickoffAt(time.Now().Add(-time.Hour))
 
-	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), fixtures, leagues, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), fixtures, leagues, fakeClock{time.Now()})
 
-	views, err := svc.ListLeaguePlayerPredictions(context.Background(), leagueID, me)
+	result, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, me, "A")
 	require.NoError(t, err)
-	require.Len(t, views, len(domain.AllPlayerHandicapCategories))
+	require.Equal(t, "A", result.Group)
 
-	// Find the group_top_scorer category.
-	var found *domain.LeaguePlayerCategoryView
-	for _, v := range views {
-		if v.Category == domain.PlayerHandicapCategoryGroupTopScorer {
-			found = v
+	// group_winner view present
+	require.Len(t, result.TeamPredictions, 1)
+	require.Equal(t, domain.TeamHandicapCategoryGroupWinner, result.TeamPredictions[0].Category)
+	require.Len(t, result.TeamPredictions[0].Predictions, 2)
+	require.Equal(t, me, result.TeamPredictions[0].Predictions[0].UserID)
+	require.NotNil(t, result.TeamPredictions[0].Predictions[0].TeamID)
+	require.Nil(t, result.TeamPredictions[0].Predictions[1].TeamID)
+
+	// group_top_scorer view present
+	require.Len(t, result.PlayerPredictions, 1)
+	require.Equal(t, domain.PlayerHandicapCategoryGroupTopScorer, result.PlayerPredictions[0].Category)
+	require.Len(t, result.PlayerPredictions[0].Predictions, 2)
+	require.Equal(t, me, result.PlayerPredictions[0].Predictions[0].UserID)
+	require.NotNil(t, result.PlayerPredictions[0].Predictions[0].PlayerID)
+	require.Nil(t, result.PlayerPredictions[0].Predictions[1].PlayerID)
+}
+
+// ---------- ListLeaguePlayoffPredictions tests ----------
+
+func TestTournamentPredictionService_ListLeaguePlayoffPredictions_NotMember(t *testing.T) {
+	leagueID := uuid.New()
+	tournamentID := uuid.New()
+	userID := uuid.New()
+
+	leagues := &fakeLeagueReader{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.League, error) {
+			return &domain.League{ID: leagueID, TournamentID: tournamentID}, nil
+		},
+		getMemberFn: func(_ context.Context, _, _ uuid.UUID) (*domain.LeagueMember, error) {
+			return nil, domain.ErrNotFound
+		},
+	}
+
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), leagues, fakeClock{time.Now()})
+
+	_, err := svc.ListLeaguePlayoffPredictions(context.Background(), leagueID, userID)
+	require.ErrorIs(t, err, domain.ErrForbidden)
+}
+
+func TestTournamentPredictionService_ListLeaguePlayoffPredictions_AfterLock(t *testing.T) {
+	leagueID := uuid.New()
+	tournamentID := uuid.New()
+	me := uuid.New()
+
+	leagues := &fakeLeagueReader{
+		getByIDFn: func(_ context.Context, _ uuid.UUID) (*domain.League, error) {
+			return &domain.League{ID: leagueID, TournamentID: tournamentID}, nil
+		},
+		getMemberFn: func(_ context.Context, _, _ uuid.UUID) (*domain.LeagueMember, error) {
+			return &domain.LeagueMember{}, nil
+		},
+		listMembersForPredictionsFn: func(_ context.Context, _ uuid.UUID) ([]*domain.LeagueMemberDisplay, error) {
+			return []*domain.LeagueMemberDisplay{{UserID: me, DisplayName: "me"}}, nil
+		},
+	}
+
+	playerID := uuid.New()
+	ppRepo := &fakePlayerPredictionRepo{
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.PlayerLeaguePick, error) {
+			return []*domain.PlayerLeaguePick{
+				{UserID: me, Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: playerID, PlayerName: "Neymar"},
+			}, nil
+		},
+	}
+
+	teamID := uuid.New()
+	tpRepo := &fakeTeamPredictionRepo{
+		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
+			return []*domain.TeamLeaguePick{
+				{UserID: me, Category: domain.TeamHandicapCategoryWinner, SlotIndex: 0, TeamID: teamID, TeamName: "Brazil"},
+			}, nil
+		},
+	}
+
+	// Kickoff was 1h ago → locked.
+	fixtures := kickoffAt(time.Now().Add(-time.Hour))
+
+	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), fixtures, leagues, fakeClock{time.Now()})
+
+	result, err := svc.ListLeaguePlayoffPredictions(context.Background(), leagueID, me)
+	require.NoError(t, err)
+
+	// semifinalist (4) + winner (1) = 5 team category views
+	require.Len(t, result.TeamPredictions, 5)
+
+	// Find winner category
+	var winnerView *domain.LeagueTeamCategoryView
+	for _, v := range result.TeamPredictions {
+		if v.Category == domain.TeamHandicapCategoryWinner {
+			winnerView = v
 			break
 		}
 	}
-	require.NotNil(t, found)
-	require.Len(t, found.Predictions, 2)
-	// Requesting user first.
-	require.Equal(t, me, found.Predictions[0].UserID)
-	require.NotNil(t, found.Predictions[0].PlayerID)
-	// Alice has no prediction.
-	require.Equal(t, alice, found.Predictions[1].UserID)
-	require.Nil(t, found.Predictions[1].PlayerID)
+	require.NotNil(t, winnerView)
+	require.Len(t, winnerView.Predictions, 1)
+	require.NotNil(t, winnerView.Predictions[0].TeamID)
+
+	// total_top_scorer player view present
+	require.Len(t, result.PlayerPredictions, 1)
+	require.Equal(t, domain.PlayerHandicapCategoryTotalTopScorer, result.PlayerPredictions[0].Category)
+	require.NotNil(t, result.PlayerPredictions[0].Predictions[0].PlayerID)
 }
 
 // ---------- Group cross-conflict tests ----------

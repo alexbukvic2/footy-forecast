@@ -40,16 +40,17 @@ type fakeTournamentPredictionSvc struct {
 		uuid.UUID,
 		uuid.UUID,
 	) (bool, []*domain.TeamPredictionView, error)
-	ListLeaguePlayerPredictionsFn func(
+	listLeagueGroupFn func(
 		context.Context,
 		uuid.UUID,
 		uuid.UUID,
-	) ([]*domain.LeaguePlayerCategoryView, error)
-	listLeagueTeamsFn func(
+		string,
+	) (*domain.LeagueGroupPredictions, error)
+	listLeaguePlayoffFn func(
 		context.Context,
 		uuid.UUID,
 		uuid.UUID,
-	) ([]*domain.LeagueTeamCategoryView, error)
+	) (*domain.LeaguePlayoffPredictions, error)
 }
 
 func (f *fakeTournamentPredictionSvc) BulkUpsertPlayerPredictions(
@@ -78,17 +79,24 @@ func (f *fakeTournamentPredictionSvc) ListTeamPredictionsForUser(
 ) (bool, []*domain.TeamPredictionView, error) {
 	return f.ListMyTeamPredictionsFn(ctx, tournamentID, userID)
 }
-func (f *fakeTournamentPredictionSvc) ListLeaguePlayerPredictions(
+func (f *fakeTournamentPredictionSvc) ListLeagueGroupPredictions(
 	ctx context.Context,
 	leagueID, userID uuid.UUID,
-) ([]*domain.LeaguePlayerCategoryView, error) {
-	return f.ListLeaguePlayerPredictionsFn(ctx, leagueID, userID)
+	groupLetter string,
+) (*domain.LeagueGroupPredictions, error) {
+	if f.listLeagueGroupFn != nil {
+		return f.listLeagueGroupFn(ctx, leagueID, userID, groupLetter)
+	}
+	return &domain.LeagueGroupPredictions{}, nil
 }
-func (f *fakeTournamentPredictionSvc) ListLeagueTeamPredictions(
+func (f *fakeTournamentPredictionSvc) ListLeaguePlayoffPredictions(
 	ctx context.Context,
 	leagueID, userID uuid.UUID,
-) ([]*domain.LeagueTeamCategoryView, error) {
-	return f.listLeagueTeamsFn(ctx, leagueID, userID)
+) (*domain.LeaguePlayoffPredictions, error) {
+	if f.listLeaguePlayoffFn != nil {
+		return f.listLeaguePlayoffFn(ctx, leagueID, userID)
+	}
+	return &domain.LeaguePlayoffPredictions{}, nil
 }
 
 // ---------- helpers ----------
@@ -622,50 +630,121 @@ func TestTournamentPrediction_ListMyTeamPredictions(t *testing.T) {
 	)
 }
 
-// ---------- ListLeaguePlayerPredictions ----------
+// ---------- ListLeagueGroupPredictions ----------
 
-func TestTournamentPrediction_ListLeaguePlayerPredictions(t *testing.T) {
+func TestTournamentPrediction_ListLeagueGroupPredictions(t *testing.T) {
 	t.Parallel()
 
 	leagueID := uuid.New()
 	userID := uuid.New()
 
 	t.Run(
-		"returns 200 with grouped predictions", func(t *testing.T) {
+		"returns 200 with group predictions", func(t *testing.T) {
 			t.Parallel()
 			playerID := uuid.New()
 			pName := "Lionel Messi"
-			views := []*domain.LeaguePlayerCategoryView{
-				{
-					Category: domain.PlayerHandicapCategoryGroupTopScorer,
-					Predictions: []domain.LeagueMemberPlayerPick{
-						{UserID: userID, DisplayName: "Alice", PlayerID: &playerID, PlayerName: &pName},
+			teamID := uuid.New()
+			tName := "Argentina"
+			groupLetter := "A"
+			result := &domain.LeagueGroupPredictions{
+				Group: "A",
+				TeamPredictions: []*domain.LeagueTeamCategoryView{
+					{
+						Category:    domain.TeamHandicapCategoryGroupWinner,
+						GroupLetter: &groupLetter,
+						SlotIndex:   0,
+						Predictions: []domain.LeagueMemberTeamPick{
+							{UserID: userID, DisplayName: "Alice", TeamID: &teamID, TeamName: &tName},
+						},
+					},
+				},
+				PlayerPredictions: []*domain.LeaguePlayerCategoryView{
+					{
+						Category:    domain.PlayerHandicapCategoryGroupTopScorer,
+						GroupLetter: &groupLetter,
+						Predictions: []domain.LeagueMemberPlayerPick{
+							{UserID: userID, DisplayName: "Alice", PlayerID: &playerID, PlayerName: &pName},
+						},
 					},
 				},
 			}
 			svc := &fakeTournamentPredictionSvc{
-				ListLeaguePlayerPredictionsFn: func(
+				listLeagueGroupFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.LeaguePlayerCategoryView, error) {
-					return views, nil
+					_ string,
+				) (*domain.LeagueGroupPredictions, error) {
+					return result, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
-			rec := getAuthedWithPathValues(
-				t, h.ListLeaguePlayerPredictions, "/leagues/"+leagueID.String()+"/predictions/players",
-				"leagueId", leagueID.String(),
-			)
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups?group=A", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
 
 			require.Equal(t, http.StatusOK, rec.Code)
-			var resp []map[string]any
+			var resp map[string]any
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Len(t, resp, 1)
-			require.Equal(t, "group_top_scorer", resp[0]["category"])
-			preds := resp[0]["predictions"].([]any)
-			require.Len(t, preds, 1)
-			member := preds[0].(map[string]any)
-			require.Equal(t, playerID.String(), member["player_id"])
+			require.Equal(t, "A", resp["group"])
+			teamPreds := resp["team_predictions"].([]any)
+			require.Len(t, teamPreds, 1)
+			require.Equal(t, "group_winner", teamPreds[0].(map[string]any)["category"])
+			playerPreds := resp["player_predictions"].([]any)
+			require.Len(t, playerPreds, 1)
+			require.Equal(t, "group_top_scorer", playerPreds[0].(map[string]any)["category"])
+		},
+	)
+
+	t.Run(
+		"returns 400 when group param missing", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
+			require.Equal(t, http.StatusBadRequest, rec.Code)
+		},
+	)
+
+	t.Run(
+		"returns 400 when group param too long", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups?group=AB", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
+			require.Equal(t, http.StatusBadRequest, rec.Code)
+		},
+	)
+
+	t.Run(
+		"returns 400 on invalid league ID", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodGet, "/leagues/bad-uuid/predictions/groups?group=A", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", "bad-uuid")
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
+			require.Equal(t, http.StatusBadRequest, rec.Code)
+		},
+	)
+
+	t.Run(
+		"returns 401 when unauthenticated", func(t *testing.T) {
+			t.Parallel()
+			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups?group=A", nil)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
+			require.Equal(t, http.StatusUnauthorized, rec.Code)
 		},
 	)
 
@@ -673,39 +752,105 @@ func TestTournamentPrediction_ListLeaguePlayerPredictions(t *testing.T) {
 		"returns 403 when not a member", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				ListLeaguePlayerPredictionsFn: func(
+				listLeagueGroupFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.LeaguePlayerCategoryView, error) {
+					_ string,
+				) (*domain.LeagueGroupPredictions, error) {
 					return nil, domain.ErrForbidden
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
-			rec := getAuthedWithPathValues(
-				t, h.ListLeaguePlayerPredictions, "/leagues/"+leagueID.String()+"/predictions/players",
-				"leagueId", leagueID.String(),
-			)
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups?group=A", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
 			require.Equal(t, http.StatusForbidden, rec.Code)
 		},
 	)
 
 	t.Run(
-		"returns 403 before lock", func(t *testing.T) {
+		"returns 404 when league not found", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				ListLeaguePlayerPredictionsFn: func(
+				listLeagueGroupFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.LeaguePlayerCategoryView, error) {
-					return nil, domain.ErrForbidden
+					_ string,
+				) (*domain.LeagueGroupPredictions, error) {
+					return nil, domain.ErrNotFound
+				},
+			}
+			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/groups?group=A", nil)
+			req = authedRequest(req)
+			req.SetPathValue("leagueId", leagueID.String())
+			rec := httptest.NewRecorder()
+			h.ListLeagueGroupPredictions(rec, req)
+			require.Equal(t, http.StatusNotFound, rec.Code)
+		},
+	)
+}
+
+// ---------- ListLeaguePlayoffPredictions ----------
+
+func TestTournamentPrediction_ListLeaguePlayoffPredictions(t *testing.T) {
+	t.Parallel()
+
+	leagueID := uuid.New()
+
+	t.Run(
+		"returns 200 with playoff predictions", func(t *testing.T) {
+			t.Parallel()
+			teamID := uuid.New()
+			tName := "Brazil"
+			playerID := uuid.New()
+			pName := "Neymar"
+			result := &domain.LeaguePlayoffPredictions{
+				TeamPredictions: []*domain.LeagueTeamCategoryView{
+					{
+						Category:    domain.TeamHandicapCategoryWinner,
+						GroupLetter: nil,
+						SlotIndex:   0,
+						Predictions: []domain.LeagueMemberTeamPick{
+							{UserID: uuid.New(), DisplayName: "Alice", TeamID: &teamID, TeamName: &tName},
+						},
+					},
+				},
+				PlayerPredictions: []*domain.LeaguePlayerCategoryView{
+					{
+						Category:    domain.PlayerHandicapCategoryTotalTopScorer,
+						GroupLetter: nil,
+						Predictions: []domain.LeagueMemberPlayerPick{
+							{UserID: uuid.New(), DisplayName: "Alice", PlayerID: &playerID, PlayerName: &pName},
+						},
+					},
+				},
+			}
+			svc := &fakeTournamentPredictionSvc{
+				listLeaguePlayoffFn: func(
+					_ context.Context,
+					_, _ uuid.UUID,
+				) (*domain.LeaguePlayoffPredictions, error) {
+					return result, nil
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
 			rec := getAuthedWithPathValues(
-				t, h.ListLeaguePlayerPredictions, "/leagues/"+leagueID.String()+"/predictions/players",
+				t, h.ListLeaguePlayoffPredictions, "/leagues/"+leagueID.String()+"/predictions/playoff",
 				"leagueId", leagueID.String(),
 			)
-			require.Equal(t, http.StatusForbidden, rec.Code)
+
+			require.Equal(t, http.StatusOK, rec.Code)
+			var resp map[string]any
+			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
+			teamPreds := resp["team_predictions"].([]any)
+			require.Len(t, teamPreds, 1)
+			require.Equal(t, "winner", teamPreds[0].(map[string]any)["category"])
+			playerPreds := resp["player_predictions"].([]any)
+			require.Len(t, playerPreds, 1)
+			require.Equal(t, "total_top_scorer", playerPreds[0].(map[string]any)["category"])
 		},
 	)
 
@@ -714,7 +859,7 @@ func TestTournamentPrediction_ListLeaguePlayerPredictions(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
 			rec := getAuthedWithPathValues(
-				t, h.ListLeaguePlayerPredictions, "/leagues/bad-uuid/predictions/players",
+				t, h.ListLeaguePlayoffPredictions, "/leagues/bad-uuid/predictions/playoff",
 				"leagueId", "bad-uuid",
 			)
 			require.Equal(t, http.StatusBadRequest, rec.Code)
@@ -725,58 +870,11 @@ func TestTournamentPrediction_ListLeaguePlayerPredictions(t *testing.T) {
 		"returns 401 when unauthenticated", func(t *testing.T) {
 			t.Parallel()
 			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/players", nil)
+			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/playoff", nil)
 			req.SetPathValue("leagueId", leagueID.String())
 			rec := httptest.NewRecorder()
-			h.ListLeaguePlayerPredictions(rec, req)
+			h.ListLeaguePlayoffPredictions(rec, req)
 			require.Equal(t, http.StatusUnauthorized, rec.Code)
-		},
-	)
-}
-
-// ---------- ListLeagueTeamPredictions ----------
-
-func TestTournamentPrediction_ListLeagueTeams(t *testing.T) {
-	t.Parallel()
-
-	leagueID := uuid.New()
-
-	t.Run(
-		"returns 200 with grouped predictions", func(t *testing.T) {
-			t.Parallel()
-			teamID := uuid.New()
-			tName := "Brazil"
-			views := []*domain.LeagueTeamCategoryView{
-				{
-					Category: domain.TeamHandicapCategoryWinner,
-					Predictions: []domain.LeagueMemberTeamPick{
-						{UserID: uuid.New(), DisplayName: "Alice", TeamID: &teamID, TeamName: &tName},
-					},
-				},
-			}
-			svc := &fakeTournamentPredictionSvc{
-				listLeagueTeamsFn: func(
-					_ context.Context,
-					_, _ uuid.UUID,
-				) ([]*domain.LeagueTeamCategoryView, error) {
-					return views, nil
-				},
-			}
-			h := handler.NewTournamentPrediction(silentLogger(), svc)
-			rec := getAuthedWithPathValues(
-				t, h.ListLeagueTeamPredictions, "/leagues/"+leagueID.String()+"/predictions/teams",
-				"leagueId", leagueID.String(),
-			)
-
-			require.Equal(t, http.StatusOK, rec.Code)
-			var resp []map[string]any
-			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
-			require.Len(t, resp, 1)
-			require.Equal(t, "winner", resp[0]["category"])
-			preds := resp[0]["predictions"].([]any)
-			require.Len(t, preds, 1)
-			member := preds[0].(map[string]any)
-			require.Equal(t, teamID.String(), member["team_id"])
 		},
 	)
 
@@ -784,16 +882,16 @@ func TestTournamentPrediction_ListLeagueTeams(t *testing.T) {
 		"returns 403 when not a member", func(t *testing.T) {
 			t.Parallel()
 			svc := &fakeTournamentPredictionSvc{
-				listLeagueTeamsFn: func(
+				listLeaguePlayoffFn: func(
 					_ context.Context,
 					_, _ uuid.UUID,
-				) ([]*domain.LeagueTeamCategoryView, error) {
+				) (*domain.LeaguePlayoffPredictions, error) {
 					return nil, domain.ErrForbidden
 				},
 			}
 			h := handler.NewTournamentPrediction(silentLogger(), svc)
 			rec := getAuthedWithPathValues(
-				t, h.ListLeagueTeamPredictions, "/leagues/"+leagueID.String()+"/predictions/teams",
+				t, h.ListLeaguePlayoffPredictions, "/leagues/"+leagueID.String()+"/predictions/playoff",
 				"leagueId", leagueID.String(),
 			)
 			require.Equal(t, http.StatusForbidden, rec.Code)
@@ -801,14 +899,22 @@ func TestTournamentPrediction_ListLeagueTeams(t *testing.T) {
 	)
 
 	t.Run(
-		"returns 401 when unauthenticated", func(t *testing.T) {
+		"returns 404 when league not found", func(t *testing.T) {
 			t.Parallel()
-			h := handler.NewTournamentPrediction(silentLogger(), &fakeTournamentPredictionSvc{})
-			req := httptest.NewRequest(http.MethodGet, "/leagues/"+leagueID.String()+"/predictions/teams", nil)
-			req.SetPathValue("leagueId", leagueID.String())
-			rec := httptest.NewRecorder()
-			h.ListLeagueTeamPredictions(rec, req)
-			require.Equal(t, http.StatusUnauthorized, rec.Code)
+			svc := &fakeTournamentPredictionSvc{
+				listLeaguePlayoffFn: func(
+					_ context.Context,
+					_, _ uuid.UUID,
+				) (*domain.LeaguePlayoffPredictions, error) {
+					return nil, domain.ErrNotFound
+				},
+			}
+			h := handler.NewTournamentPrediction(silentLogger(), svc)
+			rec := getAuthedWithPathValues(
+				t, h.ListLeaguePlayoffPredictions, "/leagues/"+leagueID.String()+"/predictions/playoff",
+				"leagueId", leagueID.String(),
+			)
+			require.Equal(t, http.StatusNotFound, rec.Code)
 		},
 	)
 }

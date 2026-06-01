@@ -25,6 +25,9 @@ func NewRouter(
 	tournamentRepo := repository.NewTournamentRepository(pool)
 	tournamentSvc := service.NewTournamentService(tournamentRepo)
 
+	tournamentGroupTableRepo := repository.NewTournamentGroupTableRepository(pool)
+	tournamentGroupTableSvc := service.NewTournamentGroupTableService(tournamentGroupTableRepo, tournamentSvc)
+
 	userRepo := repository.NewUserRepository(pool)
 	userSvc := service.NewUserService(userRepo)
 
@@ -78,6 +81,12 @@ func NewRouter(
 	fixtureH := handler.NewFixture(logger, fixtureSvc)
 	leaderboardSvc := service.NewLeaderboardService(leaderboardRepo, leagueRepo, tournamentRepo)
 	leaderboardH := handler.NewLeaderboard(logger, leaderboardSvc)
+	tournamentGroupTableH := handler.NewTournamentGroupTable(logger, tournamentGroupTableSvc)
+
+	outcomesRepo := repository.NewOutcomesRepository(pool)
+	outcomesSvc := service.NewOutcomesService(outcomesRepo, tournamentSvc)
+	outcomesH := handler.NewOutcomes(logger, outcomesSvc)
+
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -113,6 +122,18 @@ func NewRouter(
 	// Player handicaps (protected).
 	mux.Handle("GET /player-handicaps/{player_id}/{category}", protected(playerHandicapH.Get))
 
+	// Group table (protected).
+	mux.Handle(
+		"GET /tournaments/{tournamentId}/group-table",
+		protected(tournamentGroupTableH.ListGroupTable),
+	)
+
+	// Outcomes (protected).
+	mux.Handle(
+		"GET /tournaments/{tournamentId}/outcomes",
+		protected(outcomesH.ListOutcomes),
+	)
+
 	// Tournament predictions (protected).
 	mux.Handle(
 		"PUT /tournaments/{tournamentId}/predictions/players",
@@ -131,10 +152,13 @@ func NewRouter(
 		protected(tournamentPredictionH.ListMyTeamPredictions),
 	)
 	mux.Handle(
-		"GET /leagues/{leagueId}/predictions/players",
-		protected(tournamentPredictionH.ListLeaguePlayerPredictions),
+		"GET /leagues/{leagueId}/predictions/groups",
+		protected(tournamentPredictionH.ListLeagueGroupPredictions),
 	)
-	mux.Handle("GET /leagues/{leagueId}/predictions/teams", protected(tournamentPredictionH.ListLeagueTeamPredictions))
+	mux.Handle(
+		"GET /leagues/{leagueId}/predictions/playoff",
+		protected(tournamentPredictionH.ListLeaguePlayoffPredictions),
+	)
 
 	// Score predictions (protected).
 	mux.Handle("PUT /predictions/{fixtureId}", protected(scorePredictionH.UpsertScore))

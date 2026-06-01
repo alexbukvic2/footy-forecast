@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get Tournament Group Table
+method: GET
+url: "{{baseUrl}}/tournaments/{{tournamentId}}/group-table"
+auth:
+  type: noauth
+order: 5000
+headers:
+  - key: Authorization
+    value: "Bearer {{authToken}}"

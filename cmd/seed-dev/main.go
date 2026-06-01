@@ -42,6 +42,12 @@ var handicapsData []byte
 //go:embed data/predictions.json
 var predictionsData []byte
 
+//go:embed data/tournament_group_table.json
+var tournamentGroupTableData []byte
+
+//go:embed data/outcomes.json
+var outcomesData []byte
+
 // ---------- config ----------
 
 type config struct {
@@ -129,6 +135,28 @@ type seedHandicaps struct {
 	} `json:"team_handicap"`
 }
 
+type seedOutcomes struct {
+	PlayerOutcomes []struct {
+		ID       string `json:"id"`
+		Category string `json:"category"`
+		PlayerID string `json:"player_id"`
+	} `json:"player_outcomes"`
+	TeamOutcomes []struct {
+		ID       string `json:"id"`
+		Category string `json:"category"`
+		TeamID   string `json:"team_id"`
+	} `json:"team_outcomes"`
+}
+
+type seedGroupTableEntry struct {
+	ID          string `json:"id"`
+	TeamID      string `json:"team_id"`
+	GroupLetter string `json:"group_letter"`
+	Position    int    `json:"position"`
+	Points      int    `json:"points"`
+	Played      int    `json:"played"`
+}
+
 type seedPredictions struct {
 	PlayerPredictions []struct {
 		UserID      string  `json:"user_id"`
@@ -178,6 +206,8 @@ func run(logger *slog.Logger) error {
 	var users []seedUser
 	var handicaps seedHandicaps
 	var predictions seedPredictions
+	var groupTable []seedGroupTableEntry
+	var outcomes seedOutcomes
 
 	for _, p := range []struct {
 		src  []byte
@@ -190,6 +220,8 @@ func run(logger *slog.Logger) error {
 		{usersData, &users, "users.json"},
 		{handicapsData, &handicaps, "handicaps.json"},
 		{predictionsData, &predictions, "predictions.json"},
+		{tournamentGroupTableData, &groupTable, "tournament_group_table.json"},
+		{outcomesData, &outcomes, "outcomes.json"},
 	} {
 		if err = json.Unmarshal(p.src, p.dst); err != nil {
 			return fmt.Errorf("parse %s: %w", p.name, err)
@@ -243,6 +275,12 @@ func run(logger *slog.Logger) error {
 			return insertTeamPredictions(ctx, tx, predictions, cfg.tournamentID)
 		}},
 		{"score_predictions", func() error { return insertScorePredictions(ctx, tx, predictions) }},
+		{"tournament_group_table", func() error {
+			return insertGroupTable(ctx, tx, groupTable, cfg.tournamentID)
+		}},
+		{"player_outcomes", func() error {
+			return insertOutcomes(ctx, tx, outcomes, cfg.tournamentID)
+		}},
 	}
 	for _, s := range steps {
 		logger.Info("seeding " + s.label)
@@ -264,6 +302,9 @@ func run(logger *slog.Logger) error {
 		"team_predictions", len(predictions.TeamPredictions),
 		"player_predictions", len(predictions.PlayerPredictions),
 		"score_predictions", len(predictions.ScorePredictions),
+		"group_table_entries", len(groupTable),
+		"player_outcomes", len(outcomes.PlayerOutcomes),
+		"team_outcomes", len(outcomes.TeamOutcomes),
 	)
 	return nil
 }
@@ -446,6 +487,55 @@ func insertTeamPredictions(
 	return nil
 }
 
+func insertOutcomes(
+	ctx context.Context,
+	tx pgx.Tx,
+	o seedOutcomes,
+	tournamentID uuid.UUID,
+) error {
+	for _, p := range o.PlayerOutcomes {
+		if _, err := tx.Exec(
+			ctx,
+			`INSERT INTO player_outcomes (id, tournament_id, category, player_id)
+			 VALUES ($1, $2, $3::player_handicap_category, $4)`,
+			p.ID, tournamentID, p.Category, p.PlayerID,
+		); err != nil {
+			return fmt.Errorf("player_outcome category=%s player=%s: %w", p.Category, p.PlayerID, err)
+		}
+	}
+	for _, t := range o.TeamOutcomes {
+		if _, err := tx.Exec(
+			ctx,
+			`INSERT INTO team_outcomes (id, tournament_id, category, team_id)
+			 VALUES ($1, $2, $3::team_handicap_category, $4)`,
+			t.ID, tournamentID, t.Category, t.TeamID,
+		); err != nil {
+			return fmt.Errorf("team_outcome category=%s team=%s: %w", t.Category, t.TeamID, err)
+		}
+	}
+	return nil
+}
+
+func insertGroupTable(
+	ctx context.Context,
+	tx pgx.Tx,
+	entries []seedGroupTableEntry,
+	tournamentID uuid.UUID,
+) error {
+	for _, e := range entries {
+		if _, err := tx.Exec(
+			ctx,
+			`INSERT INTO tournament_group_table
+			   (id, tournament_id, team_id, group_letter, position, points, played)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+			e.ID, tournamentID, e.TeamID, e.GroupLetter, e.Position, e.Points, e.Played,
+		); err != nil {
+			return fmt.Errorf("group_table team=%s group=%s: %w", e.TeamID, e.GroupLetter, err)
+		}
+	}
+	return nil
+}
+
 func insertScorePredictions(
 	ctx context.Context,
 	tx pgx.Tx,
@@ -485,6 +575,9 @@ func clean(
 		{"league_members", `DELETE FROM league_members WHERE user_id = ANY($1) AND league_id = $2`, []any{userIDs, leagueID}},
 		{"player_handicap", `DELETE FROM player_handicap WHERE player_id = ANY($1)`, []any{playerIDs}},
 		{"team_handicap", `DELETE FROM team_handicap WHERE team_id = ANY($1)`, []any{teamIDs}},
+		{"tournament_group_table", `DELETE FROM tournament_group_table WHERE team_id = ANY($1)`, []any{teamIDs}},
+		{"team_outcomes", `DELETE FROM team_outcomes WHERE team_id = ANY($1)`, []any{teamIDs}},
+		{"player_outcomes", `DELETE FROM player_outcomes WHERE player_id = ANY($1)`, []any{playerIDs}},
 		{"fixtures", `DELETE FROM fixtures WHERE id = ANY($1)`, []any{fixtureIDs}},
 		{"players", `DELETE FROM players WHERE id = ANY($1)`, []any{playerIDs}},
 		{"teams", `DELETE FROM teams WHERE id = ANY($1)`, []any{teamIDs}},
@@ -525,11 +618,11 @@ func truncateAll(
 			player_handicap,
 			team_handicap,
 			league_members,
+			tournament_group_table,
 			fixtures,
 			players,
 			teams
-		CASCADE
-	`,
+		CASCADE`,
 	)
 	return err
 }
