@@ -616,10 +616,12 @@ func TestTournamentPredictionService_ListLeagueGroupPredictions_AfterLock(t *tes
 	}
 
 	teamID := uuid.New()
+	playoffTeamID := uuid.New()
 	tpRepo := &fakeTeamPredictionRepo{
 		listByLeagueFn: func(_ context.Context, _ uuid.UUID) ([]*domain.TeamLeaguePick, error) {
 			return []*domain.TeamLeaguePick{
 				{UserID: me, Category: domain.TeamHandicapCategoryGroupWinner, GroupLetter: strPtr("A"), SlotIndex: 0, TeamID: teamID, TeamName: "Argentina"},
+				{UserID: me, Category: domain.TeamHandicapCategoryPlayoff, GroupLetter: strPtr("A"), SlotIndex: 0, TeamID: playoffTeamID, TeamName: "Brazil"},
 			}, nil
 		},
 	}
@@ -633,13 +635,26 @@ func TestTournamentPredictionService_ListLeagueGroupPredictions_AfterLock(t *tes
 	require.NoError(t, err)
 	require.Equal(t, "A", result.Group)
 
-	// group_winner view present
-	require.Len(t, result.TeamPredictions, 1)
+	// group_winner + playoff (slots 0-2) views present
+	require.Len(t, result.TeamPredictions, 4)
 	require.Equal(t, domain.TeamHandicapCategoryGroupWinner, result.TeamPredictions[0].Category)
+	require.Equal(t, 0, result.TeamPredictions[0].SlotIndex)
 	require.Len(t, result.TeamPredictions[0].Predictions, 2)
 	require.Equal(t, me, result.TeamPredictions[0].Predictions[0].UserID)
 	require.NotNil(t, result.TeamPredictions[0].Predictions[0].TeamID)
 	require.Nil(t, result.TeamPredictions[0].Predictions[1].TeamID)
+
+	require.Equal(t, domain.TeamHandicapCategoryPlayoff, result.TeamPredictions[1].Category)
+	require.Equal(t, 0, result.TeamPredictions[1].SlotIndex)
+	require.NotNil(t, result.TeamPredictions[1].Predictions[0].TeamID)
+
+	require.Equal(t, domain.TeamHandicapCategoryPlayoff, result.TeamPredictions[2].Category)
+	require.Equal(t, 1, result.TeamPredictions[2].SlotIndex)
+	require.Nil(t, result.TeamPredictions[2].Predictions[0].TeamID)
+
+	require.Equal(t, domain.TeamHandicapCategoryPlayoff, result.TeamPredictions[3].Category)
+	require.Equal(t, 2, result.TeamPredictions[3].SlotIndex)
+	require.Nil(t, result.TeamPredictions[3].Predictions[0].TeamID)
 
 	// group_top_scorer view present
 	require.Len(t, result.PlayerPredictions, 1)

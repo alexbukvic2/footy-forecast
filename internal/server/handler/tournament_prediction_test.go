@@ -657,6 +657,30 @@ func TestTournamentPrediction_ListLeagueGroupPredictions(t *testing.T) {
 							{UserID: userID, DisplayName: "Alice", TeamID: &teamID, TeamName: &tName},
 						},
 					},
+					{
+						Category:    domain.TeamHandicapCategoryPlayoff,
+						GroupLetter: &groupLetter,
+						SlotIndex:   0,
+						Predictions: []domain.LeagueMemberTeamPick{
+							{UserID: userID, DisplayName: "Alice", TeamID: &teamID, TeamName: &tName},
+						},
+					},
+					{
+						Category:    domain.TeamHandicapCategoryPlayoff,
+						GroupLetter: &groupLetter,
+						SlotIndex:   1,
+						Predictions: []domain.LeagueMemberTeamPick{
+							{UserID: userID, DisplayName: "Alice"},
+						},
+					},
+					{
+						Category:    domain.TeamHandicapCategoryPlayoff,
+						GroupLetter: &groupLetter,
+						SlotIndex:   2,
+						Predictions: []domain.LeagueMemberTeamPick{
+							{UserID: userID, DisplayName: "Alice"},
+						},
+					},
 				},
 				PlayerPredictions: []*domain.LeaguePlayerCategoryView{
 					{
@@ -689,8 +713,11 @@ func TestTournamentPrediction_ListLeagueGroupPredictions(t *testing.T) {
 			require.NoError(t, json.NewDecoder(rec.Body).Decode(&resp))
 			require.Equal(t, "A", resp["group"])
 			teamPreds := resp["team_predictions"].([]any)
-			require.Len(t, teamPreds, 1)
+			require.Len(t, teamPreds, 4)
 			require.Equal(t, "group_winner", teamPreds[0].(map[string]any)["category"])
+			require.Equal(t, "playoff", teamPreds[1].(map[string]any)["category"])
+			require.Equal(t, "playoff", teamPreds[2].(map[string]any)["category"])
+			require.Equal(t, "playoff", teamPreds[3].(map[string]any)["category"])
 			playerPreds := resp["player_predictions"].([]any)
 			require.Len(t, playerPreds, 1)
 			require.Equal(t, "group_top_scorer", playerPreds[0].(map[string]any)["category"])

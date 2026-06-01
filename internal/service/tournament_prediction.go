@@ -889,7 +889,7 @@ func (s *TournamentPredictionService) ListLeaguePlayoffPredictions(
 	}, nil
 }
 
-// buildGroupTeamViews builds the group_winner category view for a specific group.
+// buildGroupTeamViews builds group_winner and playoff (slots 0-2) category views for a specific group.
 func buildGroupTeamViews(
 	sorted []*domain.LeagueMemberDisplay,
 	picks []*domain.TeamLeaguePick,
@@ -897,36 +897,71 @@ func buildGroupTeamViews(
 ) []*domain.LeagueTeamCategoryView {
 	type key struct {
 		userID    uuid.UUID
+		category  domain.TeamHandicapCategory
 		slotIndex int
 	}
 	pickMap := make(map[key]*domain.TeamLeaguePick, len(picks))
 	for _, p := range picks {
-		if p.Category == domain.TeamHandicapCategoryGroupWinner &&
-			p.GroupLetter != nil && *p.GroupLetter == groupLetter {
-			pickMap[key{p.UserID, p.SlotIndex}] = p
+		if p.GroupLetter == nil || *p.GroupLetter != groupLetter {
+			continue
 		}
+		if p.Category != domain.TeamHandicapCategoryGroupWinner && p.Category != domain.TeamHandicapCategoryPlayoff {
+			continue
+		}
+		pickMap[key{p.UserID, p.Category, p.SlotIndex}] = p
 	}
 
-	gCopy := groupLetter
-	memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
-	for _, m := range sorted {
-		pick := pickMap[key{m.UserID, 0}]
-		mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
-		if pick != nil {
-			mp.TeamID = &pick.TeamID
-			mp.TeamName = &pick.TeamName
-			mp.Points = pick.Points
+	views := make([]*domain.LeagueTeamCategoryView, 0, 4)
+
+	// group_winner: slot 0
+	{
+		gCopy := groupLetter
+		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
+		for _, m := range sorted {
+			pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryGroupWinner, 0}]
+			mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
+			if pick != nil {
+				mp.TeamID = &pick.TeamID
+				mp.TeamName = &pick.TeamName
+				mp.Points = pick.Points
+			}
+			memberPicks = append(memberPicks, mp)
 		}
-		memberPicks = append(memberPicks, mp)
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategoryGroupWinner,
+				GroupLetter: &gCopy,
+				SlotIndex:   0,
+				Predictions: memberPicks,
+			},
+		)
 	}
-	return []*domain.LeagueTeamCategoryView{
-		{
-			Category:    domain.TeamHandicapCategoryGroupWinner,
-			GroupLetter: &gCopy,
-			SlotIndex:   0,
-			Predictions: memberPicks,
-		},
+
+	// playoff: slots 0, 1, 2
+	for slot := 0; slot <= 2; slot++ {
+		gCopy := groupLetter
+		memberPicks := make([]domain.LeagueMemberTeamPick, 0, len(sorted))
+		for _, m := range sorted {
+			pick := pickMap[key{m.UserID, domain.TeamHandicapCategoryPlayoff, slot}]
+			mp := domain.LeagueMemberTeamPick{UserID: m.UserID, DisplayName: m.DisplayName}
+			if pick != nil {
+				mp.TeamID = &pick.TeamID
+				mp.TeamName = &pick.TeamName
+				mp.Points = pick.Points
+			}
+			memberPicks = append(memberPicks, mp)
+		}
+		views = append(
+			views, &domain.LeagueTeamCategoryView{
+				Category:    domain.TeamHandicapCategoryPlayoff,
+				GroupLetter: &gCopy,
+				SlotIndex:   slot,
+				Predictions: memberPicks,
+			},
+		)
 	}
+
+	return views
 }
 
 // buildGroupPlayerViews builds the group_top_scorer category view for a specific group.

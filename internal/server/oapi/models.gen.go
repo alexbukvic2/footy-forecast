@@ -308,7 +308,7 @@ type LeagueFixtureViewResponse struct {
 // LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
 type LeagueFixtureViewResponseStatus string
 
-// LeagueGroupPredictions defines model for LeagueGroupPredictions.
+// LeagueGroupPredictions Group-stage predictions for all league members in a given group. team_predictions contains group_winner (slot 0) and playoff (slots 0-2) categories for the group. player_predictions contains group_top_scorer for the group.
 type LeagueGroupPredictions struct {
 	Group             string                            `json:"group"`
 	PlayerPredictions []LeaguePlayerCategoryPredictions `json:"player_predictions"`
