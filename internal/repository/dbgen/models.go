@@ -18,6 +18,7 @@ const (
 	FixtureStatusUpcoming   FixtureStatus = "upcoming"
 	FixtureStatusInProgress FixtureStatus = "in_progress"
 	FixtureStatusFinished   FixtureStatus = "finished"
+	FixtureStatusCancelled  FixtureStatus = "cancelled"
 )
 
 func (e *FixtureStatus) Scan(src interface{}) error {
@@ -59,7 +60,8 @@ func (e FixtureStatus) Valid() bool {
 	switch e {
 	case FixtureStatusUpcoming,
 		FixtureStatusInProgress,
-		FixtureStatusFinished:
+		FixtureStatusFinished,
+		FixtureStatusCancelled:
 		return true
 	}
 	return false
@@ -70,6 +72,7 @@ func AllFixtureStatusValues() []FixtureStatus {
 		FixtureStatusUpcoming,
 		FixtureStatusInProgress,
 		FixtureStatusFinished,
+		FixtureStatusCancelled,
 	}
 }
 
@@ -386,6 +389,9 @@ type Fixture struct {
 	UpdatedAt        time.Time
 	Round            string
 	PredictionLocked bool
+	IsDemo           bool
+	WinnerTeamID     uuid.UUID
+	LastPolledAt     time.Time
 }
 
 type League struct {
@@ -440,6 +446,7 @@ type PlayerPrediction struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	GroupLetter  *string
+	ScoredAt     time.Time
 }
 
 type ScorePrediction struct {
@@ -451,6 +458,7 @@ type ScorePrediction struct {
 	Points    *int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	ScoredAt  time.Time
 }
 
 type Team struct {
@@ -459,6 +467,7 @@ type Team struct {
 	Logo         string
 	TournamentID uuid.UUID
 	GroupLetter  *string
+	ExternalID   *int64
 }
 
 type TeamHandicap struct {
@@ -487,17 +496,20 @@ type TeamPrediction struct {
 	UpdatedAt    time.Time
 	GroupLetter  *string
 	SlotIndex    int16
+	ScoredAt     time.Time
 }
 
 type Tournament struct {
-	ID        uuid.UUID
-	Slug      string
-	Name      string
-	Status    TournamentStatus
-	StartsAt  time.Time
-	EndsAt    time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID         uuid.UUID
+	Slug       string
+	Name       string
+	Status     TournamentStatus
+	StartsAt   time.Time
+	EndsAt     time.Time
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	ExternalID *int64
+	Season     *int16
 }
 
 type TournamentGroupTable struct {
@@ -510,6 +522,11 @@ type TournamentGroupTable struct {
 	Played       int16
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	Won          int16
+	Drawn        int16
+	Lost         int16
+	GoalsFor     int16
+	GoalsAgainst int16
 }
 
 type User struct {

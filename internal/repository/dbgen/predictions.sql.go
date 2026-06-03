@@ -7,12 +7,13 @@ package dbgen
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 const listPredictionsByUserAndTournament = `-- name: ListPredictionsByUserAndTournament :many
-SELECT sp.id, sp.user_id, sp.fixture_id, sp.goals_home, sp.goals_away, sp.points, sp.created_at, sp.updated_at
+SELECT sp.id, sp.user_id, sp.fixture_id, sp.goals_home, sp.goals_away, sp.points, sp.created_at, sp.updated_at, sp.scored_at
 FROM score_predictions sp
 WHERE sp.user_id = $1
   AND sp.fixture_id IN (SELECT id FROM fixtures WHERE tournament_id = $2)
@@ -41,6 +42,7 @@ func (q *Queries) ListPredictionsByUserAndTournament(ctx context.Context, arg Li
 			&i.Points,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.ScoredAt,
 		); err != nil {
 			return nil, err
 		}
@@ -69,14 +71,25 @@ type UpsertScorePredictionParams struct {
 	GoalsAway int32
 }
 
-func (q *Queries) UpsertScorePrediction(ctx context.Context, arg UpsertScorePredictionParams) (ScorePrediction, error) {
+type UpsertScorePredictionRow struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	FixtureID uuid.UUID
+	GoalsHome int32
+	GoalsAway int32
+	Points    *int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func (q *Queries) UpsertScorePrediction(ctx context.Context, arg UpsertScorePredictionParams) (UpsertScorePredictionRow, error) {
 	row := q.db.QueryRow(ctx, upsertScorePrediction,
 		arg.UserID,
 		arg.FixtureID,
 		arg.GoalsHome,
 		arg.GoalsAway,
 	)
-	var i ScorePrediction
+	var i UpsertScorePredictionRow
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,

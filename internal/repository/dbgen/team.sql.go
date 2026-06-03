@@ -17,9 +17,17 @@ FROM teams
 WHERE id = $1
 `
 
-func (q *Queries) GetTeamByID(ctx context.Context, id uuid.UUID) (Team, error) {
+type GetTeamByIDRow struct {
+	ID           uuid.UUID
+	Name         string
+	Logo         string
+	TournamentID uuid.UUID
+	GroupLetter  *string
+}
+
+func (q *Queries) GetTeamByID(ctx context.Context, id uuid.UUID) (GetTeamByIDRow, error) {
 	row := q.db.QueryRow(ctx, getTeamByID, id)
-	var i Team
+	var i GetTeamByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
