@@ -89,6 +89,7 @@ func (c *Client) GetStandings(
 						Lost:           t.All.Lose,
 						GoalsFor:       t.All.Goals.For,
 						GoalsAgainst:   t.All.Goals.Against,
+						Description:    t.Description,
 					},
 				)
 			}

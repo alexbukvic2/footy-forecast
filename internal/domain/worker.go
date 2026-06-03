@@ -36,4 +36,5 @@ type StandingsEntry struct {
 	Lost         int
 	GoalsFor     int
 	GoalsAgainst int
+	Description  string // raw description from the API, e.g. "Promotion - Championship (Group Stage: 1)"
 }

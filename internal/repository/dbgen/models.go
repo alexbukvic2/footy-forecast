@@ -527,6 +527,7 @@ type TournamentGroupTable struct {
 	Lost         int16
 	GoalsFor     int16
 	GoalsAgainst int16
+	Description  string
 }
 
 type User struct {

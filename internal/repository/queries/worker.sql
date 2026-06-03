@@ -16,7 +16,6 @@ WHERE f.is_demo = FALSE
   AND (
     f.status = 'in_progress'
     OR (f.status = 'upcoming'  AND f.kickoff_at <= now() + INTERVAL '5 minutes')
-    OR (f.status = 'finished'  AND f.updated_at >= now() - INTERVAL '24 hours')
   )
 ORDER BY f.kickoff_at ASC;
 

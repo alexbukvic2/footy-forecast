@@ -49,10 +49,11 @@ type standingsLeague struct {
 }
 
 type standingsTeam struct {
-	Rank   int              `json:"rank"`
-	Team   standingsTeamRef `json:"team"`
-	Points int              `json:"points"`
-	All    standingsStats   `json:"all"`
+	Rank        int              `json:"rank"`
+	Team        standingsTeamRef `json:"team"`
+	Points      int              `json:"points"`
+	All         standingsStats   `json:"all"`
+	Description string           `json:"description"`
 }
 
 type standingsTeamRef struct {

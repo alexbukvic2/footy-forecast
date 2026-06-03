@@ -47,15 +47,16 @@ type standingsState struct {
 }
 
 type standingsTeamState struct {
-	TeamID   int64 `json:"team_id"`
-	Rank     int   `json:"rank"`
-	Points   int   `json:"points"`
-	Played   int   `json:"played"`
-	Won      int   `json:"won"`
-	Drawn    int   `json:"drawn"`
-	Lost     int   `json:"lost"`
-	GoalsFor int   `json:"goals_for"`
-	Against  int   `json:"goals_against"`
+	TeamID      int64  `json:"team_id"`
+	Rank        int    `json:"rank"`
+	Points      int    `json:"points"`
+	Played      int    `json:"played"`
+	Won         int    `json:"won"`
+	Drawn       int    `json:"drawn"`
+	Lost        int    `json:"lost"`
+	GoalsFor    int    `json:"goals_for"`
+	Against     int    `json:"goals_against"`
+	Description string `json:"description"` // e.g. "Promotion - Championship (Group Stage: 1)"
 }
 
 type topScorerState struct {
@@ -131,10 +132,11 @@ type apiStandingsLeague struct {
 }
 
 type apiStandingsTeam struct {
-	Rank   int              `json:"rank"`
-	Team   apiTeamRef       `json:"team"`
-	Points int              `json:"points"`
-	All    apiStandingsStat `json:"all"`
+	Rank        int              `json:"rank"`
+	Team        apiTeamRef       `json:"team"`
+	Points      int              `json:"points"`
+	All         apiStandingsStat `json:"all"`
+	Description string           `json:"description"`
 }
 
 type apiTeamRef struct {
@@ -239,9 +241,10 @@ func (s *store) handleGetStandings(w http.ResponseWriter, r *http.Request) {
 	teams := make([]apiStandingsTeam, len(st.Teams))
 	for i, t := range st.Teams {
 		teams[i] = apiStandingsTeam{
-			Rank:   t.Rank,
-			Team:   apiTeamRef{ID: t.TeamID},
-			Points: t.Points,
+			Rank:        t.Rank,
+			Team:        apiTeamRef{ID: t.TeamID},
+			Points:      t.Points,
+			Description: t.Description,
 			All: apiStandingsStat{
 				Played: t.Played,
 				Win:    t.Won,

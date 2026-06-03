@@ -115,6 +115,11 @@ func (r *fakeRepo) SettleSemifinalistPredictions(_ context.Context, _ uuid.UUID)
 	return nil
 }
 
+func (r *fakeRepo) ZeroRemainingSemifinalistPredictions(_ context.Context, _ uuid.UUID) error {
+	r.inc("ZeroRemainingSemifinalistPredictions")
+	return nil
+}
+
 func (r *fakeRepo) SettleTournamentWinnerPredictions(_ context.Context, _ uuid.UUID, _ uuid.UUID) error {
 	r.inc("SettleTournamentWinnerPredictions")
 	return nil
@@ -298,6 +303,49 @@ func TestRunSettlement_Cancelled(t *testing.T) {
 	}
 }
 
+func TestProcessSingleFixture_StandingsUpdatedWhenScoreUnchanged(t *testing.T) {
+	// Standings should refresh on every poll for an in-progress group fixture,
+	// even when isUnchanged returns true and the score write is skipped.
+	gh, ga := 1, 0
+	f := liveFixture()
+	f.GoalsHome = &gh
+	f.GoalsAway = &ga
+
+	repo := newFakeRepo([]domain.PollableFixture{f})
+	api := &fakeAPI{result: worker.APIFixtureResult{
+		StatusShort: "2H", // still in_progress — same mapped status
+		GoalsHome:   &gh,
+		GoalsAway:   &ga,
+	}}
+	w := newWorker(repo, api)
+	runOneTick(w)
+
+	if repo.callCount("UpdateMatchAndRescoreLivePredictions") != 0 {
+		t.Error("expected no prediction write when score unchanged")
+	}
+	if repo.callCount("UpdateGroupStandings") != 1 {
+		t.Error("expected standings update even when score unchanged")
+	}
+}
+
+func TestProcessSingleFixture_StandingsNotUpdatedForUpcomingGroupFixture(t *testing.T) {
+	f := liveFixture()
+	f.Status = domain.FixtureStatusUpcoming
+	f.GoalsHome = nil
+	f.GoalsAway = nil
+
+	repo := newFakeRepo([]domain.PollableFixture{f})
+	api := &fakeAPI{result: worker.APIFixtureResult{
+		StatusShort: "NS", // upcoming
+	}}
+	w := newWorker(repo, api)
+	runOneTick(w)
+
+	if repo.callCount("UpdateGroupStandings") != 0 {
+		t.Error("expected no standings update for upcoming group fixture")
+	}
+}
+
 func TestRunSettlement_GroupMatchGroupNotDone(t *testing.T) {
 	f := liveFixture() // has GroupLetter = "A"
 	repo := newFakeRepo([]domain.PollableFixture{f})
@@ -370,6 +418,7 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 }
 
 func TestRunSettlement_QFNotAllDone(t *testing.T) {
+	// Award fires after every QF; zero is held back until round complete.
 	f := finishedFixture("Quarter-finals")
 	repo := newFakeRepo([]domain.PollableFixture{f})
 	repo.roundComplete = false
@@ -383,8 +432,11 @@ func TestRunSettlement_QFNotAllDone(t *testing.T) {
 	w := newWorker(repo, api)
 	runOneTick(w)
 
-	if repo.callCount("SettleSemifinalistPredictions") != 0 {
-		t.Error("must not settle semifinalists when round not complete")
+	if repo.callCount("SettleSemifinalistPredictions") != 1 {
+		t.Error("expected SettleSemifinalistPredictions after each QF")
+	}
+	if repo.callCount("ZeroRemainingSemifinalistPredictions") != 0 {
+		t.Error("must not zero remaining predictions until round complete")
 	}
 }
 
@@ -404,6 +456,9 @@ func TestRunSettlement_AllQFsDone(t *testing.T) {
 
 	if repo.callCount("SettleSemifinalistPredictions") != 1 {
 		t.Error("expected SettleSemifinalistPredictions when all QFs done")
+	}
+	if repo.callCount("ZeroRemainingSemifinalistPredictions") != 1 {
+		t.Error("expected ZeroRemainingSemifinalistPredictions when all QFs done")
 	}
 }
 

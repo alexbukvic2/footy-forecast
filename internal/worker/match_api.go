@@ -31,6 +31,7 @@ type APIStandingsEntry struct {
 	Lost           int
 	GoalsFor       int
 	GoalsAgainst   int
+	Description    string // e.g. "Promotion - Championship (Group Stage: 1)", "Relegation"
 }
 
 // APITopScorerResult is returned by GetGroupTopScorer and GetTournamentTopScorer.

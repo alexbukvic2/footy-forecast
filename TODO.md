@@ -7,7 +7,7 @@
 ## Features
 - [ ] Historical leaderboard snapshots (point-in-time rank history).
 - [ ] Pagination of leaderboard results.
-- [ ] Tie-breaking by secondary criteria (e.g. earliest prediction submission). Ties share a rank.]
+- [ ] Tie-breaking by secondary criteria (e.g. earliest prediction submission). Ties share a rank.
 - [ ] Fixtures in group have group, but what about quarter finals, etc?
 - [ ] Locked fixtures - lock by cron, use locked field instead of comparing current time to fixture time
 - [ ] Same points breaking criteria
@@ -24,6 +24,7 @@
 - [x] Auto-join on valid code entry — skip the manual "Join" button confirm
 - [ ] If player tries to submit result or outright but it is now locked (it locked between opening screen and submitting), show label "locked" for outrights and hide match from matches
 - [ ] At least one KO must be selected from each group, implement both on mobile and BE
+- [ ] Highlight third teams of group that advance to playoffs
 
 ## Onboarding
 - [ ] Sign-up flow: prompt for display name, pre-fill from SSO profile first name

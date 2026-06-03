@@ -191,8 +191,8 @@ func (r *WorkerRepository) UpdateGroupStandings(ctx context.Context, tournamentI
 
 	const q = `
 INSERT INTO tournament_group_table
-    (tournament_id, team_id, group_letter, position, points, played, won, drawn, lost, goals_for, goals_against)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    (tournament_id, team_id, group_letter, position, points, played, won, drawn, lost, goals_for, goals_against, description)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 ON CONFLICT (tournament_id, team_id) DO UPDATE SET
     group_letter  = EXCLUDED.group_letter,
     position      = EXCLUDED.position,
@@ -202,7 +202,8 @@ ON CONFLICT (tournament_id, team_id) DO UPDATE SET
     drawn         = EXCLUDED.drawn,
     lost          = EXCLUDED.lost,
     goals_for     = EXCLUDED.goals_for,
-    goals_against = EXCLUDED.goals_against`
+    goals_against = EXCLUDED.goals_against,
+    description   = EXCLUDED.description`
 
 	for _, e := range entries {
 		if _, err := tx.Exec(ctx, q,
@@ -210,6 +211,7 @@ ON CONFLICT (tournament_id, team_id) DO UPDATE SET
 			int16(e.Position), int16(e.Points), int16(e.Played), //nolint:gosec
 			int16(e.Won), int16(e.Drawn), int16(e.Lost), //nolint:gosec
 			int16(e.GoalsFor), int16(e.GoalsAgainst), //nolint:gosec
+			e.Description,
 		); err != nil {
 			return fmt.Errorf("upsert standings for team %s: %w", e.TeamID, err)
 		}

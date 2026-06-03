@@ -39,24 +39,26 @@ func (w *Worker) runSettlement(
 	}
 }
 
+// updateGroupStandings fetches live standings from the API and writes them to
+// the DB. Called on every result change for group-stage fixtures so the group
+// table stays current during a match, not just at full time.
+func (w *Worker) updateGroupStandings(ctx context.Context, f domain.PollableFixture) {
+	standings, err := w.api.GetStandings(ctx, f.TournamentExternalID, f.TournamentSeason)
+	if err != nil {
+		w.logger.Warn("worker: get standings", "fixture_id", f.ID, "err", err)
+		return
+	}
+	entries := w.resolveTeamIDs(ctx, standings, f.TournamentID)
+	if err := w.repo.UpdateGroupStandings(ctx, f.TournamentID, *f.GroupLetter, entries); err != nil {
+		w.logger.Error("worker: update group standings", "fixture_id", f.ID, "err", err)
+	}
+}
+
 func (w *Worker) settleGroupMatch(
 	ctx context.Context,
 	f domain.PollableFixture,
 	_ *uuid.UUID,
 ) {
-	standings, err := w.api.GetStandings(ctx, f.TournamentExternalID, f.TournamentSeason)
-	if err != nil {
-		w.logger.Warn("worker: get standings after group match", "fixture_id", f.ID, "err", err)
-		return
-	}
-
-	entries := w.resolveTeamIDs(ctx, standings, f.TournamentID)
-
-	if err := w.repo.UpdateGroupStandings(ctx, f.TournamentID, *f.GroupLetter, entries); err != nil {
-		w.logger.Error("worker: update group standings", "fixture_id", f.ID, "err", err)
-		return
-	}
-
 	groupDone, err := w.repo.IsGroupComplete(ctx, f.TournamentID, *f.GroupLetter)
 	if err != nil {
 		w.logger.Error("worker: is group complete", "fixture_id", f.ID, "err", err)
@@ -115,12 +117,18 @@ func (w *Worker) settleKnockoutMatch(
 	winnerTeamID *uuid.UUID,
 ) {
 	if isQuarterfinalRound(f.Round) {
+		// Award points for the newly known semifinalist immediately after each QF.
+		if err := w.repo.SettleSemifinalistPredictions(ctx, f.TournamentID); err != nil {
+			w.logger.Error("worker: settle semifinalist predictions", "fixture_id", f.ID, "err", err)
+		}
+
+		// Zero remaining unsettled predictions only once all QFs are complete.
 		roundDone, err := w.repo.IsRoundComplete(ctx, f.TournamentID, f.Round)
 		if err != nil {
 			w.logger.Error("worker: is round complete", "fixture_id", f.ID, "round", f.Round, "err", err)
 		} else if roundDone {
-			if err := w.repo.SettleSemifinalistPredictions(ctx, f.TournamentID); err != nil {
-				w.logger.Error("worker: settle semifinalist predictions", "fixture_id", f.ID, "err", err)
+			if err := w.repo.ZeroRemainingSemifinalistPredictions(ctx, f.TournamentID); err != nil {
+				w.logger.Error("worker: zero remaining semifinalist predictions", "fixture_id", f.ID, "err", err)
 			}
 		}
 	}
@@ -196,6 +204,7 @@ func (w *Worker) resolveTeamIDs(
 				Lost:         s.Lost,
 				GoalsFor:     s.GoalsFor,
 				GoalsAgainst: s.GoalsAgainst,
+				Description:  s.Description,
 			},
 		)
 	}
