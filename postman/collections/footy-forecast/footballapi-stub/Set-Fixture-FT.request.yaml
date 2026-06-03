@@ -1,0 +1,17 @@
+$kind: http-request
+name: Set Fixture (Full Time)
+method: PUT
+url: '{{stubBaseUrl}}/control/fixtures/{{fixtureExternalId}}'
+order: 3000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "FT",
+      "goals_home": 2,
+      "goals_away": 1,
+      "home_winner": true,
+      "away_winner": false
+    }

@@ -2,9 +2,11 @@ $kind: collection
 name: Footy Forecast
 variables:
   baseUrl: http://localhost:8080
+  stubBaseUrl: http://localhost:9001
   authToken: ""
   tournamentId: ""
   tournamentSlug: ""
   league_id: ""
   season: ""
   team_id: ""
+  fixtureExternalId: ""

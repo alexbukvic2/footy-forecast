@@ -164,7 +164,7 @@ type fakeClock struct{ t time.Time }
 func (c fakeClock) Now() time.Time { return c.t }
 
 func newWorker(repo worker.Repo, api worker.MatchAPI) *worker.Worker {
-	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger())
+	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute)
 }
 
 // ---- helpers ----

@@ -59,7 +59,7 @@ func run(logger *slog.Logger) error {
 
 	workerRepo := repository.NewWorkerRepository(pool)
 	apiClient := footballapi.NewClient(cfg.FootballAPIKey, cfg.FootballAPIBaseURL, nil)
-	w := worker.New(workerRepo, apiClient, worker.RealClock{}, logger)
+	w := worker.New(workerRepo, apiClient, worker.RealClock{}, logger, cfg.WorkerPollInterval)
 
 	workerErr := make(chan error, 1)
 	go func() {

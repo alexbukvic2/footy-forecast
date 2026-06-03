@@ -12,19 +12,22 @@ import (
 
 // Worker polls live match data and scores predictions in real time.
 type Worker struct {
-	repo   Repo
-	api    MatchAPI
-	clock  Clock
-	logger *slog.Logger
+	repo         Repo
+	api          MatchAPI
+	clock        Clock
+	logger       *slog.Logger
+	pollInterval time.Duration
 }
 
-// New constructs a Worker.
-func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger) *Worker {
+// New constructs a Worker. pollInterval controls how often the polling loop
+// runs; pass 60*time.Second for production and a shorter value in dev/testing.
+func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration) *Worker {
 	return &Worker{
-		repo:   repo,
-		api:    api,
-		clock:  clock,
-		logger: logger,
+		repo:         repo,
+		api:          api,
+		clock:        clock,
+		logger:       logger,
+		pollInterval: pollInterval,
 	}
 }
 
@@ -36,7 +39,7 @@ func (w *Worker) Run(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			return nil
-		case <-time.After(60 * time.Second):
+		case <-time.After(w.pollInterval):
 		}
 	}
 }

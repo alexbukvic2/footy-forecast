@@ -3,6 +3,7 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 )
@@ -26,8 +27,9 @@ type Config struct {
 	CognitoUserPoolID       string   `env:"COGNITO_USER_POOL_ID,required"`
 	CognitoAllowedClientIDs []string `env:"COGNITO_ALLOWED_CLIENT_IDS,required" envSeparator:","`
 
-	FootballAPIKey     string `env:"API_FOOTBALL_KEY,required"`
-	FootballAPIBaseURL string `env:"FOOTBALL_API_BASE_URL" envDefault:"https://v3.football.api-sports.io"`
+	FootballAPIKey     string        `env:"API_FOOTBALL_KEY,required"`
+	FootballAPIBaseURL string        `env:"FOOTBALL_API_BASE_URL"    envDefault:"https://v3.football.api-sports.io"`
+	WorkerPollInterval time.Duration `env:"WORKER_POLL_INTERVAL"     envDefault:"60s"`
 }
 
 // Load reads configuration from the environment and validates it.

@@ -14,3 +14,7 @@ values:
     value: ''
   - key: playerId
     value: ''
+  - key: stubBaseUrl
+    value: 'http://localhost:9001'
+  - key: fixtureExternalId
+    value: ''
