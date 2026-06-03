@@ -18,6 +18,16 @@
 //	  -d '{"status":"FT","goals_home":2,"goals_away":1,"home_winner":true}'
 //
 //	curl -s localhost:9001/control/fixtures      # inspect current state
+//
+//	# Single top scorer:
+//	curl -s -X PUT localhost:9001/control/topscorer/42/2026 \
+//	  -H 'Content-Type: application/json' \
+//	  -d '[{"player_id":99,"goals":7}]'
+//
+//	# Tied top scorers:
+//	curl -s -X PUT localhost:9001/control/topscorer/42/2026 \
+//	  -H 'Content-Type: application/json' \
+//	  -d '[{"player_id":99,"goals":7},{"player_id":100,"goals":7}]'
 package main
 
 import (
@@ -59,7 +69,7 @@ type standingsTeamState struct {
 	Description string `json:"description"` // e.g. "Promotion - Championship (Group Stage: 1)"
 }
 
-type topScorerState struct {
+type topScorerEntry struct {
 	PlayerID int64 `json:"player_id"`
 	Goals    int   `json:"goals"`
 }
@@ -73,14 +83,14 @@ type store struct {
 	mu         sync.RWMutex
 	fixtures   map[int64]fixtureState
 	standings  map[leagueSeason]standingsState
-	topScorers map[leagueSeason]topScorerState
+	topScorers map[leagueSeason][]topScorerEntry
 }
 
 func newStore() *store {
 	return &store{
 		fixtures:   make(map[int64]fixtureState),
 		standings:  make(map[leagueSeason]standingsState),
-		topScorers: make(map[leagueSeason]topScorerState),
+		topScorers: make(map[leagueSeason][]topScorerEntry),
 	}
 }
 
@@ -273,21 +283,23 @@ func (s *store) handleGetTopScorers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.mu.RLock()
-	ts, ok := s.topScorers[leagueSeason{leagueID, season}]
+	entries, ok := s.topScorers[leagueSeason{leagueID, season}]
 	s.mu.RUnlock()
 
-	if !ok {
+	if !ok || len(entries) == 0 {
 		writeJSON(w, apiTopScorersResponse{Response: []apiTopScorerItem{}})
 		return
 	}
 
-	goals := ts.Goals
-	writeJSON(w, apiTopScorersResponse{
-		Response: []apiTopScorerItem{{
-			Player: apiPlayerRef{ID: ts.PlayerID},
+	items := make([]apiTopScorerItem, len(entries))
+	for i, e := range entries {
+		goals := e.Goals
+		items[i] = apiTopScorerItem{
+			Player: apiPlayerRef{ID: e.PlayerID},
 			Stats:  []apiGoalStat{{Goals: apiGoalTotal{Total: &goals}}},
-		}},
-	})
+		}
+	}
+	writeJSON(w, apiTopScorersResponse{Response: items})
 }
 
 // --- control handlers ---
@@ -369,9 +381,13 @@ func (s *store) handleControlSetTopScorer(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var body topScorerState
+	var body []topScorerEntry
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		http.Error(w, "bad body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	if len(body) == 0 {
+		http.Error(w, "body must be a non-empty array of top scorers", http.StatusBadRequest)
 		return
 	}
 
@@ -380,7 +396,7 @@ func (s *store) handleControlSetTopScorer(w http.ResponseWriter, r *http.Request
 	s.topScorers[key] = body
 	s.mu.Unlock()
 
-	slog.Info("top scorer updated", "league", leagueID, "season", season, "player", body.PlayerID, "goals", body.Goals)
+	slog.Info("top scorers updated", "league", leagueID, "season", season, "count", len(body), "goals", body[0].Goals)
 	writeJSON(w, body)
 }
 

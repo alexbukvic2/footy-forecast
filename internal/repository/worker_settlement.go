@@ -37,7 +37,8 @@ SET status            = $1,
     last_polled_at    = now()
 WHERE id = $5`
 
-	if _, err := tx.Exec(ctx, updateFixture,
+	if _, err := tx.Exec(
+		ctx, updateFixture,
 		newStatus, result.GoalsHome, result.GoalsAway, winnerTeamID, f.ID,
 	); err != nil {
 		return fmt.Errorf("update fixture %s: %w", f.ID, err)
@@ -81,7 +82,11 @@ WHERE fixture_id = $3`
 }
 
 // SettleGroupWinnerPredictions awards points for group_winner predictions once the group concludes.
-func (r *WorkerRepository) SettleGroupWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error {
+func (r *WorkerRepository) SettleGroupWinnerPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -149,7 +154,11 @@ WHERE tournament_id = $1
 // SettlePlayoffGroupPredictions awards points for playoff predictions for teams from a specific group.
 // Qualifying teams are identified by a description starting with "Promotion" in tournament_group_table,
 // which is written by UpdateGroupStandings from the API standings response.
-func (r *WorkerRepository) SettlePlayoffGroupPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error {
+func (r *WorkerRepository) SettlePlayoffGroupPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -234,7 +243,10 @@ WHERE tournament_id = $1
 
 // SettlePlayoffWildcardPredictions awards points for wildcard (slot_index=2) playoff predictions
 // after all groups have concluded. Advancing teams are already in team_outcomes(category='playoff').
-func (r *WorkerRepository) SettlePlayoffWildcardPredictions(ctx context.Context, tournamentID uuid.UUID) error {
+func (r *WorkerRepository) SettlePlayoffWildcardPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -279,7 +291,17 @@ WHERE tournament_id = $1
 }
 
 // SettleGroupTopScorerPredictions awards points for group_top_scorer predictions.
-func (r *WorkerRepository) SettleGroupTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string, topScorerPlayerID uuid.UUID) error {
+// All players in topScorerPlayerIDs are treated as co-winners (tied top scorers).
+func (r *WorkerRepository) SettleGroupTopScorerPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+	topScorerPlayerIDs []uuid.UUID,
+) error {
+	if len(topScorerPlayerIDs) == 0 {
+		return fmt.Errorf("settle group top scorer: no player IDs provided")
+	}
+
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -291,8 +313,10 @@ INSERT INTO player_outcomes (tournament_id, category, player_id)
 VALUES ($1, 'group_top_scorer', $2)
 ON CONFLICT (tournament_id, category, player_id) DO UPDATE SET recorded_at = now()`
 
-	if _, err := tx.Exec(ctx, recordOutcome, tournamentID, topScorerPlayerID); err != nil {
-		return fmt.Errorf("record group top scorer outcome: %w", err)
+	for _, playerID := range topScorerPlayerIDs {
+		if _, err := tx.Exec(ctx, recordOutcome, tournamentID, playerID); err != nil {
+			return fmt.Errorf("record group top scorer outcome: %w", err)
+		}
 	}
 
 	const awardPoints = `
@@ -303,10 +327,10 @@ SET points    = COALESCE((SELECT h.points FROM player_handicap h
 WHERE pp.tournament_id = $1
   AND pp.category      = 'group_top_scorer'
   AND pp.group_letter  = $2
-  AND pp.pick          = $3
+  AND pp.pick          = ANY($3)
   AND pp.points IS NULL`
 
-	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter, topScorerPlayerID); err != nil {
+	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter, topScorerPlayerIDs); err != nil {
 		return fmt.Errorf("award group top scorer points: %w", err)
 	}
 
@@ -317,10 +341,10 @@ SET points    = 0,
 WHERE tournament_id = $1
   AND category      = 'group_top_scorer'
   AND group_letter  = $2
-  AND pick         != $3
+  AND NOT (pick = ANY($3))
   AND points IS NULL`
 
-	if _, err := tx.Exec(ctx, zeroRest, tournamentID, groupLetter, topScorerPlayerID); err != nil {
+	if _, err := tx.Exec(ctx, zeroRest, tournamentID, groupLetter, topScorerPlayerIDs); err != nil {
 		return fmt.Errorf("zero remaining group top scorer predictions: %w", err)
 	}
 
@@ -331,7 +355,10 @@ WHERE tournament_id = $1
 }
 
 // SettleSemifinalistPredictions awards points once all quarterfinals have concluded.
-func (r *WorkerRepository) SettleSemifinalistPredictions(ctx context.Context, tournamentID uuid.UUID) error {
+func (r *WorkerRepository) SettleSemifinalistPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -395,7 +422,10 @@ WHERE tp.tournament_id = $1
 
 // ZeroRemainingSemifinalistPredictions zeroes all unsettled semifinalist predictions
 // once the full quarterfinal round is complete and all winners are known.
-func (r *WorkerRepository) ZeroRemainingSemifinalistPredictions(ctx context.Context, tournamentID uuid.UUID) error {
+func (r *WorkerRepository) ZeroRemainingSemifinalistPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) error {
 	const q = `
 UPDATE team_predictions
 SET points    = 0,
@@ -411,7 +441,11 @@ WHERE tournament_id = $1
 }
 
 // SettleTournamentWinnerPredictions awards points for the tournament winner prediction.
-func (r *WorkerRepository) SettleTournamentWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, winnerTeamID uuid.UUID) error {
+func (r *WorkerRepository) SettleTournamentWinnerPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	winnerTeamID uuid.UUID,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -461,7 +495,16 @@ WHERE tournament_id = $1
 }
 
 // SettleTopScorerPredictions awards points for the total_top_scorer prediction.
-func (r *WorkerRepository) SettleTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, topScorerPlayerID uuid.UUID) error {
+// All players in topScorerPlayerIDs are treated as co-winners (tied top scorers).
+func (r *WorkerRepository) SettleTopScorerPredictions(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	topScorerPlayerIDs []uuid.UUID,
+) error {
+	if len(topScorerPlayerIDs) == 0 {
+		return fmt.Errorf("settle top scorer: no player IDs provided")
+	}
+
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -473,8 +516,10 @@ INSERT INTO player_outcomes (tournament_id, category, player_id)
 VALUES ($1, 'total_top_scorer', $2)
 ON CONFLICT (tournament_id, category, player_id) DO UPDATE SET recorded_at = now()`
 
-	if _, err := tx.Exec(ctx, recordOutcome, tournamentID, topScorerPlayerID); err != nil {
-		return fmt.Errorf("record top scorer outcome: %w", err)
+	for _, playerID := range topScorerPlayerIDs {
+		if _, err := tx.Exec(ctx, recordOutcome, tournamentID, playerID); err != nil {
+			return fmt.Errorf("record top scorer outcome: %w", err)
+		}
 	}
 
 	const awardPoints = `
@@ -484,10 +529,10 @@ SET points    = COALESCE((SELECT h.points FROM player_handicap h
     scored_at = now()
 WHERE pp.tournament_id = $1
   AND pp.category      = 'total_top_scorer'
-  AND pp.pick          = $2
+  AND pp.pick          = ANY($2)
   AND pp.points IS NULL`
 
-	if _, err := tx.Exec(ctx, awardPoints, tournamentID, topScorerPlayerID); err != nil {
+	if _, err := tx.Exec(ctx, awardPoints, tournamentID, topScorerPlayerIDs); err != nil {
 		return fmt.Errorf("award top scorer points: %w", err)
 	}
 
@@ -497,10 +542,10 @@ SET points    = 0,
     scored_at = now()
 WHERE tournament_id = $1
   AND category      = 'total_top_scorer'
-  AND pick         != $2
+  AND NOT (pick = ANY($2))
   AND points IS NULL`
 
-	if _, err := tx.Exec(ctx, zeroRest, tournamentID, topScorerPlayerID); err != nil {
+	if _, err := tx.Exec(ctx, zeroRest, tournamentID, topScorerPlayerIDs); err != nil {
 		return fmt.Errorf("zero remaining top scorer predictions: %w", err)
 	}
 

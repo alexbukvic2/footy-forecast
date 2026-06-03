@@ -98,38 +98,38 @@ func (c *Client) GetStandings(
 	return entries, nil
 }
 
-// GetGroupTopScorer returns the top scorer for a specific group stage group.
+// GetGroupTopScorer returns all top scorers for a specific group stage group.
 // api-sports.io does not have a group-filtered top scorers endpoint, so this
-// fetches all top scorers for the league/season and returns the first result.
-// See plan open question 6.
+// fetches all top scorers for the league/season and returns all players tied
+// at the top goal count. See plan open question 6.
 func (c *Client) GetGroupTopScorer(
 	ctx context.Context,
 	externalLeagueID int64,
 	season int,
 	_ string,
-) (worker.APITopScorerResult, error) {
-	return c.getTopScorer(ctx, externalLeagueID, season)
+) ([]worker.APITopScorerResult, error) {
+	return c.getTopScorers(ctx, externalLeagueID, season)
 }
 
-// GetTournamentTopScorer returns the overall top scorer for the tournament.
+// GetTournamentTopScorer returns all players tied for the most goals in the tournament.
 func (c *Client) GetTournamentTopScorer(
 	ctx context.Context,
 	externalLeagueID int64,
 	season int,
-) (worker.APITopScorerResult, error) {
-	return c.getTopScorer(ctx, externalLeagueID, season)
+) ([]worker.APITopScorerResult, error) {
+	return c.getTopScorers(ctx, externalLeagueID, season)
 }
 
-func (c *Client) getTopScorer(
+func (c *Client) getTopScorers(
 	ctx context.Context,
 	externalLeagueID int64,
 	season int,
-) (worker.APITopScorerResult, error) {
+) ([]worker.APITopScorerResult, error) {
 	url := c.baseURL + "/players/topscorers?league=" + strconv.FormatInt(externalLeagueID, 10) +
 		"&season=" + strconv.Itoa(season)
 	var resp topScorersResponse
 	if err := c.get(ctx, url, &resp); err != nil {
-		return worker.APITopScorerResult{}, fmt.Errorf(
+		return nil, fmt.Errorf(
 			"get top scorers league %d season %d: %w",
 			externalLeagueID,
 			season,
@@ -137,21 +137,33 @@ func (c *Client) getTopScorer(
 		)
 	}
 	if len(resp.Response) == 0 {
-		return worker.APITopScorerResult{}, fmt.Errorf(
+		return nil, fmt.Errorf(
 			"get top scorers league %d season %d: empty response",
 			externalLeagueID,
 			season,
 		)
 	}
-	item := resp.Response[0]
-	goals := 0
-	if len(item.Stats) > 0 && item.Stats[0].Goals.Total != nil {
-		goals = *item.Stats[0].Goals.Total
+
+	topGoals := 0
+	if len(resp.Response[0].Stats) > 0 && resp.Response[0].Stats[0].Goals.Total != nil {
+		topGoals = *resp.Response[0].Stats[0].Goals.Total
 	}
-	return worker.APITopScorerResult{
-		PlayerExternalID: strconv.FormatInt(item.Player.ID, 10),
-		Goals:            goals,
-	}, nil
+
+	results := make([]worker.APITopScorerResult, 0, len(resp.Response))
+	for _, item := range resp.Response {
+		goals := 0
+		if len(item.Stats) > 0 && item.Stats[0].Goals.Total != nil {
+			goals = *item.Stats[0].Goals.Total
+		}
+		if goals < topGoals {
+			break
+		}
+		results = append(results, worker.APITopScorerResult{
+			PlayerExternalID: strconv.FormatInt(item.Player.ID, 10),
+			Goals:            goals,
+		})
+	}
+	return results, nil
 }
 
 func (c *Client) get(

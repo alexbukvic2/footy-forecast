@@ -73,26 +73,13 @@ func (w *Worker) settleGroupMatch(
 			w.logger.Error("worker: settle playoff group predictions", "fixture_id", f.ID, "err", err)
 		}
 
-		topScorer, err := w.api.GetGroupTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason, *f.GroupLetter)
+		topScorers, err := w.api.GetGroupTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason, *f.GroupLetter)
 		if err != nil {
 			w.logger.Warn("worker: get group top scorer", "fixture_id", f.ID, "group", *f.GroupLetter, "err", err)
 		} else {
-			playerID, err := w.repo.GetPlayerByExternalID(ctx, topScorer.PlayerExternalID, f.TournamentID)
-			if err != nil {
-				w.logger.Warn(
-					"worker: resolve group top scorer player",
-					"external_id",
-					topScorer.PlayerExternalID,
-					"err",
-					err,
-				)
-			} else {
-				if err := w.repo.SettleGroupTopScorerPredictions(
-					ctx,
-					f.TournamentID,
-					*f.GroupLetter,
-					playerID,
-				); err != nil {
+			playerIDs := w.resolveTopScorerPlayerIDs(ctx, topScorers, f.TournamentID)
+			if len(playerIDs) > 0 {
+				if err := w.repo.SettleGroupTopScorerPredictions(ctx, f.TournamentID, *f.GroupLetter, playerIDs); err != nil {
 					w.logger.Error("worker: settle group top scorer predictions", "fixture_id", f.ID, "err", err)
 				}
 			}
@@ -138,21 +125,13 @@ func (w *Worker) settleKnockoutMatch(
 			w.logger.Error("worker: settle tournament winner predictions", "fixture_id", f.ID, "err", err)
 		}
 
-		topScorer, err := w.api.GetTournamentTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason)
+		topScorers, err := w.api.GetTournamentTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason)
 		if err != nil {
 			w.logger.Warn("worker: get tournament top scorer", "fixture_id", f.ID, "err", err)
 		} else {
-			playerID, err := w.repo.GetPlayerByExternalID(ctx, topScorer.PlayerExternalID, f.TournamentID)
-			if err != nil {
-				w.logger.Warn(
-					"worker: resolve tournament top scorer player",
-					"external_id",
-					topScorer.PlayerExternalID,
-					"err",
-					err,
-				)
-			} else {
-				if err := w.repo.SettleTopScorerPredictions(ctx, f.TournamentID, playerID); err != nil {
+			playerIDs := w.resolveTopScorerPlayerIDs(ctx, topScorers, f.TournamentID)
+			if len(playerIDs) > 0 {
+				if err := w.repo.SettleTopScorerPredictions(ctx, f.TournamentID, playerIDs); err != nil {
 					w.logger.Error("worker: settle top scorer predictions", "fixture_id", f.ID, "err", err)
 				}
 			}
@@ -174,6 +153,25 @@ func resolveWinnerTeamID(
 		return &id
 	}
 	return nil
+}
+
+// resolveTopScorerPlayerIDs maps APITopScorerResult entries to internal player UUIDs.
+// Entries whose external ID is unknown are logged and skipped.
+func (w *Worker) resolveTopScorerPlayerIDs(
+	ctx context.Context,
+	scorers []APITopScorerResult,
+	tournamentID uuid.UUID,
+) []uuid.UUID {
+	ids := make([]uuid.UUID, 0, len(scorers))
+	for _, ts := range scorers {
+		playerID, err := w.repo.GetPlayerByExternalID(ctx, ts.PlayerExternalID, tournamentID)
+		if err != nil {
+			w.logger.Warn("worker: resolve top scorer player", "external_id", ts.PlayerExternalID, "err", err)
+			continue
+		}
+		ids = append(ids, playerID)
+	}
+	return ids
 }
 
 // resolveTeamIDs converts a slice of API standings entries to domain entries by

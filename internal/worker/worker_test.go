@@ -105,7 +105,7 @@ func (r *fakeRepo) SettlePlayoffWildcardPredictions(_ context.Context, _ uuid.UU
 	return nil
 }
 
-func (r *fakeRepo) SettleGroupTopScorerPredictions(_ context.Context, _ uuid.UUID, _ string, _ uuid.UUID) error {
+func (r *fakeRepo) SettleGroupTopScorerPredictions(_ context.Context, _ uuid.UUID, _ string, _ []uuid.UUID) error {
 	r.inc("SettleGroupTopScorerPredictions")
 	return nil
 }
@@ -125,7 +125,7 @@ func (r *fakeRepo) SettleTournamentWinnerPredictions(_ context.Context, _ uuid.U
 	return nil
 }
 
-func (r *fakeRepo) SettleTopScorerPredictions(_ context.Context, _ uuid.UUID, _ uuid.UUID) error {
+func (r *fakeRepo) SettleTopScorerPredictions(_ context.Context, _ uuid.UUID, _ []uuid.UUID) error {
 	r.inc("SettleTopScorerPredictions")
 	return nil
 }
@@ -137,7 +137,7 @@ type fakeAPI struct {
 	err          error
 	standings    []worker.APIStandingsEntry
 	standingsErr error
-	topScorer    worker.APITopScorerResult
+	topScorers   []worker.APITopScorerResult
 	topScorerErr error
 }
 
@@ -152,16 +152,16 @@ func (a *fakeAPI) GetStandings(_ context.Context, _ int64, _ int) ([]worker.APIS
 	return a.standings, a.standingsErr
 }
 
-func (a *fakeAPI) GetGroupTopScorer(_ context.Context, _ int64, _ int, _ string) (worker.APITopScorerResult, error) {
+func (a *fakeAPI) GetGroupTopScorer(_ context.Context, _ int64, _ int, _ string) ([]worker.APITopScorerResult, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	return a.topScorer, a.topScorerErr
+	return a.topScorers, a.topScorerErr
 }
 
-func (a *fakeAPI) GetTournamentTopScorer(_ context.Context, _ int64, _ int) (worker.APITopScorerResult, error) {
+func (a *fakeAPI) GetTournamentTopScorer(_ context.Context, _ int64, _ int) ([]worker.APITopScorerResult, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	return a.topScorer, a.topScorerErr
+	return a.topScorers, a.topScorerErr
 }
 
 type fakeClock struct{ t time.Time }
@@ -377,7 +377,7 @@ func TestRunSettlement_GroupMatchGroupDone(t *testing.T) {
 			GoalsHome:   intPtr(2),
 			GoalsAway:   intPtr(1),
 		},
-		topScorer: worker.APITopScorerResult{PlayerExternalID: "999", Goals: 3},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "999", Goals: 3}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -407,7 +407,7 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 			GoalsHome:   intPtr(1),
 			GoalsAway:   intPtr(0),
 		},
-		topScorer: worker.APITopScorerResult{PlayerExternalID: "1", Goals: 5},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "1", Goals: 5}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -474,7 +474,7 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 			GoalsHome:   intPtr(3),
 			GoalsAway:   intPtr(1),
 		},
-		topScorer: worker.APITopScorerResult{PlayerExternalID: "42", Goals: 7},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "42", Goals: 7}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -484,6 +484,60 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 	}
 	if repo.callCount("SettleTopScorerPredictions") != 1 {
 		t.Error("expected SettleTopScorerPredictions")
+	}
+}
+
+func TestRunSettlement_FinalConcluded_MultipleTopScorers(t *testing.T) {
+	f := finishedFixture("Final")
+	repo := newFakeRepo([]domain.PollableFixture{f})
+	hw := true
+	api := &fakeAPI{
+		result: worker.APIFixtureResult{
+			StatusShort: "FT",
+			HomeWinner:  &hw,
+			GoalsHome:   intPtr(2),
+			GoalsAway:   intPtr(1),
+		},
+		topScorers: []worker.APITopScorerResult{
+			{PlayerExternalID: "10", Goals: 6},
+			{PlayerExternalID: "11", Goals: 6},
+			{PlayerExternalID: "12", Goals: 6},
+		},
+	}
+	w := newWorker(repo, api)
+	runOneTick(w)
+
+	if repo.callCount("SettleTournamentWinnerPredictions") != 1 {
+		t.Error("expected SettleTournamentWinnerPredictions")
+	}
+	if repo.callCount("SettleTopScorerPredictions") != 1 {
+		t.Errorf("expected SettleTopScorerPredictions called once (all tied scorers in one call), got %d",
+			repo.callCount("SettleTopScorerPredictions"))
+	}
+}
+
+func TestRunSettlement_GroupDone_MultipleTopScorers(t *testing.T) {
+	f := liveFixture()
+	repo := newFakeRepo([]domain.PollableFixture{f})
+	repo.groupComplete = true
+	repo.groupStageComplete = false
+	api := &fakeAPI{
+		result: worker.APIFixtureResult{
+			StatusShort: "FT",
+			GoalsHome:   intPtr(1),
+			GoalsAway:   intPtr(0),
+		},
+		topScorers: []worker.APITopScorerResult{
+			{PlayerExternalID: "20", Goals: 4},
+			{PlayerExternalID: "21", Goals: 4},
+		},
+	}
+	w := newWorker(repo, api)
+	runOneTick(w)
+
+	if repo.callCount("SettleGroupTopScorerPredictions") != 1 {
+		t.Errorf("expected SettleGroupTopScorerPredictions called once (all tied scorers in one call), got %d",
+			repo.callCount("SettleGroupTopScorerPredictions"))
 	}
 }
 

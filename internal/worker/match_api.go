@@ -6,8 +6,8 @@ import "context"
 type MatchAPI interface {
 	GetFixture(ctx context.Context, externalFixtureID int64) (APIFixtureResult, error)
 	GetStandings(ctx context.Context, externalLeagueID int64, season int) ([]APIStandingsEntry, error)
-	GetGroupTopScorer(ctx context.Context, externalLeagueID int64, season int, groupLetter string) (APITopScorerResult, error)
-	GetTournamentTopScorer(ctx context.Context, externalLeagueID int64, season int) (APITopScorerResult, error)
+	GetGroupTopScorer(ctx context.Context, externalLeagueID int64, season int, groupLetter string) ([]APITopScorerResult, error)
+	GetTournamentTopScorer(ctx context.Context, externalLeagueID int64, season int) ([]APITopScorerResult, error)
 }
 
 // APIFixtureResult is the data returned by GetFixture.

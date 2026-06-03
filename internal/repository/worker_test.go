@@ -937,6 +937,59 @@ func TestWorkerRepository_SettleTournamentWinnerPredictions(t *testing.T) {
 	assert.Equal(t, 0, queryTeamPredictionPointsWinner(t, pool, ctx, userB, tourID, loser))
 }
 
+// ---- SettleGroupTopScorerPredictions ----
+
+func TestWorkerRepository_SettleGroupTopScorerPredictions(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+	tourID := wInsertTournament(t, pool, ctx, true)
+	teamID := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+	scorer := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-top-1")
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-other-1")
+	userA := wInsertUser(t, pool, ctx)
+	userB := wInsertUser(t, pool, ctx)
+	wInsertPlayerHandicap(t, pool, ctx, scorer, "group_top_scorer", 6)
+
+	wInsertPlayerPredictionGroup(t, pool, ctx, userA, tourID, "group_top_scorer", scorer, "A")
+	wInsertPlayerPredictionGroup(t, pool, ctx, userB, tourID, "group_top_scorer", other, "A")
+
+	require.NoError(t, repo.SettleGroupTopScorerPredictions(ctx, tourID, "A", []uuid.UUID{scorer}))
+	assert.Equal(t, 6, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "group_top_scorer", scorer, "A"))
+	assert.Equal(t, 0, queryPlayerPredictionPoints(t, pool, ctx, userB, tourID, "group_top_scorer", other, "A"))
+
+	// Idempotent second call is a no-op.
+	require.NoError(t, repo.SettleGroupTopScorerPredictions(ctx, tourID, "A", []uuid.UUID{scorer}))
+	assert.Equal(t, 6, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "group_top_scorer", scorer, "A"))
+}
+
+func TestWorkerRepository_SettleGroupTopScorerPredictions_MultipleWinners(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+	tourID := wInsertTournament(t, pool, ctx, true)
+	teamID := wInsertTeam(t, pool, ctx, tourID, "B", 0)
+	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-tied-1")
+	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-tied-2")
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-out-1")
+	userA := wInsertUser(t, pool, ctx)
+	userB := wInsertUser(t, pool, ctx)
+	userC := wInsertUser(t, pool, ctx)
+	wInsertPlayerHandicap(t, pool, ctx, scorerA, "group_top_scorer", 6)
+	wInsertPlayerHandicap(t, pool, ctx, scorerB, "group_top_scorer", 6)
+
+	wInsertPlayerPredictionGroup(t, pool, ctx, userA, tourID, "group_top_scorer", scorerA, "B")
+	wInsertPlayerPredictionGroup(t, pool, ctx, userB, tourID, "group_top_scorer", scorerB, "B")
+	wInsertPlayerPredictionGroup(t, pool, ctx, userC, tourID, "group_top_scorer", other, "B")
+
+	require.NoError(t, repo.SettleGroupTopScorerPredictions(ctx, tourID, "B", []uuid.UUID{scorerA, scorerB}))
+	assert.Equal(t, 6, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "group_top_scorer", scorerA, "B"))
+	assert.Equal(t, 6, queryPlayerPredictionPoints(t, pool, ctx, userB, tourID, "group_top_scorer", scorerB, "B"))
+	assert.Equal(t, 0, queryPlayerPredictionPoints(t, pool, ctx, userC, tourID, "group_top_scorer", other, "B"))
+}
+
 // ---- SettleTopScorerPredictions ----
 
 func TestWorkerRepository_SettleTopScorerPredictions(t *testing.T) {
@@ -956,30 +1009,39 @@ func TestWorkerRepository_SettleTopScorerPredictions(t *testing.T) {
 	wInsertPlayerPrediction(t, pool, ctx, userA, tourID, "total_top_scorer", topScorer)
 	wInsertPlayerPrediction(t, pool, ctx, userB, tourID, "total_top_scorer", other)
 
-	require.NoError(t, repo.SettleTopScorerPredictions(ctx, tourID, topScorer))
-	var pts int
-	require.NoError(
-		t,
-		pool.QueryRow(
-			ctx,
-			`SELECT COALESCE(points,-1) FROM player_predictions WHERE tournament_id=$1 AND user_id=$2 AND pick=$3`,
-			tourID,
-			userA,
-			topScorer,
-		).Scan(&pts),
-	)
-	assert.Equal(t, 8, pts)
-	require.NoError(
-		t,
-		pool.QueryRow(
-			ctx,
-			`SELECT COALESCE(points,-1) FROM player_predictions WHERE tournament_id=$1 AND user_id=$2 AND pick=$3`,
-			tourID,
-			userB,
-			other,
-		).Scan(&pts),
-	)
-	assert.Equal(t, 0, pts)
+	require.NoError(t, repo.SettleTopScorerPredictions(ctx, tourID, []uuid.UUID{topScorer}))
+	assert.Equal(t, 8, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "total_top_scorer", topScorer, ""))
+	assert.Equal(t, 0, queryPlayerPredictionPoints(t, pool, ctx, userB, tourID, "total_top_scorer", other, ""))
+
+	// Idempotent second call is a no-op.
+	require.NoError(t, repo.SettleTopScorerPredictions(ctx, tourID, []uuid.UUID{topScorer}))
+	assert.Equal(t, 8, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "total_top_scorer", topScorer, ""))
+}
+
+func TestWorkerRepository_SettleTopScorerPredictions_MultipleWinners(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+	tourID := wInsertTournament(t, pool, ctx, true)
+	teamID := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, "tied-1")
+	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, "tied-2")
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "out-1")
+	userA := wInsertUser(t, pool, ctx)
+	userB := wInsertUser(t, pool, ctx)
+	userC := wInsertUser(t, pool, ctx)
+	wInsertPlayerHandicap(t, pool, ctx, scorerA, "total_top_scorer", 8)
+	wInsertPlayerHandicap(t, pool, ctx, scorerB, "total_top_scorer", 8)
+
+	wInsertPlayerPrediction(t, pool, ctx, userA, tourID, "total_top_scorer", scorerA)
+	wInsertPlayerPrediction(t, pool, ctx, userB, tourID, "total_top_scorer", scorerB)
+	wInsertPlayerPrediction(t, pool, ctx, userC, tourID, "total_top_scorer", other)
+
+	require.NoError(t, repo.SettleTopScorerPredictions(ctx, tourID, []uuid.UUID{scorerA, scorerB}))
+	assert.Equal(t, 8, queryPlayerPredictionPoints(t, pool, ctx, userA, tourID, "total_top_scorer", scorerA, ""))
+	assert.Equal(t, 8, queryPlayerPredictionPoints(t, pool, ctx, userB, tourID, "total_top_scorer", scorerB, ""))
+	assert.Equal(t, 0, queryPlayerPredictionPoints(t, pool, ctx, userC, tourID, "total_top_scorer", other, ""))
 }
 
 // ---- low-level helpers ----
@@ -1196,6 +1258,57 @@ func queryTeamPredictionPointsWinner(
 		tourID,
 		pick,
 	).Scan(&pts)
+	require.NoError(t, err)
+	return pts
+}
+
+// wInsertPlayerPredictionGroup inserts a player_predictions row with a group_letter set.
+func wInsertPlayerPredictionGroup(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	userID, tourID uuid.UUID,
+	category string,
+	pick uuid.UUID,
+	groupLetter string,
+) {
+	t.Helper()
+	_, err := pool.Exec(
+		ctx,
+		`INSERT INTO player_predictions (user_id, tournament_id, category, pick, group_letter)
+		 VALUES ($1,$2,$3::player_handicap_category,$4,$5)`,
+		userID, tourID, category, pick, groupLetter,
+	)
+	require.NoError(t, err)
+}
+
+// queryPlayerPredictionPoints returns the settled points for a player_predictions row.
+// Pass an empty groupLetter for non-group predictions (total_top_scorer).
+func queryPlayerPredictionPoints(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	userID, tourID uuid.UUID,
+	category string,
+	pick uuid.UUID,
+	groupLetter string,
+) int {
+	t.Helper()
+	var pts int
+	var err error
+	if groupLetter == "" {
+		err = pool.QueryRow(
+			ctx,
+			`SELECT COALESCE(points,-999) FROM player_predictions WHERE user_id=$1 AND tournament_id=$2 AND category=$3::player_handicap_category AND pick=$4 AND group_letter IS NULL`,
+			userID, tourID, category, pick,
+		).Scan(&pts)
+	} else {
+		err = pool.QueryRow(
+			ctx,
+			`SELECT COALESCE(points,-999) FROM player_predictions WHERE user_id=$1 AND tournament_id=$2 AND category=$3::player_handicap_category AND pick=$4 AND group_letter=$5`,
+			userID, tourID, category, pick, groupLetter,
+		).Scan(&pts)
+	}
 	require.NoError(t, err)
 	return pts
 }

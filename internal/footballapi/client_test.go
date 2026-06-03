@@ -57,18 +57,23 @@ func TestClient_GetStandings(t *testing.T) {
 }
 
 // TestClient_GetTournamentTopScorer verifies that the top-scorers response decodes
-// correctly and that the returned player has a non-empty ID and at least one goal.
+// correctly and that all returned players share the same (highest) goal count.
 func TestClient_GetTournamentTopScorer(t *testing.T) {
 	c := testClient(t)
 	ctx := context.Background()
 
-	result, err := c.GetTournamentTopScorer(ctx, testLeagueID, testSeason)
+	results, err := c.GetTournamentTopScorer(ctx, testLeagueID, testSeason)
 	require.NoError(t, err)
+	require.NotEmpty(t, results, "expected at least one top scorer")
 
-	assert.NotEmpty(t, result.PlayerExternalID, "PlayerExternalID must not be empty")
-	assert.Positive(t, result.Goals, "top scorer must have scored at least one goal")
+	topGoals := results[0].Goals
+	for _, r := range results {
+		assert.NotEmpty(t, r.PlayerExternalID, "PlayerExternalID must not be empty")
+		assert.Positive(t, r.Goals, "top scorer must have scored at least one goal")
+		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
+	}
 
-	t.Logf("top scorer: player_external_id=%s goals=%d", result.PlayerExternalID, result.Goals)
+	t.Logf("top scorers: count=%d goals=%d first_player=%s", len(results), topGoals, results[0].PlayerExternalID)
 }
 
 // TestClient_GetGroupTopScorer verifies the group-top-scorer path (which falls back
@@ -78,14 +83,19 @@ func TestClient_GetGroupTopScorer(t *testing.T) {
 	c := testClient(t)
 	ctx := context.Background()
 
-	result, err := c.GetGroupTopScorer(ctx, testLeagueID, testSeason, "A")
+	results, err := c.GetGroupTopScorer(ctx, testLeagueID, testSeason, "A")
 	require.NoError(t, err)
+	require.NotEmpty(t, results, "expected at least one top scorer")
 
-	assert.NotEmpty(t, result.PlayerExternalID)
-	assert.Positive(t, result.Goals)
+	topGoals := results[0].Goals
+	for _, r := range results {
+		assert.NotEmpty(t, r.PlayerExternalID)
+		assert.Positive(t, r.Goals)
+		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
+	}
 
-	t.Logf("group top scorer (league-wide fallback): player_external_id=%s goals=%d",
-		result.PlayerExternalID, result.Goals)
+	t.Logf("group top scorer (league-wide fallback): count=%d goals=%d first_player=%s",
+		len(results), topGoals, results[0].PlayerExternalID)
 }
 
 // TestClient_GetFixture first fetches any finished fixture for league 1 / season 2022

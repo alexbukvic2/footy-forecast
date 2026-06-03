@@ -31,9 +31,9 @@ type Repo interface {
 	SettleGroupWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error
 	SettlePlayoffGroupPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error
 	SettlePlayoffWildcardPredictions(ctx context.Context, tournamentID uuid.UUID) error
-	SettleGroupTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string, topScorerPlayerID uuid.UUID) error
+	SettleGroupTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string, topScorerPlayerIDs []uuid.UUID) error
 	SettleSemifinalistPredictions(ctx context.Context, tournamentID uuid.UUID) error
 	ZeroRemainingSemifinalistPredictions(ctx context.Context, tournamentID uuid.UUID) error
 	SettleTournamentWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, winnerTeamID uuid.UUID) error
-	SettleTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, topScorerPlayerID uuid.UUID) error
+	SettleTopScorerPredictions(ctx context.Context, tournamentID uuid.UUID, topScorerPlayerIDs []uuid.UUID) error
 }
