@@ -26,6 +26,3 @@ sql:
             nullable: true
           - db_type: "timestamptz"
             go_type: "time.Time"
-          - db_type: "timestamptz"
-            go_type: "time.Time"
-            nullable: true

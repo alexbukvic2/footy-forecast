@@ -30,6 +30,8 @@ type Config struct {
 	FootballAPIKey     string        `env:"API_FOOTBALL_KEY,required"`
 	FootballAPIBaseURL string        `env:"FOOTBALL_API_BASE_URL"    envDefault:"https://v3.football.api-sports.io"`
 	WorkerPollInterval time.Duration `env:"WORKER_POLL_INTERVAL"     envDefault:"60s"`
+	// PredictionLockLeadMinutes is how many minutes before kickoff predictions are locked.
+	PredictionLockLeadMinutes int `env:"PREDICTION_LOCK_LEAD_MINUTES" envDefault:"60"`
 }
 
 // Load reads configuration from the environment and validates it.

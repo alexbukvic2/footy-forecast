@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type FixtureStatus string
@@ -391,7 +392,7 @@ type Fixture struct {
 	PredictionLocked bool
 	IsDemo           bool
 	WinnerTeamID     uuid.UUID
-	LastPolledAt     time.Time
+	LastPolledAt     pgtype.Timestamptz
 }
 
 type League struct {
@@ -446,7 +447,7 @@ type PlayerPrediction struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	GroupLetter  *string
-	ScoredAt     time.Time
+	ScoredAt     pgtype.Timestamptz
 }
 
 type ScorePrediction struct {
@@ -458,7 +459,7 @@ type ScorePrediction struct {
 	Points    *int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	ScoredAt  time.Time
+	ScoredAt  pgtype.Timestamptz
 }
 
 type Team struct {
@@ -496,7 +497,7 @@ type TeamPrediction struct {
 	UpdatedAt    time.Time
 	GroupLetter  *string
 	SlotIndex    int16
-	ScoredAt     time.Time
+	ScoredAt     pgtype.Timestamptz
 }
 
 type Tournament struct {

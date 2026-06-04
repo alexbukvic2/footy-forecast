@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countIncompleteGroupFixtures = `-- name: CountIncompleteGroupFixtures :one
@@ -143,7 +144,7 @@ type ListPollableMatchesRow struct {
 	GoalsHome            *int32
 	GoalsAway            *int32
 	WinnerTeamID         uuid.UUID
-	LastPolledAt         time.Time
+	LastPolledAt         pgtype.Timestamptz
 }
 
 func (q *Queries) ListPollableMatches(ctx context.Context) ([]ListPollableMatchesRow, error) {

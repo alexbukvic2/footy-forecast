@@ -364,7 +364,7 @@ SET status            = $newStatus,
     goals_home        = $goalsHome,
     goals_away        = $goalsAway,
     winner_team_id    = $winnerTeamID,
-    prediction_locked = (kickoff_at <= now()),
+    prediction_locked = (kickoff_at <= now() + INTERVAL '1 hour'),
     last_polled_at    = now()
 WHERE id = $fixtureID;
 
@@ -565,7 +565,7 @@ WHERE tournament_id = $1 AND category = 'total_top_scorer'
 | API status | Action |
 |------------|--------|
 | `CANC`, `ABD` | `fixtures.status = 'cancelled'`; `score_predictions.points = 0` for all rows on the fixture (unconditional, overwriting any live points). No outright settlement triggered. |
-| `PST` | Update `fixtures.kickoff_at` if API provides a new time; leave `status = 'upcoming'`, `prediction_locked = FALSE`. No score change. |
+| `PST` | Update `fixtures.kickoff_at` if API provides a new time; leave `status = 'upcoming'`; recompute `prediction_locked = (new_kickoff_at <= now() + INTERVAL '1 hour')`. No score change. |
 | `SUSP`, `INT` | Leave `status = 'in_progress'`; continue polling. Apply cancelled handling if/when the match reaches `ABD`. |
 | `WO`, `AWD` | Treat as `finished`. Score predictions on the awarded scoreline (typically 3-0 per football convention). |
 

@@ -8,7 +8,7 @@
 - [ ] Historical leaderboard snapshots (point-in-time rank history).
 - [ ] Pagination of leaderboard results.
 - [ ] Fixtures in group have group, but what about quarter finals, etc?
-- [ ] *Locked fixtures - lock by worker
+- [ ] *Locked fixtures - lock by worker n minutes in advance
 - [ ] *Same points breaking criteria
 - [ ] *Default values for missing handicaps
 - [ ] Worker should fetch fixtures every day

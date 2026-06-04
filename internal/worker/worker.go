@@ -12,22 +12,24 @@ import (
 
 // Worker polls live match data and scores predictions in real time.
 type Worker struct {
-	repo         Repo
-	api          MatchAPI
-	clock        Clock
-	logger       *slog.Logger
-	pollInterval time.Duration
+	repo            Repo
+	api             MatchAPI
+	clock           Clock
+	logger          *slog.Logger
+	pollInterval    time.Duration
+	lockLeadMinutes int
 }
 
-// New constructs a Worker. pollInterval controls how often the polling loop
-// runs; pass 60*time.Second for production and a shorter value in dev/testing.
-func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration) *Worker {
+// New constructs a Worker. pollInterval controls how often the polling loop runs.
+// lockLeadMinutes is how many minutes before kickoff predictions are locked.
+func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration, lockLeadMinutes int) *Worker {
 	return &Worker{
-		repo:         repo,
-		api:          api,
-		clock:        clock,
-		logger:       logger,
-		pollInterval: pollInterval,
+		repo:            repo,
+		api:             api,
+		clock:           clock,
+		logger:          logger,
+		pollInterval:    pollInterval,
+		lockLeadMinutes: lockLeadMinutes,
 	}
 }
 
@@ -45,6 +47,10 @@ func (w *Worker) Run(ctx context.Context) error {
 }
 
 func (w *Worker) tick(ctx context.Context) {
+	if err := w.repo.LockImminentFixtures(ctx, w.lockLeadMinutes); err != nil {
+		w.logger.Warn("worker: lock imminent fixtures", "err", err)
+	}
+
 	fixtures, err := w.repo.ListPollableMatches(ctx)
 	if err != nil {
 		w.logger.Warn("worker: list pollable matches", "err", err)

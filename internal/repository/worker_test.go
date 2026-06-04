@@ -157,6 +157,13 @@ func wQueryPoints(
 	return pts
 }
 
+func wQueryPredictionLocked(t *testing.T, pool *db.Pool, ctx context.Context, fixtureID uuid.UUID) bool {
+	t.Helper()
+	var locked bool
+	require.NoError(t, pool.QueryRow(ctx, `SELECT prediction_locked FROM fixtures WHERE id = $1`, fixtureID).Scan(&locked))
+	return locked
+}
+
 func wSetWinnerTeamID(
 	t *testing.T,
 	pool *db.Pool,
@@ -259,6 +266,56 @@ func wInsertGroupTableEntryDesc(
 		description,
 	)
 	require.NoError(t, err)
+}
+
+// ---- LockImminentFixtures ----
+
+func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+	tourID := wInsertTournament(t, pool, ctx, true)
+	home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+	away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+
+	t.Run("within lead window gets locked", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
+
+	t.Run("outside lead window stays unlocked", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(90*time.Minute), "upcoming", "GS", false)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
+
+	t.Run("lead window is respected — 45min lead locks 30min fixture", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 45))
+		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
+
+	t.Run("lead window is respected — 20min lead does not lock 30min fixture", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 20))
+		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
+
+	t.Run("demo fixture is never locked", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", true)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
+
+	t.Run("already-locked fixture is unaffected", func(t *testing.T) {
+		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+		_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, id)
+		require.NoError(t, err)
+		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+	})
 }
 
 // ---- ListPollableMatches ----

@@ -50,6 +50,11 @@ func (r *fakeRepo) callCount(name string) int {
 	return r.calls[name]
 }
 
+func (r *fakeRepo) LockImminentFixtures(_ context.Context, _ int) error {
+	r.inc("LockImminentFixtures")
+	return nil
+}
+
 func (r *fakeRepo) ListPollableMatches(_ context.Context) ([]domain.PollableFixture, error) {
 	r.inc("ListPollableMatches")
 	return r.fixtures, r.listErr
@@ -169,7 +174,7 @@ type fakeClock struct{ t time.Time }
 func (c fakeClock) Now() time.Time { return c.t }
 
 func newWorker(repo worker.Repo, api worker.MatchAPI) *worker.Worker {
-	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute)
+	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute, 60)
 }
 
 // ---- helpers ----
@@ -555,6 +560,15 @@ func TestRunSettlement_FinalNilWinner(t *testing.T) {
 
 	if repo.callCount("SettleTournamentWinnerPredictions") != 0 {
 		t.Error("must not settle winner when winnerTeamID is nil")
+	}
+}
+
+func TestTick_LockImminentFixturesCalledEveryTick(t *testing.T) {
+	repo := newFakeRepo(nil) // no pollable matches; tick still calls lock
+	w := newWorker(repo, &fakeAPI{})
+	runOneTick(w)
+	if repo.callCount("LockImminentFixtures") != 1 {
+		t.Errorf("expected LockImminentFixtures called once per tick, got %d", repo.callCount("LockImminentFixtures"))
 	}
 }
 

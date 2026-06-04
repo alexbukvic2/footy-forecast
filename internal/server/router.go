@@ -46,7 +46,7 @@ func NewRouter(
 
 	fixtureRepo := repository.NewFixtureRepository(pool)
 	predictionRepo := repository.NewPredictionRepository(pool)
-	predictionSvc := service.NewPredictionService(predictionRepo, fixtureRepo, service.RealClock{})
+	predictionSvc := service.NewPredictionService(predictionRepo, fixtureRepo)
 	fixtureSvc := service.NewFixtureService(fixtureRepo, leagueRepo)
 	playerPredictionRepo := repository.NewPlayerPredictionRepository(pool)
 	teamPredictionRepo := repository.NewTeamPredictionRepository(pool)

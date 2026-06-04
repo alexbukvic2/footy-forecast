@@ -6,6 +6,7 @@
       <w>healthz</w>
       <w>preds</w>
       <w>sqlc</w>
+      <w>upserter</w>
     </words>
   </dictionary>
 </component>

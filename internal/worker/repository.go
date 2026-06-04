@@ -12,6 +12,7 @@ import (
 // Implemented in internal/repository.
 type Repo interface {
 	// Polling
+	LockImminentFixtures(ctx context.Context, leadMinutes int) error
 	ListPollableMatches(ctx context.Context) ([]domain.PollableFixture, error)
 	UpdateMatchAndRescoreLivePredictions(ctx context.Context, f domain.PollableFixture, result APIFixtureResult) error
 
