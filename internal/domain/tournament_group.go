@@ -16,6 +16,11 @@ type TournamentGroupEntry struct {
 	Position     int
 	Points       int
 	Played       int
+	Won          int
+	Drawn        int
+	Lost         int
+	GoalsFor     int
+	GoalsAgainst int
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }

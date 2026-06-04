@@ -34,18 +34,23 @@ func (r *TournamentGroupTableRepository) ListByTournament(
 	}
 	out := make([]*domain.TournamentGroupEntry, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, &domain.TournamentGroupEntry{
-			ID:           row.ID,
-			TournamentID: row.TournamentID,
-			TeamID:       row.TeamID,
-			TeamName:     row.TeamName,
-			GroupLetter:  row.GroupLetter,
-			Position:     int(row.Position),
-			Points:       int(row.Points),
-			Played:       int(row.Played),
-			CreatedAt:    row.CreatedAt,
-			UpdatedAt:    row.UpdatedAt,
-		})
+		out = append(
+			out, &domain.TournamentGroupEntry{
+				ID:           row.ID,
+				TournamentID: row.TournamentID,
+				TeamID:       row.TeamID,
+				TeamName:     row.TeamName,
+				GroupLetter:  row.GroupLetter,
+				Position:     int(row.Position),
+				Points:       int(row.Points),
+				Played:       int(row.Played),
+				Won:          int(row.Won),
+				Drawn:        int(row.Drawn),
+				Lost:         int(row.Lost),
+				CreatedAt:    row.CreatedAt,
+				UpdatedAt:    row.UpdatedAt,
+			},
+		)
 	}
 	return out, nil
 }

@@ -535,14 +535,19 @@ type TournamentStatus string
 
 // TournamentGroupTableEntry defines model for TournamentGroupTableEntry.
 type TournamentGroupTableEntry struct {
+	Drawn        *int               `json:"drawn,omitempty"`
+	GoalsAgainst *int               `json:"goals_against,omitempty"`
+	GoalsFor     *int               `json:"goals_for,omitempty"`
 	GroupLetter  string             `json:"group_letter"`
 	Id           openapi_types.UUID `json:"id"`
+	Lost         *int               `json:"lost,omitempty"`
 	Played       int                `json:"played"`
 	Points       int                `json:"points"`
 	Position     int                `json:"position"`
 	TeamId       openapi_types.UUID `json:"team_id"`
 	TeamName     string             `json:"team_name"`
 	TournamentId openapi_types.UUID `json:"tournament_id"`
+	Won          *int               `json:"won,omitempty"`
 }
 
 // TournamentLeaderboardResponse defines model for TournamentLeaderboardResponse.

@@ -1208,6 +1208,15 @@
       },
       "TournamentGroupTableEntry": {
         "properties": {
+          "drawn": {
+            "type": "integer"
+          },
+          "goals_against": {
+            "type": "integer"
+          },
+          "goals_for": {
+            "type": "integer"
+          },
           "group_letter": {
             "maxLength": 1,
             "minLength": 1,
@@ -1216,6 +1225,9 @@
           "id": {
             "format": "uuid",
             "type": "string"
+          },
+          "lost": {
+            "type": "integer"
           },
           "played": {
             "type": "integer"
@@ -1236,6 +1248,9 @@
           "tournament_id": {
             "format": "uuid",
             "type": "string"
+          },
+          "won": {
+            "type": "integer"
           }
         },
         "required": [
