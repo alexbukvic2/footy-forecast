@@ -138,14 +138,17 @@ func (e TournamentStatus) Valid() bool {
 
 // Defines values for UserStatus.
 const (
-	Active    UserStatus = "active"
-	Suspended UserStatus = "suspended"
+	Active         UserStatus = "active"
+	PendingProfile UserStatus = "pending_profile"
+	Suspended      UserStatus = "suspended"
 )
 
 // Valid indicates whether the value is a known member of the UserStatus enum.
 func (e UserStatus) Valid() bool {
 	switch e {
 	case Active:
+		return true
+	case PendingProfile:
 		return true
 	case Suspended:
 		return true
@@ -566,6 +569,11 @@ type TournamentOutcomes struct {
 	TeamOutcomes   []TeamOutcome   `json:"team_outcomes"`
 }
 
+// UpdateProfileRequest defines model for UpdateProfileRequest.
+type UpdateProfileRequest struct {
+	DisplayName string `json:"display_name"`
+}
+
 // UpsertScorePredictionRequest defines model for UpsertScorePredictionRequest.
 type UpsertScorePredictionRequest struct {
 	GoalsAway int `json:"goals_away"`
@@ -680,3 +688,6 @@ type BulkUpsertPlayerPredictionsJSONRequestBody = BulkUpsertPlayerPredictionsReq
 
 // BulkUpsertTeamPredictionsJSONRequestBody defines body for BulkUpsertTeamPredictions for application/json ContentType.
 type BulkUpsertTeamPredictionsJSONRequestBody = BulkUpsertTeamPredictionsRequest
+
+// CompleteProfileJSONRequestBody defines body for CompleteProfile for application/json ContentType.
+type CompleteProfileJSONRequestBody = UpdateProfileRequest

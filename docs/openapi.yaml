@@ -279,7 +279,7 @@ components:
           type: string
         status:
           type: string
-          enum: [active, suspended]
+          enum: [active, suspended, pending_profile]
         created_at:
           type: string
           format: date-time
@@ -293,6 +293,17 @@ components:
         status: "active"
         created_at: "2025-01-01T00:00:00Z"
         updated_at: "2025-01-01T00:00:00Z"
+
+    UpdateProfileRequest:
+      type: object
+      required: [display_name]
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+      example:
+        display_name: "John Doe"
 
     Player:
       type: object
@@ -1183,6 +1194,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Complete user profile (set display name)
+      description: >
+        Sets the caller's display name. If the account is in pending_profile status
+        (first sign-in), it is atomically transitioned to active. Active users may
+        also call this endpoint to update their display name later.
+      operationId: completeProfile
+      tags: [users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error (blank or too-long display name)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized
           content:

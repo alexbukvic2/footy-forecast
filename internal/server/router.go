@@ -66,11 +66,12 @@ func NewRouter(
 		cfg.CognitoAllowedClientIDs,
 	)
 	authMW := middleware.Auth(validator, userSvc)
+	authMWAllowPending := middleware.AuthAllowPendingProfile(validator, userSvc)
 
 	// Handlers.
 	healthH := handler.NewHealth(logger, pool)
 	tournamentH := handler.NewTournament(logger, tournamentSvc)
-	userH := handler.NewUser(logger)
+	userH := handler.NewUser(logger, userSvc)
 	leagueH := handler.NewLeague(logger, leagueSvc)
 	playerH := handler.NewPlayer(logger, playerSvc)
 	playerHandicapH := handler.NewPlayerHandicap(logger, playerHandicapSvc)
@@ -114,6 +115,7 @@ func NewRouter(
 
 	// Users (protected).
 	mux.Handle("GET /users/me", protected(userH.Me))
+	mux.Handle("PATCH /users/me", authMWAllowPending(http.HandlerFunc(userH.CompleteProfile)))
 
 	// Players (protected).
 	mux.Handle("GET /tournaments/{tournament_id}/players/search", protected(playerH.Search))

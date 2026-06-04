@@ -59,6 +59,23 @@ func (r *UserRepository) GetByID(ctx context.Context, id uuid.UUID) (domain.User
 	return userFromRow(row), nil
 }
 
+// UpdateDisplayName sets the user's display_name. If the user's current status is
+// pending_profile, it is transitioned to active atomically in the same query.
+// Returns domain.ErrNotFound if no row matches id.
+func (r *UserRepository) UpdateDisplayName(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error) {
+	row, err := r.q.UpdateDisplayName(ctx, dbgen.UpdateDisplayNameParams{
+		ID:          id,
+		DisplayName: displayName,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return domain.User{}, fmt.Errorf("user %s: %w", id, domain.ErrNotFound)
+		}
+		return domain.User{}, fmt.Errorf("update display name: %w", err)
+	}
+	return userFromRow(row), nil
+}
+
 // GetByCognitoSub fetches a user by their Cognito subject identifier.
 // Returns domain.ErrNotFound if no row exists.
 func (r *UserRepository) GetByCognitoSub(ctx context.Context, sub string) (domain.User, error) {

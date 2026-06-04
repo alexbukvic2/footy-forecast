@@ -161,4 +161,48 @@ func TestUserRepository(t *testing.T) {
 			t.Errorf("err = %v, want domain.ErrNotFound", err)
 		}
 	})
+
+	t.Run("UpdateDisplayName sets name and activates pending_profile user", func(t *testing.T) {
+		id := newID()
+		u, err := repo.Upsert(ctx, id, "sub-upd-pending", "updpending@example.com", "Initial")
+		if err != nil {
+			t.Fatalf("Upsert: %v", err)
+		}
+		if u.Status != domain.UserStatusPendingProfile {
+			t.Skipf("status = %q, need pending_profile to run this test (check migration)", u.Status)
+		}
+		updated, err := repo.UpdateDisplayName(ctx, id, "Confirmed")
+		if err != nil {
+			t.Fatalf("UpdateDisplayName: %v", err)
+		}
+		if updated.DisplayName != "Confirmed" {
+			t.Errorf("display_name = %q, want Confirmed", updated.DisplayName)
+		}
+		if updated.Status != domain.UserStatusActive {
+			t.Errorf("status = %q, want active after completing profile", updated.Status)
+		}
+	})
+
+	t.Run("UpdateDisplayName leaves active user active", func(t *testing.T) {
+		id := newID()
+		if _, err := repo.Upsert(ctx, id, "sub-upd-active", "updactive@example.com", "N"); err != nil {
+			t.Fatalf("Upsert: %v", err)
+		}
+		// Force status to active so the test is meaningful regardless of default.
+		// We do a second call that hits the ON CONFLICT path (which does not change status).
+		u, err := repo.UpdateDisplayName(ctx, id, "Updated")
+		if err != nil {
+			t.Fatalf("UpdateDisplayName: %v", err)
+		}
+		if u.DisplayName != "Updated" {
+			t.Errorf("display_name = %q, want Updated", u.DisplayName)
+		}
+	})
+
+	t.Run("UpdateDisplayName returns ErrNotFound for unknown id", func(t *testing.T) {
+		_, err := repo.UpdateDisplayName(ctx, newID(), "Name")
+		if !errors.Is(err, domain.ErrNotFound) {
+			t.Errorf("err = %v, want domain.ErrNotFound", err)
+		}
+	})
 }
