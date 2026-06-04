@@ -437,14 +437,17 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 	)
 
 	t.Run(
-		"non-first fixture locked does not set tournament predictions_locked", func(t *testing.T) {
+		"non-first fixture pre-locked does not set tournament predictions_locked", func(t *testing.T) {
 			tourID := wInsertTournament(t, pool, ctx, true)
 			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
-			// Earliest fixture is far in the future — won't be locked.
+			// First fixture (earliest kickoff) is outside the lead window — will not be locked.
 			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(3*time.Hour), "upcoming", "GS", false)
-			// Later fixture is imminent — will be locked, but not the first.
-			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			// Second fixture has a later kickoff but is manually pre-locked.
+			// Tournament should stay unlocked because the first fixture is still unlocked.
+			laterID := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(4*time.Hour), "upcoming", "GS", false)
+			_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, laterID)
+			require.NoError(t, err)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
 			assert.False(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
 		},
