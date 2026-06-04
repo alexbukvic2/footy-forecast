@@ -21,12 +21,13 @@ import (
 
 // TournamentRepository handles persistence of Tournament aggregates.
 type TournamentRepository struct {
-	q *dbgen.Queries
+	pool *db.Pool
+	q    *dbgen.Queries
 }
 
 // NewTournamentRepository constructs a TournamentRepository backed by pool.
 func NewTournamentRepository(pool *db.Pool) *TournamentRepository {
-	return &TournamentRepository{q: dbgen.New(pool)}
+	return &TournamentRepository{pool: pool, q: dbgen.New(pool)}
 }
 
 // CreateTournamentParams holds the fields needed to insert a tournament.
@@ -93,6 +94,20 @@ func (r *TournamentRepository) List(ctx context.Context) ([]*domain.Tournament, 
 		out = append(out, tournamentFromRow(row))
 	}
 	return out, nil
+}
+
+// IsPredictionsLocked returns whether tournament-level prediction locking has been set.
+// Returns domain.ErrNotFound if the tournament does not exist.
+func (r *TournamentRepository) IsPredictionsLocked(ctx context.Context, tournamentID uuid.UUID) (bool, error) {
+	var locked bool
+	err := r.pool.QueryRow(ctx, `SELECT predictions_locked FROM tournaments WHERE id = $1`, tournamentID).Scan(&locked)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return false, fmt.Errorf("tournament %s: %w", tournamentID, domain.ErrNotFound)
+		}
+		return false, fmt.Errorf("get predictions locked: %w", err)
+	}
+	return locked, nil
 }
 
 // tournamentFromRow maps a persistence row to the domain type.

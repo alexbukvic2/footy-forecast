@@ -15,7 +15,10 @@ import (
 
 // UserProvisioner is the narrow interface the auth middleware needs from UserService.
 type UserProvisioner interface {
-	ProvisionFromCognito(ctx context.Context, sub, email, displayName string) (domain.User, error)
+	ProvisionFromCognito(
+		ctx context.Context,
+		sub, email, displayName string,
+	) (domain.User, error)
 }
 
 // Auth returns middleware that validates a Cognito Bearer token on every request.
@@ -25,47 +28,57 @@ type UserProvisioner interface {
 //  2. Validate the token — 401 on error.
 //  3. Provision the user via JIT upsert — 500 on error.
 //  4. Store the user in context and call next.
-func Auth(validator cognito.JWTValidator, users UserProvisioner) func(http.Handler) http.Handler {
+func Auth(
+	validator cognito.JWTValidator,
+	users UserProvisioner,
+) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token, ok := bearerToken(r)
-			if !ok {
-				writeAuthError(w, http.StatusUnauthorized, "unauthorized")
-				return
-			}
+		return http.HandlerFunc(
+			func(
+				w http.ResponseWriter,
+				r *http.Request,
+			) {
+				token, ok := bearerToken(r)
+				if !ok {
+					writeAuthError(w, http.StatusUnauthorized, "unauthorized")
+					return
+				}
 
-			claims, err := validator.Validate(r.Context(), token)
-			if err != nil {
-				slog.WarnContext(r.Context(), "token validation failed",
-					"request_id", RequestIDFrom(r.Context()),
-					"err", err,
-				)
-				writeAuthError(w, http.StatusUnauthorized, "unauthorized")
-				return
-			}
+				claims, err := validator.Validate(r.Context(), token)
+				if err != nil {
+					slog.WarnContext(
+						r.Context(), "token validation failed",
+						"request_id", RequestIDFrom(r.Context()),
+						"err", err,
+					)
+					writeAuthError(w, http.StatusUnauthorized, "unauthorized")
+					return
+				}
 
-			displayName := claims.Name
-			if displayName == "" {
-				displayName = claims.GivenName
-			}
+				displayName := claims.GivenName
+				if displayName == "" {
+					displayName = claims.Name
+				}
 
-			user, err := users.ProvisionFromCognito(r.Context(), claims.Sub, claims.Email, displayName)
-			if err != nil {
-				slog.ErrorContext(r.Context(), "user provision failed",
-					"request_id", RequestIDFrom(r.Context()),
-					"err", fmt.Errorf("provision: %w", err),
-				)
-				writeAuthError(w, http.StatusInternalServerError, "internal server error")
-				return
-			}
+				user, err := users.ProvisionFromCognito(r.Context(), claims.Sub, claims.Email, displayName)
+				if err != nil {
+					slog.ErrorContext(
+						r.Context(), "user provision failed",
+						"request_id", RequestIDFrom(r.Context()),
+						"err", fmt.Errorf("provision: %w", err),
+					)
+					writeAuthError(w, http.StatusInternalServerError, "internal server error")
+					return
+				}
 
-			if user.Status != domain.UserStatusActive {
-				writeAuthError(w, http.StatusForbidden, "forbidden")
-				return
-			}
+				if user.Status != domain.UserStatusActive {
+					writeAuthError(w, http.StatusForbidden, "forbidden")
+					return
+				}
 
-			next.ServeHTTP(w, r.WithContext(ctxutil.WithUser(r.Context(), user)))
-		})
+				next.ServeHTTP(w, r.WithContext(ctxutil.WithUser(r.Context(), user)))
+			},
+		)
 	}
 }
 
@@ -81,7 +94,11 @@ func bearerToken(r *http.Request) (string, bool) {
 
 // writeAuthError writes a plain JSON error response.
 // Defined inline to avoid importing the handler package (which would be circular).
-func writeAuthError(w http.ResponseWriter, status int, msg string) {
+func writeAuthError(
+	w http.ResponseWriter,
+	status int,
+	msg string,
+) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})

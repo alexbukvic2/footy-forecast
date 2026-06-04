@@ -3,12 +3,13 @@
 ## Core
 - [ ] Refresh token handling - caching user, how do we manage cache memory? What if there are many users?
 - [ ] Admin role for entity creation
+- [ ] Select statements outside SQL files, e.g. in go files, is it okay? Should we move all SQL to files?
 
 ## Features
 - [ ] Historical leaderboard snapshots (point-in-time rank history).
 - [ ] Pagination of leaderboard results.
 - [ ] Fixtures in group have group, but what about quarter finals, etc?
-- [ ] *Locked fixtures - lock by worker n minutes in advance
+- [x] *Locked fixtures - lock by worker n minutes in advance
 - [ ] *Same points breaking criteria
 - [ ] *Default values for missing handicaps
 - [ ] Worker should fetch fixtures every day

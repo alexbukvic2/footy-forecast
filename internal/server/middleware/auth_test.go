@@ -18,7 +18,10 @@ type fakeValidator struct {
 	err    error
 }
 
-func (f *fakeValidator) Validate(_ context.Context, _ string) (cognito.Claims, error) {
+func (f *fakeValidator) Validate(
+	_ context.Context,
+	_ string,
+) (cognito.Claims, error) {
 	return f.claims, f.err
 }
 
@@ -28,15 +31,27 @@ type fakeProvisioner struct {
 	err  error
 }
 
-func (f *fakeProvisioner) ProvisionFromCognito(_ context.Context, _, _, _ string) (domain.User, error) {
+func (f *fakeProvisioner) ProvisionFromCognito(
+	_ context.Context,
+	_, _, _ string,
+) (domain.User, error) {
 	return f.user, f.err
 }
 
-func applyAuth(validator cognito.JWTValidator, provisioner UserProvisioner, r *http.Request) *httptest.ResponseRecorder {
+func applyAuth(
+	validator cognito.JWTValidator,
+	provisioner UserProvisioner,
+	r *http.Request,
+) *httptest.ResponseRecorder {
 	rec := httptest.NewRecorder()
-	next := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	next := http.HandlerFunc(
+		func(
+			w http.ResponseWriter,
+			_ *http.Request,
+		) {
+			w.WriteHeader(http.StatusOK)
+		},
+	)
 	Auth(validator, provisioner)(next).ServeHTTP(rec, r)
 	return rec
 }
@@ -97,10 +112,15 @@ func TestAuth_ValidTokenAndProvision_CallsNext(t *testing.T) {
 	var gotUser domain.User
 	var gotOK bool
 	rec := httptest.NewRecorder()
-	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		gotUser, gotOK = ctxutil.UserFromCtx(r.Context())
-		w.WriteHeader(http.StatusOK)
-	})
+	next := http.HandlerFunc(
+		func(
+			w http.ResponseWriter,
+			r *http.Request,
+		) {
+			gotUser, gotOK = ctxutil.UserFromCtx(r.Context())
+			w.WriteHeader(http.StatusOK)
+		},
+	)
 
 	req := httptest.NewRequest(http.MethodGet, "/users/me", nil)
 	req.Header.Set("Authorization", "Bearer validtoken")
@@ -129,13 +149,16 @@ func TestAuth_SuspendedUser_Returns403(t *testing.T) {
 }
 
 func TestAuth_DisplayNamePreference(t *testing.T) {
-	// When Name is present, it should be passed to provisioner.
+	// When GivenName is present, it should be passed to provisioner.
 	var capturedDisplayName string
 	provisioner := &fakeProvisioner{user: domain.User{}}
 	provisioner.user = domain.User{}
 
 	captureProvisioner := &captureProvisionerFn{
-		fn: func(_ context.Context, _, _, displayName string) (domain.User, error) {
+		fn: func(
+			_ context.Context,
+			_, _, displayName string,
+		) (domain.User, error) {
 			capturedDisplayName = displayName
 			return domain.User{Status: domain.UserStatusActive}, nil
 		},
@@ -146,12 +169,12 @@ func TestAuth_DisplayNamePreference(t *testing.T) {
 	req.Header.Set("Authorization", "Bearer tok")
 	_ = provisioner
 	applyAuth(validator, captureProvisioner, req)
-	if capturedDisplayName != "Alice" {
-		t.Errorf("displayName = %q, want Alice (Name takes priority over GivenName)", capturedDisplayName)
+	if capturedDisplayName != "Al" {
+		t.Errorf("displayName = %q, want Al (Name takes priority over GivenName)", capturedDisplayName)
 	}
 
-	// When Name is empty, GivenName should be used.
-	validator2 := &fakeValidator{claims: cognito.Claims{Sub: "s", Email: "e@e.com", Name: "", GivenName: "Bob"}}
+	// When GivenName is empty, Name should be used.
+	validator2 := &fakeValidator{claims: cognito.Claims{Sub: "s", Email: "e@e.com", Name: "Bob", GivenName: ""}}
 	capturedDisplayName = ""
 	req2 := httptest.NewRequest(http.MethodGet, "/users/me", nil)
 	req2.Header.Set("Authorization", "Bearer tok")
@@ -162,9 +185,15 @@ func TestAuth_DisplayNamePreference(t *testing.T) {
 }
 
 type captureProvisionerFn struct {
-	fn func(ctx context.Context, sub, email, displayName string) (domain.User, error)
+	fn func(
+		ctx context.Context,
+		sub, email, displayName string,
+	) (domain.User, error)
 }
 
-func (c *captureProvisionerFn) ProvisionFromCognito(ctx context.Context, sub, email, displayName string) (domain.User, error) {
+func (c *captureProvisionerFn) ProvisionFromCognito(
+	ctx context.Context,
+	sub, email, displayName string,
+) (domain.User, error) {
 	return c.fn(ctx, sub, email, displayName)
 }

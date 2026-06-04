@@ -29,17 +29,50 @@ func NewWorkerRepository(pool *db.Pool) *WorkerRepository {
 var _ worker.Repo = (*WorkerRepository)(nil)
 
 // LockImminentFixtures sets prediction_locked = TRUE for every upcoming, non-demo fixture
-// whose kickoff is within the next leadMinutes minutes.
+// whose kickoff is within the next leadMinutes minutes. If the locked fixture is the first
+// (earliest kickoff) fixture of its tournament, also sets tournaments.predictions_locked = TRUE.
 func (r *WorkerRepository) LockImminentFixtures(ctx context.Context, leadMinutes int) error {
-	const q = `
+	tx, err := r.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback(ctx) //nolint:errcheck
+
+	const lockFixtures = `
 UPDATE fixtures
 SET prediction_locked = TRUE
 WHERE prediction_locked = FALSE
   AND is_demo          = FALSE
   AND status           = 'upcoming'
   AND kickoff_at       <= now() + ($1 * INTERVAL '1 minute')`
-	if _, err := r.pool.Exec(ctx, q, leadMinutes); err != nil {
+	if _, err := tx.Exec(ctx, lockFixtures, leadMinutes); err != nil {
 		return fmt.Errorf("lock imminent fixtures: %w", err)
+	}
+
+	// Lock any tournament whose first (earliest kickoff) non-demo fixture is now locked.
+	const lockTournaments = `
+UPDATE tournaments
+SET predictions_locked = TRUE
+WHERE predictions_locked = FALSE
+  AND EXISTS (
+    SELECT 1
+    FROM fixtures f
+    WHERE f.tournament_id = tournaments.id
+      AND f.is_demo = FALSE
+      AND f.prediction_locked = TRUE
+      AND f.kickoff_at = (
+        SELECT MIN(f2.kickoff_at)
+        FROM fixtures f2
+        WHERE f2.tournament_id = tournaments.id
+          AND f2.is_demo = FALSE
+      )
+  )`
+	if _, err := tx.Exec(ctx, lockTournaments); err != nil {
+		return fmt.Errorf("lock tournament predictions: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit lock: %w", err)
 	}
 	return nil
 }

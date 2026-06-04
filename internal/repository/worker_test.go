@@ -157,10 +157,18 @@ func wQueryPoints(
 	return pts
 }
 
-func wQueryPredictionLocked(t *testing.T, pool *db.Pool, ctx context.Context, fixtureID uuid.UUID) bool {
+func wQueryPredictionLocked(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	fixtureID uuid.UUID,
+) bool {
 	t.Helper()
 	var locked bool
-	require.NoError(t, pool.QueryRow(ctx, `SELECT prediction_locked FROM fixtures WHERE id = $1`, fixtureID).Scan(&locked))
+	require.NoError(
+		t,
+		pool.QueryRow(ctx, `SELECT prediction_locked FROM fixtures WHERE id = $1`, fixtureID).Scan(&locked),
+	)
 	return locked
 }
 
@@ -279,43 +287,194 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 	home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 	away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 
-	t.Run("within lead window gets locked", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
-		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"within lead window gets locked", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(30*time.Minute),
+				"upcoming",
+				"GS",
+				false,
+			)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
 
-	t.Run("outside lead window stays unlocked", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(90*time.Minute), "upcoming", "GS", false)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
-		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"outside lead window stays unlocked", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(90*time.Minute),
+				"upcoming",
+				"GS",
+				false,
+			)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
 
-	t.Run("lead window is respected — 45min lead locks 30min fixture", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 45))
-		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"lead window is respected — 45min lead locks 30min fixture", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(30*time.Minute),
+				"upcoming",
+				"GS",
+				false,
+			)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 45))
+			assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
 
-	t.Run("lead window is respected — 20min lead does not lock 30min fixture", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 20))
-		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"lead window is respected — 20min lead does not lock 30min fixture", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(30*time.Minute),
+				"upcoming",
+				"GS",
+				false,
+			)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 20))
+			assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
 
-	t.Run("demo fixture is never locked", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", true)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
-		assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"demo fixture is never locked", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(30*time.Minute),
+				"upcoming",
+				"GS",
+				true,
+			)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.False(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
 
-	t.Run("already-locked fixture is unaffected", func(t *testing.T) {
-		id := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
-		_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, id)
-		require.NoError(t, err)
-		require.NoError(t, repo.LockImminentFixtures(ctx, 60))
-		assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
-	})
+	t.Run(
+		"already-locked fixture is unaffected", func(t *testing.T) {
+			id := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(30*time.Minute),
+				"upcoming",
+				"GS",
+				false,
+			)
+			_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, id)
+			require.NoError(t, err)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.True(t, wQueryPredictionLocked(t, pool, ctx, id))
+		},
+	)
+}
+
+func wQueryTournamentPredictionsLocked(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) bool {
+	t.Helper()
+	var locked bool
+	require.NoError(
+		t,
+		pool.QueryRow(ctx, `SELECT predictions_locked FROM tournaments WHERE id = $1`, tournamentID).Scan(&locked),
+	)
+	return locked
+}
+
+func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+
+	t.Run(
+		"first fixture locked sets tournament predictions_locked", func(t *testing.T) {
+			tourID := wInsertTournament(t, pool, ctx, true)
+			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.True(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
+		},
+	)
+
+	t.Run(
+		"non-first fixture locked does not set tournament predictions_locked", func(t *testing.T) {
+			tourID := wInsertTournament(t, pool, ctx, true)
+			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			// Earliest fixture is far in the future — won't be locked.
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(3*time.Hour), "upcoming", "GS", false)
+			// Later fixture is imminent — will be locked, but not the first.
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.False(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
+		},
+	)
+
+	t.Run(
+		"demo fixture being first does not trigger tournament lock", func(t *testing.T) {
+			tourID := wInsertTournament(t, pool, ctx, true)
+			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			// Only fixture is a demo — should never be locked, so tournament stays unlocked.
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", true)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.False(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
+		},
+	)
+
+	t.Run(
+		"already-locked tournament is not reset", func(t *testing.T) {
+			tourID := wInsertTournament(t, pool, ctx, true)
+			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.True(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
+			// Second call is idempotent.
+			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
+			assert.True(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
+		},
+	)
 }
 
 // ---- ListPollableMatches ----

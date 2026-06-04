@@ -56,9 +56,8 @@ func NewRouter(
 		playerRepo,
 		teamRepo,
 		teamRepo,
-		fixtureRepo,
+		tournamentRepo,
 		leagueRepo,
-		service.RealClock{},
 	)
 
 	validator := cognito.NewValidator(
