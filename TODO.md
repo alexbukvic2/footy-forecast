@@ -12,6 +12,7 @@
 - [ ] Locked fixtures - lock by cron, use locked field instead of comparing current time to fixture time
 - [ ] Same points breaking criteria
 - [ ] Default values for missing handicaps
+- [ ] Worker should fetch fixtures every day
 
 ### Profile page
 - [ ] Change display name

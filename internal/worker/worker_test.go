@@ -85,7 +85,7 @@ func (r *fakeRepo) GetTeamByExternalID(_ context.Context, _ int64, _ uuid.UUID) 
 	return uuid.New(), nil
 }
 
-func (r *fakeRepo) GetPlayerByExternalID(_ context.Context, _ string, _ uuid.UUID) (uuid.UUID, error) {
+func (r *fakeRepo) GetPlayerByExternalID(_ context.Context, _ int64, _ uuid.UUID) (uuid.UUID, error) {
 	r.inc("GetPlayerByExternalID")
 	return uuid.New(), nil
 }
@@ -377,7 +377,7 @@ func TestRunSettlement_GroupMatchGroupDone(t *testing.T) {
 			GoalsHome:   intPtr(2),
 			GoalsAway:   intPtr(1),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "999", Goals: 3}},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 999, Goals: 3}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -407,7 +407,7 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 			GoalsHome:   intPtr(1),
 			GoalsAway:   intPtr(0),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "1", Goals: 5}},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 1, Goals: 5}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -474,7 +474,7 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 			GoalsHome:   intPtr(3),
 			GoalsAway:   intPtr(1),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: "42", Goals: 7}},
+		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 42, Goals: 7}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -499,9 +499,9 @@ func TestRunSettlement_FinalConcluded_MultipleTopScorers(t *testing.T) {
 			GoalsAway:   intPtr(1),
 		},
 		topScorers: []worker.APITopScorerResult{
-			{PlayerExternalID: "10", Goals: 6},
-			{PlayerExternalID: "11", Goals: 6},
-			{PlayerExternalID: "12", Goals: 6},
+			{PlayerExternalID: 10, Goals: 6},
+			{PlayerExternalID: 11, Goals: 6},
+			{PlayerExternalID: 12, Goals: 6},
 		},
 	}
 	w := newWorker(repo, api)
@@ -528,8 +528,8 @@ func TestRunSettlement_GroupDone_MultipleTopScorers(t *testing.T) {
 			GoalsAway:   intPtr(0),
 		},
 		topScorers: []worker.APITopScorerResult{
-			{PlayerExternalID: "20", Goals: 4},
-			{PlayerExternalID: "21", Goals: 4},
+			{PlayerExternalID: 20, Goals: 4},
+			{PlayerExternalID: 21, Goals: 4},
 		},
 	}
 	w := newWorker(repo, api)

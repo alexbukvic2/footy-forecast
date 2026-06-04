@@ -76,7 +76,7 @@ WHERE external_id = $1
 `
 
 type GetPlayerByExternalIDParams struct {
-	ExternalID   string
+	ExternalID   int64
 	TournamentID uuid.UUID
 }
 
@@ -109,8 +109,8 @@ func (q *Queries) GetTeamByExternalID(ctx context.Context, arg GetTeamByExternal
 const listPollableMatches = `-- name: ListPollableMatches :many
 SELECT f.id, f.external_id, f.tournament_id,
        f.home_team_id, f.away_team_id,
-       t.external_id  AS tournament_external_id,
-       t.season       AS tournament_season,
+       t.external_id                                                      AS tournament_external_id,
+       t.season                                                           AS tournament_season,
        home_t.group_letter,
        f.round, f.status, f.kickoff_at,
        f.goals_home, f.goals_away,

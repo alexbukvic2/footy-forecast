@@ -41,7 +41,7 @@ func TestPlayerPredictionRepository(t *testing.T) {
 
 	_, err = pool.Exec(ctx, `
 		INSERT INTO players (id, external_id, name, tournament_id, team_id)
-		VALUES ($1, 'ext-1', 'Lionel Messi', $2, $3)`,
+		VALUES ($1, 1, 'Lionel Messi', $2, $3)`,
 		playerID, tournamentID, teamID)
 	require.NoError(t, err)
 
@@ -95,7 +95,7 @@ func TestPlayerPredictionRepository(t *testing.T) {
 		player2ID := uuid.Must(uuid.NewV7())
 		_, err = pool.Exec(ctx, `
 			INSERT INTO players (id, external_id, name, tournament_id, team_id)
-			VALUES ($1, 'ext-2', 'Cristiano Ronaldo', $2, $3)`,
+			VALUES ($1, 2, 'Cristiano Ronaldo', $2, $3)`,
 			player2ID, tournamentID, teamID)
 		require.NoError(t, err)
 

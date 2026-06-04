@@ -46,14 +46,18 @@ func TestClient_GetStandings(t *testing.T) {
 		assert.Positive(t, e.Position, "Position must be > 0")
 		assert.GreaterOrEqual(t, e.Points, 0, "Points must be >= 0")
 		assert.Positive(t, e.Played, "Played must be > 0 for a completed season")
-		assert.Equal(t, e.Played, e.Won+e.Drawn+e.Lost,
-			"Played must equal Won+Drawn+Lost for team external_id=%d", e.TeamExternalID)
+		assert.Equal(
+			t, e.Played, e.Won+e.Drawn+e.Lost,
+			"Played must equal Won+Drawn+Lost for team external_id=%d", e.TeamExternalID,
+		)
 		assert.GreaterOrEqual(t, e.GoalsFor, 0)
 		assert.GreaterOrEqual(t, e.GoalsAgainst, 0)
 	}
 
-	t.Logf("standings: %d entries; leader external_id=%d pts=%d played=%d",
-		len(entries), entries[0].TeamExternalID, entries[0].Points, entries[0].Played)
+	t.Logf(
+		"standings: %d entries; leader external_id=%d pts=%d played=%d",
+		len(entries), entries[0].TeamExternalID, entries[0].Points, entries[0].Played,
+	)
 }
 
 // TestClient_GetTournamentTopScorer verifies that the top-scorers response decodes
@@ -73,7 +77,7 @@ func TestClient_GetTournamentTopScorer(t *testing.T) {
 		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
 	}
 
-	t.Logf("top scorers: count=%d goals=%d first_player=%s", len(results), topGoals, results[0].PlayerExternalID)
+	t.Logf("top scorers: count=%d goals=%d first_player=%d", len(results), topGoals, results[0].PlayerExternalID)
 }
 
 // TestClient_GetGroupTopScorer verifies the group-top-scorer path (which falls back
@@ -94,8 +98,10 @@ func TestClient_GetGroupTopScorer(t *testing.T) {
 		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
 	}
 
-	t.Logf("group top scorer (league-wide fallback): count=%d goals=%d first_player=%s",
-		len(results), topGoals, results[0].PlayerExternalID)
+	t.Logf(
+		"group top scorer (league-wide fallback): count=%d goals=%d first_player=%d",
+		len(results), topGoals, results[0].PlayerExternalID,
+	)
 }
 
 // TestClient_GetFixture first fetches any finished fixture for league 1 / season 2022
@@ -137,6 +143,8 @@ func TestClient_GetFixture(t *testing.T) {
 		assert.False(t, homeWins && awayWins, "HomeWinner and AwayWinner must not both be true")
 	}
 
-	t.Logf("fixture %d: status=%s home_goals=%d away_goals=%d",
-		fixtureID, result.StatusShort, *result.GoalsHome, *result.GoalsAway)
+	t.Logf(
+		"fixture %d: status=%s home_goals=%d away_goals=%d",
+		fixtureID, result.StatusShort, *result.GoalsHome, *result.GoalsAway,
+	)
 }

@@ -413,7 +413,7 @@ type LeagueMember struct {
 
 type Player struct {
 	ID           uuid.UUID
-	ExternalID   string
+	ExternalID   int64
 	Name         string
 	TournamentID uuid.UUID
 	TeamID       uuid.UUID

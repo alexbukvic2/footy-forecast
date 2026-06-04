@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -94,14 +95,14 @@ func (r *WorkerRepository) GetTeamByExternalID(ctx context.Context, externalID i
 }
 
 // GetPlayerByExternalID resolves an api-sports.io player ID to our internal player UUID.
-func (r *WorkerRepository) GetPlayerByExternalID(ctx context.Context, externalID string, tournamentID uuid.UUID) (uuid.UUID, error) {
+func (r *WorkerRepository) GetPlayerByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error) {
 	id, err := r.q.GetPlayerByExternalID(ctx, dbgen.GetPlayerByExternalIDParams{
 		ExternalID:   externalID,
 		TournamentID: tournamentID,
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return uuid.UUID{}, fmt.Errorf("player external_id %s tournament %s: %w", externalID, tournamentID, domain.ErrNotFound)
+			return uuid.UUID{}, fmt.Errorf("player external_id %d tournament %s: %w", externalID, tournamentID, domain.ErrNotFound)
 		}
 		return uuid.UUID{}, fmt.Errorf("get player by external id: %w", err)
 	}
@@ -122,10 +123,11 @@ func pollableFixtureFromRow(row dbgen.ListPollableMatchesRow) (domain.PollableFi
 		TournamentSeason:     0,
 		HomeTeamID:           row.HomeTeamID,
 		AwayTeamID:           row.AwayTeamID,
-		GroupLetter:          row.GroupLetter,
-		Round:                row.Round,
-		Status:               domain.FixtureStatus(row.Status),
-		KickoffAt:            row.KickoffAt,
+		// group_letter is meaningful only for group-stage fixtures; clear it for knockout rounds.
+		GroupLetter: groupLetterForRound(row.Round, row.GroupLetter),
+		Round:       row.Round,
+		Status:      domain.FixtureStatus(row.Status),
+		KickoffAt:   row.KickoffAt,
 	}
 
 	if row.TournamentSeason != nil {
@@ -152,6 +154,13 @@ func pollableFixtureFromRow(row dbgen.ListPollableMatchesRow) (domain.PollableFi
 	}
 
 	return f, nil
+}
+
+func groupLetterForRound(round string, gl *string) *string {
+	if strings.HasPrefix(round, "Group") {
+		return gl
+	}
+	return nil
 }
 
 // mapAPIStatusForDB converts an api-sports.io status string to the DB enum string.

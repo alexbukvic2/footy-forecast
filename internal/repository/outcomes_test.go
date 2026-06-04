@@ -45,7 +45,7 @@ func TestOutcomesRepository(t *testing.T) {
 		INSERT INTO players (id, name, tournament_id, team_id, external_id) VALUES
 		($1, 'Neymar',  $3, $4, $6),
 		($2, 'Messi',   $3, $5, $7)`,
-		player1ID, player2ID, tournamentID, team1ID, team2ID, "ext-1", "ext-2",
+		player1ID, player2ID, tournamentID, team1ID, team2ID, 1, 2,
 	)
 	require.NoError(t, err)
 

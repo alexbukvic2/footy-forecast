@@ -159,7 +159,7 @@ func (c *Client) getTopScorers(
 			break
 		}
 		results = append(results, worker.APITopScorerResult{
-			PlayerExternalID: strconv.FormatInt(item.Player.ID, 10),
+			PlayerExternalID: item.Player.ID,
 			Goals:            goals,
 		})
 	}

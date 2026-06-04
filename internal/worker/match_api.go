@@ -36,6 +36,6 @@ type APIStandingsEntry struct {
 
 // APITopScorerResult is returned by GetGroupTopScorer and GetTournamentTopScorer.
 type APITopScorerResult struct {
-	PlayerExternalID string // matches players.external_id
+	PlayerExternalID int64 // matches players.external_id
 	Goals            int
 }

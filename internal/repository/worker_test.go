@@ -4,6 +4,7 @@ package repository_test
 
 import (
 	"context"
+	"fmt"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -251,7 +252,11 @@ func wInsertGroupTableEntryDesc(
 		`INSERT INTO tournament_group_table (tournament_id, team_id, group_letter, position, points, played, description)
 		 VALUES ($1, $2, $3, $4, 0, 0, $5)
 		 ON CONFLICT (tournament_id, team_id) DO UPDATE SET position=$4, description=$5`,
-		tournamentID, teamID, group, pos, description,
+		tournamentID,
+		teamID,
+		group,
+		pos,
+		description,
 	)
 	require.NoError(t, err)
 }
@@ -697,9 +702,9 @@ func TestWorkerRepository_GetPlayerByExternalID(t *testing.T) {
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
 	teamID := wInsertTeam(t, pool, ctx, tourID, "A", 0)
-	playerID := wInsertPlayer(t, pool, ctx, tourID, teamID, "ext-42")
+	playerID := wInsertPlayer(t, pool, ctx, tourID, teamID, 42)
 
-	got, err := repo.GetPlayerByExternalID(ctx, "ext-42", tourID)
+	got, err := repo.GetPlayerByExternalID(ctx, 42, tourID)
 	require.NoError(t, err)
 	assert.Equal(t, playerID, got)
 }
@@ -865,8 +870,10 @@ func TestWorkerRepository_SettleSemifinalistPredictions_PartialRound(t *testing.
 	other := wInsertTeam(t, pool, ctx, tourID, "", 0)
 	stillPlaying := wInsertTeam(t, pool, ctx, tourID, "", 0)
 
-	fID := wInsertFixture(t, pool, ctx, tourID, winner, other,
-		time.Now().Add(-2*time.Hour), "finished", "Quarter-finals", false)
+	fID := wInsertFixture(
+		t, pool, ctx, tourID, winner, other,
+		time.Now().Add(-2*time.Hour), "finished", "Quarter-finals", false,
+	)
 	wSetWinnerTeamID(t, pool, ctx, fID, winner)
 	wInsertTeamHandicap(t, pool, ctx, winner, "semifinalist", 5)
 
@@ -895,8 +902,10 @@ func TestWorkerRepository_ZeroRemainingSemifinalistPredictions(t *testing.T) {
 	eliminated := wInsertTeam(t, pool, ctx, tourID, "", 0)
 	other := wInsertTeam(t, pool, ctx, tourID, "", 0)
 
-	fID := wInsertFixture(t, pool, ctx, tourID, winner, other,
-		time.Now().Add(-2*time.Hour), "finished", "Quarter-finals", false)
+	fID := wInsertFixture(
+		t, pool, ctx, tourID, winner, other,
+		time.Now().Add(-2*time.Hour), "finished", "Quarter-finals", false,
+	)
 	wSetWinnerTeamID(t, pool, ctx, fID, winner)
 	wInsertTeamHandicap(t, pool, ctx, winner, "semifinalist", 5)
 
@@ -946,8 +955,8 @@ func TestWorkerRepository_SettleGroupTopScorerPredictions(t *testing.T) {
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
 	teamID := wInsertTeam(t, pool, ctx, tourID, "A", 0)
-	scorer := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-top-1")
-	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-other-1")
+	scorer := wInsertPlayer(t, pool, ctx, tourID, teamID, 1)
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, 2)
 	userA := wInsertUser(t, pool, ctx)
 	userB := wInsertUser(t, pool, ctx)
 	wInsertPlayerHandicap(t, pool, ctx, scorer, "group_top_scorer", 6)
@@ -971,9 +980,9 @@ func TestWorkerRepository_SettleGroupTopScorerPredictions_MultipleWinners(t *tes
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
 	teamID := wInsertTeam(t, pool, ctx, tourID, "B", 0)
-	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-tied-1")
-	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-tied-2")
-	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "gs-out-1")
+	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, 1)
+	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, 2)
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, 3)
 	userA := wInsertUser(t, pool, ctx)
 	userB := wInsertUser(t, pool, ctx)
 	userC := wInsertUser(t, pool, ctx)
@@ -999,8 +1008,8 @@ func TestWorkerRepository_SettleTopScorerPredictions(t *testing.T) {
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
 	teamID := wInsertTeam(t, pool, ctx, tourID, "", 0)
-	topScorer := wInsertPlayer(t, pool, ctx, tourID, teamID, "top-1")
-	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "other-1")
+	topScorer := wInsertPlayer(t, pool, ctx, tourID, teamID, 1)
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, 2)
 	// Use separate users: the constraint allows only one top-scorer pick per user per category.
 	userA := wInsertUser(t, pool, ctx)
 	userB := wInsertUser(t, pool, ctx)
@@ -1025,9 +1034,9 @@ func TestWorkerRepository_SettleTopScorerPredictions_MultipleWinners(t *testing.
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
 	teamID := wInsertTeam(t, pool, ctx, tourID, "", 0)
-	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, "tied-1")
-	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, "tied-2")
-	other := wInsertPlayer(t, pool, ctx, tourID, teamID, "out-1")
+	scorerA := wInsertPlayer(t, pool, ctx, tourID, teamID, 1)
+	scorerB := wInsertPlayer(t, pool, ctx, tourID, teamID, 2)
+	other := wInsertPlayer(t, pool, ctx, tourID, teamID, 3)
 	userA := wInsertUser(t, pool, ctx)
 	userB := wInsertUser(t, pool, ctx)
 	userC := wInsertUser(t, pool, ctx)
@@ -1063,14 +1072,14 @@ func wInsertPlayer(
 	pool *db.Pool,
 	ctx context.Context,
 	tourID, teamID uuid.UUID,
-	extID string,
+	extID int64,
 ) uuid.UUID {
 	t.Helper()
 	id := uuid.Must(uuid.NewV7())
 	_, err := pool.Exec(
 		ctx,
 		`INSERT INTO players (id, external_id, name, tournament_id, team_id) VALUES ($1,$2,$3,$4,$5)`,
-		id, extID, "Player "+extID, tourID, teamID,
+		id, extID, fmt.Sprintf("Player %d", extID), tourID, teamID,
 	)
 	require.NoError(t, err)
 	return id
@@ -1300,13 +1309,20 @@ func queryPlayerPredictionPoints(
 		err = pool.QueryRow(
 			ctx,
 			`SELECT COALESCE(points,-999) FROM player_predictions WHERE user_id=$1 AND tournament_id=$2 AND category=$3::player_handicap_category AND pick=$4 AND group_letter IS NULL`,
-			userID, tourID, category, pick,
+			userID,
+			tourID,
+			category,
+			pick,
 		).Scan(&pts)
 	} else {
 		err = pool.QueryRow(
 			ctx,
 			`SELECT COALESCE(points,-999) FROM player_predictions WHERE user_id=$1 AND tournament_id=$2 AND category=$3::player_handicap_category AND pick=$4 AND group_letter=$5`,
-			userID, tourID, category, pick, groupLetter,
+			userID,
+			tourID,
+			category,
+			pick,
+			groupLetter,
 		).Scan(&pts)
 	}
 	require.NoError(t, err)
