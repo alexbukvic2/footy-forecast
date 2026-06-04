@@ -23,7 +23,7 @@ WHERE p.id = $1
 
 type GetPlayerByIDRow struct {
 	ID           uuid.UUID
-	ExternalID   string
+	ExternalID   int64
 	Name         string
 	TournamentID uuid.UUID
 	TeamID       uuid.UUID

@@ -5,24 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/google/uuid"
 
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
 	"github.com/alexbukvic2/footy-forecast/internal/repository"
 )
-
-// Clock allows injecting a deterministic time source for testing.
-type Clock interface {
-	Now() time.Time
-}
-
-// RealClock returns the actual current time.
-type RealClock struct{}
-
-// Now returns time.Now().
-func (RealClock) Now() time.Time { return time.Now() }
 
 // PlayerPredictionRepo is the data access interface for player predictions.
 type PlayerPredictionRepo interface {
@@ -97,13 +85,9 @@ type TeamGroupLister interface {
 	) ([]string, error)
 }
 
-// FixtureFirstKickoffGetter returns the first kickoff time for a tournament.
-// Returns domain.ErrNotFound when no fixtures exist for the tournament.
-type FixtureFirstKickoffGetter interface {
-	GetFirstKickoffByTournament(
-		ctx context.Context,
-		tournamentID uuid.UUID,
-	) (time.Time, error)
+// TournamentLockReader checks whether predictions are locked for a tournament.
+type TournamentLockReader interface {
+	IsPredictionsLocked(ctx context.Context, tournamentID uuid.UUID) (bool, error)
 }
 
 // LeagueReader reads league and membership data needed for prediction views.
@@ -129,9 +113,8 @@ type TournamentPredictionService struct {
 	players           PlayerGetter
 	teams             TeamGetter
 	teamGroups        TeamGroupLister
-	fixtures          FixtureFirstKickoffGetter
+	tournaments       TournamentLockReader
 	leagues           LeagueReader
-	clock             Clock
 }
 
 // NewTournamentPredictionService constructs a TournamentPredictionService.
@@ -141,9 +124,8 @@ func NewTournamentPredictionService(
 	players PlayerGetter,
 	teams TeamGetter,
 	teamGroups TeamGroupLister,
-	fixtures FixtureFirstKickoffGetter,
+	tournaments TournamentLockReader,
 	leagues LeagueReader,
-	clock Clock,
 ) *TournamentPredictionService {
 	return &TournamentPredictionService{
 		playerPredictions: playerPredictions,
@@ -151,27 +133,9 @@ func NewTournamentPredictionService(
 		players:           players,
 		teams:             teams,
 		teamGroups:        teamGroups,
-		fixtures:          fixtures,
+		tournaments:       tournaments,
 		leagues:           leagues,
-		clock:             clock,
 	}
-}
-
-// lockAt returns the lock time for a tournament and whether it has passed.
-// When no fixtures exist, isLocked is false (predictions remain open).
-func (s *TournamentPredictionService) lockAt(
-	ctx context.Context,
-	tournamentID uuid.UUID,
-) (lockTime time.Time, isLocked bool, err error) {
-	firstKickoff, err := s.fixtures.GetFirstKickoffByTournament(ctx, tournamentID)
-	if errors.Is(err, domain.ErrNotFound) {
-		return time.Time{}, false, nil
-	}
-	if err != nil {
-		return time.Time{}, false, fmt.Errorf("get first kickoff: %w", err)
-	}
-	lockAt := firstKickoff.Add(-30 * time.Minute)
-	return lockAt, s.clock.Now().After(lockAt), nil
 }
 
 // UpsertPlayerPrediction validates and saves a player tournament prediction.
@@ -208,9 +172,9 @@ func (s *TournamentPredictionService) UpsertPlayerPrediction(
 		}
 	}
 
-	_, locked, err := s.lockAt(ctx, in.TournamentID)
+	locked, err := s.tournaments.IsPredictionsLocked(ctx, in.TournamentID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check lock: %w", err)
 	}
 	if locked {
 		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
@@ -253,9 +217,9 @@ func (s *TournamentPredictionService) UpsertTeamPrediction(
 		return nil, err
 	}
 
-	_, locked, err := s.lockAt(ctx, in.TournamentID)
+	locked, err := s.tournaments.IsPredictionsLocked(ctx, in.TournamentID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check lock: %w", err)
 	}
 	if locked {
 		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
@@ -359,9 +323,9 @@ func (s *TournamentPredictionService) BulkUpsertPlayerPredictions(
 		return views, err
 	}
 
-	_, locked, err := s.lockAt(ctx, tournamentID)
+	locked, err := s.tournaments.IsPredictionsLocked(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check lock: %w", err)
 	}
 	if locked {
 		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
@@ -442,9 +406,9 @@ func (s *TournamentPredictionService) BulkUpsertTeamPredictions(
 		return views, err
 	}
 
-	_, locked, err := s.lockAt(ctx, tournamentID)
+	locked, err := s.tournaments.IsPredictionsLocked(ctx, tournamentID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check lock: %w", err)
 	}
 	if locked {
 		return nil, fmt.Errorf("predictions are locked for this tournament: %w", domain.ErrForbidden)
@@ -650,7 +614,7 @@ func (s *TournamentPredictionService) ListPlayerPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
 ) (locked bool, views []*domain.PlayerPredictionView, err error) {
-	_, locked, err = s.lockAt(ctx, tournamentID)
+	locked, err = s.tournaments.IsPredictionsLocked(ctx, tournamentID)
 	if err != nil {
 		return false, nil, fmt.Errorf("check lock: %w", err)
 	}
@@ -708,7 +672,7 @@ func (s *TournamentPredictionService) ListTeamPredictionsForUser(
 	ctx context.Context,
 	tournamentID, userID uuid.UUID,
 ) (locked bool, views []*domain.TeamPredictionView, err error) {
-	_, locked, err = s.lockAt(ctx, tournamentID)
+	locked, err = s.tournaments.IsPredictionsLocked(ctx, tournamentID)
 	if err != nil {
 		return false, nil, fmt.Errorf("check lock: %w", err)
 	}
@@ -803,9 +767,9 @@ func (s *TournamentPredictionService) checkLeagueMembership(
 		return nil, fmt.Errorf("check membership: %w", err)
 	}
 
-	_, locked, err := s.lockAt(ctx, league.TournamentID)
+	locked, err := s.tournaments.IsPredictionsLocked(ctx, league.TournamentID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("check lock: %w", err)
 	}
 	if !locked {
 		return nil, fmt.Errorf("league predictions not available until lock time has passed: %w", domain.ErrForbidden)
@@ -1106,13 +1070,13 @@ func buildPlayoffPlayerViews(
 
 // compile-time interface checks
 var (
-	_ PlayerPredictionRepo      = (*repository.PlayerPredictionRepository)(nil)
-	_ TeamPredictionRepo        = (*repository.TeamPredictionRepository)(nil)
-	_ PlayerGetter              = (*repository.PlayerRepository)(nil)
-	_ TeamGetter                = (*repository.TeamRepository)(nil)
-	_ TeamGroupLister           = (*repository.TeamRepository)(nil)
-	_ FixtureFirstKickoffGetter = (*repository.FixtureRepository)(nil)
-	_ LeagueReader              = (*repository.LeagueRepository)(nil)
+	_ PlayerPredictionRepo = (*repository.PlayerPredictionRepository)(nil)
+	_ TeamPredictionRepo   = (*repository.TeamPredictionRepository)(nil)
+	_ PlayerGetter         = (*repository.PlayerRepository)(nil)
+	_ TeamGetter           = (*repository.TeamRepository)(nil)
+	_ TeamGroupLister      = (*repository.TeamRepository)(nil)
+	_ TournamentLockReader = (*repository.TournamentRepository)(nil)
+	_ LeagueReader         = (*repository.LeagueRepository)(nil)
 )
 
 // sortedMembers returns members sorted with requestingUserID first, then alphabetically.

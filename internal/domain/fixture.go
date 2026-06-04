@@ -14,6 +14,7 @@ const (
 	FixtureStatusUpcoming   FixtureStatus = "upcoming"
 	FixtureStatusInProgress FixtureStatus = "in_progress"
 	FixtureStatusFinished   FixtureStatus = "finished"
+	FixtureStatusCancelled  FixtureStatus = "cancelled"
 )
 
 // Fixture represents a scheduled or completed football match.

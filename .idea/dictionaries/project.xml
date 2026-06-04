@@ -4,7 +4,9 @@
       <w>goinstall</w>
       <w>golangci</w>
       <w>healthz</w>
+      <w>preds</w>
       <w>sqlc</w>
+      <w>upserter</w>
     </words>
   </dictionary>
 </component>

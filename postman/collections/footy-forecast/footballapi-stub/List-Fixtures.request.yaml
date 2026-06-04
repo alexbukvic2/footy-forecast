@@ -1,0 +1,5 @@
+$kind: http-request
+name: List Fixtures
+method: GET
+url: '{{stubBaseUrl}}/control/fixtures'
+order: 1000

@@ -13,8 +13,7 @@ import (
 )
 
 const listGroupTableByTournament = `-- name: ListGroupTableByTournament :many
-SELECT tgt.id, tgt.tournament_id, tgt.team_id, t.name AS team_name,
-       tgt.group_letter, tgt.position, tgt.points, tgt.played, tgt.created_at, tgt.updated_at
+SELECT tgt.id, tgt.tournament_id, tgt.team_id, tgt.group_letter, tgt.position, tgt.points, tgt.played, tgt.created_at, tgt.updated_at, tgt.won, tgt.drawn, tgt.lost, tgt.goals_for, tgt.goals_against, tgt.description, t.name AS team_name
 FROM tournament_group_table tgt
 JOIN teams t ON t.id = tgt.team_id
 WHERE tgt.tournament_id = $1
@@ -25,13 +24,19 @@ type ListGroupTableByTournamentRow struct {
 	ID           uuid.UUID
 	TournamentID uuid.UUID
 	TeamID       uuid.UUID
-	TeamName     string
 	GroupLetter  string
 	Position     int16
 	Points       int16
 	Played       int16
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	Won          int16
+	Drawn        int16
+	Lost         int16
+	GoalsFor     int16
+	GoalsAgainst int16
+	Description  string
+	TeamName     string
 }
 
 func (q *Queries) ListGroupTableByTournament(ctx context.Context, tournamentID uuid.UUID) ([]ListGroupTableByTournamentRow, error) {
@@ -47,13 +52,19 @@ func (q *Queries) ListGroupTableByTournament(ctx context.Context, tournamentID u
 			&i.ID,
 			&i.TournamentID,
 			&i.TeamID,
-			&i.TeamName,
 			&i.GroupLetter,
 			&i.Position,
 			&i.Points,
 			&i.Played,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.Won,
+			&i.Drawn,
+			&i.Lost,
+			&i.GoalsFor,
+			&i.GoalsAgainst,
+			&i.Description,
+			&i.TeamName,
 		); err != nil {
 			return nil, err
 		}

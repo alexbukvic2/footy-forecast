@@ -15,7 +15,7 @@ import (
 const createTournament = `-- name: CreateTournament :one
 INSERT INTO tournaments (id, slug, name, starts_at, ends_at)
 VALUES ($1, $2, $3, $4, $5)
-RETURNING id, slug, name, status, starts_at, ends_at, created_at, updated_at
+RETURNING id, slug, name, status, starts_at, ends_at, created_at, updated_at, external_id, season
 `
 
 type CreateTournamentParams struct {
@@ -44,12 +44,14 @@ func (q *Queries) CreateTournament(ctx context.Context, arg CreateTournamentPara
 		&i.EndsAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ExternalID,
+		&i.Season,
 	)
 	return i, err
 }
 
 const getTournamentByID = `-- name: GetTournamentByID :one
-SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at
+SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at, external_id, season
 FROM tournaments
 WHERE id = $1
 `
@@ -66,12 +68,14 @@ func (q *Queries) GetTournamentByID(ctx context.Context, id uuid.UUID) (Tourname
 		&i.EndsAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ExternalID,
+		&i.Season,
 	)
 	return i, err
 }
 
 const getTournamentBySlug = `-- name: GetTournamentBySlug :one
-SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at
+SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at, external_id, season
 FROM tournaments
 WHERE slug = $1
 `
@@ -88,12 +92,14 @@ func (q *Queries) GetTournamentBySlug(ctx context.Context, slug string) (Tournam
 		&i.EndsAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ExternalID,
+		&i.Season,
 	)
 	return i, err
 }
 
 const listTournaments = `-- name: ListTournaments :many
-SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at
+SELECT id, slug, name, status, starts_at, ends_at, created_at, updated_at, external_id, season
 FROM tournaments
 ORDER BY starts_at DESC
 `
@@ -116,6 +122,8 @@ func (q *Queries) ListTournaments(ctx context.Context) ([]Tournament, error) {
 			&i.EndsAt,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.ExternalID,
+			&i.Season,
 		); err != nil {
 			return nil, err
 		}

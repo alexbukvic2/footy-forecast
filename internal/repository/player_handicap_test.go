@@ -29,7 +29,7 @@ func TestPlayerHandicapRepository_Get(t *testing.T) {
 
 	playerID := uuid.Must(uuid.NewV7())
 	_, err = pool.Exec(ctx,
-		`INSERT INTO players (id, external_id, name, tournament_id, team_id) VALUES ($1, 'ph-ext-1', 'PH Player', $2, $3)`,
+		`INSERT INTO players (id, external_id, name, tournament_id, team_id) VALUES ($1, 1, 'PH Player', $2, $3)`,
 		playerID, tournamentID, teamID,
 	)
 	require.NoError(t, err)

@@ -320,16 +320,15 @@ func importPlayers(
 				name = string(runes[:maxNameRunes])
 			}
 
-			externalID := strconv.Itoa(r.Player.ID)
 			tag, err := pool.Exec(
 				ctx,
 				`INSERT INTO players (external_id, name, tournament_id, team_id)
 				 VALUES ($1, $2, $3, $4)
 				 ON CONFLICT (external_id, tournament_id) DO NOTHING`,
-				externalID, name, cfg.tournamentID, teamID,
+				int64(r.Player.ID), name, cfg.tournamentID, teamID,
 			)
 			if err != nil {
-				return inserted, fmt.Errorf("insert player %q (external_id %s): %w", name, externalID, err)
+				return inserted, fmt.Errorf("insert player %q (external_id %d): %w", name, r.Player.ID, err)
 			}
 			if tag.RowsAffected() > 0 {
 				inserted++

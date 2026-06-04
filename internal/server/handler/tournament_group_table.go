@@ -43,6 +43,11 @@ type tournamentGroupTableEntryResponse struct {
 	GroupLetter  string `json:"group_letter"`
 	Position     int    `json:"position"`
 	Points       int    `json:"points"`
+	Won          int    `json:"won"`
+	Drawn        int    `json:"drawn"`
+	Lost         int    `json:"lost"`
+	GoalsFor     int    `json:"goals_for"`
+	GoalsAgainst int    `json:"goals_against"`
 	Played       int    `json:"played"`
 }
 
@@ -67,16 +72,23 @@ func (h *TournamentGroupTable) ListGroupTable(
 
 	out := make([]tournamentGroupTableEntryResponse, 0, len(entries))
 	for _, e := range entries {
-		out = append(out, tournamentGroupTableEntryResponse{
-			ID:           e.ID.String(),
-			TournamentID: e.TournamentID.String(),
-			TeamID:       e.TeamID.String(),
-			TeamName:     e.TeamName,
-			GroupLetter:  e.GroupLetter,
-			Position:     e.Position,
-			Points:       e.Points,
-			Played:       e.Played,
-		})
+		out = append(
+			out, tournamentGroupTableEntryResponse{
+				ID:           e.ID.String(),
+				TournamentID: e.TournamentID.String(),
+				TeamID:       e.TeamID.String(),
+				TeamName:     e.TeamName,
+				GroupLetter:  e.GroupLetter,
+				Position:     e.Position,
+				Points:       e.Points,
+				Played:       e.Played,
+				Won:          e.Won,
+				Drawn:        e.Drawn,
+				Lost:         e.Lost,
+				GoalsFor:     e.GoalsFor,
+				GoalsAgainst: e.GoalsAgainst,
+			},
+		)
 	}
 	writeJSON(w, http.StatusOK, out)
 }

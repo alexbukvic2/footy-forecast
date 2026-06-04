@@ -73,13 +73,15 @@ WITH
     WHERE lm.league_id = $1
   )
 SELECT
-  DENSE_RANK() OVER (ORDER BY total_points DESC) AS position,
+  DENSE_RANK() OVER (
+    ORDER BY total_points DESC, score_points DESC, winner_pts DESC, total_top_scorer_pts DESC
+  ) AS position,
   user_id, display_name, score_points,
   group_top_scorer_pts, total_top_scorer_pts,
   group_winner_pts, playoff_pts, semifinalist_pts, winner_pts,
   total_points
 FROM totals
-ORDER BY total_points DESC`
+ORDER BY total_points DESC, score_points DESC, winner_pts DESC, total_top_scorer_pts DESC`
 
 // GetForLeague returns the leaderboard for a league, ordered by total points descending.
 // If the league has no members, an empty slice is returned.
@@ -154,13 +156,15 @@ WITH
     LEFT JOIN team_pts   t ON t.user_id = au.user_id
   )
 SELECT
-  DENSE_RANK() OVER (ORDER BY total_points DESC) AS position,
+  DENSE_RANK() OVER (
+    ORDER BY total_points DESC, score_points DESC, winner_pts DESC, total_top_scorer_pts DESC
+  ) AS position,
   user_id, display_name, score_points,
   group_top_scorer_pts, total_top_scorer_pts,
   group_winner_pts, playoff_pts, semifinalist_pts, winner_pts,
   total_points
 FROM totals
-ORDER BY total_points DESC`
+ORDER BY total_points DESC, score_points DESC, winner_pts DESC, total_top_scorer_pts DESC`
 
 // GetForTournament returns the global leaderboard for a tournament, ordered by
 // total points descending. Only users who have made at least one prediction appear.
@@ -211,14 +215,18 @@ WITH
     GROUP BY sp.user_id, l.id
   ),
   player_pts AS (
-    SELECT pp.user_id, l.id AS league_id, COALESCE(SUM(pp.points), 0) AS pts
+    SELECT pp.user_id, l.id AS league_id,
+      COALESCE(SUM(pp.points), 0)                                                    AS pts,
+      COALESCE(SUM(pp.points) FILTER (WHERE pp.category = 'total_top_scorer'), 0)   AS total_top_scorer_pts
     FROM player_predictions pp
     JOIN leagues l ON l.tournament_id = pp.tournament_id
     WHERE l.id = ANY($2)
     GROUP BY pp.user_id, l.id
   ),
   team_pts AS (
-    SELECT tp.user_id, l.id AS league_id, COALESCE(SUM(tp.points), 0) AS pts
+    SELECT tp.user_id, l.id AS league_id,
+      COALESCE(SUM(tp.points), 0)                                             AS pts,
+      COALESCE(SUM(tp.points) FILTER (WHERE tp.category = 'winner'), 0)      AS winner_pts
     FROM team_predictions tp
     JOIN leagues l ON l.tournament_id = tp.tournament_id
     WHERE l.id = ANY($2)
@@ -230,7 +238,11 @@ WITH
       lm.user_id,
       DENSE_RANK() OVER (
         PARTITION BY lm.league_id
-        ORDER BY (COALESCE(s.pts, 0) + COALESCE(p.pts, 0) + COALESCE(t.pts, 0)) DESC
+        ORDER BY
+          (COALESCE(s.pts, 0) + COALESCE(p.pts, 0) + COALESCE(t.pts, 0)) DESC,
+          COALESCE(s.pts, 0)                    DESC,
+          COALESCE(t.winner_pts, 0)             DESC,
+          COALESCE(p.total_top_scorer_pts, 0)   DESC
       ) AS position
     FROM league_members lm
     LEFT JOIN score_pts  s ON s.user_id = lm.user_id AND s.league_id = lm.league_id

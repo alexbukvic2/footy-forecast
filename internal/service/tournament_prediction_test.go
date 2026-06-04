@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -84,12 +83,12 @@ func (f *fakeTeamGetter) GetByID(ctx context.Context, id uuid.UUID) (*domain.Tea
 	return f.getByIDFn(ctx, id)
 }
 
-type fakeFixtureRepo struct {
-	getFirstKickoffFn func(context.Context, uuid.UUID) (time.Time, error)
+type fakeTournamentLockReader struct {
+	isLockedFn func(context.Context, uuid.UUID) (bool, error)
 }
 
-func (f *fakeFixtureRepo) GetFirstKickoffByTournament(ctx context.Context, tID uuid.UUID) (time.Time, error) {
-	return f.getFirstKickoffFn(ctx, tID)
+func (f *fakeTournamentLockReader) IsPredictionsLocked(ctx context.Context, id uuid.UUID) (bool, error) {
+	return f.isLockedFn(ctx, id)
 }
 
 type fakeLeagueReader struct {
@@ -107,10 +106,6 @@ func (f *fakeLeagueReader) GetMember(ctx context.Context, leagueID, userID uuid.
 func (f *fakeLeagueReader) ListMembersForPredictions(ctx context.Context, leagueID uuid.UUID) ([]*domain.LeagueMemberDisplay, error) {
 	return f.listMembersForPredictionsFn(ctx, leagueID)
 }
-
-type fakeClock struct{ t time.Time }
-
-func (c fakeClock) Now() time.Time { return c.t }
 
 type fakeTeamGroupLister struct {
 	listFn func(context.Context, uuid.UUID) ([]string, error)
@@ -142,11 +137,10 @@ func newSvc(
 	players service.PlayerGetter,
 	teams service.TeamGetter,
 	tGroups service.TeamGroupLister,
-	fixtures service.FixtureFirstKickoffGetter,
+	tournaments service.TournamentLockReader,
 	leagues service.LeagueReader,
-	clock service.Clock,
 ) *service.TournamentPredictionService {
-	return service.NewTournamentPredictionService(ppRepo, tpRepo, players, teams, tGroups, fixtures, leagues, clock)
+	return service.NewTournamentPredictionService(ppRepo, tpRepo, players, teams, tGroups, tournaments, leagues)
 }
 
 func defaultPlayerRepo() *fakePlayerPredictionRepo {
@@ -177,19 +171,15 @@ func defaultTeamRepo() *fakeTeamPredictionRepo {
 	}
 }
 
-func noFixtures() *fakeFixtureRepo {
-	return &fakeFixtureRepo{
-		getFirstKickoffFn: func(_ context.Context, _ uuid.UUID) (time.Time, error) {
-			return time.Time{}, domain.ErrNotFound
-		},
+func unlocked() *fakeTournamentLockReader {
+	return &fakeTournamentLockReader{
+		isLockedFn: func(_ context.Context, _ uuid.UUID) (bool, error) { return false, nil },
 	}
 }
 
-func kickoffAt(t time.Time) *fakeFixtureRepo {
-	return &fakeFixtureRepo{
-		getFirstKickoffFn: func(_ context.Context, _ uuid.UUID) (time.Time, error) {
-			return t, nil
-		},
+func locked() *fakeTournamentLockReader {
+	return &fakeTournamentLockReader{
+		isLockedFn: func(_ context.Context, _ uuid.UUID) (bool, error) { return true, nil },
 	}
 }
 
@@ -206,7 +196,7 @@ func TestTournamentPredictionService_UpsertPlayer_WrongTournament(t *testing.T) 
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	_, err := svc.UpsertPlayerPrediction(context.Background(), domain.UpsertPlayerPredictionInput{
 		UserID:       uuid.New(),
@@ -226,10 +216,8 @@ func TestTournamentPredictionService_UpsertPlayer_Locked(t *testing.T) {
 			return &domain.Player{ID: playerID, TournamentID: tournamentID, GroupLetter: strPtr("A")}, nil
 		},
 	}
-	// Lock time: 1 hour ago, so we are now 30+ min past it.
-	firstKickoff := time.Now().Add(-90 * time.Minute)
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), locked(), nil)
 
 	_, err := svc.UpsertPlayerPrediction(context.Background(), domain.UpsertPlayerPredictionInput{
 		UserID:       uuid.New(),
@@ -252,7 +240,7 @@ func TestTournamentPredictionService_UpsertPlayer_Happy(t *testing.T) {
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	pred, err := svc.UpsertPlayerPrediction(context.Background(), domain.UpsertPlayerPredictionInput{
 		UserID:       userID,
@@ -275,10 +263,8 @@ func TestTournamentPredictionService_UpsertPlayer_Happy_FixturesExistNotLocked(t
 			return &domain.Player{ID: playerID, TournamentID: tournamentID, GroupLetter: strPtr("A")}, nil
 		},
 	}
-	// Kickoff is 2h in the future; lock is 1.5h in the future — not yet reached.
-	fixtures := kickoffAt(time.Now().Add(2 * time.Hour))
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), fixtures, nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	pred, err := svc.UpsertPlayerPrediction(context.Background(), domain.UpsertPlayerPredictionInput{
 		UserID:       userID,
@@ -303,7 +289,7 @@ func TestTournamentPredictionService_UpsertTeam_WrongTournament(t *testing.T) {
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), unlocked(), nil)
 
 	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
 		UserID:       uuid.New(),
@@ -323,9 +309,8 @@ func TestTournamentPredictionService_UpsertTeam_Locked(t *testing.T) {
 			return &domain.Team{ID: teamID, TournamentID: tournamentID}, nil
 		},
 	}
-	firstKickoff := time.Now().Add(-90 * time.Minute)
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), locked(), nil)
 
 	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
 		UserID:       uuid.New(),
@@ -348,8 +333,7 @@ func TestTournamentPredictionService_BulkUpsertPlayers_Locked(t *testing.T) {
 			return &domain.Player{ID: playerID, TournamentID: tournamentID}, nil
 		},
 	}
-	firstKickoff := time.Now().Add(-90 * time.Minute)
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), locked(), nil)
 
 	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, []domain.BulkPlayerPredictionItem{
 		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: &playerID},
@@ -366,7 +350,7 @@ func TestTournamentPredictionService_BulkUpsertPlayers_EmptyBatch(t *testing.T) 
 			return nil, nil
 		},
 	}
-	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	views, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, nil)
 	require.NoError(t, err)
@@ -387,7 +371,7 @@ func TestTournamentPredictionService_BulkUpsertPlayers_ClearSlot(t *testing.T) {
 			return nil, nil
 		},
 	}
-	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, userID, []domain.BulkPlayerPredictionItem{
 		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: nil},
@@ -405,7 +389,7 @@ func TestTournamentPredictionService_BulkUpsertPlayers_PlayerWrongTournament(t *
 			return &domain.Player{ID: playerID, TournamentID: uuid.New()}, nil
 		},
 	}
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), players, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	_, err := svc.BulkUpsertPlayerPredictions(context.Background(), tournamentID, uuid.New(), []domain.BulkPlayerPredictionItem{
 		{Category: domain.PlayerHandicapCategoryTotalTopScorer, PlayerID: &playerID},
@@ -424,8 +408,7 @@ func TestTournamentPredictionService_BulkUpsertTeams_Locked(t *testing.T) {
 			return &domain.Team{ID: teamID, TournamentID: tournamentID}, nil
 		},
 	}
-	firstKickoff := time.Now().Add(-90 * time.Minute)
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), kickoffAt(firstKickoff), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, teams, noGroups(), locked(), nil)
 
 	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, uuid.New(), []domain.BulkTeamPredictionItem{
 		{Category: domain.TeamHandicapCategoryWinner, SlotIndex: 0, TeamID: &teamID},
@@ -450,7 +433,7 @@ func TestTournamentPredictionService_BulkUpsertTeams_WildcardCapExceeded(t *test
 			return nil, nil
 		},
 	}
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, groupsA(), unlocked(), nil)
 
 	groupA := "A"
 	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
@@ -473,7 +456,7 @@ func TestTournamentPredictionService_BulkUpsertTeams_ClearSlot(t *testing.T) {
 			return nil, nil
 		},
 	}
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), nil)
 
 	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
 		{Category: domain.TeamHandicapCategoryWinner, SlotIndex: 0, TeamID: nil},
@@ -497,7 +480,7 @@ func TestTournamentPredictionService_ListPlayerPredictionsForUser_AllCategories(
 		},
 	}
 
-	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), unlocked(), nil)
 
 	_, views, err := svc.ListPlayerPredictionsForUser(context.Background(), tournamentID, userID)
 	require.NoError(t, err)
@@ -527,7 +510,7 @@ func TestTournamentPredictionService_ListTeamPredictionsForUser_AllCategories(t 
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), unlocked(), nil)
 
 	_, views, err := svc.ListTeamPredictionsForUser(context.Background(), tournamentID, userID)
 	require.NoError(t, err)
@@ -553,7 +536,7 @@ func TestTournamentPredictionService_ListLeagueGroupPredictions_NotMember(t *tes
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), leagues, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), leagues)
 
 	_, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, userID, "A")
 	require.ErrorIs(t, err, domain.ErrForbidden)
@@ -576,10 +559,7 @@ func TestTournamentPredictionService_ListLeagueGroupPredictions_BeforeLock(t *te
 		},
 	}
 
-	// Kickoff is 2 hours in the future, lock is 1.5h in the future — not yet locked.
-	fixtures := kickoffAt(time.Now().Add(2 * time.Hour))
-
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), fixtures, leagues, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), leagues)
 
 	_, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, userID, "A")
 	require.ErrorIs(t, err, domain.ErrForbidden)
@@ -626,10 +606,7 @@ func TestTournamentPredictionService_ListLeagueGroupPredictions_AfterLock(t *tes
 		},
 	}
 
-	// Kickoff was 1h ago → locked.
-	fixtures := kickoffAt(time.Now().Add(-time.Hour))
-
-	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), fixtures, leagues, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, groupsA(), locked(), leagues)
 
 	result, err := svc.ListLeagueGroupPredictions(context.Background(), leagueID, me, "A")
 	require.NoError(t, err)
@@ -681,7 +658,7 @@ func TestTournamentPredictionService_ListLeaguePlayoffPredictions_NotMember(t *t
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), noFixtures(), leagues, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), defaultTeamRepo(), &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), unlocked(), leagues)
 
 	_, err := svc.ListLeaguePlayoffPredictions(context.Background(), leagueID, userID)
 	require.ErrorIs(t, err, domain.ErrForbidden)
@@ -722,10 +699,7 @@ func TestTournamentPredictionService_ListLeaguePlayoffPredictions_AfterLock(t *t
 		},
 	}
 
-	// Kickoff was 1h ago → locked.
-	fixtures := kickoffAt(time.Now().Add(-time.Hour))
-
-	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), fixtures, leagues, fakeClock{time.Now()})
+	svc := newSvc(ppRepo, tpRepo, &fakePlayerGetter{}, &fakeTeamGetter{}, noGroups(), locked(), leagues)
 
 	result, err := svc.ListLeaguePlayoffPredictions(context.Background(), leagueID, me)
 	require.NoError(t, err)
@@ -784,7 +758,7 @@ func TestTournamentPredictionService_UpsertTeam_CrossConflict_PlayoffBlocksGroup
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), unlocked(), nil)
 
 	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
 		UserID:       userID,
@@ -828,7 +802,7 @@ func TestTournamentPredictionService_UpsertTeam_CrossConflict_GroupWinnerBlocksP
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), unlocked(), nil)
 
 	_, err := svc.UpsertTeamPrediction(context.Background(), domain.UpsertTeamPredictionInput{
 		UserID:       userID,
@@ -864,7 +838,7 @@ func TestTournamentPredictionService_BulkUpsertTeams_CrossConflict_InBatch(t *te
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), unlocked(), nil)
 
 	// Same team picked as group_winner AND playoff in the same batch.
 	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{
@@ -900,7 +874,7 @@ func TestTournamentPredictionService_BulkUpsertTeams_CrossConflict_AgainstExisti
 		},
 	}
 
-	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), noFixtures(), nil, fakeClock{time.Now()})
+	svc := newSvc(defaultPlayerRepo(), tpRepo, &fakePlayerGetter{}, teams, noGroups(), unlocked(), nil)
 
 	// Batch tries to add the same team as a playoff pick.
 	_, err := svc.BulkUpsertTeamPredictions(context.Background(), tournamentID, userID, []domain.BulkTeamPredictionItem{

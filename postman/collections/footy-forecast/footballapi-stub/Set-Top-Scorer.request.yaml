@@ -1,0 +1,14 @@
+$kind: http-request
+name: Set Top Scorer
+method: PUT
+url: '{{stubBaseUrl}}/control/topscorer/{{league_id}}/{{season}}'
+order: 5000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "player_id": 123,
+      "goals": 5
+    }

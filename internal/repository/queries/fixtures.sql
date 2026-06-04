@@ -49,7 +49,7 @@ JOIN leagues l ON l.tournament_id = f.tournament_id
 JOIN league_members lm ON lm.league_id = l.id
 JOIN users u ON u.id = lm.user_id
 LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_id
-WHERE l.id = @league_id AND f.status IN ('in_progress', 'finished')
+WHERE l.id = @league_id AND f.status IN ('in_progress', 'finished', 'cancelled')
 GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter
 ORDER BY f.kickoff_at DESC;
 

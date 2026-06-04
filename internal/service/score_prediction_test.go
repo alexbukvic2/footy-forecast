@@ -15,73 +15,121 @@ import (
 // ---------- fakes ----------
 
 type fakePredictionUpserter struct {
-	upsertFn func(context.Context, domain.UpsertScorePredictionInput) (*domain.ScorePrediction, error)
+	upsertFn func(
+		context.Context,
+		domain.UpsertScorePredictionInput,
+	) (*domain.ScorePrediction, error)
 }
 
-func (f *fakePredictionUpserter) Upsert(ctx context.Context, in domain.UpsertScorePredictionInput) (*domain.ScorePrediction, error) {
+func (f *fakePredictionUpserter) Upsert(
+	ctx context.Context,
+	in domain.UpsertScorePredictionInput,
+) (*domain.ScorePrediction, error) {
 	return f.upsertFn(ctx, in)
 }
 
 type fakeFixtureGetter struct {
-	getByIDFn func(context.Context, uuid.UUID) (*domain.Fixture, error)
+	getByIDFn func(
+		context.Context,
+		uuid.UUID,
+	) (*domain.Fixture, error)
 }
 
-func (f *fakeFixtureGetter) GetByID(ctx context.Context, id uuid.UUID) (*domain.Fixture, error) {
+func (f *fakeFixtureGetter) GetByID(
+	ctx context.Context,
+	id uuid.UUID,
+) (*domain.Fixture, error) {
 	return f.getByIDFn(ctx, id)
 }
 
 type fakeFixtureForUserLister struct {
-	listByTournamentFn  func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.UserFixtureView, error)
-	listLockedFn        func(context.Context, uuid.UUID, uuid.UUID) ([]*domain.LeagueFixtureView, error)
-	getLockedDatesFn    func(context.Context, uuid.UUID) ([]time.Time, error)
-	listLockedByDatesFn func(context.Context, uuid.UUID, uuid.UUID, []time.Time) ([]*domain.LeagueFixtureView, error)
+	listByTournamentFn func(
+		context.Context,
+		uuid.UUID,
+		uuid.UUID,
+	) ([]*domain.UserFixtureView, error)
+	listLockedFn func(
+		context.Context,
+		uuid.UUID,
+		uuid.UUID,
+	) ([]*domain.LeagueFixtureView, error)
+	getLockedDatesFn func(
+		context.Context,
+		uuid.UUID,
+	) ([]time.Time, error)
+	listLockedByDatesFn func(
+		context.Context,
+		uuid.UUID,
+		uuid.UUID,
+		[]time.Time,
+	) ([]*domain.LeagueFixtureView, error)
 }
 
-func (f *fakeFixtureForUserLister) ListByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error) {
+func (f *fakeFixtureForUserLister) ListByTournamentForUser(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+) ([]*domain.UserFixtureView, error) {
 	return f.listByTournamentFn(ctx, tournamentID, userID)
 }
 
-func (f *fakeFixtureForUserLister) ListLockedByLeague(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeagueFixtureView, error) {
+func (f *fakeFixtureForUserLister) ListLockedByLeague(
+	ctx context.Context,
+	leagueID, requestingUserID uuid.UUID,
+) ([]*domain.LeagueFixtureView, error) {
 	return f.listLockedFn(ctx, leagueID, requestingUserID)
 }
 
-func (f *fakeFixtureForUserLister) GetLockedFixtureDates(ctx context.Context, leagueID uuid.UUID) ([]time.Time, error) {
+func (f *fakeFixtureForUserLister) GetLockedFixtureDates(
+	ctx context.Context,
+	leagueID uuid.UUID,
+) ([]time.Time, error) {
 	return f.getLockedDatesFn(ctx, leagueID)
 }
 
-func (f *fakeFixtureForUserLister) ListLockedByLeagueAndDates(ctx context.Context, leagueID, requestingUserID uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+func (f *fakeFixtureForUserLister) ListLockedByLeagueAndDates(
+	ctx context.Context,
+	leagueID, requestingUserID uuid.UUID,
+	dates []time.Time,
+) ([]*domain.LeagueFixtureView, error) {
 	return f.listLockedByDatesFn(ctx, leagueID, requestingUserID, dates)
 }
 
 type fakeLeagueMemberChecker struct {
-	getMemberFn func(context.Context, uuid.UUID, uuid.UUID) (*domain.LeagueMember, error)
+	getMemberFn func(
+		context.Context,
+		uuid.UUID,
+		uuid.UUID,
+	) (*domain.LeagueMember, error)
 }
 
-func (f *fakeLeagueMemberChecker) GetMember(ctx context.Context, leagueID, userID uuid.UUID) (*domain.LeagueMember, error) {
+func (f *fakeLeagueMemberChecker) GetMember(
+	ctx context.Context,
+	leagueID, userID uuid.UUID,
+) (*domain.LeagueMember, error) {
 	return f.getMemberFn(ctx, leagueID, userID)
 }
-
-type frozenClock struct{ t time.Time }
-
-func (c frozenClock) Now() time.Time { return c.t }
 
 // ---------- PredictionService ----------
 
 func TestPredictionService_UpsertScore_NegativeGoalsHome(t *testing.T) {
 	t.Parallel()
-	svc := service.NewPredictionService(&fakePredictionUpserter{}, &fakeFixtureGetter{}, frozenClock{})
-	_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{
-		GoalsHome: -1, GoalsAway: 0,
-	})
+	svc := service.NewPredictionService(&fakePredictionUpserter{}, &fakeFixtureGetter{})
+	_, err := svc.UpsertScore(
+		context.Background(), domain.UpsertScorePredictionInput{
+			GoalsHome: -1, GoalsAway: 0,
+		},
+	)
 	require.ErrorIs(t, err, domain.ErrInvalid)
 }
 
 func TestPredictionService_UpsertScore_NegativeGoalsAway(t *testing.T) {
 	t.Parallel()
-	svc := service.NewPredictionService(&fakePredictionUpserter{}, &fakeFixtureGetter{}, frozenClock{})
-	_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{
-		GoalsHome: 0, GoalsAway: -1,
-	})
+	svc := service.NewPredictionService(&fakePredictionUpserter{}, &fakeFixtureGetter{})
+	_, err := svc.UpsertScore(
+		context.Background(), domain.UpsertScorePredictionInput{
+			GoalsHome: 0, GoalsAway: -1,
+		},
+	)
 	require.ErrorIs(t, err, domain.ErrInvalid)
 }
 
@@ -90,47 +138,34 @@ func TestPredictionService_UpsertScore_FixtureNotFound(t *testing.T) {
 	fixtureID := uuid.New()
 	svc := service.NewPredictionService(
 		&fakePredictionUpserter{},
-		&fakeFixtureGetter{getByIDFn: func(_ context.Context, id uuid.UUID) (*domain.Fixture, error) {
+		&fakeFixtureGetter{getByIDFn: func(
+			_ context.Context,
+			id uuid.UUID,
+		) (*domain.Fixture, error) {
 			require.Equal(t, fixtureID, id)
 			return nil, domain.ErrNotFound
 		}},
-		frozenClock{},
 	)
-	_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{
-		FixtureID: fixtureID, GoalsHome: 1, GoalsAway: 0,
-	})
+	_, err := svc.UpsertScore(
+		context.Background(), domain.UpsertScorePredictionInput{
+			FixtureID: fixtureID, GoalsHome: 1, GoalsAway: 0,
+		},
+	)
 	require.ErrorIs(t, err, domain.ErrNotFound)
 }
 
 func TestPredictionService_UpsertScore_WithinLockWindow(t *testing.T) {
 	t.Parallel()
 	kickoff := time.Date(2026, 6, 1, 15, 0, 0, 0, time.UTC)
-	// 29 minutes before kickoff = inside the 30-minute lock window
-	now := kickoff.Add(-29 * time.Minute)
 
 	svc := service.NewPredictionService(
 		&fakePredictionUpserter{},
-		&fakeFixtureGetter{getByIDFn: func(context.Context, uuid.UUID) (*domain.Fixture, error) {
-			return &domain.Fixture{KickoffAt: kickoff}, nil
+		&fakeFixtureGetter{getByIDFn: func(
+			context.Context,
+			uuid.UUID,
+		) (*domain.Fixture, error) {
+			return &domain.Fixture{KickoffAt: kickoff, PredictionLocked: true}, nil
 		}},
-		frozenClock{t: now},
-	)
-	_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{GoalsHome: 1, GoalsAway: 0})
-	require.ErrorIs(t, err, domain.ErrForbidden)
-}
-
-func TestPredictionService_UpsertScore_AtExactLockTime(t *testing.T) {
-	t.Parallel()
-	kickoff := time.Date(2026, 6, 1, 15, 0, 0, 0, time.UTC)
-	// exactly 30 minutes before = locked
-	now := kickoff.Add(-30 * time.Minute)
-
-	svc := service.NewPredictionService(
-		&fakePredictionUpserter{},
-		&fakeFixtureGetter{getByIDFn: func(context.Context, uuid.UUID) (*domain.Fixture, error) {
-			return &domain.Fixture{KickoffAt: kickoff}, nil
-		}},
-		frozenClock{t: now},
 	)
 	_, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{GoalsHome: 1, GoalsAway: 0})
 	require.ErrorIs(t, err, domain.ErrForbidden)
@@ -139,20 +174,23 @@ func TestPredictionService_UpsertScore_AtExactLockTime(t *testing.T) {
 func TestPredictionService_UpsertScore_HappyPath(t *testing.T) {
 	t.Parallel()
 	kickoff := time.Date(2026, 6, 1, 15, 0, 0, 0, time.UTC)
-	// 31 minutes before = open
-	now := kickoff.Add(-31 * time.Minute)
 
 	want := &domain.ScorePrediction{ID: uuid.New(), GoalsHome: 2, GoalsAway: 1}
 	svc := service.NewPredictionService(
-		&fakePredictionUpserter{upsertFn: func(_ context.Context, in domain.UpsertScorePredictionInput) (*domain.ScorePrediction, error) {
+		&fakePredictionUpserter{upsertFn: func(
+			_ context.Context,
+			in domain.UpsertScorePredictionInput,
+		) (*domain.ScorePrediction, error) {
 			require.Equal(t, 2, in.GoalsHome)
 			require.Equal(t, 1, in.GoalsAway)
 			return want, nil
 		}},
-		&fakeFixtureGetter{getByIDFn: func(context.Context, uuid.UUID) (*domain.Fixture, error) {
+		&fakeFixtureGetter{getByIDFn: func(
+			context.Context,
+			uuid.UUID,
+		) (*domain.Fixture, error) {
 			return &domain.Fixture{KickoffAt: kickoff}, nil
 		}},
-		frozenClock{t: now},
 	)
 	got, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{GoalsHome: 2, GoalsAway: 1})
 	require.NoError(t, err)
@@ -165,7 +203,11 @@ func TestFixtureService_ListForLeague_NotMember(t *testing.T) {
 	t.Parallel()
 	svc := service.NewFixtureService(
 		&fakeFixtureForUserLister{},
-		&fakeLeagueMemberChecker{getMemberFn: func(context.Context, uuid.UUID, uuid.UUID) (*domain.LeagueMember, error) {
+		&fakeLeagueMemberChecker{getMemberFn: func(
+			context.Context,
+			uuid.UUID,
+			uuid.UUID,
+		) (*domain.LeagueMember, error) {
 			return nil, domain.ErrNotFound
 		}},
 	)
@@ -179,12 +221,19 @@ func TestFixtureService_ListForLeague_HappyPath(t *testing.T) {
 	want := []*domain.LeagueFixtureView{{Fixture: domain.Fixture{ID: uuid.New()}}}
 
 	svc := service.NewFixtureService(
-		&fakeFixtureForUserLister{listLockedFn: func(_ context.Context, lid, uid uuid.UUID) ([]*domain.LeagueFixtureView, error) {
+		&fakeFixtureForUserLister{listLockedFn: func(
+			_ context.Context,
+			lid, uid uuid.UUID,
+		) ([]*domain.LeagueFixtureView, error) {
 			require.Equal(t, leagueID, lid)
 			require.Equal(t, userID, uid)
 			return want, nil
 		}},
-		&fakeLeagueMemberChecker{getMemberFn: func(context.Context, uuid.UUID, uuid.UUID) (*domain.LeagueMember, error) {
+		&fakeLeagueMemberChecker{getMemberFn: func(
+			context.Context,
+			uuid.UUID,
+			uuid.UUID,
+		) (*domain.LeagueMember, error) {
 			return &domain.LeagueMember{}, nil
 		}},
 	)
@@ -199,7 +248,10 @@ func TestFixtureService_ListForUser_HappyPath(t *testing.T) {
 	want := []*domain.UserFixtureView{{Fixture: domain.Fixture{ID: uuid.New()}}}
 
 	svc := service.NewFixtureService(
-		&fakeFixtureForUserLister{listByTournamentFn: func(_ context.Context, tid, uid uuid.UUID) ([]*domain.UserFixtureView, error) {
+		&fakeFixtureForUserLister{listByTournamentFn: func(
+			_ context.Context,
+			tid, uid uuid.UUID,
+		) ([]*domain.UserFixtureView, error) {
 			require.Equal(t, tournamentID, tid)
 			require.Equal(t, userID, uid)
 			return want, nil
@@ -213,9 +265,16 @@ func TestFixtureService_ListForUser_HappyPath(t *testing.T) {
 
 // ---------- FixtureService paged tests ----------
 
-func makeMemberChecker(member *domain.LeagueMember, err error) *fakeLeagueMemberChecker {
+func makeMemberChecker(
+	member *domain.LeagueMember,
+	err error,
+) *fakeLeagueMemberChecker {
 	return &fakeLeagueMemberChecker{
-		getMemberFn: func(context.Context, uuid.UUID, uuid.UUID) (*domain.LeagueMember, error) {
+		getMemberFn: func(
+			context.Context,
+			uuid.UUID,
+			uuid.UUID,
+		) (*domain.LeagueMember, error) {
 			return member, err
 		},
 	}
@@ -233,11 +292,18 @@ func TestFixtureService_ListForLeaguePaged_Skip0(t *testing.T) {
 	wantViews := []*domain.LeagueFixtureView{{Fixture: domain.Fixture{ID: uuid.New()}}}
 
 	repo := &fakeFixtureForUserLister{
-		getLockedDatesFn: func(_ context.Context, lid uuid.UUID) ([]time.Time, error) {
+		getLockedDatesFn: func(
+			_ context.Context,
+			lid uuid.UUID,
+		) ([]time.Time, error) {
 			require.Equal(t, leagueID, lid)
 			return allDates, nil
 		},
-		listLockedByDatesFn: func(_ context.Context, lid, uid uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+		listLockedByDatesFn: func(
+			_ context.Context,
+			lid, uid uuid.UUID,
+			dates []time.Time,
+		) ([]*domain.LeagueFixtureView, error) {
 			require.Equal(t, leagueID, lid)
 			require.Equal(t, userID, uid)
 			require.Equal(t, []time.Time{d1, d2}, dates)
@@ -262,10 +328,17 @@ func TestFixtureService_ListForLeaguePaged_Skip2(t *testing.T) {
 	allDates := []time.Time{d1, d2, d3, d4}
 
 	repo := &fakeFixtureForUserLister{
-		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+		getLockedDatesFn: func(
+			_ context.Context,
+			_ uuid.UUID,
+		) ([]time.Time, error) {
 			return allDates, nil
 		},
-		listLockedByDatesFn: func(_ context.Context, _, _ uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+		listLockedByDatesFn: func(
+			_ context.Context,
+			_, _ uuid.UUID,
+			dates []time.Time,
+		) ([]*domain.LeagueFixtureView, error) {
 			require.Equal(t, []time.Time{d3, d4}, dates)
 			return []*domain.LeagueFixtureView{}, nil
 		},
@@ -284,10 +357,17 @@ func TestFixtureService_ListForLeaguePaged_FewerDatesThanN(t *testing.T) {
 	allDates := []time.Time{d1}
 
 	repo := &fakeFixtureForUserLister{
-		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+		getLockedDatesFn: func(
+			_ context.Context,
+			_ uuid.UUID,
+		) ([]time.Time, error) {
 			return allDates, nil
 		},
-		listLockedByDatesFn: func(_ context.Context, _, _ uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+		listLockedByDatesFn: func(
+			_ context.Context,
+			_, _ uuid.UUID,
+			dates []time.Time,
+		) ([]*domain.LeagueFixtureView, error) {
 			require.Equal(t, []time.Time{d1}, dates)
 			return []*domain.LeagueFixtureView{}, nil
 		},
@@ -305,7 +385,10 @@ func TestFixtureService_ListForLeaguePaged_SkipBeyondAvailable(t *testing.T) {
 	allDates := []time.Time{time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC)}
 
 	repo := &fakeFixtureForUserLister{
-		getLockedDatesFn: func(_ context.Context, _ uuid.UUID) ([]time.Time, error) {
+		getLockedDatesFn: func(
+			_ context.Context,
+			_ uuid.UUID,
+		) ([]time.Time, error) {
 			return allDates, nil
 		},
 	}

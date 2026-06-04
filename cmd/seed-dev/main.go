@@ -97,7 +97,7 @@ type seedTeam struct {
 
 type seedPlayer struct {
 	ID         string `json:"id"`
-	ExternalID string `json:"external_id"`
+	ExternalID int64  `json:"external_id"`
 	Name       string `json:"name"`
 	TeamID     string `json:"team_id"`
 }
