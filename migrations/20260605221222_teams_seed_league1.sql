@@ -9,8 +9,8 @@
 INSERT INTO tournaments (id, slug, name, external_id, season, starts_at, ends_at)
 VALUES (
     gen_random_uuid(),
-    'world-cup-2026',
-    'World Cup 2026',
+    'fifa-world-cup-2026',
+    'FIFA World Cup 2026',
     1,
     2026,
     '2026-06-11T00:00:00Z',

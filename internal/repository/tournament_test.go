@@ -18,12 +18,14 @@ import (
 func TestTournamentRepository_CRUD(t *testing.T) {
 	t.Parallel()
 	pool := startPostgres(t)
+	// Start from a clean slate: seed migrations insert real tournament data.
+	truncate(t, pool, "fixtures", "teams", "tournaments")
 	repo := repository.NewTournamentRepository(pool)
 	ctx := context.Background()
 
 	params := repository.CreateTournamentParams{
-		Slug:     "world-cup-2026",
-		Name:     "FIFA World Cup 2026",
+		Slug:     "test-tournament-crud",
+		Name:     "Test Tournament CRUD",
 		StartsAt: time.Date(2026, 6, 11, 0, 0, 0, 0, time.UTC),
 		EndsAt:   time.Date(2026, 7, 19, 23, 59, 59, 0, time.UTC),
 	}
@@ -73,9 +75,9 @@ func TestTournamentRepository_CRUD(t *testing.T) {
 			require.NoError(t, err)
 			require.Len(t, list, 2)
 
-			// Most recent first: euro-2028 starts in 2028, world-cup in 2026.
+			// Most recent first: euro-2028 starts in 2028, test-tournament-crud in 2026.
 			require.Equal(t, "euro-2028", list[0].Slug)
-			require.Equal(t, "world-cup-2026", list[1].Slug)
+			require.Equal(t, "test-tournament-crud", list[1].Slug)
 		},
 	)
 }
