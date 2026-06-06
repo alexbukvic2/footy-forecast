@@ -1,7 +1,9 @@
 $kind: http-request
 name: List League Group Predictions
 method: GET
-url: "{{baseUrl}}/leagues/{{leagueId}}/predictions/groups?group=A"
+url: "{{baseUrl}}/leagues/{{leagueId}}/predictions/groups?group=B"
+queryParams:
+  group: B
 auth:
   type: noauth
 order: 3000

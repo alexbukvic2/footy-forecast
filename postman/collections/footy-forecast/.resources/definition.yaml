@@ -10,3 +10,4 @@ variables:
   season: ""
   team_id: ""
   fixtureExternalId: ""
+  apisports-key: ""

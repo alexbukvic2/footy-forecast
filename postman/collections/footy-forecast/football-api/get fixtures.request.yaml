@@ -1,13 +1,12 @@
 $kind: http-request
-url: https://v3.football.api-sports.io/fixtures?season={{season}}&league={{league_id}}
+name: get fixtures
+url: https://v3.football.api-sports.io/players/topscorers?season={{season}}&league={{league_id}}
 method: GET
 headers:
   x-apisports-key: d22f1be11f428cc0567dfab8a78e67d7
 queryParams:
-  - key: season
-    value: "{{season}}"
-  - key: league
-    value: "{{league_id}}"
+  season: "{{season}}"
+  league: "{{league_id}}"
 auth:
   type: noauth
 order: 4454039712200456

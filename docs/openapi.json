@@ -1328,6 +1328,22 @@
         ],
         "type": "object"
       },
+      "UpdateProfileRequest": {
+        "example": {
+          "display_name": "John Doe"
+        },
+        "properties": {
+          "display_name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name"
+        ],
+        "type": "object"
+      },
       "UpsertScorePredictionRequest": {
         "example": {
           "goals_away": 1,
@@ -1377,7 +1393,8 @@
           "status": {
             "enum": [
               "active",
-              "suspended"
+              "suspended",
+              "pending_profile"
             ],
             "type": "string"
           },
@@ -3903,6 +3920,71 @@
           }
         ],
         "summary": "Get current user profile",
+        "tags": [
+          "users"
+        ]
+      },
+      "patch": {
+        "description": "Sets the caller's display name. If the account is in pending_profile status (first sign-in), it is atomically transitioned to active. Active users may also call this endpoint to update their display name later.\n",
+        "operationId": "completeProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "Updated user profile"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Validation error (blank or too-long display name)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Complete user profile (set display name)",
         "tags": [
           "users"
         ]

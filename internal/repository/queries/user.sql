@@ -19,3 +19,10 @@ WHERE id = $1;
 SELECT id, cognito_sub, email, display_name, status, created_at, updated_at
 FROM users
 WHERE cognito_sub = $1;
+
+-- name: UpdateDisplayName :one
+UPDATE users
+SET display_name = $2,
+    status       = CASE WHEN status = 'pending_profile' THEN 'active'::user_status ELSE status END
+WHERE id = $1
+RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at;

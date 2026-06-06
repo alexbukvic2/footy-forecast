@@ -11,14 +11,15 @@ type UserStatus string
 
 // User status values. These mirror the Postgres enum user_status.
 const (
-	UserStatusActive    UserStatus = "active"
-	UserStatusSuspended UserStatus = "suspended"
+	UserStatusActive         UserStatus = "active"
+	UserStatusSuspended      UserStatus = "suspended"
+	UserStatusPendingProfile UserStatus = "pending_profile"
 )
 
 // Valid reports whether s is a defined status value.
 func (s UserStatus) Valid() bool {
 	switch s {
-	case UserStatusActive, UserStatusSuspended:
+	case UserStatusActive, UserStatusSuspended, UserStatusPendingProfile:
 		return true
 	}
 	return false

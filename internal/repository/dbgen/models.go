@@ -321,8 +321,9 @@ func AllTournamentStatusValues() []TournamentStatus {
 type UserStatus string
 
 const (
-	UserStatusActive    UserStatus = "active"
-	UserStatusSuspended UserStatus = "suspended"
+	UserStatusActive         UserStatus = "active"
+	UserStatusSuspended      UserStatus = "suspended"
+	UserStatusPendingProfile UserStatus = "pending_profile"
 )
 
 func (e *UserStatus) Scan(src interface{}) error {
@@ -363,7 +364,8 @@ func (ns NullUserStatus) Value() (driver.Value, error) {
 func (e UserStatus) Valid() bool {
 	switch e {
 	case UserStatusActive,
-		UserStatusSuspended:
+		UserStatusSuspended,
+		UserStatusPendingProfile:
 		return true
 	}
 	return false
@@ -373,6 +375,7 @@ func AllUserStatusValues() []UserStatus {
 	return []UserStatus{
 		UserStatusActive,
 		UserStatusSuspended,
+		UserStatusPendingProfile,
 	}
 }
 
@@ -501,16 +504,17 @@ type TeamPrediction struct {
 }
 
 type Tournament struct {
-	ID         uuid.UUID
-	Slug       string
-	Name       string
-	Status     TournamentStatus
-	StartsAt   time.Time
-	EndsAt     time.Time
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	ExternalID *int64
-	Season     *int16
+	ID                uuid.UUID
+	Slug              string
+	Name              string
+	Status            TournamentStatus
+	StartsAt          time.Time
+	EndsAt            time.Time
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	ExternalID        *int64
+	Season            *int16
+	PredictionsLocked bool
 }
 
 type TournamentGroupTable struct {

@@ -14,6 +14,7 @@ import (
 // UserRepo is the subset of the repository that UserService needs.
 type UserRepo interface {
 	Upsert(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error)
+	UpdateDisplayName(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error)
 }
 
 // UserService orchestrates user provisioning with an in-process cache.
@@ -83,6 +84,28 @@ func (s *UserService) InvalidateUser(cognitoSub string) {
 	s.mu.Lock()
 	delete(s.cache, cognitoSub)
 	s.mu.Unlock()
+}
+
+// UpdateDisplayName validates and persists a new display name for the user.
+// Whitespace is trimmed; the result must be 1–50 Unicode code points.
+// If the user's status is pending_profile it is atomically transitioned to active.
+// The in-process cache entry is invalidated so the next request reads fresh state.
+func (s *UserService) UpdateDisplayName(ctx context.Context, userID uuid.UUID, displayName string) (domain.User, error) {
+	name := strings.TrimSpace(displayName)
+	if name == "" {
+		return domain.User{}, fmt.Errorf("display_name cannot be blank: %w", domain.ErrInvalid)
+	}
+	if len([]rune(name)) > 50 {
+		return domain.User{}, fmt.Errorf("display_name must be at most 50 characters: %w", domain.ErrInvalid)
+	}
+
+	u, err := s.repo.UpdateDisplayName(ctx, userID, name)
+	if err != nil {
+		return domain.User{}, fmt.Errorf("update display name: %w", err)
+	}
+
+	s.InvalidateUser(u.CognitoSub)
+	return u, nil
 }
 
 // deriveDisplayName produces a display name from the raw name claim and email.

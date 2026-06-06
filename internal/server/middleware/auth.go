@@ -22,15 +22,34 @@ type UserProvisioner interface {
 }
 
 // Auth returns middleware that validates a Cognito Bearer token on every request.
+// Only users with status "active" are allowed through; others receive 403.
 //
 // Flow:
 //  1. Extract Authorization: Bearer <token> — 401 if absent or malformed.
 //  2. Validate the token — 401 on error.
 //  3. Provision the user via JIT upsert — 500 on error.
-//  4. Store the user in context and call next.
+//  4. Enforce active status — 403 if suspended or pending_profile.
+//  5. Store the user in context and call next.
 func Auth(
 	validator cognito.JWTValidator,
 	users UserProvisioner,
+) func(http.Handler) http.Handler {
+	return authMiddleware(validator, users, false)
+}
+
+// AuthAllowPendingProfile is like Auth but also lets pending_profile users through.
+// Use only for endpoints that are part of the profile-completion flow (PATCH /users/me).
+func AuthAllowPendingProfile(
+	validator cognito.JWTValidator,
+	users UserProvisioner,
+) func(http.Handler) http.Handler {
+	return authMiddleware(validator, users, true)
+}
+
+func authMiddleware(
+	validator cognito.JWTValidator,
+	users UserProvisioner,
+	allowPendingProfile bool,
 ) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
@@ -71,7 +90,15 @@ func Auth(
 					return
 				}
 
-				if user.Status != domain.UserStatusActive {
+				switch user.Status {
+				case domain.UserStatusActive:
+					// always allowed
+				case domain.UserStatusPendingProfile:
+					if !allowPendingProfile {
+						writeAuthError(w, http.StatusForbidden, "forbidden")
+						return
+					}
+				default:
 					writeAuthError(w, http.StatusForbidden, "forbidden")
 					return
 				}

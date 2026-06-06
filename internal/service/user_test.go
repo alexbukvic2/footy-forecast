@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -77,11 +78,19 @@ func TestDeriveDisplayName(t *testing.T) {
 // ---------- fakeUserRepo ----------
 
 type fakeUserRepo struct {
-	upsertFn func(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error)
+	upsertFn            func(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error)
+	updateDisplayNameFn func(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error)
 }
 
 func (f *fakeUserRepo) Upsert(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error) {
 	return f.upsertFn(ctx, id, cognitoSub, email, displayName)
+}
+
+func (f *fakeUserRepo) UpdateDisplayName(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error) {
+	if f.updateDisplayNameFn != nil {
+		return f.updateDisplayNameFn(ctx, id, displayName)
+	}
+	return domain.User{}, nil
 }
 
 // countingRepo returns a repo whose Upsert always succeeds and counts calls.
@@ -243,6 +252,112 @@ func TestUserService_ProvisionFromCognito_UpsertReceivesCorrectArgs(t *testing.T
 	}
 	if capturedDisplayName != "Alice" {
 		t.Errorf("displayName = %q, want Alice", capturedDisplayName)
+	}
+}
+
+// ---------- UpdateDisplayName tests ----------
+
+func TestUserService_UpdateDisplayName_HappyPath(t *testing.T) {
+	id, _ := uuid.NewV7()
+	want := domain.User{ID: id, CognitoSub: "sub-upd", Email: "u@example.com", DisplayName: "Alice", Status: domain.UserStatusActive}
+	repo := &fakeUserRepo{
+		upsertFn: func(_ context.Context, _ uuid.UUID, _, _, _ string) (domain.User, error) {
+			return domain.User{}, nil
+		},
+		updateDisplayNameFn: func(_ context.Context, gotID uuid.UUID, gotName string) (domain.User, error) {
+			if gotID != id {
+				return domain.User{}, fmt.Errorf("unexpected id %v", gotID)
+			}
+			if gotName != "Alice" {
+				return domain.User{}, fmt.Errorf("unexpected name %q", gotName)
+			}
+			return want, nil
+		},
+	}
+	svc := NewUserService(repo)
+	got, err := svc.UpdateDisplayName(context.Background(), id, "Alice")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.DisplayName != "Alice" {
+		t.Errorf("display_name = %q, want Alice", got.DisplayName)
+	}
+}
+
+func TestUserService_UpdateDisplayName_TrimsWhitespace(t *testing.T) {
+	id, _ := uuid.NewV7()
+	repo := &fakeUserRepo{
+		upsertFn: func(_ context.Context, _ uuid.UUID, _, _, _ string) (domain.User, error) {
+			return domain.User{}, nil
+		},
+		updateDisplayNameFn: func(_ context.Context, _ uuid.UUID, gotName string) (domain.User, error) {
+			return domain.User{CognitoSub: "s", DisplayName: gotName}, nil
+		},
+	}
+	svc := NewUserService(repo)
+	got, err := svc.UpdateDisplayName(context.Background(), id, "  Bob  ")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.DisplayName != "Bob" {
+		t.Errorf("display_name = %q, want Bob", got.DisplayName)
+	}
+}
+
+func TestUserService_UpdateDisplayName_BlankName_ReturnsInvalid(t *testing.T) {
+	id, _ := uuid.NewV7()
+	svc := NewUserService(&fakeUserRepo{
+		upsertFn: func(_ context.Context, _ uuid.UUID, _, _, _ string) (domain.User, error) {
+			return domain.User{}, nil
+		},
+	})
+	_, err := svc.UpdateDisplayName(context.Background(), id, "   ")
+	if !errors.Is(err, domain.ErrInvalid) {
+		t.Errorf("err = %v, want domain.ErrInvalid", err)
+	}
+}
+
+func TestUserService_UpdateDisplayName_TooLong_ReturnsInvalid(t *testing.T) {
+	id, _ := uuid.NewV7()
+	svc := NewUserService(&fakeUserRepo{
+		upsertFn: func(_ context.Context, _ uuid.UUID, _, _, _ string) (domain.User, error) {
+			return domain.User{}, nil
+		},
+	})
+	_, err := svc.UpdateDisplayName(context.Background(), id, strings.Repeat("a", 51))
+	if !errors.Is(err, domain.ErrInvalid) {
+		t.Errorf("err = %v, want domain.ErrInvalid", err)
+	}
+}
+
+func TestUserService_UpdateDisplayName_InvalidatesCache(t *testing.T) {
+	id, _ := uuid.NewV7()
+	sub := "sub-invalidate"
+	repo, calls := countingRepo(domain.User{ID: id, CognitoSub: sub, Email: "u@example.com"})
+	repo.updateDisplayNameFn = func(_ context.Context, _ uuid.UUID, _ string) (domain.User, error) {
+		return domain.User{ID: id, CognitoSub: sub, Email: "u@example.com", DisplayName: "New"}, nil
+	}
+	svc := NewUserService(repo)
+
+	// Populate cache.
+	if _, err := svc.ProvisionFromCognito(context.Background(), sub, "u@example.com", ""); err != nil {
+		t.Fatalf("provision: %v", err)
+	}
+	if calls.Load() != 1 {
+		t.Fatalf("expected 1 upsert call, got %d", calls.Load())
+	}
+
+	// Update display name — should invalidate cache.
+	if _, err := svc.UpdateDisplayName(context.Background(), id, "New"); err != nil {
+		t.Fatalf("UpdateDisplayName: %v", err)
+	}
+
+	// Next ProvisionFromCognito call must hit DB again (cache was invalidated).
+	if _, err := svc.ProvisionFromCognito(context.Background(), sub, "u@example.com", ""); err != nil {
+		t.Fatalf("second provision: %v", err)
+	}
+	if calls.Load() != 2 {
+		t.Errorf("upsert called %d times after invalidation, want 2", calls.Load())
 	}
 }
 

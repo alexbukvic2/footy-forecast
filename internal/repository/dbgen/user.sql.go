@@ -53,6 +53,34 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 	return i, err
 }
 
+const updateDisplayName = `-- name: UpdateDisplayName :one
+UPDATE users
+SET display_name = $2,
+    status       = CASE WHEN status = 'pending_profile' THEN 'active'::user_status ELSE status END
+WHERE id = $1
+RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at
+`
+
+type UpdateDisplayNameParams struct {
+	ID          uuid.UUID
+	DisplayName string
+}
+
+func (q *Queries) UpdateDisplayName(ctx context.Context, arg UpdateDisplayNameParams) (User, error) {
+	row := q.db.QueryRow(ctx, updateDisplayName, arg.ID, arg.DisplayName)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CognitoSub,
+		&i.Email,
+		&i.DisplayName,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const upsertUser = `-- name: UpsertUser :one
 INSERT INTO users (id, cognito_sub, email, display_name)
 VALUES ($1, $2, $3, $4)
