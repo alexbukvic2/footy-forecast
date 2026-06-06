@@ -282,6 +282,49 @@ func winnerTeamIDFromResult(
 	return nil
 }
 
+// ListActiveTournaments returns all tournaments that have an external API ID and season set.
+func (r *WorkerRepository) ListActiveTournaments(ctx context.Context) ([]domain.ActiveTournament, error) {
+	rows, err := r.q.ListActiveTournaments(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list active tournaments: %w", err)
+	}
+	out := make([]domain.ActiveTournament, 0, len(rows))
+	for _, row := range rows {
+		if row.ExternalID == nil || row.Season == nil {
+			continue
+		}
+		out = append(out, domain.ActiveTournament{
+			ID:         row.ID,
+			ExternalID: *row.ExternalID,
+			Season:     int(*row.Season),
+		})
+	}
+	return out, nil
+}
+
+// InsertMissingFixtures inserts fixtures that are not yet in the DB.
+// Existing fixtures (matched by external_id) are left untouched.
+func (r *WorkerRepository) InsertMissingFixtures(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	fixtures []domain.NewFixture,
+) error {
+	const q = `
+INSERT INTO fixtures (external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status, round, goals_home, goals_away)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+ON CONFLICT (external_id) DO NOTHING`
+	for _, f := range fixtures {
+		if _, err := r.pool.Exec(
+			ctx, q,
+			f.ExternalID, tournamentID, f.HomeTeamID, f.AwayTeamID,
+			f.KickoffAt, string(f.Status), f.Round, f.GoalsHome, f.GoalsAway,
+		); err != nil {
+			return fmt.Errorf("insert fixture external_id %d: %w", f.ExternalID, err)
+		}
+	}
+	return nil
+}
+
 // UpdateGroupStandings upserts standings rows for all teams in a group.
 func (r *WorkerRepository) UpdateGroupStandings(
 	ctx context.Context,

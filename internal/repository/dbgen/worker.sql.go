@@ -107,6 +107,39 @@ func (q *Queries) GetTeamByExternalID(ctx context.Context, arg GetTeamByExternal
 	return id, err
 }
 
+const listActiveTournaments = `-- name: ListActiveTournaments :many
+SELECT id, external_id, season
+FROM tournaments
+WHERE external_id IS NOT NULL
+  AND season IS NOT NULL
+`
+
+type ListActiveTournamentsRow struct {
+	ID         uuid.UUID
+	ExternalID *int64
+	Season     *int16
+}
+
+func (q *Queries) ListActiveTournaments(ctx context.Context) ([]ListActiveTournamentsRow, error) {
+	rows, err := q.db.Query(ctx, listActiveTournaments)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListActiveTournamentsRow{}
+	for rows.Next() {
+		var i ListActiveTournamentsRow
+		if err := rows.Scan(&i.ID, &i.ExternalID, &i.Season); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listPollableMatches = `-- name: ListPollableMatches :many
 SELECT f.id, f.external_id, f.tournament_id,
        f.home_team_id, f.away_team_id,

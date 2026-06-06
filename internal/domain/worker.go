@@ -25,6 +25,25 @@ type PollableFixture struct {
 	LastPolledAt         *time.Time
 }
 
+// ActiveTournament holds the identifiers needed to refresh fixtures from the API.
+type ActiveTournament struct {
+	ID         uuid.UUID
+	ExternalID int64
+	Season     int
+}
+
+// NewFixture is a fixture sourced from the API to be inserted into the DB.
+type NewFixture struct {
+	ExternalID int64
+	HomeTeamID uuid.UUID
+	AwayTeamID uuid.UUID
+	KickoffAt  time.Time
+	Status     FixtureStatus
+	Round      string
+	GoalsHome  *int
+	GoalsAway  *int
+}
+
 // StandingsEntry is one team's standings row resolved to our internal team UUID.
 type StandingsEntry struct {
 	TeamID       uuid.UUID

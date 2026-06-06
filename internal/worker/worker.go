@@ -35,6 +35,8 @@ func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval
 
 // Run starts the polling loop. It blocks until ctx is cancelled.
 func (w *Worker) Run(ctx context.Context) error {
+	w.refreshAllActiveTournamentFixtures(ctx)
+
 	for {
 		w.tick(ctx)
 
