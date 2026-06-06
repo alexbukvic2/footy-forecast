@@ -50,6 +50,16 @@ func (r *fakeRepo) callCount(name string) int {
 	return r.calls[name]
 }
 
+func (r *fakeRepo) ListActiveTournaments(_ context.Context) ([]domain.ActiveTournament, error) {
+	r.inc("ListActiveTournaments")
+	return nil, nil
+}
+
+func (r *fakeRepo) InsertMissingFixtures(_ context.Context, _ uuid.UUID, _ []domain.NewFixture) error {
+	r.inc("InsertMissingFixtures")
+	return nil
+}
+
 func (r *fakeRepo) LockImminentFixtures(_ context.Context, _ int) error {
 	r.inc("LockImminentFixtures")
 	return nil
@@ -167,6 +177,10 @@ func (a *fakeAPI) GetTournamentTopScorer(_ context.Context, _ int64, _ int) ([]w
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	return a.topScorers, a.topScorerErr
+}
+
+func (a *fakeAPI) GetLeagueFixtures(_ context.Context, _ int64, _ int) ([]worker.APILeagueFixtureResult, error) {
+	return nil, nil
 }
 
 type fakeClock struct{ t time.Time }

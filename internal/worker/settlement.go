@@ -42,7 +42,10 @@ func (w *Worker) runSettlement(
 // updateGroupStandings fetches live standings from the API and writes them to
 // the DB. Called on every result change for group-stage fixtures so the group
 // table stays current during a match, not just at full time.
-func (w *Worker) updateGroupStandings(ctx context.Context, f domain.PollableFixture) {
+func (w *Worker) updateGroupStandings(
+	ctx context.Context,
+	f domain.PollableFixture,
+) {
 	standings, err := w.api.GetStandings(ctx, f.TournamentExternalID, f.TournamentSeason)
 	if err != nil {
 		w.logger.Warn("worker: get standings", "fixture_id", f.ID, "err", err)
@@ -79,7 +82,12 @@ func (w *Worker) settleGroupMatch(
 		} else {
 			playerIDs := w.resolveTopScorerPlayerIDs(ctx, topScorers, f.TournamentID)
 			if len(playerIDs) > 0 {
-				if err := w.repo.SettleGroupTopScorerPredictions(ctx, f.TournamentID, *f.GroupLetter, playerIDs); err != nil {
+				if err := w.repo.SettleGroupTopScorerPredictions(
+					ctx,
+					f.TournamentID,
+					*f.GroupLetter,
+					playerIDs,
+				); err != nil {
 					w.logger.Error("worker: settle group top scorer predictions", "fixture_id", f.ID, "err", err)
 				}
 			}
@@ -95,6 +103,9 @@ func (w *Worker) settleGroupMatch(
 				w.logger.Error("worker: settle playoff wildcard predictions", "fixture_id", f.ID, "err", err)
 			}
 		}
+
+		// Refresh fixtures so that knockout-draw matches added by the API are picked up.
+		w.refreshFixturesForTournament(ctx, f.TournamentExternalID, f.TournamentSeason, f.TournamentID)
 	}
 }
 
@@ -137,6 +148,9 @@ func (w *Worker) settleKnockoutMatch(
 			}
 		}
 	}
+
+	// Any playoff fixture finishing may reveal new fixtures in the API (e.g. next-round draw).
+	w.refreshFixturesForTournament(ctx, f.TournamentExternalID, f.TournamentSeason, f.TournamentID)
 }
 
 // resolveWinnerTeamID returns the winning team's UUID based on the API result.

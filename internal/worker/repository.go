@@ -24,6 +24,10 @@ type Repo interface {
 	IsRoundComplete(ctx context.Context, tournamentID uuid.UUID, round string) (bool, error)
 	IsGroupStageComplete(ctx context.Context, tournamentID uuid.UUID) (bool, error)
 
+	// Fixture refresh
+	ListActiveTournaments(ctx context.Context) ([]domain.ActiveTournament, error)
+	InsertMissingFixtures(ctx context.Context, tournamentID uuid.UUID, fixtures []domain.NewFixture) error
+
 	// ID resolution
 	GetTeamByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)
 	GetPlayerByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)

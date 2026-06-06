@@ -58,3 +58,9 @@ UPDATE fixtures
 SET status     = @status,
     kickoff_at = @kickoff_at
 WHERE id = @id;
+
+-- name: ListActiveTournaments :many
+SELECT id, external_id, season
+FROM tournaments
+WHERE external_id IS NOT NULL
+  AND season IS NOT NULL;

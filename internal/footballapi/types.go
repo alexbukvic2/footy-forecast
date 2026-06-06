@@ -8,12 +8,18 @@ type fixtureResponse struct {
 
 type fixtureItem struct {
 	Fixture fixtureDetails `json:"fixture"`
+	League  fixtureLeague  `json:"league"`
 	Goals   goalsDetails   `json:"goals"`
 	Teams   teamsDetails   `json:"teams"`
 }
 
+type fixtureLeague struct {
+	Round string `json:"round"`
+}
+
 type fixtureDetails struct {
 	ID     int64         `json:"id"`
+	Date   string        `json:"date"` // RFC3339 kickoff timestamp
 	Status fixtureStatus `json:"status"`
 }
 
@@ -32,6 +38,7 @@ type teamsDetails struct {
 }
 
 type teamResult struct {
+	ID     int64 `json:"id"`
 	Winner *bool `json:"winner"`
 }
 

@@ -12,14 +12,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/alexbukvic2/footy-forecast/internal/footballapi"
+	"github.com/alexbukvic2/footy-forecast/internal/repository"
+	"github.com/alexbukvic2/footy-forecast/internal/worker"
 	"github.com/joho/godotenv"
 
 	"github.com/alexbukvic2/footy-forecast/internal/config"
 	"github.com/alexbukvic2/footy-forecast/internal/db"
-	"github.com/alexbukvic2/footy-forecast/internal/footballapi"
-	"github.com/alexbukvic2/footy-forecast/internal/repository"
 	"github.com/alexbukvic2/footy-forecast/internal/server"
-	"github.com/alexbukvic2/footy-forecast/internal/worker"
 )
 
 func main() {
@@ -59,7 +59,14 @@ func run(logger *slog.Logger) error {
 
 	workerRepo := repository.NewWorkerRepository(pool)
 	apiClient := footballapi.NewClient(cfg.FootballAPIKey, cfg.FootballAPIBaseURL, nil)
-	w := worker.New(workerRepo, apiClient, worker.RealClock{}, logger, cfg.WorkerPollInterval, cfg.PredictionLockLeadMinutes)
+	w := worker.New(
+		workerRepo,
+		apiClient,
+		worker.RealClock{},
+		logger,
+		cfg.WorkerPollInterval,
+		cfg.PredictionLockLeadMinutes,
+	)
 
 	workerErr := make(chan error, 1)
 	go func() {

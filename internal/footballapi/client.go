@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/worker"
 )
@@ -118,6 +119,39 @@ func (c *Client) GetTournamentTopScorer(
 	season int,
 ) ([]worker.APITopScorerResult, error) {
 	return c.getTopScorers(ctx, externalLeagueID, season)
+}
+
+// GetLeagueFixtures fetches all fixtures for a league/season and returns them.
+// New fixtures not yet in our DB should be inserted; existing ones are left untouched.
+func (c *Client) GetLeagueFixtures(
+	ctx context.Context,
+	externalLeagueID int64,
+	season int,
+) ([]worker.APILeagueFixtureResult, error) {
+	url := c.baseURL + "/fixtures?season=" + strconv.Itoa(season) +
+		"&league=" + strconv.FormatInt(externalLeagueID, 10)
+	var resp fixtureResponse
+	if err := c.get(ctx, url, &resp); err != nil {
+		return nil, fmt.Errorf("get league fixtures league %d season %d: %w", externalLeagueID, season, err)
+	}
+	results := make([]worker.APILeagueFixtureResult, 0, len(resp.Response))
+	for _, item := range resp.Response {
+		kickoff, err := time.Parse(time.RFC3339, item.Fixture.Date)
+		if err != nil {
+			return nil, fmt.Errorf("parse kickoff %q for fixture %d: %w", item.Fixture.Date, item.Fixture.ID, err)
+		}
+		results = append(results, worker.APILeagueFixtureResult{
+			ExternalID:         item.Fixture.ID,
+			HomeTeamExternalID: item.Teams.Home.ID,
+			AwayTeamExternalID: item.Teams.Away.ID,
+			KickoffAt:          kickoff,
+			StatusShort:        item.Fixture.Status.Short,
+			Round:              item.League.Round,
+			GoalsHome:          item.Goals.Home,
+			GoalsAway:          item.Goals.Away,
+		})
+	}
+	return results, nil
 }
 
 func (c *Client) getTopScorers(
