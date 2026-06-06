@@ -1,7 +1,7 @@
 $kind: http-request
 name: Set Standings
 method: PUT
-url: '{{stubBaseUrl}}/control/standings/{{league_id}}/{{season}}'
+url: "{{stubBaseUrl}}/control/standings/{{league_id}}/{{season}}"
 order: 4000
 headers:
   Content-Type: application/json
@@ -11,7 +11,7 @@ body:
     {
       "teams": [
         {
-          "team_id": 1,
+          "team_id": 16,
           "rank": 1,
           "points": 9,
           "played": 3,
@@ -20,17 +20,6 @@ body:
           "lost": 0,
           "goals_for": 7,
           "goals_against": 2
-        },
-        {
-          "team_id": 2,
-          "rank": 2,
-          "points": 6,
-          "played": 3,
-          "won": 2,
-          "drawn": 0,
-          "lost": 1,
-          "goals_for": 5,
-          "goals_against": 3
         }
       ]
     }

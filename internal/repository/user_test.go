@@ -42,8 +42,8 @@ func TestUserRepository(t *testing.T) {
 		if u.DisplayName != "Creator" {
 			t.Errorf("display_name = %q, want Creator", u.DisplayName)
 		}
-		if u.Status != domain.UserStatusActive {
-			t.Errorf("status = %q, want active", u.Status)
+		if u.Status != domain.UserStatusPendingProfile {
+			t.Errorf("status = %q, want pending_profile", u.Status)
 		}
 	})
 

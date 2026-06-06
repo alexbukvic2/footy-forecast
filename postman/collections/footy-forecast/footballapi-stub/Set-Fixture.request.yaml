@@ -1,7 +1,7 @@
 $kind: http-request
 name: Set Fixture
 method: PUT
-url: '{{stubBaseUrl}}/control/fixtures/{{fixtureExternalId}}'
+url: "{{stubBaseUrl}}/control/fixtures/{{fixtureExternalId}}"
 order: 2000
 headers:
   Content-Type: application/json
@@ -9,9 +9,9 @@ body:
   type: json
   content: |-
     {
-      "status": "1H",
-      "goals_home": 0,
-      "goals_away": 0,
-      "home_winner": null,
+      "status": "PEN",
+      "goals_home": 1,
+      "goals_away": 1,
+      "home_winner": true,
       "away_winner": null
     }

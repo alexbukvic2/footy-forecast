@@ -114,7 +114,7 @@ func NewRouter(
 	mux.Handle("GET /tournaments/{tournament_id}/teams", protected(teamH.List))
 
 	// Users (protected).
-	mux.Handle("GET /users/me", protected(userH.Me))
+	mux.Handle("GET /users/me", authMWAllowPending(http.HandlerFunc(userH.Me)))
 	mux.Handle("PATCH /users/me", authMWAllowPending(http.HandlerFunc(userH.CompleteProfile)))
 
 	// Players (protected).

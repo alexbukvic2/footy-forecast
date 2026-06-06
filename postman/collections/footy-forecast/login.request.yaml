@@ -9,7 +9,7 @@ body:
   content:
     grant_type: authorization_code
     client_id: 1pcd276t2ml66b6gt93q5v72g8
-    code: 0b53af23-bf3c-4a7c-a7c0-4f9a5d0f7c6b
+    code: 50a787c0-0363-47d2-b09c-649bcdfa0d37
     redirect_uri: http://localhost:3000/callback
 scripts:
   - type: afterResponse
