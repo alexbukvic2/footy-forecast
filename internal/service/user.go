@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -15,6 +16,7 @@ import (
 type UserRepo interface {
 	Upsert(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error)
 	UpdateDisplayName(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error)
+	UpdateTimezone(ctx context.Context, id uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error)
 }
 
 // UserService orchestrates user provisioning with an in-process cache.
@@ -104,6 +106,23 @@ func (s *UserService) UpdateDisplayName(ctx context.Context, userID uuid.UUID, d
 		return domain.User{}, fmt.Errorf("update display name: %w", err)
 	}
 
+	s.InvalidateUser(u.CognitoSub)
+	return u, nil
+}
+
+// UpdateTimezone validates and persists the user's IANA timezone and optional
+// silent window. Both silentFrom and silentUntil must be non-nil together, or
+// both nil (to clear the window). silentFrom == silentUntil is rejected.
+// The in-process cache entry is invalidated after a successful update.
+func (s *UserService) UpdateTimezone(ctx context.Context, userID uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error) {
+	if _, err := time.LoadLocation(timezone); err != nil {
+		return domain.User{}, fmt.Errorf("invalid timezone %q: %w", timezone, domain.ErrInvalid)
+	}
+
+	u, err := s.repo.UpdateTimezone(ctx, userID, timezone, silentFrom, silentUntil)
+	if err != nil {
+		return domain.User{}, fmt.Errorf("update timezone: %w", err)
+	}
 	s.InvalidateUser(u.CognitoSub)
 	return u, nil
 }

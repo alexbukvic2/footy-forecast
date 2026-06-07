@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/footballapi"
+	"github.com/alexbukvic2/footy-forecast/internal/notification/expo"
+	"github.com/alexbukvic2/footy-forecast/internal/notification/job"
 	"github.com/alexbukvic2/footy-forecast/internal/repository"
 	"github.com/alexbukvic2/footy-forecast/internal/worker"
 	"github.com/joho/godotenv"
@@ -38,6 +40,27 @@ func main() {
 	if err := run(logger); err != nil {
 		logger.Error("fatal", "err", err)
 		os.Exit(1)
+	}
+}
+
+// startNotificationJobs launches the three notification background workers. Each
+// runs on its own goroutine and follows the same Run(ctx) error pattern as worker.Worker.
+func startNotificationJobs(ctx context.Context, pool *db.Pool, logger *slog.Logger) {
+	expoClient := expo.NewClient()
+	notifiers := []struct {
+		name string
+		run  func(context.Context) error
+	}{
+		{"pre_match notifier", job.NewPreMatchNotifier(pool, expoClient, logger).Run},
+		{"matchday notifier", job.NewMatchdayNotifier(pool, expoClient, logger).Run},
+		{"tournament_reminder notifier", job.NewTournamentReminderNotifier(pool, expoClient, logger).Run},
+	}
+	for _, n := range notifiers {
+		go func() {
+			if err := n.run(ctx); err != nil && !errors.Is(err, context.Canceled) {
+				logger.Error(n.name+" stopped unexpectedly", "err", err)
+			}
+		}()
 	}
 }
 
@@ -75,6 +98,9 @@ func run(logger *slog.Logger) error {
 		}
 		close(workerErr)
 	}()
+
+	// Notification jobs.
+	startNotificationJobs(ctx, pool, logger)
 
 	router := server.NewRouter(logger, pool, cfg)
 

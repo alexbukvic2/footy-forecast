@@ -184,9 +184,9 @@ Validation:
 
 ---
 
-## 6. Notification Jobs
+## 6. Notification Workers
 
-Two background goroutines launched in `cmd/server/main.go`, each on a ticker. They live in a new package `internal/notification/`.
+The existing `internal/worker` package already establishes the pattern: a struct with a `Run(ctx context.Context) error` method that blocks on a ticker loop, launched as a goroutine from `cmd/server/main.go`. Notification workers follow the exact same pattern — they are **not** added to the existing `worker.Worker` because they have a different tick interval and different dependencies (Expo client instead of `MatchAPI`). Three new structs, each in `internal/notification/job/`, each started alongside the existing worker in `main.go`.
 
 ### 6a. Pre-match notifier
 
@@ -282,11 +282,11 @@ Batch splitting: max 100 per request. On Expo error responses, surface `DeviceNo
 
 ## 8. Notification Copy
 
-| Type                   | Title                          | Body                                                              |
-|------------------------|--------------------------------|-------------------------------------------------------------------|
-| `matchday`             | "Predictions open today"       | "You have unpredicted matches today — get your picks in!"         |
-| `pre_match`            | "Kick-off in 2.5 hours"        | "{{HomeTeam}} vs {{AwayTeam}} — predict before it's too late!"    |
-| `tournament_reminder`  | "Tournament predictions close soon" | "{{TournamentName}} kicks off in 5 hours — fill in your tournament predictions before they lock!" |
+| Type                   | Title                          | Body                                                                                              |
+|------------------------|--------------------------------|---------------------------------------------------------------------------------------------------|
+| `matchday`             | "Predictions open today"       | "You have unpredicted matches today - get your picks in!"                                         |
+| `pre_match`            | "Kick-off in 2.5 hours"        | "{{HomeTeam}} vs {{AwayTeam}} - predict before it's too late!"                                    |
+| `tournament_reminder`  | "Tournament predictions close soon" | "{{TournamentName}} kicks off in 5 hours - fill in your tournament predictions before they lock!" |
 
 Copy can be refined later. Store it as constants in a `messages.go` file inside `internal/notification/`.
 

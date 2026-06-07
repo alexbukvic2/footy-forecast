@@ -87,6 +87,11 @@ func NewRouter(
 	outcomesSvc := service.NewOutcomesService(outcomesRepo, tournamentSvc)
 	outcomesH := handler.NewOutcomes(logger, outcomesSvc)
 
+	notifTokenRepo := repository.NewPushTokenRepository(pool)
+	notifPrefRepo := repository.NewNotificationPreferenceRepository(pool)
+	notifSvc := service.NewNotificationService(notifTokenRepo, notifPrefRepo)
+	notifH := handler.NewNotification(logger, notifSvc)
+
 	specH := handler.NewSpec()
 
 	mux := http.NewServeMux()
@@ -116,6 +121,12 @@ func NewRouter(
 	// Users (protected).
 	mux.Handle("GET /users/me", authMWAllowPending(http.HandlerFunc(userH.Me)))
 	mux.Handle("PATCH /users/me", authMWAllowPending(http.HandlerFunc(userH.CompleteProfile)))
+
+	// Push tokens and notification preferences (protected).
+	mux.Handle("POST /users/me/push-tokens", protected(notifH.RegisterToken))
+	mux.Handle("DELETE /users/me/push-tokens/{token}", protected(notifH.DeleteToken))
+	mux.Handle("GET /users/me/notification-preferences", protected(notifH.GetPreferences))
+	mux.Handle("PUT /users/me/notification-preferences/{type}", protected(notifH.UpdatePreference))
 
 	// Players (protected).
 	mux.Handle("GET /tournaments/{tournament_id}/players/search", protected(playerH.Search))

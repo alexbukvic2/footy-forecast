@@ -1,0 +1,7 @@
+$kind: http-request
+name: Delete Push Token
+method: DELETE
+url: "{{baseUrl}}/users/me/push-tokens/ExponentPushToken%5Bxxxxxxxxxxxxxxxxxxxxxx%5D"
+order: 1001
+headers:
+  Authorization: Bearer {{authToken}}

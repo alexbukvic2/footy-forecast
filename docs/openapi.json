@@ -747,6 +747,60 @@
         ],
         "type": "object"
       },
+      "NotificationPreference": {
+        "example": {
+          "enabled": true,
+          "type": "matchday"
+        },
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "type": {
+            "description": "Notification type.",
+            "enum": [
+              "matchday",
+              "pre_match"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "PatchMeRequest": {
+        "example": {
+          "display_name": "John Doe",
+          "silent_from": "22:00",
+          "silent_until": "08:00",
+          "timezone": "Europe/London"
+        },
+        "properties": {
+          "display_name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "silent_from": {
+            "description": "Start of silent window in HH:MM format (24-hour). Send null to clear the window. Must be provided together with silent_until.\n",
+            "nullable": true,
+            "type": "string"
+          },
+          "silent_until": {
+            "description": "End of silent window in HH:MM format (24-hour). Send null to clear the window. Must be provided together with silent_from.\n",
+            "nullable": true,
+            "type": "string"
+          },
+          "timezone": {
+            "description": "IANA timezone name. Validated with time.LoadLocation.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "Player": {
         "example": {
           "group": "C",
@@ -934,6 +988,37 @@
         "required": [
           "locked",
           "predictions"
+        ],
+        "type": "object"
+      },
+      "PushTokenRequest": {
+        "example": {
+          "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"
+        },
+        "properties": {
+          "token": {
+            "description": "Expo push token (ExponentPushToken[...]).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "type": "object"
+      },
+      "RegisterTokenResponse": {
+        "example": {
+          "id": "550e8400-e29b-41d4-a716-446655440099"
+        },
+        "properties": {
+          "id": {
+            "description": "The server-assigned ID for this token registration.",
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
         ],
         "type": "object"
       },
@@ -1371,7 +1456,10 @@
           "display_name": "John Doe",
           "email": "user@example.com",
           "id": "550e8400-e29b-41d4-a716-446655440002",
+          "silent_from": "22:00",
+          "silent_until": "08:00",
           "status": "active",
+          "timezone": "Europe/London",
           "updated_at": "2025-01-01T00:00:00Z"
         },
         "properties": {
@@ -1390,12 +1478,26 @@
             "format": "uuid",
             "type": "string"
           },
+          "silent_from": {
+            "description": "Start of the user's silent window in HH:MM format. Null if no window is set.",
+            "nullable": true,
+            "type": "string"
+          },
+          "silent_until": {
+            "description": "End of the user's silent window in HH:MM format. Null if no window is set.",
+            "nullable": true,
+            "type": "string"
+          },
           "status": {
             "enum": [
               "active",
               "suspended",
               "pending_profile"
             ],
+            "type": "string"
+          },
+          "timezone": {
+            "description": "IANA timezone name (e.g. \"Europe/London\"). Defaults to \"UTC\".",
             "type": "string"
           },
           "updated_at": {
@@ -1409,7 +1511,8 @@
           "display_name",
           "status",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "timezone"
         ],
         "type": "object"
       },
@@ -3925,13 +4028,13 @@
         ]
       },
       "patch": {
-        "description": "Sets the caller's display name. If the account is in pending_profile status (first sign-in), it is atomically transitioned to active. Active users may also call this endpoint to update their display name later.\n",
-        "operationId": "completeProfile",
+        "description": "Updates one or more of: display_name, timezone, silent window. If the account is in pending_profile status (first sign-in) and display_name is provided, it is atomically transitioned to active. All fields are optional; omit a field to leave it unchanged. To clear the silent window send both silent_from and silent_until as null.\n",
+        "operationId": "patchMe",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateProfileRequest"
+                "$ref": "#/components/schemas/PatchMeRequest"
               }
             }
           },
@@ -3956,7 +4059,7 @@
                 }
               }
             },
-            "description": "Validation error (blank or too-long display name)"
+            "description": "Validation error"
           },
           "401": {
             "content": {
@@ -3984,9 +4087,268 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Complete user profile (set display name)",
+        "summary": "Update user profile",
         "tags": [
           "users"
+        ]
+      }
+    },
+    "/users/me/notification-preferences": {
+      "get": {
+        "description": "Returns all supported notification types with their current enabled state. Types with no stored row are materialised with their default (enabled=true).\n",
+        "operationId": "getNotificationPreferences",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationPreference"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Notification preferences"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get notification preferences",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/users/me/notification-preferences/{type}": {
+      "put": {
+        "description": "Upserts the enabled state for a single notification type. type must be one of: matchday, pre_match, tournament_reminder.\n",
+        "operationId": "updateNotificationPreference",
+        "parameters": [
+          {
+            "description": "Notification type to update.",
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "matchday",
+                "pre_match",
+                "tournament_reminder"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "enabled"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationPreference"
+                }
+              }
+            },
+            "description": "Updated preference"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unknown notification type"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Update a notification preference",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/users/me/push-tokens": {
+      "post": {
+        "description": "Upserts a device push token for the authenticated user. If the token already exists for another user (device reused after sign-out), it is reassigned.\n",
+        "operationId": "registerPushToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterTokenResponse"
+                }
+              }
+            },
+            "description": "Token registered (or re-registered)"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Empty token"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Register a device push token",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/users/me/push-tokens/{token}": {
+      "delete": {
+        "description": "Removes a push token. Idempotent — returns 204 even if the token did not exist. Call on logout or when expo-notifications fires a DeviceNotRegistered event.\n",
+        "operationId": "deletePushToken",
+        "parameters": [
+          {
+            "description": "The Expo push token to deregister.",
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Token removed (or was already absent)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Deregister a device push token",
+        "tags": [
+          "notifications"
         ]
       }
     }
@@ -4009,6 +4371,10 @@
     {
       "description": "User profile",
       "name": "users"
+    },
+    {
+      "description": "Push notification tokens and preferences",
+      "name": "notifications"
     },
     {
       "description": "Private prediction leagues",
