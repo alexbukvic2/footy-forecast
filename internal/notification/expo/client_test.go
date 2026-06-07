@@ -24,12 +24,12 @@ func TestClient_Send_HappyPath(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var req sendRequest
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		var msgs []Message
+		if err := json.NewDecoder(r.Body).Decode(&msgs); err != nil {
 			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
-		receipts := make([]Receipt, len(req.Messages))
+		receipts := make([]Receipt, len(msgs))
 		for i := range receipts {
 			receipts[i] = Receipt{Status: "ok"}
 		}
@@ -65,9 +65,9 @@ func TestClient_Send_Batching(t *testing.T) {
 	callCount := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		callCount++
-		var req sendRequest
-		_ = json.NewDecoder(r.Body).Decode(&req)
-		receipts := make([]Receipt, len(req.Messages))
+		var msgs []Message
+		_ = json.NewDecoder(r.Body).Decode(&msgs)
+		receipts := make([]Receipt, len(msgs))
 		for i := range receipts {
 			receipts[i] = Receipt{Status: "ok"}
 		}
@@ -136,8 +136,8 @@ func TestClient_Send_TransientRetry(t *testing.T) {
 			return
 		}
 		// Second call succeeds.
-		var req sendRequest
-		_ = json.NewDecoder(r.Body).Decode(&req)
+		var msgs []Message
+		_ = json.NewDecoder(r.Body).Decode(&msgs)
 		receipts := []Receipt{{Status: "ok"}}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(sendResponse{Data: receipts})

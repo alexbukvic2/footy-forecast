@@ -10,14 +10,9 @@ import (
 )
 
 const (
-	defaultEndpoint = "https://exp.host/--/expo-push-notification/send"
+	defaultEndpoint = "https://exp.host/--/api/v2/push/send"
 	batchSize       = 100
 )
-
-// sendRequest is the Expo push API request body.
-type sendRequest struct {
-	Messages []Message `json:"messages"`
-}
 
 // sendResponse is the Expo push API response body.
 type sendResponse struct {
@@ -74,7 +69,7 @@ func (c *Client) Send(ctx context.Context, messages []Message) ([]Receipt, error
 }
 
 func (c *Client) sendBatch(ctx context.Context, messages []Message) ([]Receipt, error) {
-	body, err := json.Marshal(sendRequest{Messages: messages})
+	body, err := json.Marshal(messages)
 	if err != nil {
 		return nil, fmt.Errorf("marshal request: %w", err)
 	}

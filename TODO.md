@@ -40,7 +40,7 @@
 - [ ] Rewards for teams that go to playoffs as third ones, how does API show those
 - [ ] Playoff matches - different handicap, if player sets draw, needs to choose winner
 - [ ] Players that do not have handicap, set default
-- [ ] Change app name and icon
+- [x] Change app name and icon
 
 
 "be protagonist, not just a spectator"
