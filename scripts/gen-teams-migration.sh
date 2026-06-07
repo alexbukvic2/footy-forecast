@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # gen-teams-migration.sh — fetch teams from API-Football and emit two goose migration files:
-#   1. teams_seed        — INSERT tournament + INSERT teams (idempotent)
+#   1. teams_seed        — INSERT tournament + INSERT teams with group_letter (idempotent)
 #   2. team_handicap_seed — template; replace NULL with points, leave NULL to skip
 #
 # Usage:
@@ -38,19 +38,44 @@ fi
 
 echo "Fetching teams for league=${LEAGUE_ID} season=${SEASON}…"
 
-RESPONSE=$(curl -fsSL \
+TEAMS_RESPONSE=$(curl -fsSL \
   -H "x-apisports-key: ${API_KEY}" \
   "https://v3.football.api-sports.io/teams?league=${LEAGUE_ID}&season=${SEASON}")
 
-ERRORS=$(echo "$RESPONSE" | jq '.errors | length')
+ERRORS=$(echo "$TEAMS_RESPONSE" | jq '.errors | length')
 if [[ "$ERRORS" -gt 0 ]]; then
-  echo "API returned errors:" >&2
-  echo "$RESPONSE" | jq '.errors' >&2
+  echo "API returned errors (teams):" >&2
+  echo "$TEAMS_RESPONSE" | jq '.errors' >&2
   exit 1
 fi
 
-TEAM_COUNT=$(echo "$RESPONSE" | jq '.results')
-echo "Got ${TEAM_COUNT} teams."
+echo "Got $(echo "$TEAMS_RESPONSE" | jq '.results') teams."
+
+echo "Fetching standings for league=${LEAGUE_ID} season=${SEASON}…"
+
+STANDINGS_RESPONSE=$(curl -fsSL \
+  -H "x-apisports-key: ${API_KEY}" \
+  "https://v3.football.api-sports.io/standings?league=${LEAGUE_ID}&season=${SEASON}")
+
+ERRORS=$(echo "$STANDINGS_RESPONSE" | jq '.errors | length')
+if [[ "$ERRORS" -gt 0 ]]; then
+  echo "API returned errors (standings):" >&2
+  echo "$STANDINGS_RESPONSE" | jq '.errors' >&2
+  exit 1
+fi
+
+# Build a map of external team id -> group letter from standings.
+# standings[][] flattens the array-of-arrays; each entry has .team.id and .group ("Group F" -> "F").
+# capture() validates the format exactly — anything that isn't "Group <single-uppercase-letter>" is ignored.
+GROUP_MAP=$(echo "$STANDINGS_RESPONSE" | jq '
+  [ .response[0].league.standings[][] |
+    select((.group // "") | test("^Group [A-Z]$")) |
+    { (.team.id | tostring): (.group[-1:]) }
+  ] | add // {}
+')
+
+echo "Got group letters for $(echo "$GROUP_MAP" | jq 'length') teams."
+echo "$GROUP_MAP" | jq 'to_entries | group_by(.value) | map({group: .[0].value, count: length}) | sort_by(.group)' >&2
 
 TIMESTAMP=$(date -u +"%Y%m%d%H%M%S")
 TIMESTAMP_NEXT=$(date -u -v+1S +"%Y%m%d%H%M%S" 2>/dev/null || date -u -d "+1 second" +"%Y%m%d%H%M%S")
@@ -67,7 +92,7 @@ cat > "$TEAMS_FILE" <<SQL
 -- Seeded from API-Football league=${LEAGUE_ID} season=${SEASON}
 -- Tournament and teams are inserted idempotently:
 --   ON CONFLICT (slug)  DO NOTHING  for tournaments
---   ON CONFLICT (name)  DO UPDATE   for teams (updates external_id, logo, tournament_id)
+--   ON CONFLICT (name)  DO UPDATE   for teams (updates external_id, logo, tournament_id, group_letter)
 
 INSERT INTO tournaments (id, slug, name, external_id, season, starts_at, ends_at)
 VALUES (
@@ -82,19 +107,23 @@ VALUES (
 
 SQL
 
-echo "$RESPONSE" | jq -r --arg slug "${TOURNAMENT_SLUG}" '
+echo "$TEAMS_RESPONSE" | jq -r --arg slug "${TOURNAMENT_SLUG}" --argjson groups "${GROUP_MAP}" '
   .response[] |
   .team |
-  "INSERT INTO teams (external_id, name, logo, tournament_id)\n" +
+  (.id | tostring) as $eid |
+  ($groups[$eid] // null) as $letter |
+  "INSERT INTO teams (external_id, name, logo, tournament_id, group_letter)\n" +
   "VALUES (\n" +
-  "    " + (.id | tostring) + ",\n" +
+  "    " + $eid + ",\n" +
   "    '"'"'" + (.name | gsub("'"'"'"; "'"'"''"'"'")) + "'"'"',\n" +
   "    '"'"'" + (.logo | gsub("'"'"'"; "'"'"''"'"'")) + "'"'"',\n" +
-  "    (SELECT id FROM tournaments WHERE slug = '"'"'" + $slug + "'"'"')\n" +
+  "    (SELECT id FROM tournaments WHERE slug = '"'"'" + $slug + "'"'"'),\n" +
+  "    " + (if $letter then "'"'"'" + $letter + "'"'"'" else "NULL" end) + "\n" +
   ") ON CONFLICT (name) DO UPDATE SET\n" +
   "    external_id   = EXCLUDED.external_id,\n" +
   "    logo          = EXCLUDED.logo,\n" +
-  "    tournament_id = EXCLUDED.tournament_id;\n"
+  "    tournament_id = EXCLUDED.tournament_id,\n" +
+  "    group_letter  = EXCLUDED.group_letter;\n"
 ' >> "$TEAMS_FILE"
 
 cat >> "$TEAMS_FILE" <<SQL
@@ -106,7 +135,7 @@ cat >> "$TEAMS_FILE" <<SQL
 
 -- Removing seeded data cascades to fixtures, predictions, handicaps, etc.
 -- Run only if you are sure this is safe in the target environment.
-DELETE FROM teams      WHERE tournament_id = (SELECT id FROM tournaments WHERE slug = '${TOURNAMENT_SLUG}');
+DELETE FROM teams       WHERE tournament_id = (SELECT id FROM tournaments WHERE slug = '${TOURNAMENT_SLUG}');
 DELETE FROM tournaments WHERE slug = '${TOURNAMENT_SLUG}';
 
 -- +goose StatementEnd
@@ -135,7 +164,7 @@ cat > "$HANDICAP_FILE" <<'HEADER'
 
 HEADER
 
-echo "$RESPONSE" | jq -r '
+echo "$TEAMS_RESPONSE" | jq -r '
   .response[] |
   .team |
   "-- " + .name + " (" + (.code // "???") + ")\n" +
@@ -167,7 +196,7 @@ FOOTER
 echo "Written: ${HANDICAP_FILE}"
 echo
 echo "Next steps:"
-echo "  1. Review ${TEAMS_FILE} — tournament + teams are inserted idempotently."
+echo "  1. Review ${TEAMS_FILE} — tournament + teams (with group letters) are inserted idempotently."
 echo "  2. Open ${HANDICAP_FILE} and replace NULL with points for each team/category."
 echo "     Leave NULL to skip a team/category pair entirely."
 echo "  3. Commit both files and push — goose will apply them on next deploy."
