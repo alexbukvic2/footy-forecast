@@ -15,21 +15,14 @@ import (
 // PlayerRepo is the subset of the repository that PlayerService needs.
 type PlayerRepo interface {
 	Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string, hasHandicap bool) ([]*domain.PlayerSearchResult, error)
-}
-
-// defaultPlayerHandicapPoints maps each player handicap category to the points
-// returned when no handicap row exists for a player in that category.
-// Business rule: group scorer slots are cheaper (20 pts) than the overall top-scorer (100 pts).
-var defaultPlayerHandicapPoints = map[domain.PlayerHandicapCategory]int{
-	domain.PlayerHandicapCategoryGroupTopScorer: 20,
-	domain.PlayerHandicapCategoryTotalTopScorer: 100,
+	GetDefaults(ctx context.Context, tournamentID uuid.UUID) (map[domain.PlayerHandicapCategory]int, error)
 }
 
 // FillDefaultPlayerHandicaps ensures every known category is present in p.Handicaps,
 // inserting the per-category default for any that are missing.
 // It is exported so other service packages can reuse the same rule.
-func FillDefaultPlayerHandicaps(p *domain.PlayerSearchResult) {
-	for cat, def := range defaultPlayerHandicapPoints {
+func FillDefaultPlayerHandicaps(p *domain.PlayerSearchResult, defaults map[domain.PlayerHandicapCategory]int) {
+	for cat, def := range defaults {
 		if _, ok := p.Handicaps[cat]; !ok {
 			p.Handicaps[cat] = def
 		}
@@ -73,8 +66,13 @@ func (s *PlayerService) Search(
 		return nil, fmt.Errorf("search players: %w", err)
 	}
 
+	defaults, err := s.players.GetDefaults(ctx, in.TournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("get player handicap defaults: %w", err)
+	}
+
 	for _, p := range players {
-		FillDefaultPlayerHandicaps(p)
+		FillDefaultPlayerHandicaps(p, defaults)
 	}
 
 	return players, nil

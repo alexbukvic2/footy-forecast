@@ -33,3 +33,12 @@ curl http://localhost:8080/health
 ## Project layout
 
 See [docs/decisions/0001-project-layout.md](docs/decisions/0001-project-layout.md).
+
+## Monitoring
+
+Alarms route to SNS topics. Two exist because Route53 alarms live in us-east-1:
+
+- `arn:aws:sns:eu-central-1:429822431751:footy-forecast-alarms` (disk, backup)
+- `arn:aws:sns:us-east-1:429822431751:footy-forecast-alarms` (app-down via Route53 health check)
+
+Both have the same email subscriber.

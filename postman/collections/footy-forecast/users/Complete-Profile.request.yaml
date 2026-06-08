@@ -1,5 +1,5 @@
 $kind: http-request
-name: Complete Profile (Set Display Name)
+name: Patch Me (display name / timezone / silent window)
 method: PATCH
 url: "{{baseUrl}}/users/me"
 order: 2000
@@ -10,5 +10,8 @@ body:
   mode: raw
   raw: |
     {
-      "display_name": "{{displayName}}"
+      "display_name": "{{displayName}}",
+      "timezone": "Europe/London",
+      "silent_from": "22:00",
+      "silent_until": "08:00"
     }

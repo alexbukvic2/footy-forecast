@@ -9,10 +9,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getUserByCognitoSub = `-- name: GetUserByCognitoSub :one
-SELECT id, cognito_sub, email, display_name, status, created_at, updated_at
+SELECT id, cognito_sub, email, display_name, status, created_at, updated_at, timezone, silent_from, silent_until
 FROM users
 WHERE cognito_sub = $1
 `
@@ -28,12 +29,15 @@ func (q *Queries) GetUserByCognitoSub(ctx context.Context, cognitoSub string) (U
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Timezone,
+		&i.SilentFrom,
+		&i.SilentUntil,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, cognito_sub, email, display_name, status, created_at, updated_at
+SELECT id, cognito_sub, email, display_name, status, created_at, updated_at, timezone, silent_from, silent_until
 FROM users
 WHERE id = $1
 `
@@ -49,6 +53,9 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Timezone,
+		&i.SilentFrom,
+		&i.SilentUntil,
 	)
 	return i, err
 }
@@ -58,7 +65,7 @@ UPDATE users
 SET display_name = $2,
     status       = CASE WHEN status = 'pending_profile' THEN 'active'::user_status ELSE status END
 WHERE id = $1
-RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at
+RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at, timezone, silent_from, silent_until
 `
 
 type UpdateDisplayNameParams struct {
@@ -77,6 +84,49 @@ func (q *Queries) UpdateDisplayName(ctx context.Context, arg UpdateDisplayNamePa
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Timezone,
+		&i.SilentFrom,
+		&i.SilentUntil,
+	)
+	return i, err
+}
+
+const updateTimezone = `-- name: UpdateTimezone :one
+UPDATE users
+SET timezone     = $2,
+    silent_from  = $3,
+    silent_until = $4,
+    updated_at   = now()
+WHERE id = $1
+RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at, timezone, silent_from, silent_until
+`
+
+type UpdateTimezoneParams struct {
+	ID          uuid.UUID
+	Timezone    string
+	SilentFrom  pgtype.Time
+	SilentUntil pgtype.Time
+}
+
+func (q *Queries) UpdateTimezone(ctx context.Context, arg UpdateTimezoneParams) (User, error) {
+	row := q.db.QueryRow(ctx, updateTimezone,
+		arg.ID,
+		arg.Timezone,
+		arg.SilentFrom,
+		arg.SilentUntil,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CognitoSub,
+		&i.Email,
+		&i.DisplayName,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Timezone,
+		&i.SilentFrom,
+		&i.SilentUntil,
 	)
 	return i, err
 }
@@ -91,7 +141,7 @@ ON CONFLICT (cognito_sub) DO UPDATE
                            ELSE users.display_name
                        END,
         updated_at   = now()
-RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at
+RETURNING id, cognito_sub, email, display_name, status, created_at, updated_at, timezone, silent_from, silent_until
 `
 
 type UpsertUserParams struct {
@@ -117,6 +167,9 @@ func (q *Queries) UpsertUser(ctx context.Context, arg UpsertUserParams) (User, e
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.Timezone,
+		&i.SilentFrom,
+		&i.SilentUntil,
 	)
 	return i, err
 }

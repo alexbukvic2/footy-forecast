@@ -415,6 +415,20 @@ type LeagueMember struct {
 	JoinedAt time.Time
 }
 
+type NotificationLog struct {
+	ID          uuid.UUID
+	UserID      uuid.UUID
+	Type        string
+	ReferenceID string
+	SentAt      time.Time
+}
+
+type NotificationPreference struct {
+	UserID  uuid.UUID
+	Type    string
+	Enabled bool
+}
+
 type Player struct {
 	ID           uuid.UUID
 	ExternalID   int64
@@ -430,6 +444,13 @@ type PlayerHandicap struct {
 	PlayerID uuid.UUID
 	Category PlayerHandicapCategory
 	Points   int32
+}
+
+type PlayerHandicapDefault struct {
+	ID            uuid.UUID
+	TournamentID  uuid.UUID
+	Category      PlayerHandicapCategory
+	DefaultPoints int32
 }
 
 type PlayerOutcome struct {
@@ -451,6 +472,13 @@ type PlayerPrediction struct {
 	UpdatedAt    time.Time
 	GroupLetter  *string
 	ScoredAt     pgtype.Timestamptz
+}
+
+type PushToken struct {
+	ID        uuid.UUID
+	UserID    uuid.UUID
+	Token     string
+	CreatedAt time.Time
 }
 
 type ScorePrediction struct {
@@ -543,4 +571,7 @@ type User struct {
 	Status      UserStatus
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	Timezone    string
+	SilentFrom  pgtype.Time
+	SilentUntil pgtype.Time
 }

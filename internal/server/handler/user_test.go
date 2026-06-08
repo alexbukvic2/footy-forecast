@@ -21,11 +21,19 @@ import (
 
 type fakeUserService struct {
 	updateDisplayNameFn func(ctx context.Context, userID uuid.UUID, displayName string) (domain.User, error)
+	updateTimezoneFn    func(ctx context.Context, userID uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error)
 }
 
 func (f *fakeUserService) UpdateDisplayName(ctx context.Context, userID uuid.UUID, displayName string) (domain.User, error) {
 	if f.updateDisplayNameFn != nil {
 		return f.updateDisplayNameFn(ctx, userID, displayName)
+	}
+	return domain.User{}, nil
+}
+
+func (f *fakeUserService) UpdateTimezone(ctx context.Context, userID uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error) {
+	if f.updateTimezoneFn != nil {
+		return f.updateTimezoneFn(ctx, userID, timezone, silentFrom, silentUntil)
 	}
 	return domain.User{}, nil
 }

@@ -80,6 +80,7 @@ func TestDeriveDisplayName(t *testing.T) {
 type fakeUserRepo struct {
 	upsertFn            func(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error)
 	updateDisplayNameFn func(ctx context.Context, id uuid.UUID, displayName string) (domain.User, error)
+	updateTimezoneFn    func(ctx context.Context, id uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error)
 }
 
 func (f *fakeUserRepo) Upsert(ctx context.Context, id uuid.UUID, cognitoSub, email, displayName string) (domain.User, error) {
@@ -91,6 +92,13 @@ func (f *fakeUserRepo) UpdateDisplayName(ctx context.Context, id uuid.UUID, disp
 		return f.updateDisplayNameFn(ctx, id, displayName)
 	}
 	return domain.User{}, nil
+}
+
+func (f *fakeUserRepo) UpdateTimezone(ctx context.Context, id uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error) {
+	if f.updateTimezoneFn != nil {
+		return f.updateTimezoneFn(ctx, id, timezone, silentFrom, silentUntil)
+	}
+	return domain.User{Timezone: timezone, SilentFrom: silentFrom, SilentUntil: silentUntil}, nil
 }
 
 // countingRepo returns a repo whose Upsert always succeeds and counts calls.

@@ -16,6 +16,8 @@ tags:
     description: Tournament management
   - name: users
     description: User profile
+  - name: notifications
+    description: Push notification tokens and preferences
   - name: leagues
     description: Private prediction leagues
   - name: players
@@ -267,7 +269,7 @@ components:
 
     User:
       type: object
-      required: [id, email, display_name, status, created_at, updated_at]
+      required: [id, email, display_name, status, created_at, updated_at, timezone]
       properties:
         id:
           type: string
@@ -286,6 +288,17 @@ components:
         updated_at:
           type: string
           format: date-time
+        timezone:
+          type: string
+          description: IANA timezone name (e.g. "Europe/London"). Defaults to "UTC".
+        silent_from:
+          type: string
+          nullable: true
+          description: Start of the user's silent window in HH:MM format. Null if no window is set.
+        silent_until:
+          type: string
+          nullable: true
+          description: End of the user's silent window in HH:MM format. Null if no window is set.
       example:
         id: "550e8400-e29b-41d4-a716-446655440002"
         email: "user@example.com"
@@ -293,6 +306,37 @@ components:
         status: "active"
         created_at: "2025-01-01T00:00:00Z"
         updated_at: "2025-01-01T00:00:00Z"
+        timezone: "Europe/London"
+        silent_from: "22:00"
+        silent_until: "08:00"
+
+    PatchMeRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        timezone:
+          type: string
+          description: IANA timezone name. Validated with time.LoadLocation.
+        silent_from:
+          type: string
+          nullable: true
+          description: >
+            Start of silent window in HH:MM format (24-hour). Send null to clear the window.
+            Must be provided together with silent_until.
+        silent_until:
+          type: string
+          nullable: true
+          description: >
+            End of silent window in HH:MM format (24-hour). Send null to clear the window.
+            Must be provided together with silent_from.
+      example:
+        display_name: "John Doe"
+        timezone: "Europe/London"
+        silent_from: "22:00"
+        silent_until: "08:00"
 
     UpdateProfileRequest:
       type: object
@@ -304,6 +348,41 @@ components:
           maxLength: 50
       example:
         display_name: "John Doe"
+
+    PushTokenRequest:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+          description: Expo push token (ExponentPushToken[...]).
+      example:
+        token: "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]"
+
+    RegisterTokenResponse:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The server-assigned ID for this token registration.
+      example:
+        id: "550e8400-e29b-41d4-a716-446655440099"
+
+    NotificationPreference:
+      type: object
+      required: [type, enabled]
+      properties:
+        type:
+          type: string
+          enum: [matchday, pre_match]
+          description: Notification type.
+        enabled:
+          type: boolean
+      example:
+        type: "matchday"
+        enabled: true
 
     Player:
       type: object
@@ -1207,12 +1286,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     patch:
-      summary: Complete user profile (set display name)
+      summary: Update user profile
       description: >
-        Sets the caller's display name. If the account is in pending_profile status
-        (first sign-in), it is atomically transitioned to active. Active users may
-        also call this endpoint to update their display name later.
-      operationId: completeProfile
+        Updates one or more of: display_name, timezone, silent window.
+        If the account is in pending_profile status (first sign-in) and display_name
+        is provided, it is atomically transitioned to active.
+        All fields are optional; omit a field to leave it unchanged.
+        To clear the silent window send both silent_from and silent_until as null.
+      operationId: patchMe
       tags: [users]
       security:
         - bearerAuth: []
@@ -1221,7 +1302,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateProfileRequest'
+              $ref: '#/components/schemas/PatchMeRequest'
       responses:
         '200':
           description: Updated user profile
@@ -1230,7 +1311,168 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Validation error (blank or too-long display name)
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me/push-tokens:
+    post:
+      summary: Register a device push token
+      description: >
+        Upserts a device push token for the authenticated user. If the token already
+        exists for another user (device reused after sign-out), it is reassigned.
+      operationId: registerPushToken
+      tags: [notifications]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushTokenRequest'
+      responses:
+        '201':
+          description: Token registered (or re-registered)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterTokenResponse'
+        '400':
+          description: Empty token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me/push-tokens/{token}:
+    delete:
+      summary: Deregister a device push token
+      description: >
+        Removes a push token. Idempotent — returns 204 even if the token did not
+        exist. Call on logout or when expo-notifications fires a DeviceNotRegistered event.
+      operationId: deletePushToken
+      tags: [notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The Expo push token to deregister.
+      responses:
+        '204':
+          description: Token removed (or was already absent)
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me/notification-preferences:
+    get:
+      summary: Get notification preferences
+      description: >
+        Returns all supported notification types with their current enabled state.
+        Types with no stored row are materialised with their default (enabled=true).
+      operationId: getNotificationPreferences
+      tags: [notifications]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Notification preferences
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationPreference'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me/notification-preferences/{type}:
+    put:
+      summary: Update a notification preference
+      description: >
+        Upserts the enabled state for a single notification type.
+        type must be one of: matchday, pre_match, tournament_reminder.
+      operationId: updateNotificationPreference
+      tags: [notifications]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [matchday, pre_match, tournament_reminder]
+          description: Notification type to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enabled]
+              properties:
+                enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: Updated preference
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+        '400':
+          description: Unknown notification type
           content:
             application/json:
               schema:

@@ -1,0 +1,14 @@
+$kind: http-request
+name: Update Notification Preference
+method: PUT
+url: "{{baseUrl}}/users/me/notification-preferences/matchday"
+order: 1003
+headers:
+  Authorization: Bearer {{authToken}}
+  Content-Type: application/json
+body:
+  mode: raw
+  raw: |
+    {
+      "enabled": false
+    }

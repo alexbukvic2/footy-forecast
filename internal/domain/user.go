@@ -34,4 +34,7 @@ type User struct {
 	Status      UserStatus
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	Timezone    string
+	SilentFrom  *TimeOfDay
+	SilentUntil *TimeOfDay
 }

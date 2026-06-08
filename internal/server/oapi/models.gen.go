@@ -73,6 +73,24 @@ func (e LeagueMemberRole) Valid() bool {
 	}
 }
 
+// Defines values for NotificationPreferenceType.
+const (
+	NotificationPreferenceTypeMatchday NotificationPreferenceType = "matchday"
+	NotificationPreferenceTypePreMatch NotificationPreferenceType = "pre_match"
+)
+
+// Valid indicates whether the value is a known member of the NotificationPreferenceType enum.
+func (e NotificationPreferenceType) Valid() bool {
+	switch e {
+	case NotificationPreferenceTypeMatchday:
+		return true
+	case NotificationPreferenceTypePreMatch:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for PlayerHandicapCategory.
 const (
 	GroupTopScorer PlayerHandicapCategory = "group_top_scorer"
@@ -172,6 +190,27 @@ func (e UserFixtureViewResponseStatus) Valid() bool {
 	case UserFixtureViewResponseStatusInProgress:
 		return true
 	case UserFixtureViewResponseStatusUpcoming:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateNotificationPreferenceParamsType.
+const (
+	UpdateNotificationPreferenceParamsTypeMatchday           UpdateNotificationPreferenceParamsType = "matchday"
+	UpdateNotificationPreferenceParamsTypePreMatch           UpdateNotificationPreferenceParamsType = "pre_match"
+	UpdateNotificationPreferenceParamsTypeTournamentReminder UpdateNotificationPreferenceParamsType = "tournament_reminder"
+)
+
+// Valid indicates whether the value is a known member of the UpdateNotificationPreferenceParamsType enum.
+func (e UpdateNotificationPreferenceParamsType) Valid() bool {
+	switch e {
+	case UpdateNotificationPreferenceParamsTypeMatchday:
+		return true
+	case UpdateNotificationPreferenceParamsTypePreMatch:
+		return true
+	case UpdateNotificationPreferenceParamsTypeTournamentReminder:
 		return true
 	default:
 		return false
@@ -409,6 +448,31 @@ type LeagueTeamCategoryPredictions struct {
 	SlotIndex *int `json:"slot_index,omitempty"`
 }
 
+// NotificationPreference defines model for NotificationPreference.
+type NotificationPreference struct {
+	Enabled bool `json:"enabled"`
+
+	// Type Notification type.
+	Type NotificationPreferenceType `json:"type"`
+}
+
+// NotificationPreferenceType Notification type.
+type NotificationPreferenceType string
+
+// PatchMeRequest defines model for PatchMeRequest.
+type PatchMeRequest struct {
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// SilentFrom Start of silent window in HH:MM format (24-hour). Send null to clear the window. Must be provided together with silent_until.
+	SilentFrom *string `json:"silent_from,omitempty"`
+
+	// SilentUntil End of silent window in HH:MM format (24-hour). Send null to clear the window. Must be provided together with silent_from.
+	SilentUntil *string `json:"silent_until,omitempty"`
+
+	// Timezone IANA timezone name. Validated with time.LoadLocation.
+	Timezone *string `json:"timezone,omitempty"`
+}
+
 // Player defines model for Player.
 type Player struct {
 	// Group Group letter of the player's team (e.g. "A"), or null if not applicable.
@@ -460,6 +524,18 @@ type PlayerPredictionsListResponse struct {
 	// Locked Whether predictions are locked (first kickoff is within 30 minutes or has passed).
 	Locked      bool                   `json:"locked"`
 	Predictions []PlayerPredictionView `json:"predictions"`
+}
+
+// PushTokenRequest defines model for PushTokenRequest.
+type PushTokenRequest struct {
+	// Token Expo push token (ExponentPushToken[...]).
+	Token string `json:"token"`
+}
+
+// RegisterTokenResponse defines model for RegisterTokenResponse.
+type RegisterTokenResponse struct {
+	// Id The server-assigned ID for this token registration.
+	Id openapi_types.UUID `json:"id"`
 }
 
 // ScorePredictionResponse defines model for ScorePredictionResponse.
@@ -569,11 +645,6 @@ type TournamentOutcomes struct {
 	TeamOutcomes   []TeamOutcome   `json:"team_outcomes"`
 }
 
-// UpdateProfileRequest defines model for UpdateProfileRequest.
-type UpdateProfileRequest struct {
-	DisplayName string `json:"display_name"`
-}
-
 // UpsertScorePredictionRequest defines model for UpsertScorePredictionRequest.
 type UpsertScorePredictionRequest struct {
 	GoalsAway int `json:"goals_away"`
@@ -586,8 +657,17 @@ type User struct {
 	DisplayName string              `json:"display_name"`
 	Email       openapi_types.Email `json:"email"`
 	Id          openapi_types.UUID  `json:"id"`
-	Status      UserStatus          `json:"status"`
-	UpdatedAt   time.Time           `json:"updated_at"`
+
+	// SilentFrom Start of the user's silent window in HH:MM format. Null if no window is set.
+	SilentFrom *string `json:"silent_from,omitempty"`
+
+	// SilentUntil End of the user's silent window in HH:MM format. Null if no window is set.
+	SilentUntil *string    `json:"silent_until,omitempty"`
+	Status      UserStatus `json:"status"`
+
+	// Timezone IANA timezone name (e.g. "Europe/London"). Defaults to "UTC".
+	Timezone  string    `json:"timezone"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // UserStatus defines model for User.Status.
@@ -668,6 +748,14 @@ type SearchPlayersParams struct {
 	HasHandicap *bool `form:"hasHandicap,omitempty" json:"hasHandicap,omitempty"`
 }
 
+// UpdateNotificationPreferenceJSONBody defines parameters for UpdateNotificationPreference.
+type UpdateNotificationPreferenceJSONBody struct {
+	Enabled bool `json:"enabled"`
+}
+
+// UpdateNotificationPreferenceParamsType defines parameters for UpdateNotificationPreference.
+type UpdateNotificationPreferenceParamsType string
+
 // CreateLeagueJSONRequestBody defines body for CreateLeague for application/json ContentType.
 type CreateLeagueJSONRequestBody CreateLeagueJSONBody
 
@@ -689,5 +777,11 @@ type BulkUpsertPlayerPredictionsJSONRequestBody = BulkUpsertPlayerPredictionsReq
 // BulkUpsertTeamPredictionsJSONRequestBody defines body for BulkUpsertTeamPredictions for application/json ContentType.
 type BulkUpsertTeamPredictionsJSONRequestBody = BulkUpsertTeamPredictionsRequest
 
-// CompleteProfileJSONRequestBody defines body for CompleteProfile for application/json ContentType.
-type CompleteProfileJSONRequestBody = UpdateProfileRequest
+// PatchMeJSONRequestBody defines body for PatchMe for application/json ContentType.
+type PatchMeJSONRequestBody = PatchMeRequest
+
+// UpdateNotificationPreferenceJSONRequestBody defines body for UpdateNotificationPreference for application/json ContentType.
+type UpdateNotificationPreferenceJSONRequestBody UpdateNotificationPreferenceJSONBody
+
+// RegisterPushTokenJSONRequestBody defines body for RegisterPushToken for application/json ContentType.
+type RegisterPushTokenJSONRequestBody = PushTokenRequest

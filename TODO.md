@@ -12,10 +12,10 @@
 - [x] *Locked fixtures - lock by worker n minutes in advance
 - [x] *Same points breaking criteria
 - [ ] *Default values for missing handicaps
-- [ ] Worker should fetch fixtures every day
+- [x] Worker should fetch fixtures every day
 
 ### Profile page
-- [ ] Change display name
+- [x] Change display name
 
 ---
 
@@ -29,7 +29,18 @@
 - [x] *Highlight third teams of group that advance to playoffs
 
 ## Onboarding
-- [ ] *Sign-up flow: prompt for display name, pre-fill from SSO profile first name
+- [x] *Sign-up flow: prompt for display name, pre-fill from SSO profile first name
+
+## Notifications
+- [ ] Player should land on profile page after signup
+- [ ] Click on push notification leads to appropriate screen
+
+## Important
+- [ ] Create migration for players
+- [ ] Rewards for teams that go to playoffs as third ones, how does API show those
+- [ ] Playoff matches - different handicap, if player sets draw, needs to choose winner
+- [ ] Players that do not have handicap, set default
+- [x] Change app name and icon
 
 
 "be protagonist, not just a spectator"

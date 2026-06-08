@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/alexbukvic2/footy-forecast/internal/db"
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
@@ -89,6 +90,25 @@ func (r *UserRepository) GetByCognitoSub(ctx context.Context, sub string) (domai
 	return userFromRow(row), nil
 }
 
+// UpdateTimezone sets the user's timezone and optional silent window.
+// Pass nil for silentFrom and silentUntil to clear the window.
+// Returns domain.ErrNotFound if no row matches id.
+func (r *UserRepository) UpdateTimezone(ctx context.Context, id uuid.UUID, timezone string, silentFrom, silentUntil *domain.TimeOfDay) (domain.User, error) {
+	row, err := r.q.UpdateTimezone(ctx, dbgen.UpdateTimezoneParams{
+		ID:          id,
+		Timezone:    timezone,
+		SilentFrom:  timeOfDayToPgTime(silentFrom),
+		SilentUntil: timeOfDayToPgTime(silentUntil),
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return domain.User{}, fmt.Errorf("user %s: %w", id, domain.ErrNotFound)
+		}
+		return domain.User{}, fmt.Errorf("update timezone: %w", err)
+	}
+	return userFromRow(row), nil
+}
+
 // userFromRow maps a persistence row to the domain type.
 func userFromRow(row dbgen.User) domain.User {
 	return domain.User{
@@ -99,5 +119,33 @@ func userFromRow(row dbgen.User) domain.User {
 		Status:      domain.UserStatus(row.Status),
 		CreatedAt:   row.CreatedAt,
 		UpdatedAt:   row.UpdatedAt,
+		Timezone:    row.Timezone,
+		SilentFrom:  pgTimeToTimeOfDay(row.SilentFrom),
+		SilentUntil: pgTimeToTimeOfDay(row.SilentUntil),
+	}
+}
+
+// timeOfDayToPgTime converts a *domain.TimeOfDay to a pgtype.Time.
+// Nil input produces an invalid (NULL) pgtype.Time.
+func timeOfDayToPgTime(tod *domain.TimeOfDay) pgtype.Time {
+	if tod == nil {
+		return pgtype.Time{Valid: false}
+	}
+	return pgtype.Time{
+		Microseconds: int64(tod.Hour*3600+tod.Minute*60) * 1_000_000,
+		Valid:        true,
+	}
+}
+
+// pgTimeToTimeOfDay converts a pgtype.Time to a *domain.TimeOfDay.
+// An invalid (NULL) pgtype.Time produces nil.
+func pgTimeToTimeOfDay(t pgtype.Time) *domain.TimeOfDay {
+	if !t.Valid {
+		return nil
+	}
+	totalSeconds := t.Microseconds / 1_000_000
+	return &domain.TimeOfDay{
+		Hour:   int(totalSeconds / 3600),
+		Minute: int((totalSeconds % 3600) / 60),
 	}
 }

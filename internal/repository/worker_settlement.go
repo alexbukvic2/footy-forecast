@@ -321,8 +321,13 @@ ON CONFLICT (tournament_id, category, player_id) DO UPDATE SET recorded_at = now
 
 	const awardPoints = `
 UPDATE player_predictions pp
-SET points    = COALESCE((SELECT h.points FROM player_handicap h
-                          WHERE h.player_id = pp.pick AND h.category = 'group_top_scorer'), 0),
+SET points    = COALESCE(
+                  (SELECT h.points FROM player_handicap h
+                   WHERE h.player_id = pp.pick AND h.category = 'group_top_scorer'),
+                  (SELECT d.default_points FROM player_handicap_defaults d
+                   WHERE d.tournament_id = pp.tournament_id AND d.category = 'group_top_scorer'),
+                  0
+                ),
     scored_at = now()
 WHERE pp.tournament_id = $1
   AND pp.category      = 'group_top_scorer'
@@ -524,8 +529,13 @@ ON CONFLICT (tournament_id, category, player_id) DO UPDATE SET recorded_at = now
 
 	const awardPoints = `
 UPDATE player_predictions pp
-SET points    = COALESCE((SELECT h.points FROM player_handicap h
-                          WHERE h.player_id = pp.pick AND h.category = 'total_top_scorer'), 0),
+SET points    = COALESCE(
+                  (SELECT h.points FROM player_handicap h
+                   WHERE h.player_id = pp.pick AND h.category = 'total_top_scorer'),
+                  (SELECT d.default_points FROM player_handicap_defaults d
+                   WHERE d.tournament_id = pp.tournament_id AND d.category = 'total_top_scorer'),
+                  0
+                ),
     scored_at = now()
 WHERE pp.tournament_id = $1
   AND pp.category      = 'total_top_scorer'
