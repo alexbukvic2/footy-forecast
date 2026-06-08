@@ -15,11 +15,19 @@ import (
 // ---------- fakes ----------
 
 type fakePlayerRepo struct {
-	searchFn func(context.Context, uuid.UUID, string, string, *string, bool) ([]*domain.PlayerSearchResult, error)
+	searchFn      func(context.Context, uuid.UUID, string, string, *string, bool) ([]*domain.PlayerSearchResult, error)
+	getDefaultsFn func(context.Context, uuid.UUID) (map[domain.PlayerHandicapCategory]int, error)
 }
 
 func (f *fakePlayerRepo) Search(ctx context.Context, tournamentID uuid.UUID, escapedQuery, rawQuery string, groupLetter *string, hasHandicap bool) ([]*domain.PlayerSearchResult, error) {
 	return f.searchFn(ctx, tournamentID, escapedQuery, rawQuery, groupLetter, hasHandicap)
+}
+
+func (f *fakePlayerRepo) GetDefaults(ctx context.Context, tournamentID uuid.UUID) (map[domain.PlayerHandicapCategory]int, error) {
+	if f.getDefaultsFn != nil {
+		return f.getDefaultsFn(ctx, tournamentID)
+	}
+	return map[domain.PlayerHandicapCategory]int{}, nil
 }
 
 // neverCallGetter returns a fakeTournamentGetter whose GetByID calls t.Fatal —
@@ -55,6 +63,12 @@ func repoWithHandicaps(playerID uuid.UUID, h map[domain.PlayerHandicapCategory]i
 		searchFn: func(context.Context, uuid.UUID, string, string, *string, bool) ([]*domain.PlayerSearchResult, error) {
 			return []*domain.PlayerSearchResult{
 				{ID: playerID, Name: "Player", TeamName: "Team", TeamLogo: "", Handicaps: h},
+			}, nil
+		},
+		getDefaultsFn: func(context.Context, uuid.UUID) (map[domain.PlayerHandicapCategory]int, error) {
+			return map[domain.PlayerHandicapCategory]int{
+				domain.PlayerHandicapCategoryGroupTopScorer: 20,
+				domain.PlayerHandicapCategoryTotalTopScorer: 100,
 			}, nil
 		},
 	}

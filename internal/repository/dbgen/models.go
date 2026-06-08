@@ -446,6 +446,13 @@ type PlayerHandicap struct {
 	Points   int32
 }
 
+type PlayerHandicapDefault struct {
+	ID            uuid.UUID
+	TournamentID  uuid.UUID
+	Category      PlayerHandicapCategory
+	DefaultPoints int32
+}
+
 type PlayerOutcome struct {
 	ID           uuid.UUID
 	TournamentID uuid.UUID

@@ -87,6 +87,22 @@ func (r *PlayerRepository) Search(
 	return out, nil
 }
 
+// GetDefaults returns the per-category default points from player_handicap_defaults.
+func (r *PlayerRepository) GetDefaults(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) (map[domain.PlayerHandicapCategory]int, error) {
+	rows, err := r.q.GetPlayerHandicapDefaults(ctx, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("get player handicap defaults: %w", err)
+	}
+	out := make(map[domain.PlayerHandicapCategory]int, len(rows))
+	for _, row := range rows {
+		out[domain.PlayerHandicapCategory(row.Category)] = int(row.DefaultPoints)
+	}
+	return out, nil
+}
+
 func playerSearchResultFromRow(row dbgen.SearchPlayersRow) (*domain.PlayerSearchResult, error) {
 	var raw map[string]int
 	if err := json.Unmarshal([]byte(row.Handicaps), &raw); err != nil {
