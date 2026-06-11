@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/worker"
@@ -79,9 +80,15 @@ func (c *Client) GetStandings(
 	for _, league := range resp.Response {
 		for _, group := range league.League.Standings {
 			for _, t := range group {
+				var groupLetter *string
+				if t.Group != "" {
+					g := strings.TrimPrefix(t.Group, "Group ")
+					groupLetter = &g
+				}
 				entries = append(
 					entries, worker.APIStandingsEntry{
 						TeamExternalID: t.Team.ID,
+						Group:          groupLetter,
 						Position:       t.Rank,
 						Points:         t.Points,
 						Played:         t.All.Played,
@@ -203,7 +210,7 @@ func (c *Client) getTopScorers(
 func (c *Client) get(
 	ctx context.Context,
 	url string,
-	dest interface{},
+	dest any,
 ) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

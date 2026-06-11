@@ -208,6 +208,7 @@ func (w *Worker) resolveTeamIDs(
 		out = append(
 			out, domain.StandingsEntry{
 				TeamID:       teamID,
+				Group:        s.Group,
 				Position:     s.Position,
 				Points:       s.Points,
 				Played:       s.Played,

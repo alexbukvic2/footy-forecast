@@ -355,6 +355,9 @@ ON CONFLICT (tournament_id, team_id) DO UPDATE SET
     description   = EXCLUDED.description`
 
 	for _, e := range entries {
+		if e.Group == nil || *e.Group != groupLetter {
+			continue
+		}
 		if _, err := tx.Exec(
 			ctx, q,
 			tournamentID, e.TeamID, groupLetter,

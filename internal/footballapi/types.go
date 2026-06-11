@@ -57,6 +57,7 @@ type standingsLeague struct {
 
 type standingsTeam struct {
 	Rank        int              `json:"rank"`
+	Group       string           `json:"group"`
 	Team        standingsTeamRef `json:"team"`
 	Points      int              `json:"points"`
 	All         standingsStats   `json:"all"`

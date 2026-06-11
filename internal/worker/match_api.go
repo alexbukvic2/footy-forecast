@@ -27,6 +27,7 @@ type APIFixtureResult struct {
 // APIStandingsEntry is one team row from GetStandings.
 type APIStandingsEntry struct {
 	TeamExternalID int64
+	Group          *string // nil for non-group-stage standings; "A", "B", … for group stages
 	Position       int
 	Points         int
 	Played         int
