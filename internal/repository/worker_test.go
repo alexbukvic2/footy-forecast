@@ -865,9 +865,10 @@ func TestWorkerRepository_UpdateGroupStandings(t *testing.T) {
 	t1 := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 	t2 := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 
+	groupA := "A"
 	entries := []domain.StandingsEntry{
-		{TeamID: t1, Position: 1, Points: 6, Played: 2, Won: 2, Drawn: 0, Lost: 0, GoalsFor: 4, GoalsAgainst: 1},
-		{TeamID: t2, Position: 2, Points: 3, Played: 2, Won: 1, Drawn: 0, Lost: 1, GoalsFor: 2, GoalsAgainst: 3},
+		{TeamID: t1, Group: &groupA, Position: 1, Points: 6, Played: 2, Won: 2, Drawn: 0, Lost: 0, GoalsFor: 4, GoalsAgainst: 1},
+		{TeamID: t2, Group: &groupA, Position: 2, Points: 3, Played: 2, Won: 1, Drawn: 0, Lost: 1, GoalsFor: 2, GoalsAgainst: 3},
 	}
 	require.NoError(t, repo.UpdateGroupStandings(ctx, tourID, "A", entries))
 

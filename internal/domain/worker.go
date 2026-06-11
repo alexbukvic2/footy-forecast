@@ -47,6 +47,7 @@ type NewFixture struct {
 // StandingsEntry is one team's standings row resolved to our internal team UUID.
 type StandingsEntry struct {
 	TeamID       uuid.UUID
+	Group        *string // nil for non-group-stage standings; "A", "B", … for group stages
 	Position     int
 	Points       int
 	Played       int

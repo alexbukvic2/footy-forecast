@@ -36,10 +36,10 @@
 - [ ] Click on push notification leads to appropriate screen
 
 ## Important
-- [ ] Create migration for players
+- [x] Create migration for players
 - [ ] Rewards for teams that go to playoffs as third ones, how does API show those
 - [ ] Playoff matches - different handicap, if player sets draw, needs to choose winner
-- [ ] Players that do not have handicap, set default
+- [x] Players that do not have handicap, set default
 - [x] Change app name and icon
 
 
