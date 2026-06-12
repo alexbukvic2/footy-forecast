@@ -75,6 +75,16 @@ func (r *fakeRepo) UpdateMatchAndRescoreLivePredictions(_ context.Context, _ dom
 	return r.updateErr
 }
 
+func (r *fakeRepo) ListGroupTeams(_ context.Context, _ uuid.UUID, _ string) ([]uuid.UUID, error) {
+	r.inc("ListGroupTeams")
+	return nil, nil
+}
+
+func (r *fakeRepo) ListGroupFixtures(_ context.Context, _ uuid.UUID, _ string) ([]domain.GroupFixture, error) {
+	r.inc("ListGroupFixtures")
+	return nil, nil
+}
+
 func (r *fakeRepo) UpdateGroupStandings(_ context.Context, _ uuid.UUID, _ string, _ []domain.StandingsEntry) error {
 	r.inc("UpdateGroupStandings")
 	return nil
@@ -150,8 +160,6 @@ type fakeAPI struct {
 	callCount    int64
 	result       worker.APIFixtureResult
 	err          error
-	standings    []worker.APIStandingsEntry
-	standingsErr error
 	topScorers   []worker.APITopScorerResult
 	topScorerErr error
 }
@@ -159,12 +167,6 @@ type fakeAPI struct {
 func (a *fakeAPI) GetFixture(_ context.Context, _ int64) (worker.APIFixtureResult, error) {
 	atomic.AddInt64(&a.callCount, 1)
 	return a.result, a.err
-}
-
-func (a *fakeAPI) GetStandings(_ context.Context, _ int64, _ int) ([]worker.APIStandingsEntry, error) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-	return a.standings, a.standingsErr
 }
 
 func (a *fakeAPI) GetGroupTopScorer(_ context.Context, _ int64, _ int, _ string) ([]worker.APITopScorerResult, error) {
@@ -322,9 +324,7 @@ func TestRunSettlement_Cancelled(t *testing.T) {
 	}
 }
 
-func TestProcessSingleFixture_StandingsUpdatedWhenScoreUnchanged(t *testing.T) {
-	// Standings should refresh on every poll for an in-progress group fixture,
-	// even when isUnchanged returns true and the score write is skipped.
+func TestProcessSingleFixture_StandingsNotUpdatedWhenScoreUnchanged(t *testing.T) {
 	gh, ga := 1, 0
 	f := liveFixture()
 	f.GoalsHome = &gh
@@ -342,8 +342,8 @@ func TestProcessSingleFixture_StandingsUpdatedWhenScoreUnchanged(t *testing.T) {
 	if repo.callCount("UpdateMatchAndRescoreLivePredictions") != 0 {
 		t.Error("expected no prediction write when score unchanged")
 	}
-	if repo.callCount("UpdateGroupStandings") != 1 {
-		t.Error("expected standings update even when score unchanged")
+	if repo.callCount("UpdateGroupStandings") != 0 {
+		t.Error("expected no standings update when nothing changed")
 	}
 }
 

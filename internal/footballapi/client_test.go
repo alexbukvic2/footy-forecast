@@ -31,35 +31,6 @@ func testClient(t *testing.T) *Client {
 	return NewClient(key, baseURL, nil)
 }
 
-// TestClient_GetStandings verifies that the standings response decodes correctly
-// and that every field in APIStandingsEntry carries a sensible value.
-func TestClient_GetStandings(t *testing.T) {
-	c := testClient(t)
-	ctx := context.Background()
-
-	entries, err := c.GetStandings(ctx, testLeagueID, testSeason)
-	require.NoError(t, err)
-	require.NotEmpty(t, entries, "expected at least one standings entry")
-
-	for _, e := range entries {
-		assert.Positive(t, e.TeamExternalID, "TeamExternalID must be > 0")
-		assert.Positive(t, e.Position, "Position must be > 0")
-		assert.GreaterOrEqual(t, e.Points, 0, "Points must be >= 0")
-		assert.Positive(t, e.Played, "Played must be > 0 for a completed season")
-		assert.Equal(
-			t, e.Played, e.Won+e.Drawn+e.Lost,
-			"Played must equal Won+Drawn+Lost for team external_id=%d", e.TeamExternalID,
-		)
-		assert.GreaterOrEqual(t, e.GoalsFor, 0)
-		assert.GreaterOrEqual(t, e.GoalsAgainst, 0)
-	}
-
-	t.Logf(
-		"standings: %d entries; leader external_id=%d pts=%d played=%d",
-		len(entries), entries[0].TeamExternalID, entries[0].Points, entries[0].Played,
-	)
-}
-
 // TestClient_GetTournamentTopScorer verifies that the top-scorers response decodes
 // correctly and that all returned players share the same (highest) goal count.
 func TestClient_GetTournamentTopScorer(t *testing.T) {

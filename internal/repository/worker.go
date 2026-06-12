@@ -31,7 +31,10 @@ var _ worker.Repo = (*WorkerRepository)(nil)
 // LockImminentFixtures sets prediction_locked = TRUE for every upcoming, non-demo fixture
 // whose kickoff is within the next leadMinutes minutes. If the locked fixture is the first
 // (earliest kickoff) fixture of its tournament, also sets tournaments.predictions_locked = TRUE.
-func (r *WorkerRepository) LockImminentFixtures(ctx context.Context, leadMinutes int) error {
+func (r *WorkerRepository) LockImminentFixtures(
+	ctx context.Context,
+	leadMinutes int,
+) error {
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -293,11 +296,13 @@ func (r *WorkerRepository) ListActiveTournaments(ctx context.Context) ([]domain.
 		if row.ExternalID == nil || row.Season == nil {
 			continue
 		}
-		out = append(out, domain.ActiveTournament{
-			ID:         row.ID,
-			ExternalID: *row.ExternalID,
-			Season:     int(*row.Season),
-		})
+		out = append(
+			out, domain.ActiveTournament{
+				ID:         row.ID,
+				ExternalID: *row.ExternalID,
+				Season:     int(*row.Season),
+			},
+		)
 	}
 	return out, nil
 }
@@ -323,6 +328,65 @@ ON CONFLICT (external_id) DO NOTHING`
 		}
 	}
 	return nil
+}
+
+// ListGroupTeams returns the IDs of all teams assigned to a given group letter in a tournament.
+func (r *WorkerRepository) ListGroupTeams(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+) ([]uuid.UUID, error) {
+	const q = `SELECT id FROM teams WHERE tournament_id = $1 AND group_letter = $2 ORDER BY id`
+	rows, err := r.pool.Query(ctx, q, tournamentID, groupLetter)
+	if err != nil {
+		return nil, fmt.Errorf("list group teams: %w", err)
+	}
+	defer rows.Close()
+	var ids []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan group team id: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
+// ListGroupFixtures returns all group-stage fixtures for a tournament + group that have goals set.
+func (r *WorkerRepository) ListGroupFixtures(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+) ([]domain.GroupFixture, error) {
+	const q = `
+SELECT f.home_team_id, f.away_team_id, f.goals_home, f.goals_away
+FROM fixtures f
+JOIN teams t ON t.id = f.home_team_id
+WHERE f.tournament_id = $1
+  AND t.group_letter   = $2
+  AND f.goals_home    IS NOT NULL
+  AND f.goals_away    IS NOT NULL`
+	rows, err := r.pool.Query(ctx, q, tournamentID, groupLetter)
+	if err != nil {
+		return nil, fmt.Errorf("list group fixtures: %w", err)
+	}
+	defer rows.Close()
+	var out []domain.GroupFixture
+	for rows.Next() {
+		var (
+			gf        domain.GroupFixture
+			goalsHome int32
+			goalsAway int32
+		)
+		if err := rows.Scan(&gf.HomeTeamID, &gf.AwayTeamID, &goalsHome, &goalsAway); err != nil {
+			return nil, fmt.Errorf("scan group fixture: %w", err)
+		}
+		gf.GoalsHome = int(goalsHome)
+		gf.GoalsAway = int(goalsAway)
+		out = append(out, gf)
+	}
+	return out, rows.Err()
 }
 
 // UpdateGroupStandings upserts standings rows for all teams in a group.

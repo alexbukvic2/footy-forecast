@@ -85,13 +85,6 @@ func (w *Worker) processSingleFixture(ctx context.Context, f domain.PollableFixt
 
 	newStatus := MapAPIStatus(result.StatusShort)
 
-	// Update standings on every poll for in-progress group fixtures. The standings
-	// API may lag behind the score by a cycle, so tying the update to isUnchanged
-	// would leave stale standings if that lag coincides with a goal.
-	if f.GroupLetter != nil && newStatus == domain.FixtureStatusInProgress {
-		w.updateGroupStandings(ctx, f)
-	}
-
 	if isUnchanged(f, result, newStatus) {
 		return
 	}
@@ -101,9 +94,7 @@ func (w *Worker) processSingleFixture(ctx context.Context, f domain.PollableFixt
 		return
 	}
 
-	// Also update standings on the finishing transition (in_progress → finished),
-	// which isUnchanged doesn't skip.
-	if f.GroupLetter != nil && newStatus != domain.FixtureStatusInProgress {
+	if f.GroupLetter != nil {
 		w.updateGroupStandings(ctx, f)
 	}
 

@@ -2,7 +2,6 @@ package worker
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/google/uuid"
 
@@ -39,19 +38,23 @@ func (w *Worker) runSettlement(
 	}
 }
 
-// updateGroupStandings fetches live standings from the API and writes them to
-// the DB. Called on every result change for group-stage fixtures so the group
-// table stays current during a match, not just at full time.
+// updateGroupStandings computes standings from our own fixtures and writes them to the DB.
+// Called on every result change for group-stage fixtures so the table stays current during a match.
 func (w *Worker) updateGroupStandings(
 	ctx context.Context,
 	f domain.PollableFixture,
 ) {
-	standings, err := w.api.GetStandings(ctx, f.TournamentExternalID, f.TournamentSeason)
+	teams, err := w.repo.ListGroupTeams(ctx, f.TournamentID, *f.GroupLetter)
 	if err != nil {
-		w.logger.Warn("worker: get standings", "fixture_id", f.ID, "err", err)
+		w.logger.Warn("worker: list group teams", "fixture_id", f.ID, "err", err)
 		return
 	}
-	entries := w.resolveTeamIDs(ctx, standings, f.TournamentID)
+	fixtures, err := w.repo.ListGroupFixtures(ctx, f.TournamentID, *f.GroupLetter)
+	if err != nil {
+		w.logger.Warn("worker: list group fixtures", "fixture_id", f.ID, "err", err)
+		return
+	}
+	entries := computeGroupStandings(*f.GroupLetter, teams, fixtures)
 	if err := w.repo.UpdateGroupStandings(ctx, f.TournamentID, *f.GroupLetter, entries); err != nil {
 		w.logger.Error("worker: update group standings", "fixture_id", f.ID, "err", err)
 	}
@@ -186,40 +189,4 @@ func (w *Worker) resolveTopScorerPlayerIDs(
 		ids = append(ids, playerID)
 	}
 	return ids
-}
-
-// resolveTeamIDs converts a slice of API standings entries to domain entries by
-// looking up each team's internal UUID. Entries whose external ID is unknown are skipped.
-func (w *Worker) resolveTeamIDs(
-	ctx context.Context,
-	standings []APIStandingsEntry,
-	tournamentID uuid.UUID,
-) []domain.StandingsEntry {
-	out := make([]domain.StandingsEntry, 0, len(standings))
-	for _, s := range standings {
-		teamID, err := w.repo.GetTeamByExternalID(ctx, s.TeamExternalID, tournamentID)
-		if err != nil {
-			w.logger.Error(
-				"worker: resolve team external id", "external_id", s.TeamExternalID, "err", err,
-				slog.String("hint", "populate teams.external_id"),
-			)
-			continue
-		}
-		out = append(
-			out, domain.StandingsEntry{
-				TeamID:       teamID,
-				Group:        s.Group,
-				Position:     s.Position,
-				Points:       s.Points,
-				Played:       s.Played,
-				Won:          s.Won,
-				Drawn:        s.Drawn,
-				Lost:         s.Lost,
-				GoalsFor:     s.GoalsFor,
-				GoalsAgainst: s.GoalsAgainst,
-				Description:  s.Description,
-			},
-		)
-	}
-	return out
 }

@@ -8,7 +8,6 @@ import (
 // MatchAPI abstracts the external football data provider.
 type MatchAPI interface {
 	GetFixture(ctx context.Context, externalFixtureID int64) (APIFixtureResult, error)
-	GetStandings(ctx context.Context, externalLeagueID int64, season int) ([]APIStandingsEntry, error)
 	GetGroupTopScorer(ctx context.Context, externalLeagueID int64, season int, groupLetter string) ([]APITopScorerResult, error)
 	GetTournamentTopScorer(ctx context.Context, externalLeagueID int64, season int) ([]APITopScorerResult, error)
 	GetLeagueFixtures(ctx context.Context, externalLeagueID int64, season int) ([]APILeagueFixtureResult, error)
@@ -22,21 +21,6 @@ type APIFixtureResult struct {
 	GoalsAway   *int
 	HomeWinner  *bool // teams.home.winner; handles ET/PEN
 	AwayWinner  *bool
-}
-
-// APIStandingsEntry is one team row from GetStandings.
-type APIStandingsEntry struct {
-	TeamExternalID int64
-	Group          *string // nil for non-group-stage standings; "A", "B", … for group stages
-	Position       int
-	Points         int
-	Played         int
-	Won            int
-	Drawn          int
-	Lost           int
-	GoalsFor       int
-	GoalsAgainst   int
-	Description    string // e.g. "Promotion - Championship (Group Stage: 1)", "Relegation"
 }
 
 // APITopScorerResult is returned by GetGroupTopScorer and GetTournamentTopScorer.
