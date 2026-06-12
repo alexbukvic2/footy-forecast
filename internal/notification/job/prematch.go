@@ -33,7 +33,7 @@ func NewPreMatchNotifier(
 
 // Run blocks on a 5-minute ticker until ctx is cancelled. It always returns nil.
 func (j *PreMatchNotifier) Run(ctx context.Context) error {
-	tick := time.NewTicker(5 * time.Second)
+	tick := time.NewTicker(5 * time.Minute)
 	defer tick.Stop()
 	for {
 		select {
