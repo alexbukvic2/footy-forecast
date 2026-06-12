@@ -80,7 +80,6 @@ func (c *Client) sendBatch(ctx context.Context, messages []Message) ([]Receipt, 
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Accept-Encoding", "gzip, deflate")
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
