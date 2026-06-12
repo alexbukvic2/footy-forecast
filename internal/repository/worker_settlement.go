@@ -148,8 +148,8 @@ WHERE tournament_id = $1
 	return nil
 }
 
-// SettlePlayoffGroupPredictions awards points for the playoff prediction
-// for the group runner-up (position 2).
+// SettlePlayoffGroupPredictions awards points for playoff predictions for both
+// the group winner (position 1) and runner-up (position 2), then zeroes the rest.
 func (r *WorkerRepository) SettlePlayoffGroupPredictions(
 	ctx context.Context,
 	tournamentID uuid.UUID,
@@ -161,13 +161,31 @@ func (r *WorkerRepository) SettlePlayoffGroupPredictions(
 	}
 	defer tx.Rollback(ctx) //nolint:errcheck
 
-	const getRunner = `
+	// Both the group winner and runner-up advance to the playoff.
+	const getAdvancing = `
 SELECT team_id FROM tournament_group_table
-WHERE tournament_id = $1 AND group_letter = $2 AND position = 2`
+WHERE tournament_id = $1 AND group_letter = $2 AND position IN (1, 2)
+ORDER BY position`
 
-	var pos2 uuid.UUID
-	if err := tx.QueryRow(ctx, getRunner, tournamentID, groupLetter).Scan(&pos2); err != nil {
-		return fmt.Errorf("get group runner-up team: %w", err)
+	rows, err := tx.Query(ctx, getAdvancing, tournamentID, groupLetter)
+	if err != nil {
+		return fmt.Errorf("get advancing teams: %w", err)
+	}
+	defer rows.Close() //nolint:errcheck
+
+	var advancing []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return fmt.Errorf("scan advancing team: %w", err)
+		}
+		advancing = append(advancing, id)
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate advancing teams: %w", err)
+	}
+	if len(advancing) == 0 {
+		return fmt.Errorf("no advancing teams found for group %s", groupLetter)
 	}
 
 	const recordOutcome = `
@@ -175,8 +193,10 @@ INSERT INTO team_outcomes (tournament_id, category, team_id)
 VALUES ($1, 'playoff', $2)
 ON CONFLICT (tournament_id, category, team_id) DO UPDATE SET recorded_at = now()`
 
-	if _, err := tx.Exec(ctx, recordOutcome, tournamentID, pos2); err != nil {
-		return fmt.Errorf("record playoff runner-up outcome: %w", err)
+	for _, teamID := range advancing {
+		if _, err := tx.Exec(ctx, recordOutcome, tournamentID, teamID); err != nil {
+			return fmt.Errorf("record playoff advancing outcome for team %s: %w", teamID, err)
+		}
 	}
 
 	const awardPoints = `
@@ -187,15 +207,29 @@ SET points    = COALESCE((SELECT h.points FROM team_handicap h
 WHERE tp.tournament_id = $1
   AND tp.category      = 'playoff'
   AND tp.group_letter  = $2
-  AND tp.pick          = $3
+  AND tp.pick          = ANY($3)
   AND tp.points IS NULL`
 
-	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter, pos2); err != nil {
-		return fmt.Errorf("award playoff runner-up points: %w", err)
+	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter, advancing); err != nil {
+		return fmt.Errorf("award playoff advancing points: %w", err)
+	}
+
+	// Zero remaining unsettled playoff predictions for this group (eliminated teams).
+	const zeroRest = `
+UPDATE team_predictions
+SET points    = 0,
+    scored_at = now()
+WHERE tournament_id = $1
+  AND category      = 'playoff'
+  AND group_letter  = $2
+  AND points IS NULL`
+
+	if _, err := tx.Exec(ctx, zeroRest, tournamentID, groupLetter); err != nil {
+		return fmt.Errorf("zero remaining group playoff predictions: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("commit settle playoff runner-up: %w", err)
+		return fmt.Errorf("commit settle playoff group: %w", err)
 	}
 	return nil
 }
