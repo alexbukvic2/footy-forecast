@@ -1,0 +1,12 @@
+$kind: http-request
+url: https://v3.football.api-sports.io/players?season={{season}}&league={{league_id}}&page=1
+method: GET
+headers:
+  x-apisports-key: "{{apisports-key}}"
+queryParams:
+  season: "{{season}}"
+  league: "{{league_id}}"
+  page: "1"
+auth:
+  type: noauth
+order: 4493940953263334

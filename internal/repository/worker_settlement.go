@@ -93,12 +93,9 @@ func (r *WorkerRepository) SettleGroupWinnerPredictions(
 	}
 	defer tx.Rollback(ctx) //nolint:errcheck
 
-	// Fetch the group winner (1st place only).
 	const getWinner = `
 SELECT team_id FROM tournament_group_table
-WHERE tournament_id = $1 AND group_letter = $2
-ORDER BY position ASC
-LIMIT 1`
+WHERE tournament_id = $1 AND group_letter = $2 AND position = 1`
 
 	var pos1 uuid.UUID
 	if err := tx.QueryRow(ctx, getWinner, tournamentID, groupLetter).Scan(&pos1); err != nil {
@@ -151,9 +148,8 @@ WHERE tournament_id = $1
 	return nil
 }
 
-// SettlePlayoffGroupPredictions awards points for playoff predictions for teams from a specific group.
-// Qualifying teams are identified by a description starting with "Promotion" in tournament_group_table,
-// which is written by UpdateGroupStandings from the API standings response.
+// SettlePlayoffGroupPredictions awards points for the playoff prediction
+// for the group runner-up (position 2).
 func (r *WorkerRepository) SettlePlayoffGroupPredictions(
 	ctx context.Context,
 	tournamentID uuid.UUID,
@@ -165,43 +161,22 @@ func (r *WorkerRepository) SettlePlayoffGroupPredictions(
 	}
 	defer tx.Rollback(ctx) //nolint:errcheck
 
-	const getQualifiers = `
+	const getRunner = `
 SELECT team_id FROM tournament_group_table
-WHERE tournament_id = $1
-  AND group_letter  = $2
-  AND description   LIKE 'Promotion%'
-ORDER BY position ASC`
+WHERE tournament_id = $1 AND group_letter = $2 AND position = 2`
 
-	rows, err := tx.Query(ctx, getQualifiers, tournamentID, groupLetter)
-	if err != nil {
-		return fmt.Errorf("get playoff qualifiers for group %s: %w", groupLetter, err)
-	}
-	defer rows.Close()
-
-	var qualifiers []uuid.UUID
-	for rows.Next() {
-		var id uuid.UUID
-		if err := rows.Scan(&id); err != nil {
-			return fmt.Errorf("scan qualifier team id: %w", err)
-		}
-		qualifiers = append(qualifiers, id)
-	}
-	if err := rows.Err(); err != nil {
-		return fmt.Errorf("iterate playoff qualifiers: %w", err)
-	}
-	if len(qualifiers) == 0 {
-		return fmt.Errorf("no playoff qualifiers found for group %s of tournament %s", groupLetter, tournamentID)
+	var pos2 uuid.UUID
+	if err := tx.QueryRow(ctx, getRunner, tournamentID, groupLetter).Scan(&pos2); err != nil {
+		return fmt.Errorf("get group runner-up team: %w", err)
 	}
 
-	for _, teamID := range qualifiers {
-		const recordOutcome = `
+	const recordOutcome = `
 INSERT INTO team_outcomes (tournament_id, category, team_id)
 VALUES ($1, 'playoff', $2)
 ON CONFLICT (tournament_id, category, team_id) DO UPDATE SET recorded_at = now()`
 
-		if _, err := tx.Exec(ctx, recordOutcome, tournamentID, teamID); err != nil {
-			return fmt.Errorf("record playoff outcome for team %s: %w", teamID, err)
-		}
+	if _, err := tx.Exec(ctx, recordOutcome, tournamentID, pos2); err != nil {
+		return fmt.Errorf("record playoff runner-up outcome: %w", err)
 	}
 
 	const awardPoints = `
@@ -212,37 +187,22 @@ SET points    = COALESCE((SELECT h.points FROM team_handicap h
 WHERE tp.tournament_id = $1
   AND tp.category      = 'playoff'
   AND tp.group_letter  = $2
-  AND tp.slot_index   IN (0, 1)
-  AND tp.pick IN (SELECT team_id FROM tournament_group_table
-                  WHERE tournament_id = $1 AND group_letter = $2 AND description LIKE 'Promotion%')
+  AND tp.pick          = $3
   AND tp.points IS NULL`
 
-	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter); err != nil {
-		return fmt.Errorf("award playoff group points: %w", err)
-	}
-
-	const zeroRest = `
-UPDATE team_predictions
-SET points    = 0,
-    scored_at = now()
-WHERE tournament_id = $1
-  AND category      = 'playoff'
-  AND group_letter  = $2
-  AND slot_index   IN (0, 1)
-  AND points IS NULL`
-
-	if _, err := tx.Exec(ctx, zeroRest, tournamentID, groupLetter); err != nil {
-		return fmt.Errorf("zero remaining playoff group predictions: %w", err)
+	if _, err := tx.Exec(ctx, awardPoints, tournamentID, groupLetter, pos2); err != nil {
+		return fmt.Errorf("award playoff runner-up points: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("commit settle playoff group: %w", err)
+		return fmt.Errorf("commit settle playoff runner-up: %w", err)
 	}
 	return nil
 }
 
-// SettlePlayoffWildcardPredictions awards points for wildcard (slot_index=2) playoff predictions
-// after all groups have concluded. Advancing teams are already in team_outcomes(category='playoff').
+// SettlePlayoffWildcardPredictions awards points for wildcard playoff predictions
+// after all groups have concluded. The 8 best third-placed teams advance; ties are broken
+// by points, then goal difference, then goals scored.
 func (r *WorkerRepository) SettlePlayoffWildcardPredictions(
 	ctx context.Context,
 	tournamentID uuid.UUID,
@@ -253,6 +213,49 @@ func (r *WorkerRepository) SettlePlayoffWildcardPredictions(
 	}
 	defer tx.Rollback(ctx) //nolint:errcheck
 
+	// Find the 8 best third-placed teams across all groups.
+	const getWildcards = `
+SELECT team_id FROM tournament_group_table
+WHERE tournament_id = $1 AND position = 3
+ORDER BY points DESC,
+         (goals_for - goals_against) DESC,
+         goals_for DESC
+LIMIT 8`
+
+	rows, err := tx.Query(ctx, getWildcards, tournamentID)
+	if err != nil {
+		return fmt.Errorf("get wildcard teams: %w", err)
+	}
+	defer rows.Close() //nolint:errcheck
+
+	var wildcards []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return fmt.Errorf("scan wildcard team id: %w", err)
+		}
+		wildcards = append(wildcards, id)
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate wildcard teams: %w", err)
+	}
+	if len(wildcards) == 0 {
+		return fmt.Errorf("no third-placed teams found for tournament %s", tournamentID)
+	}
+
+	// Record outcomes.
+	const recordOutcome = `
+INSERT INTO team_outcomes (tournament_id, category, team_id)
+VALUES ($1, 'playoff', $2)
+ON CONFLICT (tournament_id, category, team_id) DO UPDATE SET recorded_at = now()`
+
+	for _, teamID := range wildcards {
+		if _, err := tx.Exec(ctx, recordOutcome, tournamentID, teamID); err != nil {
+			return fmt.Errorf("record wildcard outcome for team %s: %w", teamID, err)
+		}
+	}
+
+	// Award points — slot_index and group_letter are irrelevant for wildcard predictions.
 	const awardPoints = `
 UPDATE team_predictions tp
 SET points    = COALESCE((SELECT h.points FROM team_handicap h
@@ -260,24 +263,20 @@ SET points    = COALESCE((SELECT h.points FROM team_handicap h
     scored_at = now()
 WHERE tp.tournament_id = $1
   AND tp.category      = 'playoff'
-  AND tp.group_letter IS NULL
-  AND tp.slot_index    = 2
-  AND tp.pick IN (SELECT team_id FROM team_outcomes
-                  WHERE tournament_id = $1 AND category = 'playoff')
+  AND tp.pick          = ANY($2)
   AND tp.points IS NULL`
 
-	if _, err := tx.Exec(ctx, awardPoints, tournamentID); err != nil {
+	if _, err := tx.Exec(ctx, awardPoints, tournamentID, wildcards); err != nil {
 		return fmt.Errorf("award wildcard playoff points: %w", err)
 	}
 
+	// Zero remaining unsettled playoff predictions.
 	const zeroRest = `
 UPDATE team_predictions
 SET points    = 0,
     scored_at = now()
 WHERE tournament_id = $1
   AND category      = 'playoff'
-  AND group_letter IS NULL
-  AND slot_index    = 2
   AND points IS NULL`
 
 	if _, err := tx.Exec(ctx, zeroRest, tournamentID); err != nil {
