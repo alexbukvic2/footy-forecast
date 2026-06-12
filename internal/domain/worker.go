@@ -56,5 +56,13 @@ type StandingsEntry struct {
 	Lost         int
 	GoalsFor     int
 	GoalsAgainst int
-	Description  string // raw description from the API, e.g. "Promotion - Championship (Group Stage: 1)"
+	Description  string
+}
+
+// GroupFixture is a group-stage fixture whose score is already known.
+type GroupFixture struct {
+	HomeTeamID uuid.UUID
+	AwayTeamID uuid.UUID
+	GoalsHome  int
+	GoalsAway  int
 }

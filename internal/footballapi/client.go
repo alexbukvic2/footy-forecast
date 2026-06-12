@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/worker"
@@ -58,52 +57,6 @@ func (c *Client) GetFixture(
 		HomeWinner:  item.Teams.Home.Winner,
 		AwayWinner:  item.Teams.Away.Winner,
 	}, nil
-}
-
-// GetStandings fetches the current standings for a league/season.
-func (c *Client) GetStandings(
-	ctx context.Context,
-	externalLeagueID int64,
-	season int,
-) ([]worker.APIStandingsEntry, error) {
-	url := c.baseURL + "/standings?league=" + strconv.FormatInt(externalLeagueID, 10) +
-		"&season=" + strconv.Itoa(season)
-	var resp standingsResponse
-	if err := c.get(ctx, url, &resp); err != nil {
-		return nil, fmt.Errorf("get standings league %d season %d: %w", externalLeagueID, season, err)
-	}
-	if len(resp.Response) == 0 {
-		return nil, fmt.Errorf("get standings league %d season %d: empty response", externalLeagueID, season)
-	}
-
-	var entries []worker.APIStandingsEntry
-	for _, league := range resp.Response {
-		for _, group := range league.League.Standings {
-			for _, t := range group {
-				var groupLetter *string
-				if t.Group != "" {
-					g := strings.TrimPrefix(t.Group, "Group ")
-					groupLetter = &g
-				}
-				entries = append(
-					entries, worker.APIStandingsEntry{
-						TeamExternalID: t.Team.ID,
-						Group:          groupLetter,
-						Position:       t.Rank,
-						Points:         t.Points,
-						Played:         t.All.Played,
-						Won:            t.All.Win,
-						Drawn:          t.All.Draw,
-						Lost:           t.All.Lose,
-						GoalsFor:       t.All.Goals.For,
-						GoalsAgainst:   t.All.Goals.Against,
-						Description:    t.Description,
-					},
-				)
-			}
-		}
-	}
-	return entries, nil
 }
 
 // GetGroupTopScorer returns all top scorers for a specific group stage group.

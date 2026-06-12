@@ -996,21 +996,15 @@ func TestWorkerRepository_SettlePlayoffWildcardPredictions(t *testing.T) {
 	ctx := context.Background()
 	repo := repository.NewWorkerRepository(pool)
 	tourID := wInsertTournament(t, pool, ctx, true)
-	t1 := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	t1 := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 	t2 := wInsertTeam(t, pool, ctx, tourID, "", 0)
 	// Use separate users: one picks the team that advances, one picks the eliminated team.
 	userA := wInsertUser(t, pool, ctx)
 	userB := wInsertUser(t, pool, ctx)
 	wInsertTeamHandicap(t, pool, ctx, t1, "playoff", 6)
 
-	// t1 advanced (in team_outcomes); t2 eliminated
-	_, err := pool.Exec(
-		ctx,
-		`INSERT INTO team_outcomes (tournament_id, category, team_id) VALUES ($1,'playoff',$2)`,
-		tourID,
-		t1,
-	)
-	require.NoError(t, err)
+	// t1 is a third-placed wildcard qualifier; t2 is not in any group table entry.
+	wInsertGroupTableEntry(t, pool, ctx, tourID, t1, "A", 3)
 
 	wInsertTeamPredictionWildcard(t, pool, ctx, userA, tourID, "playoff", t1)
 	wInsertTeamPredictionWildcard(t, pool, ctx, userB, tourID, "playoff", t2)

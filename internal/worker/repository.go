@@ -17,6 +17,8 @@ type Repo interface {
 	UpdateMatchAndRescoreLivePredictions(ctx context.Context, f domain.PollableFixture, result APIFixtureResult) error
 
 	// Group standings
+	ListGroupTeams(ctx context.Context, tournamentID uuid.UUID, groupLetter string) ([]uuid.UUID, error)
+	ListGroupFixtures(ctx context.Context, tournamentID uuid.UUID, groupLetter string) ([]domain.GroupFixture, error)
 	UpdateGroupStandings(ctx context.Context, tournamentID uuid.UUID, groupLetter string, entries []domain.StandingsEntry) error
 
 	// Completion checks

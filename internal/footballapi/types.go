@@ -42,45 +42,6 @@ type teamResult struct {
 	Winner *bool `json:"winner"`
 }
 
-// standingsResponse is the top-level JSON envelope for GET /standings.
-type standingsResponse struct {
-	Response []standingsItem `json:"response"`
-}
-
-type standingsItem struct {
-	League standingsLeague `json:"league"`
-}
-
-type standingsLeague struct {
-	Standings [][]standingsTeam `json:"standings"`
-}
-
-type standingsTeam struct {
-	Rank        int              `json:"rank"`
-	Group       string           `json:"group"`
-	Team        standingsTeamRef `json:"team"`
-	Points      int              `json:"points"`
-	All         standingsStats   `json:"all"`
-	Description string           `json:"description"`
-}
-
-type standingsTeamRef struct {
-	ID int64 `json:"id"`
-}
-
-type standingsStats struct {
-	Played int            `json:"played"`
-	Win    int            `json:"win"`
-	Draw   int            `json:"draw"`
-	Lose   int            `json:"lose"`
-	Goals  standingsGoals `json:"goals"`
-}
-
-type standingsGoals struct {
-	For     int `json:"for"`
-	Against int `json:"against"`
-}
-
 // topScorersResponse is the top-level JSON envelope for GET /players/topscorers.
 type topScorersResponse struct {
 	Response []topScorerItem `json:"response"`

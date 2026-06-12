@@ -47,6 +47,8 @@ func (r *TournamentGroupTableRepository) ListByTournament(
 				Won:          int(row.Won),
 				Drawn:        int(row.Drawn),
 				Lost:         int(row.Lost),
+				GoalsFor:     int(row.GoalsFor),
+				GoalsAgainst: int(row.GoalsAgainst),
 				CreatedAt:    row.CreatedAt,
 				UpdatedAt:    row.UpdatedAt,
 			},
