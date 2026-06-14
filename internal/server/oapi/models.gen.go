@@ -595,6 +595,7 @@ type TeamWithHandicaps struct {
 	Id          openapi_types.UUID `json:"id"`
 	Logo        string             `json:"logo"`
 	Name        string             `json:"name"`
+	ShortName   string             `json:"short_name"`
 }
 
 // Tournament defines model for Tournament.

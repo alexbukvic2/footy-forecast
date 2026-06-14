@@ -37,6 +37,7 @@ type teamHandicapItemResponse struct {
 type teamWithHandicapsResponse struct {
 	ID          string                     `json:"id"`
 	Name        string                     `json:"name"`
+	ShortName   string                     `json:"short_name"`
 	Logo        string                     `json:"logo"`
 	GroupLetter *string                    `json:"group_letter,omitempty"`
 	Handicaps   []teamHandicapItemResponse `json:"handicaps"`
@@ -53,6 +54,7 @@ func toTeamWithHandicapsResponse(t domain.TeamWithHandicaps) teamWithHandicapsRe
 	return teamWithHandicapsResponse{
 		ID:          t.ID.String(),
 		Name:        t.Name,
+		ShortName:   t.ShortName,
 		Logo:        t.Logo,
 		GroupLetter: t.GroupLetter,
 		Handicaps:   handicaps,

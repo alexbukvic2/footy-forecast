@@ -6,6 +6,7 @@ import "github.com/google/uuid"
 type Team struct {
 	ID           uuid.UUID
 	Name         string
+	ShortName    string
 	Logo         string
 	TournamentID uuid.UUID
 	GroupLetter  *string

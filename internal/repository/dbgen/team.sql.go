@@ -12,7 +12,7 @@ import (
 )
 
 const getTeamByID = `-- name: GetTeamByID :one
-SELECT id, name, logo, tournament_id, group_letter
+SELECT id, name, short_name, logo, tournament_id, group_letter
 FROM teams
 WHERE id = $1
 `
@@ -20,6 +20,7 @@ WHERE id = $1
 type GetTeamByIDRow struct {
 	ID           uuid.UUID
 	Name         string
+	ShortName    string
 	Logo         string
 	TournamentID uuid.UUID
 	GroupLetter  *string
@@ -31,6 +32,7 @@ func (q *Queries) GetTeamByID(ctx context.Context, id uuid.UUID) (GetTeamByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
+		&i.ShortName,
 		&i.Logo,
 		&i.TournamentID,
 		&i.GroupLetter,
@@ -70,6 +72,7 @@ const listTeamsWithHandicapsByTournament = `-- name: ListTeamsWithHandicapsByTou
 SELECT
     t.id,
     t.name,
+    t.short_name,
     t.logo,
     t.tournament_id,
     t.group_letter,
@@ -84,6 +87,7 @@ ORDER BY t.name ASC, th.category ASC
 type ListTeamsWithHandicapsByTournamentRow struct {
 	ID               uuid.UUID
 	Name             string
+	ShortName        string
 	Logo             string
 	TournamentID     uuid.UUID
 	GroupLetter      *string
@@ -103,6 +107,7 @@ func (q *Queries) ListTeamsWithHandicapsByTournament(ctx context.Context, tourna
 		if err := rows.Scan(
 			&i.ID,
 			&i.Name,
+			&i.ShortName,
 			&i.Logo,
 			&i.TournamentID,
 			&i.GroupLetter,
