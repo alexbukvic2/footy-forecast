@@ -1,5 +1,5 @@
 -- name: GetTeamByID :one
-SELECT id, name, logo, tournament_id, group_letter
+SELECT id, name, short_name, logo, tournament_id, group_letter
 FROM teams
 WHERE id = @id;
 
@@ -14,6 +14,7 @@ ORDER BY group_letter ASC;
 SELECT
     t.id,
     t.name,
+    t.short_name,
     t.logo,
     t.tournament_id,
     t.group_letter,

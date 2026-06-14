@@ -1200,7 +1200,8 @@
           ],
           "id": "550e8400-e29b-41d4-a716-446655440010",
           "logo": "https://example.com/france.png",
-          "name": "France"
+          "name": "France",
+          "short_name": "FRA"
         },
         "properties": {
           "group_letter": {
@@ -1222,11 +1223,15 @@
           },
           "name": {
             "type": "string"
+          },
+          "short_name": {
+            "type": "string"
           }
         },
         "required": [
           "id",
           "name",
+          "short_name",
           "logo",
           "handicaps"
         ],

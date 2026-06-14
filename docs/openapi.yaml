@@ -438,12 +438,14 @@ components:
 
     TeamWithHandicaps:
       type: object
-      required: [id, name, logo, handicaps]
+      required: [id, name, short_name, logo, handicaps]
       properties:
         id:
           type: string
           format: uuid
         name:
+          type: string
+        short_name:
           type: string
         logo:
           type: string
@@ -457,6 +459,7 @@ components:
       example:
         id: "550e8400-e29b-41d4-a716-446655440010"
         name: "France"
+        short_name: "FRA"
         logo: "https://example.com/france.png"
         group_letter: "A"
         handicaps:

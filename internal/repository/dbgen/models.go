@@ -500,6 +500,7 @@ type Team struct {
 	TournamentID uuid.UUID
 	GroupLetter  *string
 	ExternalID   *int64
+	ShortName    string
 }
 
 type TeamHandicap struct {

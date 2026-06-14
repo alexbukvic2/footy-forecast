@@ -29,7 +29,7 @@ func TestTeamService_ListWithHandicaps_HappyPath(t *testing.T) {
 	tournamentID := uuid.New()
 	want := []domain.TeamWithHandicaps{
 		{
-			Team: domain.Team{ID: uuid.New(), Name: "France", TournamentID: tournamentID},
+			Team: domain.Team{ID: uuid.New(), Name: "France", ShortName: "FRA", TournamentID: tournamentID},
 			Handicaps: []domain.TeamHandicapItem{
 				{Category: domain.TeamHandicapCategoryWinner, Points: 20},
 			},

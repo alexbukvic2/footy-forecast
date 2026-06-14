@@ -36,6 +36,7 @@ func (r *TeamRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Tea
 	return &domain.Team{
 		ID:           row.ID,
 		Name:         row.Name,
+		ShortName:    row.ShortName,
 		Logo:         row.Logo,
 		TournamentID: row.TournamentID,
 		GroupLetter:  row.GroupLetter,
@@ -77,6 +78,7 @@ func (r *TeamRepository) ListWithHandicapsByTournament(ctx context.Context, tour
 				Team: domain.Team{
 					ID:           row.ID,
 					Name:         row.Name,
+					ShortName:    row.ShortName,
 					Logo:         row.Logo,
 					TournamentID: row.TournamentID,
 					GroupLetter:  row.GroupLetter,
