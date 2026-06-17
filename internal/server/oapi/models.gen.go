@@ -330,10 +330,12 @@ type LeagueDetail struct {
 
 // LeagueFixtureViewResponse defines model for LeagueFixtureViewResponse.
 type LeagueFixtureViewResponse struct {
-	AwayTeamName string `json:"away_team_name"`
-	ExternalId   int    `json:"external_id"`
-	GoalsAway    *int   `json:"goals_away,omitempty"`
-	GoalsHome    *int   `json:"goals_home,omitempty"`
+	// AiAnalysis AI-generated match trivia (2–3 bullet points). Null if the analysis job has not completed yet or the fixture is not finished.
+	AiAnalysis   *string `json:"ai_analysis,omitempty"`
+	AwayTeamName string  `json:"away_team_name"`
+	ExternalId   int     `json:"external_id"`
+	GoalsAway    *int    `json:"goals_away,omitempty"`
+	GoalsHome    *int    `json:"goals_home,omitempty"`
 
 	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
 	Group            *string                         `json:"group,omitempty"`

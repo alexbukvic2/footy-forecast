@@ -71,6 +71,7 @@ type leagueMemberScorePrediction struct {
 type leagueFixtureViewResponse struct {
 	fixtureResponse
 	Predictions []leagueMemberScorePrediction `json:"predictions"`
+	AIAnalysis  *string                       `json:"ai_analysis"`
 }
 
 // ---------- ScorePrediction handler ----------
@@ -273,5 +274,6 @@ func toLeagueFixtureViewResponse(v *domain.LeagueFixtureView) leagueFixtureViewR
 	return leagueFixtureViewResponse{
 		fixtureResponse: toFixtureResponse(v.Fixture),
 		Predictions:     preds,
+		AIAnalysis:      v.AIAnalysis,
 	}
 }

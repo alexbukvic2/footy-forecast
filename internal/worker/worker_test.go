@@ -155,6 +155,21 @@ func (r *fakeRepo) SettleTopScorerPredictions(_ context.Context, _ uuid.UUID, _ 
 	return nil
 }
 
+func (r *fakeRepo) ListLeaguesForFixture(_ context.Context, _ uuid.UUID) ([]uuid.UUID, error) {
+	r.inc("ListLeaguesForFixture")
+	return nil, nil
+}
+
+func (r *fakeRepo) GetFixtureAnalysisInput(_ context.Context, _ uuid.UUID, _ uuid.UUID) (domain.FixtureAnalysisInput, error) {
+	r.inc("GetFixtureAnalysisInput")
+	return domain.FixtureAnalysisInput{}, nil
+}
+
+func (r *fakeRepo) UpsertFixtureAnalysis(_ context.Context, _ uuid.UUID, _ uuid.UUID, _ string) error {
+	r.inc("UpsertFixtureAnalysis")
+	return nil
+}
+
 type fakeAPI struct {
 	mu           sync.Mutex
 	callCount    int64
@@ -189,8 +204,14 @@ type fakeClock struct{ t time.Time }
 
 func (c fakeClock) Now() time.Time { return c.t }
 
+type fakeAnalyser struct{}
+
+func (a *fakeAnalyser) Analyse(_ context.Context, _ string) (string, error) {
+	return "• Fake analysis", nil
+}
+
 func newWorker(repo worker.Repo, api worker.MatchAPI) *worker.Worker {
-	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute, 60)
+	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute, 60, &fakeAnalyser{})
 }
 
 // ---- helpers ----

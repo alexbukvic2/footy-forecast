@@ -34,6 +34,11 @@ type Repo interface {
 	GetTeamByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)
 	GetPlayerByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)
 
+	// AI analysis
+	ListLeaguesForFixture(ctx context.Context, fixtureID uuid.UUID) ([]uuid.UUID, error)
+	GetFixtureAnalysisInput(ctx context.Context, fixtureID uuid.UUID, leagueID uuid.UUID) (domain.FixtureAnalysisInput, error)
+	UpsertFixtureAnalysis(ctx context.Context, fixtureID uuid.UUID, leagueID uuid.UUID, analysis string) error
+
 	// Settlement
 	SettleGroupWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error
 	SettlePlayoffGroupPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error

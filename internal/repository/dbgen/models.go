@@ -481,6 +481,15 @@ type PushToken struct {
 	CreatedAt time.Time
 }
 
+type ScoreAiAnalysis struct {
+	ID        uuid.UUID
+	FixtureID uuid.UUID
+	LeagueID  uuid.UUID
+	Analysis  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 type ScorePrediction struct {
 	ID        uuid.UUID
 	UserID    uuid.UUID
