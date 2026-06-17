@@ -134,6 +134,7 @@ func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, re
 		out = append(out, &domain.LeagueFixtureView{
 			Fixture:     *fix,
 			Predictions: preds,
+			AIAnalysis:  row.AiAnalysis,
 		})
 	}
 	return out, nil
@@ -201,6 +202,7 @@ func (r *FixtureRepository) ListLockedByLeagueAndDates(ctx context.Context, leag
 		out = append(out, &domain.LeagueFixtureView{
 			Fixture:     *fix,
 			Predictions: preds,
+			AIAnalysis:  row.AiAnalysis,
 		})
 	}
 	return out, nil

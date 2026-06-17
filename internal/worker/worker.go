@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/alexbukvic2/footy-forecast/internal/bedrock"
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
 )
 
@@ -18,11 +19,12 @@ type Worker struct {
 	logger          *slog.Logger
 	pollInterval    time.Duration
 	lockLeadMinutes int
+	analyser        bedrock.Analyser
 }
 
 // New constructs a Worker. pollInterval controls how often the polling loop runs.
 // lockLeadMinutes is how many minutes before kickoff predictions are locked.
-func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration, lockLeadMinutes int) *Worker {
+func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration, lockLeadMinutes int, analyser bedrock.Analyser) *Worker {
 	return &Worker{
 		repo:            repo,
 		api:             api,
@@ -30,6 +32,7 @@ func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval
 		logger:          logger,
 		pollInterval:    pollInterval,
 		lockLeadMinutes: lockLeadMinutes,
+		analyser:        analyser,
 	}
 }
 
@@ -99,6 +102,10 @@ func (w *Worker) processSingleFixture(ctx context.Context, f domain.PollableFixt
 	}
 
 	w.runSettlement(ctx, f, result, newStatus)
+
+	if newStatus == domain.FixtureStatusFinished {
+		go w.runAIAnalysis(f.ID)
+	}
 }
 
 // MapAPIStatus converts an api-sports.io status.short string to a domain FixtureStatus.

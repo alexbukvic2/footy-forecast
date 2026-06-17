@@ -32,6 +32,9 @@ type Config struct {
 	WorkerPollInterval time.Duration `env:"WORKER_POLL_INTERVAL"     envDefault:"60s"`
 	// PredictionLockLeadMinutes is how many minutes before kickoff predictions are locked.
 	PredictionLockLeadMinutes int `env:"PREDICTION_LOCK_LEAD_MINUTES" envDefault:"60"`
+
+	BedrockRegion  string `env:"BEDROCK_REGION"   envDefault:"eu-central-1"`
+	BedrockModelID string `env:"BEDROCK_MODEL_ID" envDefault:"eu.anthropic.claude-sonnet-4-6"`
 }
 
 // Load reads configuration from the environment and validates it.
