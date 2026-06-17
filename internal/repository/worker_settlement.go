@@ -214,20 +214,6 @@ WHERE tp.tournament_id = $1
 		return fmt.Errorf("award playoff advancing points: %w", err)
 	}
 
-	// Zero remaining unsettled playoff predictions for this group (eliminated teams).
-	const zeroRest = `
-UPDATE team_predictions
-SET points    = 0,
-    scored_at = now()
-WHERE tournament_id = $1
-  AND category      = 'playoff'
-  AND group_letter  = $2
-  AND points IS NULL`
-
-	if _, err := tx.Exec(ctx, zeroRest, tournamentID, groupLetter); err != nil {
-		return fmt.Errorf("zero remaining group playoff predictions: %w", err)
-	}
-
 	if err := tx.Commit(ctx); err != nil {
 		return fmt.Errorf("commit settle playoff group: %w", err)
 	}
@@ -297,8 +283,7 @@ SET points    = COALESCE((SELECT h.points FROM team_handicap h
     scored_at = now()
 WHERE tp.tournament_id = $1
   AND tp.category      = 'playoff'
-  AND tp.pick          = ANY($2)
-  AND tp.points IS NULL`
+  AND tp.pick          = ANY($2)`
 
 	if _, err := tx.Exec(ctx, awardPoints, tournamentID, wildcards); err != nil {
 		return fmt.Errorf("award wildcard playoff points: %w", err)
