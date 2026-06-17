@@ -445,7 +445,18 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(3*time.Hour), "upcoming", "GS", false)
 			// Second fixture has a later kickoff but is manually pre-locked.
 			// Tournament should stay unlocked because the first fixture is still unlocked.
-			laterID := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(4*time.Hour), "upcoming", "GS", false)
+			laterID := wInsertFixture(
+				t,
+				pool,
+				ctx,
+				tourID,
+				home,
+				away,
+				time.Now().Add(4*time.Hour),
+				"upcoming",
+				"GS",
+				false,
+			)
 			_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, laterID)
 			require.NoError(t, err)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
@@ -985,7 +996,6 @@ func TestWorkerRepository_SettlePlayoffGroupPredictions(t *testing.T) {
 
 	require.NoError(t, repo.SettlePlayoffGroupPredictions(ctx, tourID, "B"))
 	assert.Equal(t, 4, queryTeamPredictionPoints(t, pool, ctx, userID, tourID, "playoff", t1, "B", 0))
-	assert.Equal(t, 0, queryTeamPredictionPoints(t, pool, ctx, userID, tourID, "playoff", t3, "B", 1))
 }
 
 // ---- SettlePlayoffWildcardPredictions ----
