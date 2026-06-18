@@ -180,8 +180,7 @@ SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
            'goals_away', sp.goals_away,
            'points', sp.points
        ) ORDER BY (lm.user_id = $1) DESC, u.display_name ASC), '[]'::json)::text
-       AS member_predictions,
-       saa.analysis AS ai_analysis
+       AS member_predictions
 FROM fixtures f
 JOIN teams home_t ON home_t.id = f.home_team_id
 JOIN teams away_t ON away_t.id = f.away_team_id
@@ -189,9 +188,8 @@ JOIN leagues l ON l.tournament_id = f.tournament_id
 JOIN league_members lm ON lm.league_id = l.id
 JOIN users u ON u.id = lm.user_id
 LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_id
-LEFT JOIN score_ai_analysis saa ON saa.fixture_id = f.id AND saa.league_id = l.id
 WHERE l.id = $2 AND f.status IN ('in_progress', 'finished', 'cancelled')
-GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter, saa.analysis
+GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter
 ORDER BY f.kickoff_at DESC
 `
 
@@ -218,7 +216,6 @@ type ListLockedFixturesByLeagueRow struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	MemberPredictions string
-	AiAnalysis        *string
 }
 
 func (q *Queries) ListLockedFixturesByLeague(ctx context.Context, arg ListLockedFixturesByLeagueParams) ([]ListLockedFixturesByLeagueRow, error) {
@@ -248,7 +245,6 @@ func (q *Queries) ListLockedFixturesByLeague(ctx context.Context, arg ListLocked
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.MemberPredictions,
-			&i.AiAnalysis,
 		); err != nil {
 			return nil, err
 		}
@@ -272,8 +268,7 @@ SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
            'goals_away', sp.goals_away,
            'points', sp.points
        ) ORDER BY (lm.user_id = $1) DESC, u.display_name ASC), '[]'::json)::text
-       AS member_predictions,
-       saa.analysis AS ai_analysis
+       AS member_predictions
 FROM fixtures f
 JOIN teams home_t ON home_t.id = f.home_team_id
 JOIN teams away_t ON away_t.id = f.away_team_id
@@ -281,11 +276,10 @@ JOIN leagues l ON l.tournament_id = f.tournament_id
 JOIN league_members lm ON lm.league_id = l.id
 JOIN users u ON u.id = lm.user_id
 LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_id
-LEFT JOIN score_ai_analysis saa ON saa.fixture_id = f.id AND saa.league_id = l.id
 WHERE l.id = $2
   AND f.prediction_locked = true
   AND f.kickoff_at::date = ANY($3::date[])
-GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter, saa.analysis
+GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter
 ORDER BY f.kickoff_at DESC
 `
 
@@ -313,7 +307,6 @@ type ListLockedFixturesByLeagueAndDatesRow struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	MemberPredictions string
-	AiAnalysis        *string
 }
 
 func (q *Queries) ListLockedFixturesByLeagueAndDates(ctx context.Context, arg ListLockedFixturesByLeagueAndDatesParams) ([]ListLockedFixturesByLeagueAndDatesRow, error) {
@@ -343,7 +336,6 @@ func (q *Queries) ListLockedFixturesByLeagueAndDates(ctx context.Context, arg Li
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.MemberPredictions,
-			&i.AiAnalysis,
 		); err != nil {
 			return nil, err
 		}

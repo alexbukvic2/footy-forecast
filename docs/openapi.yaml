@@ -908,12 +908,6 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/LeagueMemberScorePrediction'
-            ai_analysis:
-              type: string
-              nullable: true
-              description: >
-                AI-generated match trivia (2–3 bullet points). Null if the analysis
-                job has not completed yet or the fixture is not finished.
       example:
         id: "550e8400-e29b-41d4-a716-446655440011"
         external_id: 90001
@@ -930,7 +924,6 @@ components:
             goals_home: 2
             goals_away: 1
             points: 3
-        ai_analysis: "• Brazil edged a tight match 2–1 — only alice predicted the correct scoreline.\n• Half the league got the result right, but nobody predicted extra time.\n• The most popular prediction was 2–0; turns out Germany had other ideas."
 
     TournamentGroupTableEntry:
       type: object

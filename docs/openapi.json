@@ -331,11 +331,6 @@
           },
           {
             "properties": {
-              "ai_analysis": {
-                "description": "AI-generated match trivia (2–3 bullet points). Null if the analysis job has not completed yet or the fixture is not finished.\n",
-                "nullable": true,
-                "type": "string"
-              },
               "predictions": {
                 "items": {
                   "$ref": "#/components/schemas/LeagueMemberScorePrediction"
@@ -350,7 +345,6 @@
           }
         ],
         "example": {
-          "ai_analysis": "• Brazil edged a tight match 2–1 — only alice predicted the correct scoreline.\n• Half the league got the result right, but nobody predicted extra time.\n• The most popular prediction was 2–0; turns out Germany had other ideas.",
           "away_team_name": "Germany",
           "external_id": 90001,
           "goals_away": 1,
