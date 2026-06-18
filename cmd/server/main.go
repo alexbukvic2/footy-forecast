@@ -12,7 +12,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/alexbukvic2/footy-forecast/internal/bedrock"
 	"github.com/alexbukvic2/footy-forecast/internal/footballapi"
 	"github.com/alexbukvic2/footy-forecast/internal/notification/expo"
 	"github.com/alexbukvic2/footy-forecast/internal/notification/job"
@@ -81,11 +80,6 @@ func run(logger *slog.Logger) error {
 	defer pool.Close()
 	logger.Info("database connected")
 
-	analyser, err := bedrock.NewClient(cfg.BedrockRegion, cfg.BedrockModelID)
-	if err != nil {
-		return fmt.Errorf("create bedrock analyser: %w", err)
-	}
-
 	workerRepo := repository.NewWorkerRepository(pool)
 	apiClient := footballapi.NewClient(cfg.FootballAPIKey, cfg.FootballAPIBaseURL, nil)
 	w := worker.New(
@@ -95,7 +89,6 @@ func run(logger *slog.Logger) error {
 		logger,
 		cfg.WorkerPollInterval,
 		cfg.PredictionLockLeadMinutes,
-		analyser,
 	)
 
 	workerErr := make(chan error, 1)

@@ -56,5 +56,4 @@ type LeagueMemberPrediction struct {
 type LeagueFixtureView struct {
 	Fixture     Fixture
 	Predictions []LeagueMemberPrediction
-	AIAnalysis  *string // nil when analysis is not yet available
 }

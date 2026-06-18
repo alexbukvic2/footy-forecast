@@ -8,6 +8,3 @@ CREATE TABLE score_ai_analysis (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (fixture_id, league_id)
 );
-
--- +goose Down
-DROP TABLE score_ai_analysis;
