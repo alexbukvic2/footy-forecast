@@ -32,7 +32,11 @@ type Repo interface {
 
 	// ID resolution
 	GetTeamByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)
-	GetPlayerByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID) (uuid.UUID, error)
+
+	// Player stats
+	UpsertPlayerGoalsByExternalID(ctx context.Context, externalID int64, tournamentID uuid.UUID, goals int) error
+	GetGroupTopScorerPlayerIDs(ctx context.Context, tournamentID uuid.UUID, groupLetter string) ([]uuid.UUID, error)
+	GetTournamentTopScorerPlayerIDs(ctx context.Context, tournamentID uuid.UUID) ([]uuid.UUID, error)
 
 	// Settlement
 	SettleGroupWinnerPredictions(ctx context.Context, tournamentID uuid.UUID, groupLetter string) error

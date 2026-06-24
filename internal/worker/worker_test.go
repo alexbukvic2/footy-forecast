@@ -28,7 +28,8 @@ type fakeRepo struct {
 	roundComplete      bool
 	groupStageComplete bool
 
-	updateErr error
+	updateErr          error
+	topScorerPlayerIDs []uuid.UUID
 }
 
 func newFakeRepo(fixtures []domain.PollableFixture) *fakeRepo {
@@ -110,9 +111,23 @@ func (r *fakeRepo) GetTeamByExternalID(_ context.Context, _ int64, _ uuid.UUID) 
 	return uuid.New(), nil
 }
 
-func (r *fakeRepo) GetPlayerByExternalID(_ context.Context, _ int64, _ uuid.UUID) (uuid.UUID, error) {
-	r.inc("GetPlayerByExternalID")
-	return uuid.New(), nil
+func (r *fakeRepo) UpsertPlayerGoalsByExternalID(_ context.Context, _ int64, _ uuid.UUID, _ int) error {
+	r.inc("UpsertPlayerGoalsByExternalID")
+	return nil
+}
+
+func (r *fakeRepo) GetGroupTopScorerPlayerIDs(_ context.Context, _ uuid.UUID, _ string) ([]uuid.UUID, error) {
+	r.inc("GetGroupTopScorerPlayerIDs")
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.topScorerPlayerIDs, nil
+}
+
+func (r *fakeRepo) GetTournamentTopScorerPlayerIDs(_ context.Context, _ uuid.UUID) ([]uuid.UUID, error) {
+	r.inc("GetTournamentTopScorerPlayerIDs")
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.topScorerPlayerIDs, nil
 }
 
 func (r *fakeRepo) SettleGroupWinnerPredictions(_ context.Context, _ uuid.UUID, _ string) error {
@@ -156,29 +171,14 @@ func (r *fakeRepo) SettleTopScorerPredictions(_ context.Context, _ uuid.UUID, _ 
 }
 
 type fakeAPI struct {
-	mu           sync.Mutex
-	callCount    int64
-	result       worker.APIFixtureResult
-	err          error
-	topScorers   []worker.APITopScorerResult
-	topScorerErr error
+	callCount int64
+	result    worker.APIFixtureResult
+	err       error
 }
 
 func (a *fakeAPI) GetFixture(_ context.Context, _ int64) (worker.APIFixtureResult, error) {
 	atomic.AddInt64(&a.callCount, 1)
 	return a.result, a.err
-}
-
-func (a *fakeAPI) GetGroupTopScorer(_ context.Context, _ int64, _ int, _ string) ([]worker.APITopScorerResult, error) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-	return a.topScorers, a.topScorerErr
-}
-
-func (a *fakeAPI) GetTournamentTopScorer(_ context.Context, _ int64, _ int) ([]worker.APITopScorerResult, error) {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-	return a.topScorers, a.topScorerErr
 }
 
 func (a *fakeAPI) GetLeagueFixtures(_ context.Context, _ int64, _ int) ([]worker.APILeagueFixtureResult, error) {
@@ -390,13 +390,13 @@ func TestRunSettlement_GroupMatchGroupDone(t *testing.T) {
 	repo := newFakeRepo([]domain.PollableFixture{f})
 	repo.groupComplete = true
 	repo.groupStageComplete = false
+	repo.topScorerPlayerIDs = []uuid.UUID{uuid.New()}
 	api := &fakeAPI{
 		result: worker.APIFixtureResult{
 			StatusShort: "FT",
 			GoalsHome:   intPtr(2),
 			GoalsAway:   intPtr(1),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 999, Goals: 3}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -420,13 +420,13 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 	repo := newFakeRepo([]domain.PollableFixture{f})
 	repo.groupComplete = true
 	repo.groupStageComplete = true
+	repo.topScorerPlayerIDs = []uuid.UUID{uuid.New()}
 	api := &fakeAPI{
 		result: worker.APIFixtureResult{
 			StatusShort: "FT",
 			GoalsHome:   intPtr(1),
 			GoalsAway:   intPtr(0),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 1, Goals: 5}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -485,6 +485,7 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 	f := finishedFixture("Final")
 	repo := newFakeRepo([]domain.PollableFixture{f})
 	repo.roundComplete = false // not a QF round so irrelevant
+	repo.topScorerPlayerIDs = []uuid.UUID{uuid.New()}
 	hw := true
 	api := &fakeAPI{
 		result: worker.APIFixtureResult{
@@ -493,7 +494,6 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 			GoalsHome:   intPtr(3),
 			GoalsAway:   intPtr(1),
 		},
-		topScorers: []worker.APITopScorerResult{{PlayerExternalID: 42, Goals: 7}},
 	}
 	w := newWorker(repo, api)
 	runOneTick(w)
@@ -509,6 +509,7 @@ func TestRunSettlement_FinalConcluded(t *testing.T) {
 func TestRunSettlement_FinalConcluded_MultipleTopScorers(t *testing.T) {
 	f := finishedFixture("Final")
 	repo := newFakeRepo([]domain.PollableFixture{f})
+	repo.topScorerPlayerIDs = []uuid.UUID{uuid.New(), uuid.New(), uuid.New()}
 	hw := true
 	api := &fakeAPI{
 		result: worker.APIFixtureResult{
@@ -516,11 +517,6 @@ func TestRunSettlement_FinalConcluded_MultipleTopScorers(t *testing.T) {
 			HomeWinner:  &hw,
 			GoalsHome:   intPtr(2),
 			GoalsAway:   intPtr(1),
-		},
-		topScorers: []worker.APITopScorerResult{
-			{PlayerExternalID: 10, Goals: 6},
-			{PlayerExternalID: 11, Goals: 6},
-			{PlayerExternalID: 12, Goals: 6},
 		},
 	}
 	w := newWorker(repo, api)
@@ -540,15 +536,12 @@ func TestRunSettlement_GroupDone_MultipleTopScorers(t *testing.T) {
 	repo := newFakeRepo([]domain.PollableFixture{f})
 	repo.groupComplete = true
 	repo.groupStageComplete = false
+	repo.topScorerPlayerIDs = []uuid.UUID{uuid.New(), uuid.New()}
 	api := &fakeAPI{
 		result: worker.APIFixtureResult{
 			StatusShort: "FT",
 			GoalsHome:   intPtr(1),
 			GoalsAway:   intPtr(0),
-		},
-		topScorers: []worker.APITopScorerResult{
-			{PlayerExternalID: 20, Goals: 4},
-			{PlayerExternalID: 21, Goals: 4},
 		},
 	}
 	w := newWorker(repo, api)

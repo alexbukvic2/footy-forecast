@@ -31,50 +31,6 @@ func testClient(t *testing.T) *Client {
 	return NewClient(key, baseURL, nil)
 }
 
-// TestClient_GetTournamentTopScorer verifies that the top-scorers response decodes
-// correctly and that all returned players share the same (highest) goal count.
-func TestClient_GetTournamentTopScorer(t *testing.T) {
-	c := testClient(t)
-	ctx := context.Background()
-
-	results, err := c.GetTournamentTopScorer(ctx, testLeagueID, testSeason)
-	require.NoError(t, err)
-	require.NotEmpty(t, results, "expected at least one top scorer")
-
-	topGoals := results[0].Goals
-	for _, r := range results {
-		assert.NotEmpty(t, r.PlayerExternalID, "PlayerExternalID must not be empty")
-		assert.Positive(t, r.Goals, "top scorer must have scored at least one goal")
-		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
-	}
-
-	t.Logf("top scorers: count=%d goals=%d first_player=%d", len(results), topGoals, results[0].PlayerExternalID)
-}
-
-// TestClient_GetGroupTopScorer verifies the group-top-scorer path (which falls back
-// to the full tournament top scorers endpoint for leagues that don't support
-// group filtering).
-func TestClient_GetGroupTopScorer(t *testing.T) {
-	c := testClient(t)
-	ctx := context.Background()
-
-	results, err := c.GetGroupTopScorer(ctx, testLeagueID, testSeason, "A")
-	require.NoError(t, err)
-	require.NotEmpty(t, results, "expected at least one top scorer")
-
-	topGoals := results[0].Goals
-	for _, r := range results {
-		assert.NotEmpty(t, r.PlayerExternalID)
-		assert.Positive(t, r.Goals)
-		assert.Equal(t, topGoals, r.Goals, "all returned players must share the top goal count")
-	}
-
-	t.Logf(
-		"group top scorer (league-wide fallback): count=%d goals=%d first_player=%d",
-		len(results), topGoals, results[0].PlayerExternalID,
-	)
-}
-
 // TestClient_GetFixture first fetches any finished fixture for league 1 / season 2022
 // using the private get() helper (white-box, same package), then calls GetFixture
 // with that ID to validate the full struct mapping.
@@ -115,7 +71,8 @@ func TestClient_GetFixture(t *testing.T) {
 	}
 
 	t.Logf(
-		"fixture %d: status=%s home_goals=%d away_goals=%d",
+		"fixture %d: status=%s home_goals=%d away_goals=%d goal_scorers=%d",
 		fixtureID, result.StatusShort, *result.GoalsHome, *result.GoalsAway,
+		len(result.GoalScorerExternalIDs),
 	)
 }

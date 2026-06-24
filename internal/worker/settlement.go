@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
 
@@ -28,6 +29,8 @@ func (w *Worker) runSettlement(
 		// No outright settlement for cancelled matches.
 		return
 	}
+
+	w.updatePlayerGoals(ctx, f, result.GoalScorerExternalIDs)
 
 	winnerTeamID := resolveWinnerTeamID(result, f)
 
@@ -79,20 +82,17 @@ func (w *Worker) settleGroupMatch(
 			w.logger.Error("worker: settle playoff group predictions", "fixture_id", f.ID, "err", err)
 		}
 
-		topScorers, err := w.api.GetGroupTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason, *f.GroupLetter)
+		playerIDs, err := w.repo.GetGroupTopScorerPlayerIDs(ctx, f.TournamentID, *f.GroupLetter)
 		if err != nil {
-			w.logger.Warn("worker: get group top scorer", "fixture_id", f.ID, "group", *f.GroupLetter, "err", err)
-		} else {
-			playerIDs := w.resolveTopScorerPlayerIDs(ctx, topScorers, f.TournamentID)
-			if len(playerIDs) > 0 {
-				if err := w.repo.SettleGroupTopScorerPredictions(
-					ctx,
-					f.TournamentID,
-					*f.GroupLetter,
-					playerIDs,
-				); err != nil {
-					w.logger.Error("worker: settle group top scorer predictions", "fixture_id", f.ID, "err", err)
-				}
+			w.logger.Warn("worker: get group top scorer player ids", "fixture_id", f.ID, "group", *f.GroupLetter, "err", err)
+		} else if len(playerIDs) > 0 {
+			if err := w.repo.SettleGroupTopScorerPredictions(
+				ctx,
+				f.TournamentID,
+				*f.GroupLetter,
+				playerIDs,
+			); err != nil {
+				w.logger.Error("worker: settle group top scorer predictions", "fixture_id", f.ID, "err", err)
 			}
 		}
 
@@ -139,21 +139,44 @@ func (w *Worker) settleKnockoutMatch(
 			w.logger.Error("worker: settle tournament winner predictions", "fixture_id", f.ID, "err", err)
 		}
 
-		topScorers, err := w.api.GetTournamentTopScorer(ctx, f.TournamentExternalID, f.TournamentSeason)
+		playerIDs, err := w.repo.GetTournamentTopScorerPlayerIDs(ctx, f.TournamentID)
 		if err != nil {
-			w.logger.Warn("worker: get tournament top scorer", "fixture_id", f.ID, "err", err)
-		} else {
-			playerIDs := w.resolveTopScorerPlayerIDs(ctx, topScorers, f.TournamentID)
-			if len(playerIDs) > 0 {
-				if err := w.repo.SettleTopScorerPredictions(ctx, f.TournamentID, playerIDs); err != nil {
-					w.logger.Error("worker: settle top scorer predictions", "fixture_id", f.ID, "err", err)
-				}
+			w.logger.Warn("worker: get tournament top scorer player ids", "fixture_id", f.ID, "err", err)
+		} else if len(playerIDs) > 0 {
+			if err := w.repo.SettleTopScorerPredictions(ctx, f.TournamentID, playerIDs); err != nil {
+				w.logger.Error("worker: settle top scorer predictions", "fixture_id", f.ID, "err", err)
 			}
 		}
 	}
 
 	// Any playoff fixture finishing may reveal new fixtures in the API (e.g. next-round draw).
 	w.refreshFixturesForTournament(ctx, f.TournamentExternalID, f.TournamentSeason, f.TournamentID)
+}
+
+// updatePlayerGoals records goals scored in a finished fixture into players_stats.
+// Each entry in goalScorerExternalIDs is one goal (a player appears N times if they scored N goals).
+func (w *Worker) updatePlayerGoals(
+	ctx context.Context,
+	f domain.PollableFixture,
+	goalScorerExternalIDs []int64,
+) {
+	if len(goalScorerExternalIDs) == 0 {
+		return
+	}
+	counts := make(map[int64]int, len(goalScorerExternalIDs))
+	for _, id := range goalScorerExternalIDs {
+		counts[id]++
+	}
+	for externalID, goals := range counts {
+		err := w.repo.UpsertPlayerGoalsByExternalID(ctx, externalID, f.TournamentID, goals)
+		if err != nil {
+			if errors.Is(err, domain.ErrNotFound) {
+				w.logger.Warn("worker: goal scorer not found", "external_id", externalID, "tournament_id", f.TournamentID)
+			} else {
+				w.logger.Error("worker: upsert player goals", "external_id", externalID, "err", err)
+			}
+		}
+	}
 }
 
 // resolveWinnerTeamID returns the winning team's UUID based on the API result.
@@ -170,23 +193,4 @@ func resolveWinnerTeamID(
 		return &id
 	}
 	return nil
-}
-
-// resolveTopScorerPlayerIDs maps APITopScorerResult entries to internal player UUIDs.
-// Entries whose external ID is unknown are logged and skipped.
-func (w *Worker) resolveTopScorerPlayerIDs(
-	ctx context.Context,
-	scorers []APITopScorerResult,
-	tournamentID uuid.UUID,
-) []uuid.UUID {
-	ids := make([]uuid.UUID, 0, len(scorers))
-	for _, ts := range scorers {
-		playerID, err := w.repo.GetPlayerByExternalID(ctx, ts.PlayerExternalID, tournamentID)
-		if err != nil {
-			w.logger.Warn("worker: resolve top scorer player", "external_id", ts.PlayerExternalID, "err", err)
-			continue
-		}
-		ids = append(ids, playerID)
-	}
-	return ids
 }
