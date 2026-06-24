@@ -11,6 +11,7 @@ type fixtureItem struct {
 	League  fixtureLeague  `json:"league"`
 	Goals   goalsDetails   `json:"goals"`
 	Teams   teamsDetails   `json:"teams"`
+	Events  []fixtureEvent `json:"events"`
 }
 
 type fixtureLeague struct {
@@ -37,29 +38,17 @@ type teamsDetails struct {
 	Away teamResult `json:"away"`
 }
 
+type fixtureEvent struct {
+	Player playerRef `json:"player"`
+	Type   string    `json:"type"`   // "Goal", "Card", etc.
+	Detail string    `json:"detail"` // "Normal Goal", "Own Goal", "Penalty", etc.
+}
+
 type teamResult struct {
 	ID     int64 `json:"id"`
 	Winner *bool `json:"winner"`
 }
 
-// topScorersResponse is the top-level JSON envelope for GET /players/topscorers.
-type topScorersResponse struct {
-	Response []topScorerItem `json:"response"`
-}
-
-type topScorerItem struct {
-	Player playerRef    `json:"player"`
-	Stats  []playerStat `json:"statistics"`
-}
-
 type playerRef struct {
 	ID int64 `json:"id"`
-}
-
-type playerStat struct {
-	Goals goalsStat `json:"goals"`
-}
-
-type goalsStat struct {
-	Total *int `json:"total"`
 }

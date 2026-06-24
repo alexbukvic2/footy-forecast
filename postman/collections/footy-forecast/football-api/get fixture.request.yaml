@@ -1,4 +1,9 @@
 $kind: http-request
-url: ""
+name: get fixture
+url: https://v3.football.api-sports.io/fixtures?id=1539009
 method: GET
+headers:
+  x-apisports-key: "{{apisports-key}}"
+queryParams:
+  id: "1539009"
 order: 3728064549745429

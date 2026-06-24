@@ -330,6 +330,105 @@ ON CONFLICT (external_id) DO NOTHING`
 	return nil
 }
 
+// UpsertPlayerGoalsByExternalID looks up the player by external ID and tournament,
+// then adds goals to their running total in a single round trip.
+// Returns domain.ErrNotFound if no matching player exists.
+func (r *WorkerRepository) UpsertPlayerGoalsByExternalID(
+	ctx context.Context,
+	externalID int64,
+	tournamentID uuid.UUID,
+	goals int,
+) error {
+	const q = `
+INSERT INTO players_stats (player_id, goals)
+SELECT id, $3
+FROM players
+WHERE external_id = $1
+  AND tournament_id = $2
+ON CONFLICT (player_id) DO UPDATE SET goals = players_stats.goals + EXCLUDED.goals`
+	tag, err := r.pool.Exec(ctx, q, externalID, tournamentID, goals)
+	if err != nil {
+		return fmt.Errorf("upsert player goals external_id %d: %w", externalID, err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("upsert player goals external_id %d tournament %s: %w", externalID, tournamentID, domain.ErrNotFound)
+	}
+	return nil
+}
+
+// GetGroupTopScorerPlayerIDs returns internal player UUIDs tied at the highest goal
+// count among players in the given group. Returns empty slice when no goals are recorded.
+func (r *WorkerRepository) GetGroupTopScorerPlayerIDs(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+	groupLetter string,
+) ([]uuid.UUID, error) {
+	const q = `
+SELECT ps.player_id
+FROM players_stats ps
+JOIN players p ON p.id = ps.player_id
+JOIN teams   t ON t.id = p.team_id
+WHERE p.tournament_id = $1
+  AND t.group_letter  = $2
+  AND ps.goals = (
+    SELECT MAX(ps2.goals)
+    FROM players_stats ps2
+    JOIN players p2 ON p2.id = ps2.player_id
+    JOIN teams   t2 ON t2.id = p2.team_id
+    WHERE p2.tournament_id = $1
+      AND t2.group_letter  = $2
+  )
+ORDER BY ps.player_id`
+	rows, err := r.pool.Query(ctx, q, tournamentID, groupLetter)
+	if err != nil {
+		return nil, fmt.Errorf("get group top scorer player ids: %w", err)
+	}
+	defer rows.Close()
+	var ids []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan group top scorer player id: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
+// GetTournamentTopScorerPlayerIDs returns internal player UUIDs tied at the highest
+// goal count in the tournament. Returns empty slice when no goals are recorded.
+func (r *WorkerRepository) GetTournamentTopScorerPlayerIDs(
+	ctx context.Context,
+	tournamentID uuid.UUID,
+) ([]uuid.UUID, error) {
+	const q = `
+SELECT ps.player_id
+FROM players_stats ps
+JOIN players p ON p.id = ps.player_id
+WHERE p.tournament_id = $1
+  AND ps.goals = (
+    SELECT MAX(ps2.goals)
+    FROM players_stats ps2
+    JOIN players p2 ON p2.id = ps2.player_id
+    WHERE p2.tournament_id = $1
+  )
+ORDER BY ps.player_id`
+	rows, err := r.pool.Query(ctx, q, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("get tournament top scorer player ids: %w", err)
+	}
+	defer rows.Close()
+	var ids []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan tournament top scorer player id: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
 // ListGroupTeams returns the IDs of all teams assigned to a given group letter in a tournament.
 func (r *WorkerRepository) ListGroupTeams(
 	ctx context.Context,

@@ -19,18 +19,11 @@ type Client struct {
 }
 
 // NewClient constructs a Client. If httpClient is nil, http.DefaultClient is used.
-func NewClient(
-	apiKey, baseURL string,
-	httpClient *http.Client,
-) *Client {
+func NewClient(apiKey, baseURL string, httpClient *http.Client) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
-	return &Client{
-		apiKey:  apiKey,
-		baseURL: baseURL,
-		http:    httpClient,
-	}
+	return &Client{apiKey: apiKey, baseURL: baseURL, http: httpClient}
 }
 
 var _ worker.MatchAPI = (*Client)(nil)
@@ -49,36 +42,23 @@ func (c *Client) GetFixture(
 		return worker.APIFixtureResult{}, fmt.Errorf("get fixture %d: empty response", externalFixtureID)
 	}
 	item := resp.Response[0]
+
+	var goalScorerIDs []int64
+	for _, e := range item.Events {
+		if e.Type == "Goal" && e.Detail != "Own Goal" {
+			goalScorerIDs = append(goalScorerIDs, e.Player.ID)
+		}
+	}
+
 	return worker.APIFixtureResult{
-		ExternalID:  item.Fixture.ID,
-		StatusShort: item.Fixture.Status.Short,
-		GoalsHome:   item.Goals.Home,
-		GoalsAway:   item.Goals.Away,
-		HomeWinner:  item.Teams.Home.Winner,
-		AwayWinner:  item.Teams.Away.Winner,
+		ExternalID:            item.Fixture.ID,
+		StatusShort:           item.Fixture.Status.Short,
+		GoalsHome:             item.Goals.Home,
+		GoalsAway:             item.Goals.Away,
+		HomeWinner:            item.Teams.Home.Winner,
+		AwayWinner:            item.Teams.Away.Winner,
+		GoalScorerExternalIDs: goalScorerIDs,
 	}, nil
-}
-
-// GetGroupTopScorer returns all top scorers for a specific group stage group.
-// api-sports.io does not have a group-filtered top scorers endpoint, so this
-// fetches all top scorers for the league/season and returns all players tied
-// at the top goal count. See plan open question 6.
-func (c *Client) GetGroupTopScorer(
-	ctx context.Context,
-	externalLeagueID int64,
-	season int,
-	_ string,
-) ([]worker.APITopScorerResult, error) {
-	return c.getTopScorers(ctx, externalLeagueID, season)
-}
-
-// GetTournamentTopScorer returns all players tied for the most goals in the tournament.
-func (c *Client) GetTournamentTopScorer(
-	ctx context.Context,
-	externalLeagueID int64,
-	season int,
-) ([]worker.APITopScorerResult, error) {
-	return c.getTopScorers(ctx, externalLeagueID, season)
 }
 
 // GetLeagueFixtures fetches all fixtures for a league/season and returns them.
@@ -114,57 +94,7 @@ func (c *Client) GetLeagueFixtures(
 	return results, nil
 }
 
-func (c *Client) getTopScorers(
-	ctx context.Context,
-	externalLeagueID int64,
-	season int,
-) ([]worker.APITopScorerResult, error) {
-	url := c.baseURL + "/players/topscorers?league=" + strconv.FormatInt(externalLeagueID, 10) +
-		"&season=" + strconv.Itoa(season)
-	var resp topScorersResponse
-	if err := c.get(ctx, url, &resp); err != nil {
-		return nil, fmt.Errorf(
-			"get top scorers league %d season %d: %w",
-			externalLeagueID,
-			season,
-			err,
-		)
-	}
-	if len(resp.Response) == 0 {
-		return nil, fmt.Errorf(
-			"get top scorers league %d season %d: empty response",
-			externalLeagueID,
-			season,
-		)
-	}
-
-	topGoals := 0
-	if len(resp.Response[0].Stats) > 0 && resp.Response[0].Stats[0].Goals.Total != nil {
-		topGoals = *resp.Response[0].Stats[0].Goals.Total
-	}
-
-	results := make([]worker.APITopScorerResult, 0, len(resp.Response))
-	for _, item := range resp.Response {
-		goals := 0
-		if len(item.Stats) > 0 && item.Stats[0].Goals.Total != nil {
-			goals = *item.Stats[0].Goals.Total
-		}
-		if goals < topGoals {
-			break
-		}
-		results = append(results, worker.APITopScorerResult{
-			PlayerExternalID: item.Player.ID,
-			Goals:            goals,
-		})
-	}
-	return results, nil
-}
-
-func (c *Client) get(
-	ctx context.Context,
-	url string,
-	dest any,
-) error {
+func (c *Client) get(ctx context.Context, url string, dest any) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return fmt.Errorf("build request: %w", err)
