@@ -57,7 +57,7 @@ func (q *Queries) ListPredictionsByUserAndTournament(ctx context.Context, arg Li
 
 const upsertScorePrediction = `-- name: UpsertScorePrediction :one
 INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away, winner)
-VALUES ($1, $2, $3, $4, $5)
+VALUES ($1, $2, $3, $4, NULLIF($5, '00000000-0000-0000-0000-000000000000'::uuid))
 ON CONFLICT (user_id, fixture_id) DO UPDATE
     SET goals_home = EXCLUDED.goals_home,
         goals_away = EXCLUDED.goals_away,
