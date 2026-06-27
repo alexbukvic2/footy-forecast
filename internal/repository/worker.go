@@ -315,14 +315,16 @@ func (r *WorkerRepository) InsertMissingFixtures(
 	fixtures []domain.NewFixture,
 ) error {
 	const q = `
-INSERT INTO fixtures (external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status, round, goals_home, goals_away)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+INSERT INTO fixtures (external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status, round, goals_home_regular, goals_away_regular, goals_home, goals_away)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 ON CONFLICT (external_id) DO NOTHING`
 	for _, f := range fixtures {
 		if _, err := r.pool.Exec(
 			ctx, q,
 			f.ExternalID, tournamentID, f.HomeTeamID, f.AwayTeamID,
-			f.KickoffAt, string(f.Status), f.Round, f.GoalsHome, f.GoalsAway,
+			f.KickoffAt, string(f.Status), f.Round,
+			f.GoalsHome, f.GoalsAway, // regular = total for refreshed fixtures (no ET distinction)
+			f.GoalsHome, f.GoalsAway,
 		); err != nil {
 			return fmt.Errorf("insert fixture external_id %d: %w", f.ExternalID, err)
 		}
@@ -351,7 +353,12 @@ ON CONFLICT (player_id) DO UPDATE SET goals = players_stats.goals + EXCLUDED.goa
 		return fmt.Errorf("upsert player goals external_id %d: %w", externalID, err)
 	}
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("upsert player goals external_id %d tournament %s: %w", externalID, tournamentID, domain.ErrNotFound)
+		return fmt.Errorf(
+			"upsert player goals external_id %d tournament %s: %w",
+			externalID,
+			tournamentID,
+			domain.ErrNotFound,
+		)
 	}
 	return nil
 }
@@ -459,13 +466,13 @@ func (r *WorkerRepository) ListGroupFixtures(
 	groupLetter string,
 ) ([]domain.GroupFixture, error) {
 	const q = `
-SELECT f.home_team_id, f.away_team_id, f.goals_home, f.goals_away
+SELECT f.home_team_id, f.away_team_id, f.goals_home_regular, f.goals_away_regular
 FROM fixtures f
 JOIN teams t ON t.id = f.home_team_id
 WHERE f.tournament_id = $1
-  AND t.group_letter   = $2
-  AND f.goals_home    IS NOT NULL
-  AND f.goals_away    IS NOT NULL`
+  AND t.group_letter        = $2
+  AND f.goals_home_regular IS NOT NULL
+  AND f.goals_away_regular IS NOT NULL`
 	rows, err := r.pool.Query(ctx, q, tournamentID, groupLetter)
 	if err != nil {
 		return nil, fmt.Errorf("list group fixtures: %w", err)

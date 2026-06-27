@@ -189,7 +189,8 @@ func TestPredictionService_UpsertScore_HappyPath(t *testing.T) {
 			context.Context,
 			uuid.UUID,
 		) (*domain.Fixture, error) {
-			return &domain.Fixture{KickoffAt: kickoff}, nil
+			group := "A"
+			return &domain.Fixture{KickoffAt: kickoff, Group: &group}, nil
 		}},
 	)
 	got, err := svc.UpsertScore(context.Background(), domain.UpsertScorePredictionInput{GoalsHome: 2, GoalsAway: 1})

@@ -13,6 +13,7 @@ type ScorePrediction struct {
 	FixtureID uuid.UUID
 	GoalsHome int
 	GoalsAway int
+	Winner    *uuid.UUID // nil for group-stage predictions; required for knockout
 	Points    *int
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -24,4 +25,5 @@ type UpsertScorePredictionInput struct {
 	FixtureID uuid.UUID
 	GoalsHome int
 	GoalsAway int
+	Winner    *uuid.UUID // must match fixture home/away team if fixture is knockout
 }

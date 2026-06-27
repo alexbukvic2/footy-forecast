@@ -15,5 +15,6 @@ body:
   content: |-
     {
       "goals_home": 2,
-      "goals_away": 1
+      "goals_away": 1,
+      "winner": null
     }

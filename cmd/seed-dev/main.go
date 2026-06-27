@@ -360,8 +360,8 @@ func insertFixtures(
 			ctx,
 			`INSERT INTO fixtures
 			   (id, external_id, tournament_id, home_team_id, away_team_id,
-			    round, kickoff_at, status, goals_home, goals_away, prediction_locked)
-			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8::fixture_status, $9, $10, $11)`,
+			    round, kickoff_at, status, goals_home_regular, goals_away_regular, goals_home, goals_away, prediction_locked)
+			 VALUES ($1, $2, $3, $4, $5, $6, $7, $8::fixture_status, $9, $10, $9, $10, $11)`,
 			f.ID, f.ExternalID, tournamentID,
 			f.HomeTeamID, f.AwayTeamID,
 			f.Round, f.KickoffAt, f.Status, f.GoalsHome, f.GoalsAway, f.Locked,

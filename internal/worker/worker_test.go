@@ -56,12 +56,19 @@ func (r *fakeRepo) ListActiveTournaments(_ context.Context) ([]domain.ActiveTour
 	return nil, nil
 }
 
-func (r *fakeRepo) InsertMissingFixtures(_ context.Context, _ uuid.UUID, _ []domain.NewFixture) error {
+func (r *fakeRepo) InsertMissingFixtures(
+	_ context.Context,
+	_ uuid.UUID,
+	_ []domain.NewFixture,
+) error {
 	r.inc("InsertMissingFixtures")
 	return nil
 }
 
-func (r *fakeRepo) LockImminentFixtures(_ context.Context, _ int) error {
+func (r *fakeRepo) LockImminentFixtures(
+	_ context.Context,
+	_ int,
+) error {
 	r.inc("LockImminentFixtures")
 	return nil
 }
@@ -71,101 +78,175 @@ func (r *fakeRepo) ListPollableMatches(_ context.Context) ([]domain.PollableFixt
 	return r.fixtures, r.listErr
 }
 
-func (r *fakeRepo) UpdateMatchAndRescoreLivePredictions(_ context.Context, _ domain.PollableFixture, _ worker.APIFixtureResult) error {
+func (r *fakeRepo) UpdateMatchAndRescoreLivePredictions(
+	_ context.Context,
+	_ domain.PollableFixture,
+	_ worker.APIFixtureResult,
+) error {
 	r.inc("UpdateMatchAndRescoreLivePredictions")
 	return r.updateErr
 }
 
-func (r *fakeRepo) ListGroupTeams(_ context.Context, _ uuid.UUID, _ string) ([]uuid.UUID, error) {
+func (r *fakeRepo) ListGroupTeams(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) ([]uuid.UUID, error) {
 	r.inc("ListGroupTeams")
 	return nil, nil
 }
 
-func (r *fakeRepo) ListGroupFixtures(_ context.Context, _ uuid.UUID, _ string) ([]domain.GroupFixture, error) {
+func (r *fakeRepo) ListGroupFixtures(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) ([]domain.GroupFixture, error) {
 	r.inc("ListGroupFixtures")
 	return nil, nil
 }
 
-func (r *fakeRepo) UpdateGroupStandings(_ context.Context, _ uuid.UUID, _ string, _ []domain.StandingsEntry) error {
+func (r *fakeRepo) UpdateGroupStandings(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+	_ []domain.StandingsEntry,
+) error {
 	r.inc("UpdateGroupStandings")
 	return nil
 }
 
-func (r *fakeRepo) IsGroupComplete(_ context.Context, _ uuid.UUID, _ string) (bool, error) {
+func (r *fakeRepo) IsGroupComplete(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) (bool, error) {
 	r.inc("IsGroupComplete")
 	return r.groupComplete, nil
 }
 
-func (r *fakeRepo) IsRoundComplete(_ context.Context, _ uuid.UUID, _ string) (bool, error) {
+func (r *fakeRepo) IsRoundComplete(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) (bool, error) {
 	r.inc("IsRoundComplete")
 	return r.roundComplete, nil
 }
 
-func (r *fakeRepo) IsGroupStageComplete(_ context.Context, _ uuid.UUID) (bool, error) {
+func (r *fakeRepo) IsGroupStageComplete(
+	_ context.Context,
+	_ uuid.UUID,
+) (bool, error) {
 	r.inc("IsGroupStageComplete")
 	return r.groupStageComplete, nil
 }
 
-func (r *fakeRepo) GetTeamByExternalID(_ context.Context, _ int64, _ uuid.UUID) (uuid.UUID, error) {
+func (r *fakeRepo) GetTeamByExternalID(
+	_ context.Context,
+	_ int64,
+	_ uuid.UUID,
+) (uuid.UUID, error) {
 	r.inc("GetTeamByExternalID")
 	return uuid.New(), nil
 }
 
-func (r *fakeRepo) UpsertPlayerGoalsByExternalID(_ context.Context, _ int64, _ uuid.UUID, _ int) error {
+func (r *fakeRepo) UpsertPlayerGoalsByExternalID(
+	_ context.Context,
+	_ int64,
+	_ uuid.UUID,
+	_ int,
+) error {
 	r.inc("UpsertPlayerGoalsByExternalID")
 	return nil
 }
 
-func (r *fakeRepo) GetGroupTopScorerPlayerIDs(_ context.Context, _ uuid.UUID, _ string) ([]uuid.UUID, error) {
+func (r *fakeRepo) GetGroupTopScorerPlayerIDs(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) ([]uuid.UUID, error) {
 	r.inc("GetGroupTopScorerPlayerIDs")
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	return r.topScorerPlayerIDs, nil
 }
 
-func (r *fakeRepo) GetTournamentTopScorerPlayerIDs(_ context.Context, _ uuid.UUID) ([]uuid.UUID, error) {
+func (r *fakeRepo) GetTournamentTopScorerPlayerIDs(
+	_ context.Context,
+	_ uuid.UUID,
+) ([]uuid.UUID, error) {
 	r.inc("GetTournamentTopScorerPlayerIDs")
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	return r.topScorerPlayerIDs, nil
 }
 
-func (r *fakeRepo) SettleGroupWinnerPredictions(_ context.Context, _ uuid.UUID, _ string) error {
+func (r *fakeRepo) SettleGroupWinnerPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) error {
 	r.inc("SettleGroupWinnerPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettlePlayoffGroupPredictions(_ context.Context, _ uuid.UUID, _ string) error {
+func (r *fakeRepo) SettlePlayoffGroupPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+) error {
 	r.inc("SettlePlayoffGroupPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettlePlayoffWildcardPredictions(_ context.Context, _ uuid.UUID) error {
+func (r *fakeRepo) SettlePlayoffWildcardPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+) error {
 	r.inc("SettlePlayoffWildcardPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettleGroupTopScorerPredictions(_ context.Context, _ uuid.UUID, _ string, _ []uuid.UUID) error {
+func (r *fakeRepo) SettleGroupTopScorerPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+	_ string,
+	_ []uuid.UUID,
+) error {
 	r.inc("SettleGroupTopScorerPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettleSemifinalistPredictions(_ context.Context, _ uuid.UUID) error {
+func (r *fakeRepo) SettleSemifinalistPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+) error {
 	r.inc("SettleSemifinalistPredictions")
 	return nil
 }
 
-func (r *fakeRepo) ZeroRemainingSemifinalistPredictions(_ context.Context, _ uuid.UUID) error {
+func (r *fakeRepo) ZeroRemainingSemifinalistPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+) error {
 	r.inc("ZeroRemainingSemifinalistPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettleTournamentWinnerPredictions(_ context.Context, _ uuid.UUID, _ uuid.UUID) error {
+func (r *fakeRepo) SettleTournamentWinnerPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+	_ uuid.UUID,
+) error {
 	r.inc("SettleTournamentWinnerPredictions")
 	return nil
 }
 
-func (r *fakeRepo) SettleTopScorerPredictions(_ context.Context, _ uuid.UUID, _ []uuid.UUID) error {
+func (r *fakeRepo) SettleTopScorerPredictions(
+	_ context.Context,
+	_ uuid.UUID,
+	_ []uuid.UUID,
+) error {
 	r.inc("SettleTopScorerPredictions")
 	return nil
 }
@@ -176,12 +257,19 @@ type fakeAPI struct {
 	err       error
 }
 
-func (a *fakeAPI) GetFixture(_ context.Context, _ int64) (worker.APIFixtureResult, error) {
+func (a *fakeAPI) GetFixture(
+	_ context.Context,
+	_ int64,
+) (worker.APIFixtureResult, error) {
 	atomic.AddInt64(&a.callCount, 1)
 	return a.result, a.err
 }
 
-func (a *fakeAPI) GetLeagueFixtures(_ context.Context, _ int64, _ int) ([]worker.APILeagueFixtureResult, error) {
+func (a *fakeAPI) GetLeagueFixtures(
+	_ context.Context,
+	_ int64,
+	_ int,
+) ([]worker.APILeagueFixtureResult, error) {
 	return nil, nil
 }
 
@@ -189,7 +277,10 @@ type fakeClock struct{ t time.Time }
 
 func (c fakeClock) Now() time.Time { return c.t }
 
-func newWorker(repo worker.Repo, api worker.MatchAPI) *worker.Worker {
+func newWorker(
+	repo worker.Repo,
+	api worker.MatchAPI,
+) *worker.Worker {
 	return worker.New(repo, api, fakeClock{t: time.Now()}, nopLogger(), time.Minute, 60)
 }
 
@@ -261,14 +352,14 @@ func TestProcessSingleFixture_NoChange(t *testing.T) {
 	f.GoalsAway = &ga
 	f.Status = domain.FixtureStatusInProgress
 
-	repo := newFakeRepo(nil)
+	repo := newFakeRepo([]domain.PollableFixture{f})
 	api := &fakeAPI{result: worker.APIFixtureResult{
 		StatusShort: "2H",
 		GoalsHome:   &gh,
 		GoalsAway:   &ga,
 	}}
 	w := newWorker(repo, api)
-	w.Run(cancelledCtx()) //nolint:errcheck
+	runOneTick(w)
 
 	if repo.callCount("UpdateMatchAndRescoreLivePredictions") != 0 {
 		t.Error("expected no DB write when state unchanged")
@@ -526,8 +617,10 @@ func TestRunSettlement_FinalConcluded_MultipleTopScorers(t *testing.T) {
 		t.Error("expected SettleTournamentWinnerPredictions")
 	}
 	if repo.callCount("SettleTopScorerPredictions") != 1 {
-		t.Errorf("expected SettleTopScorerPredictions called once (all tied scorers in one call), got %d",
-			repo.callCount("SettleTopScorerPredictions"))
+		t.Errorf(
+			"expected SettleTopScorerPredictions called once (all tied scorers in one call), got %d",
+			repo.callCount("SettleTopScorerPredictions"),
+		)
 	}
 }
 
@@ -548,8 +641,10 @@ func TestRunSettlement_GroupDone_MultipleTopScorers(t *testing.T) {
 	runOneTick(w)
 
 	if repo.callCount("SettleGroupTopScorerPredictions") != 1 {
-		t.Errorf("expected SettleGroupTopScorerPredictions called once (all tied scorers in one call), got %d",
-			repo.callCount("SettleGroupTopScorerPredictions"))
+		t.Errorf(
+			"expected SettleGroupTopScorerPredictions called once (all tied scorers in one call), got %d",
+			repo.callCount("SettleGroupTopScorerPredictions"),
+		)
 	}
 }
 
@@ -628,12 +723,6 @@ func TestTick_LiveFixtures_SemaphoreLimits(t *testing.T) {
 }
 
 // ---- helpers ----
-
-func cancelledCtx() context.Context {
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
-	return ctx
-}
 
 func runOneTick(w *worker.Worker) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

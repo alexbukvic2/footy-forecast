@@ -39,26 +39,32 @@ func (w *Worker) refreshFixturesForTournament(
 	for _, af := range apiFixtures {
 		homeID, err := w.repo.GetTeamByExternalID(ctx, af.HomeTeamExternalID, tournamentID)
 		if err != nil {
-			w.logger.Warn("worker: resolve home team for fixture refresh",
-				"external_id", af.HomeTeamExternalID, "fixture_external_id", af.ExternalID, "err", err)
+			w.logger.Warn(
+				"worker: resolve home team for fixture refresh",
+				"external_id", af.HomeTeamExternalID, "fixture_external_id", af.ExternalID, "err", err,
+			)
 			continue
 		}
 		awayID, err := w.repo.GetTeamByExternalID(ctx, af.AwayTeamExternalID, tournamentID)
 		if err != nil {
-			w.logger.Warn("worker: resolve away team for fixture refresh",
-				"external_id", af.AwayTeamExternalID, "fixture_external_id", af.ExternalID, "err", err)
+			w.logger.Warn(
+				"worker: resolve away team for fixture refresh",
+				"external_id", af.AwayTeamExternalID, "fixture_external_id", af.ExternalID, "err", err,
+			)
 			continue
 		}
-		toInsert = append(toInsert, domain.NewFixture{
-			ExternalID: af.ExternalID,
-			HomeTeamID: homeID,
-			AwayTeamID: awayID,
-			KickoffAt:  af.KickoffAt,
-			Status:     MapAPIStatus(af.StatusShort),
-			Round:      af.Round,
-			GoalsHome:  af.GoalsHome,
-			GoalsAway:  af.GoalsAway,
-		})
+		toInsert = append(
+			toInsert, domain.NewFixture{
+				ExternalID: af.ExternalID,
+				HomeTeamID: homeID,
+				AwayTeamID: awayID,
+				KickoffAt:  af.KickoffAt,
+				Status:     MapAPIStatus(af.StatusShort),
+				Round:      af.Round,
+				GoalsHome:  af.GoalsHome,
+				GoalsAway:  af.GoalsAway,
+			},
+		)
 	}
 
 	if err := w.repo.InsertMissingFixtures(ctx, tournamentID, toInsert); err != nil {

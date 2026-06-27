@@ -769,9 +769,15 @@ components:
         goals_away:
           type: integer
           minimum: 0
+        winner:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the team predicted to advance. Required for knockout fixtures (group is null); must be either home_team_id or away_team_id.
       example:
         goals_home: 2
         goals_away: 1
+        winner: null
 
     ScorePredictionResponse:
       type: object
@@ -787,6 +793,11 @@ components:
           type: integer
         goals_away:
           type: integer
+        winner:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the team predicted to advance. Present only for knockout predictions.
         points:
           type: integer
           nullable: true
@@ -795,11 +806,12 @@ components:
         fixture_id: "550e8400-e29b-41d4-a716-446655440011"
         goals_home: 2
         goals_away: 1
+        winner: null
         points: null
 
     FixtureResponse:
       type: object
-      required: [id, external_id, tournament_id, home_team_name, away_team_name, round, kickoff_at, status, prediction_locked]
+      required: [id, external_id, tournament_id, home_team_id, away_team_id, home_team_name, away_team_name, round, kickoff_at, status, prediction_locked]
       properties:
         id:
           type: string
@@ -807,6 +819,12 @@ components:
         external_id:
           type: integer
         tournament_id:
+          type: string
+          format: uuid
+        home_team_id:
+          type: string
+          format: uuid
+        away_team_id:
           type: string
           format: uuid
         home_team_name:
@@ -830,13 +848,30 @@ components:
         goals_home:
           type: integer
           nullable: true
+          description: Total goals including extra time. Nil until the match starts.
         goals_away:
           type: integer
           nullable: true
+          description: Total goals including extra time. Nil until the match starts.
+        goals_home_regular:
+          type: integer
+          nullable: true
+          description: Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+        goals_away_regular:
+          type: integer
+          nullable: true
+          description: Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+        winner_team_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the team that advanced. Set once a knockout match concludes.
       example:
         id: "550e8400-e29b-41d4-a716-446655440011"
         external_id: 90001
         tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        home_team_id: "550e8400-e29b-41d4-a716-446655440030"
+        away_team_id: "550e8400-e29b-41d4-a716-446655440031"
         home_team_name: "Argentina"
         away_team_name: "France"
         round: "Group Stage - 1"
@@ -846,6 +881,9 @@ components:
         prediction_locked: true
         goals_home: 2
         goals_away: 1
+        goals_home_regular: 2
+        goals_away_regular: 1
+        winner_team_id: null
 
     UserFixtureViewResponse:
       allOf:
@@ -860,6 +898,8 @@ components:
         id: "550e8400-e29b-41d4-a716-446655440011"
         external_id: 90001
         tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        home_team_id: "550e8400-e29b-41d4-a716-446655440030"
+        away_team_id: "550e8400-e29b-41d4-a716-446655440031"
         home_team_name: "Argentina"
         away_team_name: "France"
         kickoff_at: "2026-05-20T19:00:00Z"
@@ -888,6 +928,11 @@ components:
         goals_away:
           type: integer
           nullable: true
+        winner:
+          type: string
+          format: uuid
+          nullable: true
+          description: UUID of the team this member predicted to advance. Present only for knockout predictions.
         points:
           type: integer
           nullable: true
@@ -896,6 +941,7 @@ components:
         display_name: "alice"
         goals_home: 2
         goals_away: 1
+        winner: null
         points: 3
 
     LeagueFixtureViewResponse:
@@ -912,6 +958,8 @@ components:
         id: "550e8400-e29b-41d4-a716-446655440011"
         external_id: 90001
         tournament_id: "550e8400-e29b-41d4-a716-446655440000"
+        home_team_id: "550e8400-e29b-41d4-a716-446655440030"
+        away_team_id: "550e8400-e29b-41d4-a716-446655440031"
         home_team_name: "Brazil"
         away_team_name: "Germany"
         kickoff_at: "2026-06-01T15:00:00Z"

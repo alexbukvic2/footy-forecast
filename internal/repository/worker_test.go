@@ -140,6 +140,39 @@ func wInsertScorePrediction(
 	require.NoError(t, err)
 }
 
+func wInsertScorePredictionWithWinner(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	userID, fixtureID, winner uuid.UUID,
+	gh, ga int,
+) {
+	t.Helper()
+	_, err := pool.Exec(
+		ctx,
+		`INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away, winner)
+		 VALUES ($1, $2, $3, $4, $5)`,
+		userID, fixtureID, gh, ga, winner,
+	)
+	require.NoError(t, err)
+}
+
+func wQueryRegularGoals(
+	t *testing.T,
+	pool *db.Pool,
+	ctx context.Context,
+	fixtureID uuid.UUID,
+) (home, away *int) {
+	t.Helper()
+	var h, a *int
+	require.NoError(t, pool.QueryRow(
+		ctx,
+		`SELECT goals_home_regular, goals_away_regular FROM fixtures WHERE id = $1`,
+		fixtureID,
+	).Scan(&h, &a))
+	return h, a
+}
+
 func wQueryPoints(
 	t *testing.T,
 	pool *db.Pool,
@@ -1496,6 +1529,140 @@ func queryTeamPredictionPointsWinner(
 }
 
 // wInsertPlayerPredictionGroup inserts a player_predictions row with a group_letter set.
+func TestWorkerRepository_UpdateMatchAndRescore_WinnerBonus(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+
+	tourID := wInsertTournament(t, pool, ctx, true)
+	// Knockout teams: no group letter
+	home := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	away := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	userID := wInsertUser(t, pool, ctx)
+
+	hw := true
+	aw := true
+
+	newKnockoutF := func() domain.PollableFixture {
+		fID := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(-1*time.Hour), "in_progress", "Round of 16", false)
+		return domain.PollableFixture{ID: fID, HomeTeamID: home, AwayTeamID: away}
+	}
+
+	t.Run("correct winner = +2 bonus on top of score pts", func(t *testing.T) {
+		f := newKnockoutF()
+		wInsertScorePredictionWithWinner(t, pool, ctx, userID, f.ID, home, 1, 0)
+		gh, ga := 1, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "FT", GoalsHome: &gh, GoalsAway: &ga, HomeWinner: &hw,
+		}))
+		// exact score (6) + correct winner (2) = 8
+		assert.Equal(t, 8, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+
+	t.Run("wrong winner = no bonus", func(t *testing.T) {
+		f := newKnockoutF()
+		// predict away wins, but home wins
+		wInsertScorePredictionWithWinner(t, pool, ctx, userID, f.ID, away, 1, 0)
+		gh, ga := 1, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "FT", GoalsHome: &gh, GoalsAway: &ga, HomeWinner: &hw,
+		}))
+		// exact score (6) + wrong winner (0) = 6
+		assert.Equal(t, 6, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+
+	t.Run("away winner correct", func(t *testing.T) {
+		f := newKnockoutF()
+		wInsertScorePredictionWithWinner(t, pool, ctx, userID, f.ID, away, 0, 1)
+		gh, ga := 0, 1
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "FT", GoalsHome: &gh, GoalsAway: &ga, AwayWinner: &aw,
+		}))
+		// exact score (6) + correct winner (2) = 8
+		assert.Equal(t, 8, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+
+	t.Run("winner not yet set = no bonus", func(t *testing.T) {
+		f := newKnockoutF()
+		wInsertScorePredictionWithWinner(t, pool, ctx, userID, f.ID, home, 1, 1)
+		gh, ga := 1, 1
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "2H", GoalsHome: &gh, GoalsAway: &ga,
+		}))
+		// exact score (6) + no winner yet (0) = 6
+		assert.Equal(t, 6, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+}
+
+func TestWorkerRepository_UpdateMatchAndRescore_RegularTimeFreeze(t *testing.T) {
+	t.Parallel()
+	pool := startPostgres(t)
+	ctx := context.Background()
+	repo := repository.NewWorkerRepository(pool)
+
+	tourID := wInsertTournament(t, pool, ctx, true)
+	home := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	away := wInsertTeam(t, pool, ctx, tourID, "", 0)
+	userID := wInsertUser(t, pool, ctx)
+
+	newF := func() domain.PollableFixture {
+		fID := wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(-1*time.Hour), "in_progress", "QF", false)
+		return domain.PollableFixture{ID: fID, HomeTeamID: home, AwayTeamID: away}
+	}
+
+	t.Run("regular goals frozen once ET starts", func(t *testing.T) {
+		f := newF()
+		wInsertScorePrediction(t, pool, ctx, userID, f.ID, 1, 0)
+
+		// At end of regular time: 1-0
+		gh, ga := 1, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "2H", GoalsHome: &gh, GoalsAway: &ga,
+		}))
+		h, a := wQueryRegularGoals(t, pool, ctx, f.ID)
+		require.NotNil(t, h)
+		require.NotNil(t, a)
+		assert.Equal(t, 1, *h)
+		assert.Equal(t, 0, *a)
+		assert.Equal(t, 6, wQueryPoints(t, pool, ctx, f.ID, userID))
+
+		// ET goal scored: total becomes 2-0, but regular stays 1-0
+		gh2, ga2 := 2, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "ET", GoalsHome: &gh2, GoalsAway: &ga2,
+		}))
+		h2, a2 := wQueryRegularGoals(t, pool, ctx, f.ID)
+		require.NotNil(t, h2)
+		require.NotNil(t, a2)
+		assert.Equal(t, 1, *h2, "regular home goals must be frozen during ET")
+		assert.Equal(t, 0, *a2, "regular away goals must be frozen during ET")
+		// prediction was 1-0, regular time result is 1-0 → still 6 pts
+		assert.Equal(t, 6, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+
+	t.Run("scoring uses regular time goals not total", func(t *testing.T) {
+		f := newF()
+		// predict 1-0 (regular time result), ET goal makes it 2-0
+		wInsertScorePrediction(t, pool, ctx, userID, f.ID, 1, 0)
+
+		// Regular time ends 1-0
+		gh, ga := 1, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "FT", GoalsHome: &gh, GoalsAway: &ga,
+		}))
+
+		// AET result is 2-0; regular time goals frozen at 1-0
+		hw := true
+		gh2, ga2 := 2, 0
+		require.NoError(t, repo.UpdateMatchAndRescoreLivePredictions(ctx, f, worker.APIFixtureResult{
+			StatusShort: "AET", GoalsHome: &gh2, GoalsAway: &ga2, HomeWinner: &hw,
+		}))
+		// prediction 1-0 vs regular 1-0 → exact score (6); total is 2-0 but doesn't affect scoring
+		assert.Equal(t, 6, wQueryPoints(t, pool, ctx, f.ID, userID))
+	})
+}
+
 func wInsertPlayerPredictionGroup(
 	t *testing.T,
 	pool *db.Pool,

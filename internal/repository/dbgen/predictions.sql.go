@@ -13,7 +13,7 @@ import (
 )
 
 const listPredictionsByUserAndTournament = `-- name: ListPredictionsByUserAndTournament :many
-SELECT sp.id, sp.user_id, sp.fixture_id, sp.goals_home, sp.goals_away, sp.points, sp.created_at, sp.updated_at, sp.scored_at
+SELECT sp.id, sp.user_id, sp.fixture_id, sp.goals_home, sp.goals_away, sp.winner, sp.points, sp.created_at, sp.updated_at, sp.scored_at
 FROM score_predictions sp
 WHERE sp.user_id = $1
   AND sp.fixture_id IN (SELECT id FROM fixtures WHERE tournament_id = $2)
@@ -39,6 +39,7 @@ func (q *Queries) ListPredictionsByUserAndTournament(ctx context.Context, arg Li
 			&i.FixtureID,
 			&i.GoalsHome,
 			&i.GoalsAway,
+			&i.Winner,
 			&i.Points,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -55,13 +56,14 @@ func (q *Queries) ListPredictionsByUserAndTournament(ctx context.Context, arg Li
 }
 
 const upsertScorePrediction = `-- name: UpsertScorePrediction :one
-INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away)
-VALUES ($1, $2, $3, $4)
+INSERT INTO score_predictions (user_id, fixture_id, goals_home, goals_away, winner)
+VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT (user_id, fixture_id) DO UPDATE
     SET goals_home = EXCLUDED.goals_home,
         goals_away = EXCLUDED.goals_away,
+        winner     = EXCLUDED.winner,
         updated_at = now()
-RETURNING id, user_id, fixture_id, goals_home, goals_away, points, created_at, updated_at
+RETURNING id, user_id, fixture_id, goals_home, goals_away, winner, points, created_at, updated_at
 `
 
 type UpsertScorePredictionParams struct {
@@ -69,6 +71,7 @@ type UpsertScorePredictionParams struct {
 	FixtureID uuid.UUID
 	GoalsHome int32
 	GoalsAway int32
+	Winner    uuid.UUID // uuid.Nil when NULL
 }
 
 type UpsertScorePredictionRow struct {
@@ -77,6 +80,7 @@ type UpsertScorePredictionRow struct {
 	FixtureID uuid.UUID
 	GoalsHome int32
 	GoalsAway int32
+	Winner    uuid.UUID // uuid.Nil when NULL
 	Points    *int32
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -88,6 +92,7 @@ func (q *Queries) UpsertScorePrediction(ctx context.Context, arg UpsertScorePred
 		arg.FixtureID,
 		arg.GoalsHome,
 		arg.GoalsAway,
+		arg.Winner,
 	)
 	var i UpsertScorePredictionRow
 	err := row.Scan(
@@ -96,6 +101,7 @@ func (q *Queries) UpsertScorePrediction(ctx context.Context, arg UpsertScorePred
 		&i.FixtureID,
 		&i.GoalsHome,
 		&i.GoalsAway,
+		&i.Winner,
 		&i.Points,
 		&i.CreatedAt,
 		&i.UpdatedAt,

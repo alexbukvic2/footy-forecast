@@ -20,30 +20,46 @@ import (
 
 // ScorePredictionSvc is the service contract for score predictions.
 type ScorePredictionSvc interface {
-	UpsertScore(ctx context.Context, in domain.UpsertScorePredictionInput) (*domain.ScorePrediction, error)
+	UpsertScore(
+		ctx context.Context,
+		in domain.UpsertScorePredictionInput,
+	) (*domain.ScorePrediction, error)
 }
 
 // FixtureSvc is the service contract for fixture listings.
 type FixtureSvc interface {
-	ListForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error)
-	ListForLeague(ctx context.Context, leagueID, userID uuid.UUID) ([]*domain.LeagueFixtureView, error)
-	ListForLeaguePaged(ctx context.Context, leagueID, userID uuid.UUID, n, skip int) ([]*domain.LeagueFixtureView, error)
+	ListForUser(
+		ctx context.Context,
+		tournamentID, userID uuid.UUID,
+	) ([]*domain.UserFixtureView, error)
+	ListForLeague(
+		ctx context.Context,
+		leagueID, userID uuid.UUID,
+	) ([]*domain.LeagueFixtureView, error)
+	ListForLeaguePaged(
+		ctx context.Context,
+		leagueID, userID uuid.UUID,
+		n, skip int,
+	) ([]*domain.LeagueFixtureView, error)
 }
 
 // ---------- DTOs ----------
 
 type scorePredictionResponse struct {
-	ID        string `json:"id"`
-	FixtureID string `json:"fixture_id"`
-	GoalsHome int    `json:"goals_home"`
-	GoalsAway int    `json:"goals_away"`
-	Points    *int   `json:"points"`
+	ID        string  `json:"id"`
+	FixtureID string  `json:"fixture_id"`
+	GoalsHome int     `json:"goals_home"`
+	GoalsAway int     `json:"goals_away"`
+	Winner    *string `json:"winner,omitempty"` // team UUID; present for knockout predictions
+	Points    *int    `json:"points"`
 }
 
 type fixtureResponse struct {
 	ID               string    `json:"id"`
 	ExternalID       int64     `json:"external_id"`
 	TournamentID     string    `json:"tournament_id"`
+	HomeTeamID       string    `json:"home_team_id"`
+	AwayTeamID       string    `json:"away_team_id"`
 	HomeTeamName     string    `json:"home_team_name"`
 	AwayTeamName     string    `json:"away_team_name"`
 	Group            *string   `json:"group,omitempty"`
@@ -51,8 +67,11 @@ type fixtureResponse struct {
 	KickoffAt        time.Time `json:"kickoff_at"`
 	Status           string    `json:"status"`
 	PredictionLocked bool      `json:"prediction_locked"`
-	GoalsHome        *int      `json:"goals_home"`
-	GoalsAway        *int      `json:"goals_away"`
+	GoalsHome        *int      `json:"goals_home"`               // total (including ET); nil until match starts
+	GoalsAway        *int      `json:"goals_away"`               // total (including ET); nil until match starts
+	GoalsHomeRegular *int      `json:"goals_home_regular"`       // regulation time only; nil until match starts
+	GoalsAwayRegular *int      `json:"goals_away_regular"`       // regulation time only; nil until match starts
+	WinnerTeamID     *string   `json:"winner_team_id,omitempty"` // set once a knockout match concludes
 }
 
 type userFixtureViewResponse struct {
@@ -61,11 +80,12 @@ type userFixtureViewResponse struct {
 }
 
 type leagueMemberScorePrediction struct {
-	UserID      string `json:"user_id"`
-	DisplayName string `json:"display_name"`
-	GoalsHome   *int   `json:"goals_home"`
-	GoalsAway   *int   `json:"goals_away"`
-	Points      *int   `json:"points"`
+	UserID      string  `json:"user_id"`
+	DisplayName string  `json:"display_name"`
+	GoalsHome   *int    `json:"goals_home"`
+	GoalsAway   *int    `json:"goals_away"`
+	Winner      *string `json:"winner,omitempty"`
+	Points      *int    `json:"points"`
 }
 
 type leagueFixtureViewResponse struct {
@@ -82,12 +102,18 @@ type ScorePrediction struct {
 }
 
 // NewScorePrediction constructs a ScorePrediction handler.
-func NewScorePrediction(logger *slog.Logger, svc ScorePredictionSvc) *ScorePrediction {
+func NewScorePrediction(
+	logger *slog.Logger,
+	svc ScorePredictionSvc,
+) *ScorePrediction {
 	return &ScorePrediction{logger: logger, svc: svc}
 }
 
 // UpsertScore handles PUT /predictions/{fixtureId}.
-func (h *ScorePrediction) UpsertScore(w http.ResponseWriter, r *http.Request) {
+func (h *ScorePrediction) UpsertScore(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -101,20 +127,31 @@ func (h *ScorePrediction) UpsertScore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		GoalsHome int `json:"goals_home"`
-		GoalsAway int `json:"goals_away"`
+		GoalsHome int     `json:"goals_home"`
+		GoalsAway int     `json:"goals_away"`
+		Winner    *string `json:"winner"` // UUID string; required for knockout fixtures
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, r, h.logger, fmt.Errorf("invalid request body: %w", domain.ErrInvalid))
 		return
 	}
 
-	pred, err := h.svc.UpsertScore(r.Context(), domain.UpsertScorePredictionInput{
+	in := domain.UpsertScorePredictionInput{
 		UserID:    caller.ID,
 		FixtureID: fixtureID,
 		GoalsHome: req.GoalsHome,
 		GoalsAway: req.GoalsAway,
-	})
+	}
+	if req.Winner != nil {
+		winnerID, err := uuid.Parse(*req.Winner)
+		if err != nil {
+			writeError(w, r, h.logger, fmt.Errorf("winner must be a valid UUID: %w", domain.ErrInvalid))
+			return
+		}
+		in.Winner = &winnerID
+	}
+
+	pred, err := h.svc.UpsertScore(r.Context(), in)
 	if err != nil {
 		writeError(w, r, h.logger, err)
 		return
@@ -131,12 +168,18 @@ type Fixture struct {
 }
 
 // NewFixture constructs a Fixture handler.
-func NewFixture(logger *slog.Logger, svc FixtureSvc) *Fixture {
+func NewFixture(
+	logger *slog.Logger,
+	svc FixtureSvc,
+) *Fixture {
 	return &Fixture{logger: logger, svc: svc}
 }
 
 // ListForUser handles GET /tournaments/{tournamentId}/fixtures.
-func (h *Fixture) ListForUser(w http.ResponseWriter, r *http.Request) {
+func (h *Fixture) ListForUser(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -163,7 +206,10 @@ func (h *Fixture) ListForUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // ListForLeague handles GET /leagues/{leagueId}/predictions.
-func (h *Fixture) ListForLeague(w http.ResponseWriter, r *http.Request) {
+func (h *Fixture) ListForLeague(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
 	caller, ok := ctxutil.UserFromCtx(r.Context())
 	if !ok {
 		writeError(w, r, h.logger, fmt.Errorf("auth user not in context: %w", domain.ErrUnauthorized))
@@ -224,20 +270,27 @@ var _ FixtureSvc = (*service.FixtureService)(nil)
 // ---------- response converters ----------
 
 func toScorePredictionResponse(p *domain.ScorePrediction) scorePredictionResponse {
-	return scorePredictionResponse{
+	r := scorePredictionResponse{
 		ID:        p.ID.String(),
 		FixtureID: p.FixtureID.String(),
 		GoalsHome: p.GoalsHome,
 		GoalsAway: p.GoalsAway,
 		Points:    p.Points,
 	}
+	if p.Winner != nil {
+		s := p.Winner.String()
+		r.Winner = &s
+	}
+	return r
 }
 
 func toFixtureResponse(f domain.Fixture) fixtureResponse {
-	return fixtureResponse{
+	r := fixtureResponse{
 		ID:               f.ID.String(),
 		ExternalID:       f.ExternalID,
 		TournamentID:     f.TournamentID.String(),
+		HomeTeamID:       f.HomeTeamID.String(),
+		AwayTeamID:       f.AwayTeamID.String(),
 		HomeTeamName:     f.HomeTeamName,
 		AwayTeamName:     f.AwayTeamName,
 		Group:            f.Group,
@@ -247,7 +300,14 @@ func toFixtureResponse(f domain.Fixture) fixtureResponse {
 		PredictionLocked: f.PredictionLocked,
 		GoalsHome:        f.GoalsHome,
 		GoalsAway:        f.GoalsAway,
+		GoalsHomeRegular: f.GoalsHomeRegular,
+		GoalsAwayRegular: f.GoalsAwayRegular,
 	}
+	if f.WinnerTeamID != nil {
+		s := f.WinnerTeamID.String()
+		r.WinnerTeamID = &s
+	}
+	return r
 }
 
 func toUserFixtureViewResponse(v *domain.UserFixtureView) userFixtureViewResponse {
@@ -262,13 +322,18 @@ func toUserFixtureViewResponse(v *domain.UserFixtureView) userFixtureViewRespons
 func toLeagueFixtureViewResponse(v *domain.LeagueFixtureView) leagueFixtureViewResponse {
 	preds := make([]leagueMemberScorePrediction, 0, len(v.Predictions))
 	for _, p := range v.Predictions {
-		preds = append(preds, leagueMemberScorePrediction{
+		mp := leagueMemberScorePrediction{
 			UserID:      p.UserID.String(),
 			DisplayName: p.DisplayName,
 			GoalsHome:   p.GoalsHome,
 			GoalsAway:   p.GoalsAway,
 			Points:      p.Points,
-		})
+		}
+		if p.Winner != nil {
+			s := p.Winner.String()
+			mp.Winner = &s
+		}
+		preds = append(preds, mp)
 	}
 	return leagueFixtureViewResponse{
 		fixtureResponse: toFixtureResponse(v.Fixture),
