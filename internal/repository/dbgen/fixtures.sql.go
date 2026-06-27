@@ -31,7 +31,7 @@ func (q *Queries) GetFirstKickoffByTournament(ctx context.Context, tournamentID 
 const getFixtureByID = `-- name: GetFixtureByID :one
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       home_t.group_letter,
+       CASE WHEN f.round LIKE '%Group%' THEN home_t.group_letter ELSE NULL END AS group_letter,
        f.round, f.kickoff_at, f.status, f.prediction_locked,
        f.goals_home_regular, f.goals_away_regular, f.goals_home, f.goals_away,
        f.winner_team_id, f.created_at, f.updated_at
@@ -123,7 +123,7 @@ func (q *Queries) GetLockedFixtureDatesByLeague(ctx context.Context, leagueID uu
 const listFixturesByTournament = `-- name: ListFixturesByTournament :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       home_t.group_letter,
+       CASE WHEN f.round LIKE '%Group%' THEN home_t.group_letter ELSE NULL END AS group_letter,
        f.round, f.kickoff_at, f.status, f.prediction_locked,
        f.goals_home_regular, f.goals_away_regular, f.goals_home, f.goals_away,
        f.winner_team_id, f.created_at, f.updated_at
@@ -198,7 +198,7 @@ func (q *Queries) ListFixturesByTournament(ctx context.Context, tournamentID uui
 const listLockedFixturesByLeague = `-- name: ListLockedFixturesByLeague :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       home_t.group_letter,
+       CASE WHEN f.round LIKE '%Group%' THEN home_t.group_letter ELSE NULL END AS group_letter,
        f.round, f.kickoff_at, f.status, f.prediction_locked,
        f.goals_home_regular, f.goals_away_regular, f.goals_home, f.goals_away,
        f.winner_team_id, f.created_at, f.updated_at,
@@ -219,7 +219,7 @@ JOIN league_members lm ON lm.league_id = l.id
 JOIN users u ON u.id = lm.user_id
 LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_id
 WHERE l.id = $2 AND f.status IN ('in_progress', 'finished', 'cancelled')
-GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter
+GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter, f.round
 ORDER BY f.kickoff_at DESC
 `
 
@@ -295,7 +295,7 @@ func (q *Queries) ListLockedFixturesByLeague(ctx context.Context, arg ListLocked
 const listLockedFixturesByLeagueAndDates = `-- name: ListLockedFixturesByLeagueAndDates :many
 SELECT f.id, f.external_id, f.tournament_id, f.home_team_id, f.away_team_id,
        home_t.name AS home_team_name, away_t.name AS away_team_name,
-       home_t.group_letter,
+       CASE WHEN f.round LIKE '%Group%' THEN home_t.group_letter ELSE NULL END AS group_letter,
        f.round, f.kickoff_at, f.status, f.prediction_locked,
        f.goals_home_regular, f.goals_away_regular, f.goals_home, f.goals_away,
        f.winner_team_id, f.created_at, f.updated_at,
@@ -318,7 +318,7 @@ LEFT JOIN score_predictions sp ON sp.fixture_id = f.id AND sp.user_id = lm.user_
 WHERE l.id = $2
   AND f.prediction_locked = true
   AND f.kickoff_at::date = ANY($3::date[])
-GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter
+GROUP BY f.id, home_t.name, away_t.name, home_t.group_letter, f.round
 ORDER BY f.kickoff_at DESC
 `
 
