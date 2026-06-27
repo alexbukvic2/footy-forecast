@@ -1,0 +1,6 @@
+- [Verify with official docs](feedback_verify_with_official_docs.md) — for version compatibility & tooling configs, fetch release notes before recommending; don't guess from training.
+- [Prefer removing over patching](feedback_prefer_removing_over_patching.md) — if a config line has no clear purpose in the current project, delete rather than tweak it.
+- [Users + Cognito auth plan](project_users_cognito.md) — social-only, JIT upsert, two App Clients, jwt/v5; plan at docs/plans/users-cognito.md.
+- [Planner: only write the plan file](feedback_planner_no_exit.md) — do not call ExitPlanMode; just write the plan and stop.
+- [Never auto-commit](feedback_no_auto_commit.md) — only run git commit when the user explicitly asks for it.
+- [Skip plan if asked](feedback_skip_plan_if_asked.md) — when user says "jump straight to implementation", don't write a plan, go directly to code.

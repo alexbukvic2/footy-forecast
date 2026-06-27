@@ -155,9 +155,10 @@ func NewPredictionService(
 }
 
 // UpsertScore validates and stores a user's score prediction.
-// Returns domain.ErrInvalid for negative goals.
+// Returns domain.ErrInvalid for negative goals, missing winner on knockout fixtures,
+// or a winner that isn't one of the fixture's two teams.
 // Returns domain.ErrNotFound if the fixture does not exist.
-// Returns domain.ErrForbidden if within 30 minutes of kickoff (or past it).
+// Returns domain.ErrForbidden if predictions are locked (at or past kickoff).
 func (s *PredictionService) UpsertScore(
 	ctx context.Context,
 	in domain.UpsertScorePredictionInput,
@@ -172,7 +173,18 @@ func (s *PredictionService) UpsertScore(
 	}
 
 	if fixture.PredictionLocked {
-		return nil, fmt.Errorf("predictions lockd close to kickoff: %w", domain.ErrForbidden)
+		return nil, fmt.Errorf("predictions locked close to kickoff: %w", domain.ErrForbidden)
+	}
+
+	// Knockout fixtures (group == nil) require the user to specify which team advances.
+	isKnockout := fixture.Group == nil
+	if isKnockout {
+		if in.Winner == nil {
+			return nil, fmt.Errorf("winner is required for knockout fixtures: %w", domain.ErrInvalid)
+		}
+		if *in.Winner != fixture.HomeTeamID && *in.Winner != fixture.AwayTeamID {
+			return nil, fmt.Errorf("winner must be the home or away team of the fixture: %w", domain.ErrInvalid)
+		}
 	}
 
 	pred, err := s.predictions.Upsert(ctx, in)

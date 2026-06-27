@@ -44,7 +44,10 @@ func (r *FixtureRepository) GetFirstKickoffByTournament(
 
 // GetByID fetches a single fixture by ID.
 // Returns domain.ErrNotFound if no row exists.
-func (r *FixtureRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Fixture, error) {
+func (r *FixtureRepository) GetByID(
+	ctx context.Context,
+	id uuid.UUID,
+) (*domain.Fixture, error) {
 	row, err := r.q.GetFixtureByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -56,16 +59,21 @@ func (r *FixtureRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.
 }
 
 // ListByTournamentForUser returns all fixtures for a tournament paired with the user's predictions.
-func (r *FixtureRepository) ListByTournamentForUser(ctx context.Context, tournamentID, userID uuid.UUID) ([]*domain.UserFixtureView, error) {
+func (r *FixtureRepository) ListByTournamentForUser(
+	ctx context.Context,
+	tournamentID, userID uuid.UUID,
+) ([]*domain.UserFixtureView, error) {
 	fixtures, err := r.q.ListFixturesByTournament(ctx, tournamentID)
 	if err != nil {
 		return nil, fmt.Errorf("list fixtures: %w", err)
 	}
 
-	preds, err := r.q.ListPredictionsByUserAndTournament(ctx, dbgen.ListPredictionsByUserAndTournamentParams{
-		UserID:       userID,
-		TournamentID: tournamentID,
-	})
+	preds, err := r.q.ListPredictionsByUserAndTournament(
+		ctx, dbgen.ListPredictionsByUserAndTournamentParams{
+			UserID:       userID,
+			TournamentID: tournamentID,
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("list predictions: %w", err)
 	}
@@ -89,20 +97,26 @@ func (r *FixtureRepository) ListByTournamentForUser(ctx context.Context, tournam
 }
 
 type memberPredictionJSON struct {
-	UserID      string `json:"user_id"`
-	DisplayName string `json:"display_name"`
-	GoalsHome   *int   `json:"goals_home"`
-	GoalsAway   *int   `json:"goals_away"`
-	Points      *int   `json:"points"`
+	UserID      string  `json:"user_id"`
+	DisplayName string  `json:"display_name"`
+	GoalsHome   *int    `json:"goals_home"`
+	GoalsAway   *int    `json:"goals_away"`
+	Winner      *string `json:"winner"`
+	Points      *int    `json:"points"`
 }
 
 // ListLockedByLeague returns all locked (in_progress or finished) fixtures for a league,
 // along with each member's prediction. Only fixtures whose kickoff has passed are returned.
-func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, requestingUserID uuid.UUID) ([]*domain.LeagueFixtureView, error) {
-	rows, err := r.q.ListLockedFixturesByLeague(ctx, dbgen.ListLockedFixturesByLeagueParams{
-		LeagueID:         leagueID,
-		RequestingUserID: requestingUserID,
-	})
+func (r *FixtureRepository) ListLockedByLeague(
+	ctx context.Context,
+	leagueID, requestingUserID uuid.UUID,
+) ([]*domain.LeagueFixtureView, error) {
+	rows, err := r.q.ListLockedFixturesByLeague(
+		ctx, dbgen.ListLockedFixturesByLeagueParams{
+			LeagueID:         leagueID,
+			RequestingUserID: requestingUserID,
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("list locked fixtures: %w", err)
 	}
@@ -122,26 +136,39 @@ func (r *FixtureRepository) ListLockedByLeague(ctx context.Context, leagueID, re
 			if err != nil {
 				return nil, fmt.Errorf("parse user_id in member predictions: %w", err)
 			}
-			preds = append(preds, domain.LeagueMemberPrediction{
+			pred := domain.LeagueMemberPrediction{
 				UserID:      uid,
 				DisplayName: m.DisplayName,
 				GoalsHome:   m.GoalsHome,
 				GoalsAway:   m.GoalsAway,
 				Points:      m.Points,
-			})
+			}
+			if m.Winner != nil {
+				w, err := uuid.Parse(*m.Winner)
+				if err != nil {
+					return nil, fmt.Errorf("parse winner in member predictions: %w", err)
+				}
+				pred.Winner = &w
+			}
+			preds = append(preds, pred)
 		}
 
-		out = append(out, &domain.LeagueFixtureView{
-			Fixture:     *fix,
-			Predictions: preds,
-		})
+		out = append(
+			out, &domain.LeagueFixtureView{
+				Fixture:     *fix,
+				Predictions: preds,
+			},
+		)
 	}
 	return out, nil
 }
 
 // GetLockedFixtureDates returns the distinct UTC calendar dates (newest first)
 // that have at least one locked fixture for the league's tournament, on or before today.
-func (r *FixtureRepository) GetLockedFixtureDates(ctx context.Context, leagueID uuid.UUID) ([]time.Time, error) {
+func (r *FixtureRepository) GetLockedFixtureDates(
+	ctx context.Context,
+	leagueID uuid.UUID,
+) ([]time.Time, error) {
 	rows, err := r.q.GetLockedFixtureDatesByLeague(ctx, leagueID)
 	if err != nil {
 		return nil, fmt.Errorf("get locked fixture dates: %w", err)
@@ -157,19 +184,27 @@ func (r *FixtureRepository) GetLockedFixtureDates(ctx context.Context, leagueID 
 
 // ListLockedByLeagueAndDates returns locked fixtures for a league whose kickoff date
 // falls on one of the provided UTC calendar dates, with each member's predictions.
-func (r *FixtureRepository) ListLockedByLeagueAndDates(ctx context.Context, leagueID, requestingUserID uuid.UUID, dates []time.Time) ([]*domain.LeagueFixtureView, error) {
+func (r *FixtureRepository) ListLockedByLeagueAndDates(
+	ctx context.Context,
+	leagueID, requestingUserID uuid.UUID,
+	dates []time.Time,
+) ([]*domain.LeagueFixtureView, error) {
 	pgDates := make([]pgtype.Date, 0, len(dates))
 	for _, d := range dates {
-		pgDates = append(pgDates, pgtype.Date{
-			Time:  d,
-			Valid: true,
-		})
+		pgDates = append(
+			pgDates, pgtype.Date{
+				Time:  d,
+				Valid: true,
+			},
+		)
 	}
-	rows, err := r.q.ListLockedFixturesByLeagueAndDates(ctx, dbgen.ListLockedFixturesByLeagueAndDatesParams{
-		LeagueID:         leagueID,
-		RequestingUserID: requestingUserID,
-		Dates:            pgDates,
-	})
+	rows, err := r.q.ListLockedFixturesByLeagueAndDates(
+		ctx, dbgen.ListLockedFixturesByLeagueAndDatesParams{
+			LeagueID:         leagueID,
+			RequestingUserID: requestingUserID,
+			Dates:            pgDates,
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("list locked fixtures by dates: %w", err)
 	}
@@ -189,19 +224,29 @@ func (r *FixtureRepository) ListLockedByLeagueAndDates(ctx context.Context, leag
 			if err != nil {
 				return nil, fmt.Errorf("parse user_id in member predictions: %w", err)
 			}
-			preds = append(preds, domain.LeagueMemberPrediction{
+			pred := domain.LeagueMemberPrediction{
 				UserID:      uid,
 				DisplayName: m.DisplayName,
 				GoalsHome:   m.GoalsHome,
 				GoalsAway:   m.GoalsAway,
 				Points:      m.Points,
-			})
+			}
+			if m.Winner != nil {
+				w, err := uuid.Parse(*m.Winner)
+				if err != nil {
+					return nil, fmt.Errorf("parse winner in member predictions: %w", err)
+				}
+				pred.Winner = &w
+			}
+			preds = append(preds, pred)
 		}
 
-		out = append(out, &domain.LeagueFixtureView{
-			Fixture:     *fix,
-			Predictions: preds,
-		})
+		out = append(
+			out, &domain.LeagueFixtureView{
+				Fixture:     *fix,
+				Predictions: preds,
+			},
+		)
 	}
 	return out, nil
 }
@@ -213,12 +258,23 @@ func fixtureFromModel(f dbgen.GetFixtureByIDRow) *domain.Fixture {
 		TournamentID:     f.TournamentID,
 		HomeTeamID:       f.HomeTeamID,
 		AwayTeamID:       f.AwayTeamID,
+		HomeTeamName:     f.HomeTeamName,
+		AwayTeamName:     f.AwayTeamName,
+		Group:            f.GroupLetter,
 		Round:            f.Round,
 		KickoffAt:        f.KickoffAt,
 		Status:           domain.FixtureStatus(f.Status),
 		PredictionLocked: f.PredictionLocked,
 		CreatedAt:        f.CreatedAt,
 		UpdatedAt:        f.UpdatedAt,
+	}
+	if f.GoalsHomeRegular != nil {
+		v := int(*f.GoalsHomeRegular)
+		fix.GoalsHomeRegular = &v
+	}
+	if f.GoalsAwayRegular != nil {
+		v := int(*f.GoalsAwayRegular)
+		fix.GoalsAwayRegular = &v
 	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
@@ -227,6 +283,10 @@ func fixtureFromModel(f dbgen.GetFixtureByIDRow) *domain.Fixture {
 	if f.GoalsAway != nil {
 		v := int(*f.GoalsAway)
 		fix.GoalsAway = &v
+	}
+	if f.WinnerTeamID != (uuid.UUID{}) {
+		id := f.WinnerTeamID
+		fix.WinnerTeamID = &id
 	}
 	return fix
 }
@@ -248,6 +308,14 @@ func fixtureFromListRow(f dbgen.ListFixturesByTournamentRow) *domain.Fixture {
 		CreatedAt:        f.CreatedAt,
 		UpdatedAt:        f.UpdatedAt,
 	}
+	if f.GoalsHomeRegular != nil {
+		v := int(*f.GoalsHomeRegular)
+		fix.GoalsHomeRegular = &v
+	}
+	if f.GoalsAwayRegular != nil {
+		v := int(*f.GoalsAwayRegular)
+		fix.GoalsAwayRegular = &v
+	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
 		fix.GoalsHome = &v
@@ -255,6 +323,10 @@ func fixtureFromListRow(f dbgen.ListFixturesByTournamentRow) *domain.Fixture {
 	if f.GoalsAway != nil {
 		v := int(*f.GoalsAway)
 		fix.GoalsAway = &v
+	}
+	if f.WinnerTeamID != (uuid.UUID{}) {
+		id := f.WinnerTeamID
+		fix.WinnerTeamID = &id
 	}
 	return fix
 }
@@ -276,6 +348,14 @@ func fixtureFromLockedRow(f dbgen.ListLockedFixturesByLeagueRow) *domain.Fixture
 		CreatedAt:        f.CreatedAt,
 		UpdatedAt:        f.UpdatedAt,
 	}
+	if f.GoalsHomeRegular != nil {
+		v := int(*f.GoalsHomeRegular)
+		fix.GoalsHomeRegular = &v
+	}
+	if f.GoalsAwayRegular != nil {
+		v := int(*f.GoalsAwayRegular)
+		fix.GoalsAwayRegular = &v
+	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
 		fix.GoalsHome = &v
@@ -283,6 +363,10 @@ func fixtureFromLockedRow(f dbgen.ListLockedFixturesByLeagueRow) *domain.Fixture
 	if f.GoalsAway != nil {
 		v := int(*f.GoalsAway)
 		fix.GoalsAway = &v
+	}
+	if f.WinnerTeamID != (uuid.UUID{}) {
+		id := f.WinnerTeamID
+		fix.WinnerTeamID = &id
 	}
 	return fix
 }
@@ -304,6 +388,14 @@ func fixtureFromLockedByDatesRow(f dbgen.ListLockedFixturesByLeagueAndDatesRow) 
 		CreatedAt:        f.CreatedAt,
 		UpdatedAt:        f.UpdatedAt,
 	}
+	if f.GoalsHomeRegular != nil {
+		v := int(*f.GoalsHomeRegular)
+		fix.GoalsHomeRegular = &v
+	}
+	if f.GoalsAwayRegular != nil {
+		v := int(*f.GoalsAwayRegular)
+		fix.GoalsAwayRegular = &v
+	}
 	if f.GoalsHome != nil {
 		v := int(*f.GoalsHome)
 		fix.GoalsHome = &v
@@ -311,6 +403,10 @@ func fixtureFromLockedByDatesRow(f dbgen.ListLockedFixturesByLeagueAndDatesRow) 
 	if f.GoalsAway != nil {
 		v := int(*f.GoalsAway)
 		fix.GoalsAway = &v
+	}
+	if f.WinnerTeamID != (uuid.UUID{}) {
+		id := f.WinnerTeamID
+		fix.WinnerTeamID = &id
 	}
 	return fix
 }
@@ -324,6 +420,10 @@ func scorePredictionFromModel(sp dbgen.ScorePrediction) *domain.ScorePrediction 
 		GoalsAway: int(sp.GoalsAway),
 		CreatedAt: sp.CreatedAt,
 		UpdatedAt: sp.UpdatedAt,
+	}
+	if sp.Winner != (uuid.UUID{}) {
+		w := sp.Winner
+		pred.Winner = &w
 	}
 	if sp.Points != nil {
 		v := int(*sp.Points)

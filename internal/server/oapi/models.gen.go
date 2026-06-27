@@ -249,13 +249,25 @@ type ErrorResponse struct {
 
 // FixtureResponse defines model for FixtureResponse.
 type FixtureResponse struct {
-	AwayTeamName string `json:"away_team_name"`
-	ExternalId   int    `json:"external_id"`
-	GoalsAway    *int   `json:"goals_away,omitempty"`
-	GoalsHome    *int   `json:"goals_home,omitempty"`
+	AwayTeamId   openapi_types.UUID `json:"away_team_id"`
+	AwayTeamName string             `json:"away_team_name"`
+	ExternalId   int                `json:"external_id"`
+
+	// GoalsAway Total goals including extra time. Nil until the match starts.
+	GoalsAway *int `json:"goals_away,omitempty"`
+
+	// GoalsAwayRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsAwayRegular *int `json:"goals_away_regular,omitempty"`
+
+	// GoalsHome Total goals including extra time. Nil until the match starts.
+	GoalsHome *int `json:"goals_home,omitempty"`
+
+	// GoalsHomeRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsHomeRegular *int `json:"goals_home_regular,omitempty"`
 
 	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
 	Group            *string               `json:"group,omitempty"`
+	HomeTeamId       openapi_types.UUID    `json:"home_team_id"`
 	HomeTeamName     string                `json:"home_team_name"`
 	Id               openapi_types.UUID    `json:"id"`
 	KickoffAt        time.Time             `json:"kickoff_at"`
@@ -263,6 +275,9 @@ type FixtureResponse struct {
 	Round            string                `json:"round"`
 	Status           FixtureResponseStatus `json:"status"`
 	TournamentId     openapi_types.UUID    `json:"tournament_id"`
+
+	// WinnerTeamId UUID of the team that advanced. Set once a knockout match concludes.
+	WinnerTeamId *openapi_types.UUID `json:"winner_team_id,omitempty"`
 }
 
 // FixtureResponseStatus defines model for FixtureResponse.Status.
@@ -330,13 +345,25 @@ type LeagueDetail struct {
 
 // LeagueFixtureViewResponse defines model for LeagueFixtureViewResponse.
 type LeagueFixtureViewResponse struct {
-	AwayTeamName string `json:"away_team_name"`
-	ExternalId   int    `json:"external_id"`
-	GoalsAway    *int   `json:"goals_away,omitempty"`
-	GoalsHome    *int   `json:"goals_home,omitempty"`
+	AwayTeamId   openapi_types.UUID `json:"away_team_id"`
+	AwayTeamName string             `json:"away_team_name"`
+	ExternalId   int                `json:"external_id"`
+
+	// GoalsAway Total goals including extra time. Nil until the match starts.
+	GoalsAway *int `json:"goals_away,omitempty"`
+
+	// GoalsAwayRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsAwayRegular *int `json:"goals_away_regular,omitempty"`
+
+	// GoalsHome Total goals including extra time. Nil until the match starts.
+	GoalsHome *int `json:"goals_home,omitempty"`
+
+	// GoalsHomeRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsHomeRegular *int `json:"goals_home_regular,omitempty"`
 
 	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
 	Group            *string                         `json:"group,omitempty"`
+	HomeTeamId       openapi_types.UUID              `json:"home_team_id"`
 	HomeTeamName     string                          `json:"home_team_name"`
 	Id               openapi_types.UUID              `json:"id"`
 	KickoffAt        time.Time                       `json:"kickoff_at"`
@@ -345,6 +372,9 @@ type LeagueFixtureViewResponse struct {
 	Round            string                          `json:"round"`
 	Status           LeagueFixtureViewResponseStatus `json:"status"`
 	TournamentId     openapi_types.UUID              `json:"tournament_id"`
+
+	// WinnerTeamId UUID of the team that advanced. Set once a knockout match concludes.
+	WinnerTeamId *openapi_types.UUID `json:"winner_team_id,omitempty"`
 }
 
 // LeagueFixtureViewResponseStatus defines model for LeagueFixtureViewResponse.Status.
@@ -410,6 +440,9 @@ type LeagueMemberScorePrediction struct {
 	GoalsHome   *int               `json:"goals_home,omitempty"`
 	Points      *int               `json:"points,omitempty"`
 	UserId      openapi_types.UUID `json:"user_id"`
+
+	// Winner UUID of the team this member predicted to advance. Present only for knockout predictions.
+	Winner *openapi_types.UUID `json:"winner,omitempty"`
 }
 
 // LeagueMemberTeamPick defines model for LeagueMemberTeamPick.
@@ -545,6 +578,9 @@ type ScorePredictionResponse struct {
 	GoalsHome int                `json:"goals_home"`
 	Id        openapi_types.UUID `json:"id"`
 	Points    *int               `json:"points,omitempty"`
+
+	// Winner UUID of the team predicted to advance. Present only for knockout predictions.
+	Winner *openapi_types.UUID `json:"winner,omitempty"`
 }
 
 // TeamHandicapCategory defines model for TeamHandicapCategory.
@@ -650,6 +686,9 @@ type TournamentOutcomes struct {
 type UpsertScorePredictionRequest struct {
 	GoalsAway int `json:"goals_away"`
 	GoalsHome int `json:"goals_home"`
+
+	// Winner UUID of the team predicted to advance. Required for knockout fixtures (group is null); must be either home_team_id or away_team_id.
+	Winner *openapi_types.UUID `json:"winner,omitempty"`
 }
 
 // User defines model for User.
@@ -676,13 +715,25 @@ type UserStatus string
 
 // UserFixtureViewResponse defines model for UserFixtureViewResponse.
 type UserFixtureViewResponse struct {
-	AwayTeamName string `json:"away_team_name"`
-	ExternalId   int    `json:"external_id"`
-	GoalsAway    *int   `json:"goals_away,omitempty"`
-	GoalsHome    *int   `json:"goals_home,omitempty"`
+	AwayTeamId   openapi_types.UUID `json:"away_team_id"`
+	AwayTeamName string             `json:"away_team_name"`
+	ExternalId   int                `json:"external_id"`
+
+	// GoalsAway Total goals including extra time. Nil until the match starts.
+	GoalsAway *int `json:"goals_away,omitempty"`
+
+	// GoalsAwayRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsAwayRegular *int `json:"goals_away_regular,omitempty"`
+
+	// GoalsHome Total goals including extra time. Nil until the match starts.
+	GoalsHome *int `json:"goals_home,omitempty"`
+
+	// GoalsHomeRegular Regulation-time goals only (frozen once extra time begins). Nil until the match starts.
+	GoalsHomeRegular *int `json:"goals_home_regular,omitempty"`
 
 	// Group Group letter (e.g. "A"). Present only for group-stage fixtures, omitted for knockout.
 	Group            *string                       `json:"group,omitempty"`
+	HomeTeamId       openapi_types.UUID            `json:"home_team_id"`
 	HomeTeamName     string                        `json:"home_team_name"`
 	Id               openapi_types.UUID            `json:"id"`
 	KickoffAt        time.Time                     `json:"kickoff_at"`
@@ -691,6 +742,9 @@ type UserFixtureViewResponse struct {
 	Round            string                        `json:"round"`
 	Status           UserFixtureViewResponseStatus `json:"status"`
 	TournamentId     openapi_types.UUID            `json:"tournament_id"`
+
+	// WinnerTeamId UUID of the team that advanced. Set once a knockout match concludes.
+	WinnerTeamId *openapi_types.UUID `json:"winner_team_id,omitempty"`
 }
 
 // UserFixtureViewResponseStatus defines model for UserFixtureViewResponse.Status.

@@ -10,8 +10,24 @@ import (
 	"github.com/alexbukvic2/footy-forecast/internal/worker"
 )
 
+// isRegularTimeStatus returns true when the API status represents regulation time
+// (including FT which is full time without extra time). Goals are frozen in
+// goals_home_regular / goals_away_regular only while this is true.
+func isRegularTimeStatus(short string) bool {
+	switch short {
+	case "1H", "HT", "2H", "FT":
+		return true
+	}
+	return false
+}
+
 // UpdateMatchAndRescoreLivePredictions updates the fixture's status/goals/winner and atomically
 // rescores all score_predictions for that fixture.
+//
+// goals_home_regular / goals_away_regular are updated only during regulation time (1H, HT, 2H, FT).
+// goals_home / goals_away are always updated from the API value (includes ET goals).
+// Scoring always uses the current goals_home_regular / goals_away_regular (frozen during ET),
+// plus 2 bonus points for a correct winner prediction on knockout fixtures.
 func (r *WorkerRepository) UpdateMatchAndRescoreLivePredictions(
 	ctx context.Context,
 	f domain.PollableFixture,
@@ -19,6 +35,7 @@ func (r *WorkerRepository) UpdateMatchAndRescoreLivePredictions(
 ) error {
 	newStatus := mapAPIStatusForDB(result.StatusShort)
 	winnerTeamID := winnerTeamIDFromResult(result, f)
+	updateRegular := isRegularTimeStatus(result.StatusShort)
 
 	tx, err := r.pool.Begin(ctx)
 	if err != nil {
@@ -27,20 +44,26 @@ func (r *WorkerRepository) UpdateMatchAndRescoreLivePredictions(
 	defer tx.Rollback(ctx) //nolint:errcheck
 
 	// 1. Update the fixture row.
+	// goals_home_regular is only updated during regulation time; goals_home/goals_away always.
+	// RETURNING gives us the current regular goals (updated or frozen) for scoring.
 	const updateFixture = `
 UPDATE fixtures
-SET status            = $1,
-    goals_home        = $2,
-    goals_away        = $3,
-    winner_team_id    = $4,
-    prediction_locked = (kickoff_at <= now()),
-    last_polled_at    = now()
-WHERE id = $5`
+SET status             = $1,
+    goals_home_regular = CASE WHEN $2 THEN $3 ELSE goals_home_regular END,
+    goals_away_regular = CASE WHEN $2 THEN $4 ELSE goals_away_regular END,
+    goals_home         = $3,
+    goals_away         = $4,
+    winner_team_id     = $5,
+    prediction_locked  = (kickoff_at <= now()),
+    last_polled_at     = now()
+WHERE id = $6
+RETURNING goals_home_regular, goals_away_regular`
 
-	if _, err := tx.Exec(
+	var regularGoalsHome, regularGoalsAway *int32
+	if err := tx.QueryRow(
 		ctx, updateFixture,
-		newStatus, result.GoalsHome, result.GoalsAway, winnerTeamID, f.ID,
-	); err != nil {
+		newStatus, updateRegular, result.GoalsHome, result.GoalsAway, winnerTeamID, f.ID,
+	).Scan(&regularGoalsHome, &regularGoalsAway); err != nil {
 		return fmt.Errorf("update fixture %s: %w", f.ID, err)
 	}
 
@@ -55,22 +78,26 @@ WHERE fixture_id = $1`
 		if _, err := tx.Exec(ctx, zeroPredictions, f.ID); err != nil {
 			return fmt.Errorf("zero score predictions for fixture %s: %w", f.ID, err)
 		}
-	} else if result.GoalsHome != nil && result.GoalsAway != nil {
-		gh := int32(*result.GoalsHome) //nolint:gosec
-		ga := int32(*result.GoalsAway) //nolint:gosec
+	} else if regularGoalsHome != nil && regularGoalsAway != nil {
+		gh := *regularGoalsHome
+		ga := *regularGoalsAway
 
+		// 2 bonus points for correctly predicting the advancing team in a knockout match.
+		// winnerTeamID is nil during the match and set when it finishes, so the bonus
+		// naturally appears only once the result is known.
 		const scorePredictions = `
 UPDATE score_predictions
 SET points =
-      (CASE WHEN goals_home = $1                                           THEN 1 ELSE 0 END)
-    + (CASE WHEN goals_away = $2                                           THEN 1 ELSE 0 END)
+      (CASE WHEN goals_home = $1                                                            THEN 1 ELSE 0 END)
+    + (CASE WHEN goals_away = $2                                                            THEN 1 ELSE 0 END)
     + (CASE WHEN SIGN(goals_home::int - goals_away::int)
-                 = SIGN($1::int - $2::int)                                 THEN 2 ELSE 0 END)
-    + (CASE WHEN goals_home::int - goals_away::int = $1::int - $2::int     THEN 2 ELSE 0 END),
+                 = SIGN($1::int - $2::int)                                                  THEN 2 ELSE 0 END)
+    + (CASE WHEN goals_home::int - goals_away::int = $1::int - $2::int                      THEN 2 ELSE 0 END)
+    + (CASE WHEN $3::uuid IS NOT NULL AND winner = $3                                       THEN 2 ELSE 0 END),
     scored_at = now()
-WHERE fixture_id = $3`
+WHERE fixture_id = $4`
 
-		if _, err := tx.Exec(ctx, scorePredictions, gh, ga, f.ID); err != nil {
+		if _, err := tx.Exec(ctx, scorePredictions, gh, ga, winnerTeamID, f.ID); err != nil {
 			return fmt.Errorf("score predictions for fixture %s: %w", f.ID, err)
 		}
 	}

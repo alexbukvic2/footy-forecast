@@ -19,7 +19,7 @@ type PollableFixture struct {
 	Round                string
 	Status               FixtureStatus
 	KickoffAt            time.Time
-	GoalsHome            *int
+	GoalsHome            *int // total goals including ET (what the API returns); used for change detection
 	GoalsAway            *int
 	WinnerTeamID         *uuid.UUID
 	LastPolledAt         *time.Time

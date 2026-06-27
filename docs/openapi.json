@@ -75,20 +75,29 @@
       },
       "FixtureResponse": {
         "example": {
+          "away_team_id": "550e8400-e29b-41d4-a716-446655440031",
           "away_team_name": "France",
           "external_id": 90001,
           "goals_away": 1,
+          "goals_away_regular": 1,
           "goals_home": 2,
+          "goals_home_regular": 2,
           "group": "A",
+          "home_team_id": "550e8400-e29b-41d4-a716-446655440030",
           "home_team_name": "Argentina",
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "kickoff_at": "2026-06-01T15:00:00Z",
           "prediction_locked": true,
           "round": "Group Stage - 1",
           "status": "finished",
-          "tournament_id": "550e8400-e29b-41d4-a716-446655440000"
+          "tournament_id": "550e8400-e29b-41d4-a716-446655440000",
+          "winner_team_id": null
         },
         "properties": {
+          "away_team_id": {
+            "format": "uuid",
+            "type": "string"
+          },
           "away_team_name": {
             "type": "string"
           },
@@ -96,16 +105,32 @@
             "type": "integer"
           },
           "goals_away": {
+            "description": "Total goals including extra time. Nil until the match starts.",
+            "nullable": true,
+            "type": "integer"
+          },
+          "goals_away_regular": {
+            "description": "Regulation-time goals only (frozen once extra time begins). Nil until the match starts.",
             "nullable": true,
             "type": "integer"
           },
           "goals_home": {
+            "description": "Total goals including extra time. Nil until the match starts.",
+            "nullable": true,
+            "type": "integer"
+          },
+          "goals_home_regular": {
+            "description": "Regulation-time goals only (frozen once extra time begins). Nil until the match starts.",
             "nullable": true,
             "type": "integer"
           },
           "group": {
             "description": "Group letter (e.g. \"A\"). Present only for group-stage fixtures, omitted for knockout.",
             "nullable": true,
+            "type": "string"
+          },
+          "home_team_id": {
+            "format": "uuid",
             "type": "string"
           },
           "home_team_name": {
@@ -136,12 +161,20 @@
           "tournament_id": {
             "format": "uuid",
             "type": "string"
+          },
+          "winner_team_id": {
+            "description": "UUID of the team that advanced. Set once a knockout match concludes.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
           "id",
           "external_id",
           "tournament_id",
+          "home_team_id",
+          "away_team_id",
           "home_team_name",
           "away_team_name",
           "round",
@@ -345,10 +378,12 @@
           }
         ],
         "example": {
+          "away_team_id": "550e8400-e29b-41d4-a716-446655440031",
           "away_team_name": "Germany",
           "external_id": 90001,
           "goals_away": 1,
           "goals_home": 2,
+          "home_team_id": "550e8400-e29b-41d4-a716-446655440030",
           "home_team_name": "Brazil",
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "kickoff_at": "2026-06-01T15:00:00Z",
@@ -542,7 +577,8 @@
           "goals_away": 1,
           "goals_home": 2,
           "points": 3,
-          "user_id": "550e8400-e29b-41d4-a716-446655440002"
+          "user_id": "550e8400-e29b-41d4-a716-446655440002",
+          "winner": null
         },
         "properties": {
           "display_name": {
@@ -562,6 +598,12 @@
           },
           "user_id": {
             "format": "uuid",
+            "type": "string"
+          },
+          "winner": {
+            "description": "UUID of the team this member predicted to advance. Present only for knockout predictions.",
+            "format": "uuid",
+            "nullable": true,
             "type": "string"
           }
         },
@@ -1028,7 +1070,8 @@
           "goals_away": 1,
           "goals_home": 2,
           "id": "550e8400-e29b-41d4-a716-446655440010",
-          "points": null
+          "points": null,
+          "winner": null
         },
         "properties": {
           "fixture_id": {
@@ -1048,6 +1091,12 @@
           "points": {
             "nullable": true,
             "type": "integer"
+          },
+          "winner": {
+            "description": "UUID of the team predicted to advance. Present only for knockout predictions.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
@@ -1437,7 +1486,8 @@
       "UpsertScorePredictionRequest": {
         "example": {
           "goals_away": 1,
-          "goals_home": 2
+          "goals_home": 2,
+          "winner": null
         },
         "properties": {
           "goals_away": {
@@ -1447,6 +1497,12 @@
           "goals_home": {
             "minimum": 0,
             "type": "integer"
+          },
+          "winner": {
+            "description": "UUID of the team predicted to advance. Required for knockout fixtures (group is null); must be either home_team_id or away_team_id.",
+            "format": "uuid",
+            "nullable": true,
+            "type": "string"
           }
         },
         "required": [
@@ -1540,10 +1596,12 @@
           }
         ],
         "example": {
+          "away_team_id": "550e8400-e29b-41d4-a716-446655440031",
           "away_team_name": "France",
           "external_id": 90001,
           "goals_away": 1,
           "goals_home": 2,
+          "home_team_id": "550e8400-e29b-41d4-a716-446655440030",
           "home_team_name": "Argentina",
           "id": "550e8400-e29b-41d4-a716-446655440011",
           "kickoff_at": "2026-05-20T19:00:00Z",

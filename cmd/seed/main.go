@@ -440,16 +440,18 @@ func importFixtures(
 
 		tag, err := pool.Exec(
 			ctx,
-			`INSERT INTO fixtures (external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status, goals_home, goals_away)
-			 VALUES ($1, $2, $3, $4, $5, $6::fixture_status, $7, $8)
+			`INSERT INTO fixtures (external_id, tournament_id, home_team_id, away_team_id, kickoff_at, status, goals_home_regular, goals_away_regular, goals_home, goals_away)
+			 VALUES ($1, $2, $3, $4, $5, $6::fixture_status, $7, $8, $7, $8)
 			 ON CONFLICT (external_id) DO UPDATE
-			 SET tournament_id = EXCLUDED.tournament_id,
-			     home_team_id  = EXCLUDED.home_team_id,
-			     away_team_id  = EXCLUDED.away_team_id,
-			     kickoff_at    = EXCLUDED.kickoff_at,
-			     status        = EXCLUDED.status,
-			     goals_home    = EXCLUDED.goals_home,
-			     goals_away    = EXCLUDED.goals_away`,
+			 SET tournament_id      = EXCLUDED.tournament_id,
+			     home_team_id       = EXCLUDED.home_team_id,
+			     away_team_id       = EXCLUDED.away_team_id,
+			     kickoff_at         = EXCLUDED.kickoff_at,
+			     status             = EXCLUDED.status,
+			     goals_home_regular = EXCLUDED.goals_home_regular,
+			     goals_away_regular = EXCLUDED.goals_away_regular,
+			     goals_home         = EXCLUDED.goals_home,
+			     goals_away         = EXCLUDED.goals_away`,
 			r.Fixture.Id, cfg.tournamentID, homeID, awayID,
 			kickoff, status, goalsHome, goalsAway,
 		)

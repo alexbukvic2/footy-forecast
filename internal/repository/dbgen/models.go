@@ -387,6 +387,8 @@ type Fixture struct {
 	AwayTeamID       uuid.UUID
 	KickoffAt        time.Time
 	Status           FixtureStatus
+	GoalsHomeRegular *int32
+	GoalsAwayRegular *int32
 	GoalsHome        *int32
 	GoalsAway        *int32
 	CreatedAt        time.Time
@@ -487,6 +489,7 @@ type ScorePrediction struct {
 	FixtureID uuid.UUID
 	GoalsHome int32
 	GoalsAway int32
+	Winner    uuid.UUID // uuid.Nil when NULL
 	Points    *int32
 	CreatedAt time.Time
 	UpdatedAt time.Time

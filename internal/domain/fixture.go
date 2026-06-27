@@ -31,10 +31,15 @@ type Fixture struct {
 	KickoffAt        time.Time
 	Status           FixtureStatus
 	PredictionLocked bool
-	GoalsHome        *int
-	GoalsAway        *int
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	// GoalsHomeRegular/GoalsAwayRegular reflect 90-minute score only (frozen once ET begins).
+	GoalsHomeRegular *int
+	GoalsAwayRegular *int
+	// GoalsHome/GoalsAway include ET goals (but not penalty shootout).
+	GoalsHome    *int
+	GoalsAway    *int
+	WinnerTeamID *uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 // UserFixtureView pairs a fixture with the requesting user's score prediction (nil if none).
@@ -49,6 +54,7 @@ type LeagueMemberPrediction struct {
 	DisplayName string
 	GoalsHome   *int
 	GoalsAway   *int
+	Winner      *uuid.UUID
 	Points      *int
 }
 
