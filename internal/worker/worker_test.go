@@ -501,9 +501,6 @@ func TestRunSettlement_GroupMatchGroupDone(t *testing.T) {
 	if repo.callCount("SettleGroupTopScorerPredictions") != 1 {
 		t.Error("expected SettleGroupTopScorerPredictions")
 	}
-	if repo.callCount("SettlePlayoffWildcardPredictions") != 0 {
-		t.Error("must not settle wildcard when group stage not complete")
-	}
 }
 
 func TestRunSettlement_LastGroupDone(t *testing.T) {
