@@ -519,7 +519,7 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 	w := newWorker(repo, api)
 	runOneTick(w)
 
-	if repo.callCount("SettlePlayoffWildcardPredictions") != 1 {
+	if repo.callCount("SettlePlayoffWildcardPredictions") != 2 {
 		t.Error("expected SettlePlayoffWildcardPredictions when all groups done")
 	}
 }

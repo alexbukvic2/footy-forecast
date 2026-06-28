@@ -331,7 +331,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(30*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
@@ -350,7 +350,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(90*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
@@ -369,7 +369,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(30*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 45))
@@ -388,7 +388,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(30*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 20))
@@ -407,7 +407,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(30*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				true,
 			)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
@@ -426,7 +426,7 @@ func TestWorkerRepository_LockImminentFixtures(t *testing.T) {
 				away,
 				time.Now().Add(30*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, id)
@@ -463,7 +463,7 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 			tourID := wInsertTournament(t, pool, ctx, true)
 			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
-			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "Group Stage - 1", false)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
 			assert.True(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
 		},
@@ -475,7 +475,7 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			// First fixture (earliest kickoff) is outside the lead window — will not be locked.
-			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(3*time.Hour), "upcoming", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(3*time.Hour), "upcoming", "Group Stage - 1", false)
 			// Second fixture has a later kickoff but is manually pre-locked.
 			// Tournament should stay unlocked because the first fixture is still unlocked.
 			laterID := wInsertFixture(
@@ -487,7 +487,7 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 				away,
 				time.Now().Add(4*time.Hour),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			_, err := pool.Exec(ctx, `UPDATE fixtures SET prediction_locked = TRUE WHERE id = $1`, laterID)
@@ -503,7 +503,7 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			// Only fixture is a demo — should never be locked, so tournament stays unlocked.
-			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", true)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "Group Stage - 1", true)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
 			assert.False(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
 		},
@@ -514,7 +514,7 @@ func TestWorkerRepository_LockImminentFixtures_TournamentLock(t *testing.T) {
 			tourID := wInsertTournament(t, pool, ctx, true)
 			home := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 			away := wInsertTeam(t, pool, ctx, tourID, "A", 0)
-			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID, home, away, time.Now().Add(30*time.Minute), "upcoming", "Group Stage - 1", false)
 			require.NoError(t, repo.LockImminentFixtures(ctx, 60))
 			assert.True(t, wQueryTournamentPredictionsLocked(t, pool, ctx, tourID))
 			// Second call is idempotent.
@@ -547,7 +547,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				away,
 				time.Now().Add(-30*time.Minute),
 				"in_progress",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			fixtures, err := repo.ListPollableMatches(ctx)
@@ -567,7 +567,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				away,
 				time.Now().Add(4*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			fixtures, err := repo.ListPollableMatches(ctx)
@@ -587,7 +587,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				away,
 				time.Now().Add(60*time.Minute),
 				"upcoming",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			fixtures, err := repo.ListPollableMatches(ctx)
@@ -607,7 +607,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				away,
 				time.Now().Add(-26*time.Hour),
 				"finished",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			wSetUpdatedAt(t, pool, ctx, id, time.Now().Add(-26*time.Hour))
@@ -628,7 +628,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				away,
 				time.Now().Add(-10*time.Minute),
 				"in_progress",
-				"GS",
+				"Group Stage - 1",
 				true,
 			)
 			fixtures, err := repo.ListPollableMatches(ctx)
@@ -651,7 +651,7 @@ func TestWorkerRepository_ListPollableMatches(t *testing.T) {
 				a2,
 				time.Now().Add(-10*time.Minute),
 				"in_progress",
-				"GS",
+				"Group Stage - 1",
 				false,
 			)
 			fixtures, err := repo.ListPollableMatches(ctx)
@@ -684,7 +684,7 @@ func TestWorkerRepository_UpdateMatchAndRescore(t *testing.T) {
 			away,
 			time.Now().Add(-1*time.Hour),
 			"in_progress",
-			"GS",
+			"Group Stage - 1",
 			false,
 		)
 		return domain.PollableFixture{ID: fID, HomeTeamID: home, AwayTeamID: away}
@@ -799,7 +799,7 @@ func TestWorkerRepository_IsGroupComplete(t *testing.T) {
 
 	t.Run(
 		"all finished", func(t *testing.T) {
-			wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-3*time.Hour), "finished", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-3*time.Hour), "finished", "Group Stage - 1", false)
 			done, err := repo.IsGroupComplete(ctx, tourID, "A")
 			require.NoError(t, err)
 			assert.True(t, done)
@@ -807,7 +807,7 @@ func TestWorkerRepository_IsGroupComplete(t *testing.T) {
 	)
 	t.Run(
 		"one in_progress", func(t *testing.T) {
-			wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-1*time.Hour), "in_progress", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-1*time.Hour), "in_progress", "Group Stage - 1", false)
 			done, err := repo.IsGroupComplete(ctx, tourID, "A")
 			require.NoError(t, err)
 			assert.False(t, done)
@@ -819,7 +819,7 @@ func TestWorkerRepository_IsGroupComplete(t *testing.T) {
 			tourID2 := wInsertTournament(t, pool, ctx, true)
 			h2 := wInsertTeam(t, pool, ctx, tourID2, "C", 0)
 			a2 := wInsertTeam(t, pool, ctx, tourID2, "C", 0)
-			wInsertFixture(t, pool, ctx, tourID2, h2, a2, time.Now().Add(-3*time.Hour), "cancelled", "GS", false)
+			wInsertFixture(t, pool, ctx, tourID2, h2, a2, time.Now().Add(-3*time.Hour), "cancelled", "Group Stage - 1", false)
 			done, err := repo.IsGroupComplete(ctx, tourID2, "C")
 			require.NoError(t, err)
 			assert.True(t, done)
@@ -836,12 +836,12 @@ func TestWorkerRepository_IsGroupStageComplete(t *testing.T) {
 	h := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 	a := wInsertTeam(t, pool, ctx, tourID, "A", 0)
 
-	wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-3*time.Hour), "finished", "GS", false)
+	wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(-3*time.Hour), "finished", "Group Stage - 1", false)
 	done, err := repo.IsGroupStageComplete(ctx, tourID)
 	require.NoError(t, err)
 	assert.True(t, done)
 
-	wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(2*time.Hour), "upcoming", "GS", false)
+	wInsertFixture(t, pool, ctx, tourID, h, a, time.Now().Add(2*time.Hour), "upcoming", "Group Stage - 1", false)
 	done, err = repo.IsGroupStageComplete(ctx, tourID)
 	require.NoError(t, err)
 	assert.False(t, done)
