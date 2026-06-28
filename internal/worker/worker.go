@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
-	"github.com/google/uuid"
 )
 
 // Worker polls live match data and scores predictions in real time.
@@ -44,32 +43,6 @@ func New(
 // Run starts the polling loop. It blocks until ctx is cancelled.
 func (w *Worker) Run(ctx context.Context) error {
 	w.refreshAllActiveTournamentFixtures(ctx)
-	tournamentID, _ := uuid.Parse("6c4ef9ed-a44a-4dc6-8429-4ee0f191c27e")
-	if err := w.repo.SettlePlayoffWildcardPredictions(ctx, tournamentID); err != nil {
-		w.logger.Error("worker: settle playoff wildcard predictions", "fixture_id", tournamentID, "err", err)
-	}
-
-	groupLetter := "J"
-	if err := w.repo.SettleGroupWinnerPredictions(ctx, tournamentID, groupLetter); err != nil {
-		w.logger.Error("worker: settle group winner predictions", "err", err)
-	}
-	if err := w.repo.SettlePlayoffGroupPredictions(ctx, tournamentID, groupLetter); err != nil {
-		w.logger.Error("worker: settle playoff group predictions", "err", err)
-	}
-
-	playerIDs, err := w.repo.GetGroupTopScorerPlayerIDs(ctx, tournamentID, groupLetter)
-	if err != nil {
-		w.logger.Warn("worker: get group top scorer player ids", "group", groupLetter, "err", err)
-	} else if len(playerIDs) > 0 {
-		if err := w.repo.SettleGroupTopScorerPredictions(
-			ctx,
-			tournamentID,
-			groupLetter,
-			playerIDs,
-		); err != nil {
-			w.logger.Error("worker: settle group top scorer predictions", "err", err)
-		}
-	}
 
 	for {
 		w.tick(ctx)

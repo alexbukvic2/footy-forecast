@@ -501,6 +501,9 @@ func TestRunSettlement_GroupMatchGroupDone(t *testing.T) {
 	if repo.callCount("SettleGroupTopScorerPredictions") != 1 {
 		t.Error("expected SettleGroupTopScorerPredictions")
 	}
+	if repo.callCount("SettlePlayoffWildcardPredictions") != 0 {
+		t.Error("must not settle wildcard when group stage not complete")
+	}
 }
 
 func TestRunSettlement_LastGroupDone(t *testing.T) {
@@ -519,7 +522,7 @@ func TestRunSettlement_LastGroupDone(t *testing.T) {
 	w := newWorker(repo, api)
 	runOneTick(w)
 
-	if repo.callCount("SettlePlayoffWildcardPredictions") != 2 {
+	if repo.callCount("SettlePlayoffWildcardPredictions") != 1 {
 		t.Error("expected SettlePlayoffWildcardPredictions when all groups done")
 	}
 }
