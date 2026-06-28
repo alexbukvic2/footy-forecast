@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/alexbukvic2/footy-forecast/internal/domain"
+	"github.com/google/uuid"
 )
 
 // Worker polls live match data and scores predictions in real time.
@@ -22,7 +23,14 @@ type Worker struct {
 
 // New constructs a Worker. pollInterval controls how often the polling loop runs.
 // lockLeadMinutes is how many minutes before kickoff predictions are locked.
-func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval time.Duration, lockLeadMinutes int) *Worker {
+func New(
+	repo Repo,
+	api MatchAPI,
+	clock Clock,
+	logger *slog.Logger,
+	pollInterval time.Duration,
+	lockLeadMinutes int,
+) *Worker {
 	return &Worker{
 		repo:            repo,
 		api:             api,
@@ -36,6 +44,10 @@ func New(repo Repo, api MatchAPI, clock Clock, logger *slog.Logger, pollInterval
 // Run starts the polling loop. It blocks until ctx is cancelled.
 func (w *Worker) Run(ctx context.Context) error {
 	w.refreshAllActiveTournamentFixtures(ctx)
+	tournamentID, _ := uuid.Parse("6c4ef9ed-a44a-4dc6-8429-4ee0f191c27e")
+	if err := w.repo.SettlePlayoffWildcardPredictions(ctx, tournamentID); err != nil {
+		w.logger.Error("worker: settle playoff wildcard predictions", "fixture_id", tournamentID, "err", err)
+	}
 
 	for {
 		w.tick(ctx)
@@ -76,7 +88,10 @@ func (w *Worker) tick(ctx context.Context) {
 	sem.drain()
 }
 
-func (w *Worker) processSingleFixture(ctx context.Context, f domain.PollableFixture) {
+func (w *Worker) processSingleFixture(
+	ctx context.Context,
+	f domain.PollableFixture,
+) {
 	result, err := w.api.GetFixture(ctx, f.ExternalID)
 	if err != nil {
 		w.logger.Warn("worker: get fixture", "fixture_id", f.ID, "external_id", f.ExternalID, "err", err)
@@ -115,7 +130,11 @@ func MapAPIStatus(short string) domain.FixtureStatus {
 	}
 }
 
-func isUnchanged(f domain.PollableFixture, result APIFixtureResult, newStatus domain.FixtureStatus) bool {
+func isUnchanged(
+	f domain.PollableFixture,
+	result APIFixtureResult,
+	newStatus domain.FixtureStatus,
+) bool {
 	if newStatus == domain.FixtureStatusCancelled {
 		return false
 	}
