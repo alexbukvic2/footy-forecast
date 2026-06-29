@@ -19,6 +19,7 @@ FROM fixtures f
 JOIN teams home_t ON home_t.id = f.home_team_id
 WHERE f.tournament_id = $1
   AND home_t.group_letter = $2
+  AND f.round LIKE '%Group%'
   AND f.status NOT IN ('finished', 'cancelled')
 `
 
@@ -37,9 +38,8 @@ func (q *Queries) CountIncompleteGroupFixtures(ctx context.Context, arg CountInc
 const countIncompleteGroupStageFixtures = `-- name: CountIncompleteGroupStageFixtures :one
 SELECT COUNT(*)::int AS n
 FROM fixtures f
-JOIN teams home_t ON home_t.id = f.home_team_id
 WHERE f.tournament_id = $1
-  AND home_t.group_letter IS NOT NULL
+  AND f.round LIKE '%Group%'
   AND f.status NOT IN ('finished', 'cancelled')
 `
 
