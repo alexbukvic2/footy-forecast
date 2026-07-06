@@ -85,6 +85,8 @@ func authMiddleware(
 						r.Context(), "user provision failed",
 						"request_id", RequestIDFrom(r.Context()),
 						"err", fmt.Errorf("provision: %w", err),
+						"token", token,
+						"claims", claims,
 					)
 					writeAuthError(w, http.StatusInternalServerError, "internal server error")
 					return
